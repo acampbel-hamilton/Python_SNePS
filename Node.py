@@ -26,7 +26,7 @@ class Node:
 
 class Base(Node):
     """A Base Node represents a node with no arcs amanating from it"""
-    # A base node is assumed to represent some entity—individual, object, class,
+    # A base node is assumed to represent some entity - idividual, object, class,
     # property, etc. It is assumed that no two base nodes represent the same,
     # identical entity.
 
@@ -42,7 +42,7 @@ class Base(Node):
 # Molecular nodes have arc emanaing from them
 class Molecular(Node):
     """A Molecular node represents a proposition and must have a downCableSet"""
-    def __init__(self, name, upCableSet=[], downCableSet):
+    def __init__(self, name, upCableSet=[], downCableSet=[]):
         """molecular node constructor"""
         Node.__init__(self, name, upCableSet)
         self._downCableSet = downCableSet
