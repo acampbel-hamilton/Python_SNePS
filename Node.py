@@ -20,13 +20,9 @@ class Node:
         """returns the upCableSet of the node"""
         return self._upCableSet
 
-    def getDownCableSet(self):
-        """returns the downCableSet of the node"""
-        return self._downCableSet
-
     def getCableSet(self):
         """returns the entire cable set of the node """
-        return self._upCableSet + self._downCableSet
+        return self._upCableSet
 
 class Base(Node):
     """A Base Node represents a node with no arcs amanating from it"""
@@ -34,10 +30,10 @@ class Base(Node):
     # property, etc. It is assumed that no two base nodes represent the same,
     # identical entity.
 
-    # DOES THIS MEAN THAT BASE NODES DO NOT HAVE DOWNCABLE?
-    def __init__(self, name, upCableSet=[], downCableSet=[]):
+    # DOES THIS MEAN THAT BASE NODES DO NOT HAVE DOWNCABLE? Yes
+    def __init__(self, name, upCableSet=[]):
         """base node constructor"""
-        Node.__init__(self, name, upCableSet, downCableSet)
+        Node.__init__(self, name, upCableSet)
 
     def syntacticType(self):
         """returns the syntactic type of a node"""
@@ -48,7 +44,16 @@ class Molecular(Node):
     """A Molecular node represents a proposition and must have a downCableSet"""
     def __init__(self, name, upCableSet=[], downCableSet):
         """molecular node constructor"""
-        Node.__init__(self, name, upCableSet, downCableSet)
+        Node.__init__(self, name, upCableSet)
+        self._downCableSet = downCableSet
+
+    def getDownCableSet(self):
+        """returns the down cableset of a molecular node"""
+        return self._downCableSet
+
+    def getCableSet(self):
+        """returns the entire cable set of a molecular node"""
+        return self._upCableSet + self._downCableSet
 
     def syntacticType(self):
         """returns the syntactic type of a node"""
@@ -59,7 +64,16 @@ class Variable(Node):
     quantifiers and properties"""
     def __init__(self, name, upCableSet=[], downCableSet=[]):
         """variable node constructor"""
-        Node.__init__(self, name, upCableSet, downCableSet)
+        Node.__init__(self, name, upCableSet)
+        self._downCableSet = downCableSet
+
+    def getDownCableSet(self):
+        """returns the down cable set of a variable node if it exists"""
+        return self._downCableSet
+
+    def getCableSet(self):
+        """returns the entire cable set of a variable node"""
+        return self._upCableSet + self._downCableSet
 
     def syntacticType(self):
         """returns the syntactic type of a node"""
