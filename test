@@ -18,3 +18,12 @@ print(a.getClass())
 print(o.getClass())
 print(arb.getClass())
 print(t.getClass())
+
+print()
+from SemanticTypes import *
+e = Entity()
+print(e.getParent())
+print(e.getClass())
+a = Action()
+print(a.getParent())
+print(a.getClass())
