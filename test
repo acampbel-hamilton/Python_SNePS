@@ -1,0 +1,11 @@
+#!/usr/bin/python3
+
+from SyntacticTypes import *
+a = Atom()
+print(a.parent())
+o = OrEntailment()
+print(o.parent())
+arb = Arbitrary()
+print(arb.parent())
+t = Term()
+print(t.parent())
