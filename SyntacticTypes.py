@@ -8,11 +8,20 @@ class Term:
     def __init__(self):
         pass
 
-    def parent(self):
-        par = re.compile('\(\<class\s*\'SyntacticTypes\.' + \
-        '(?P<parent>[A-Z][A-z]*)\s*\'\>,\)')
-        m = par.match(str(self.__class__.__bases__))
-        return m and m.group('parent')
+#consider replacing the following 3 functions with a dictionary which
+#traces the entirety of the inheritance hierarchy for the syntactic types
+    def classStrip(self, s):
+        r = re.compile('(\()?\<class\s*\'SyntacticTypes\.' + \
+        '(?P<C>[A-Z][A-z]*)\'\>(,\))?')
+        m = r.match(str(s))
+        return m and m.group('C')
+
+    def getParent(self):
+        """returns the parent class of the given node instance"""
+        return self.classStrip(self.__class__.__bases__)
+
+    def getClass(self):
+        return self.classStrip(self.__class__)
 
 class Atom(Term):
     """Named terms containing up cablesets and no structure"""
