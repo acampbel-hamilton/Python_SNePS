@@ -1,5 +1,9 @@
 #!/usr/bin/python3
 
+
+#this file is for tesing only
+#should be removed at a future date.
+
 from SyntacticTypes import *
 a = Atom()
 print(a.parent())
