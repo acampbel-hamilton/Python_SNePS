@@ -5,8 +5,14 @@ import re
 
 class Term:
     """root of the syntactic type class hierarchy"""
-    def __init__(self):
-        pass
+    def __init__(self, name, activation_value=0, fired=None,
+     recorded_firing=None, activation_marker=None, up_cableset={}):
+        self.name = name
+        self.activation_value = activation_value
+        self.fired = fired
+        self.recorded_firing = recorded_firing
+        self.activation_marker = activation_marker
+        self.up_cableset = up_cableset
 
 #consider replacing the following 3 functions with a dictionary which
 #traces the entirety of the inheritance hierarchy for the syntactic types
@@ -25,102 +31,88 @@ class Term:
 
 class Atom(Term):
     """Named terms containing up cablesets and no structure"""
-    def __init__(self):
-        pass
 
 class Base(Atom):
     """an individual constant"""
-    def __init__(self):
-        pass
 
 class Variable(Atom):
     """a variable term ranging over a restricted domain"""
-    def __init__(self):
-        pass
+    def __init__(self, restriction_set=set(), var_label=None):
+        self.restriction_set = restriction_set
+        self.var_label = var_label
 
 class Indefinite(Variable):
     """an indefinite object"""
-    def __init__(self):
-        pass
+    def __init__(self, ind_counter=1, dependencies=set()):
+        self.ind_counter = ind_counter
+        self.dependencies = dependencies
 
 class Arbitrary(Variable):
     """an arbitaray individual"""
-    def __init__(self):
-        pass
+    def __init__(self, arb_counter=1):
+        self.arb_counter = arb_counter
 
 class Molecular(Term):
     """a functional term with zero or more arguments
     equivalently a frame with slots and fillers"""
-    def __init__(self):
-        pass
+    wftcounter = 0
+    def __init__(self, caseframe, down_cableset, down_weights):
+        self.caseframe = caseframe
+        self.down_cableset = down_cableset
+        self.down_weights = down_weights
 
 class Param2Op(Molecular):
     """the andor or thresh of some proposition(s)"""
-    def __init__(self):
-        pass
+    def __init__(self, min, max):
+        self.min = min
+        self.max = max
 
 class AndOr(Param2Op):
     """the andor of some proposition(s)"""
-    def __init__(self):
-        pass
 
 class Disjunction(AndOr):
     """the disjunction of some proposition(s)"""
-    def __init__(self):
-        pass
 
 class Xor(AndOr):
     """the exclusive or of some proposition(s)"""
-    def __init__(self):
-        pass
 
 class Nand(AndOr):
     """the negation of the conjunction of some proposition(s)"""
-    def __init(self):
-        pass
+
 
 class Thresh(Param2Op):
     """the thresh of some proposition(s)"""
-    def __init__(self):
-        pass
+
 
 class Equivalence(Thresh):
     """an equivalence proposition"""
-    def __init__(self):
-        pass
+
 
 class NumericalEntailment(Molecular):
     """a numerical entailment"""
-    def __init__(self):
-        pass
+    def __init__(self, min):
+        self.min = min
 
 class OrEntailment(NumericalEntailment):
     """the consequents are implied by any antecedent"""
-    def __init__(self):
-        pass
+
 
 class Implication(NumericalEntailment):
     """a conditional propostion"""
-    def __init__(self):
-        pass
+
 
 class Categorization(Molecular):
     """a proposition stating that some Entities
     are instances of some Categories"""
-    def __init__(self):
-        pass
+
 
 class NegationByFailure(Molecular):
     """the generalized thnor of some proposition(s)"""
-    def __init__(self):
-        pass
+
 
 class Conjunction(Molecular):
     """the conjunction of some propositions"""
-    def __init__(self):
-        pass
+
 
 class Negation(Molecular):
     """the generalized nor of some proposition(s)"""
-    def __init__(self):
-        pass

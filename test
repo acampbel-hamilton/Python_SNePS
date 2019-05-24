@@ -3,13 +3,3 @@
 
 #this file is for tesing only
 #should be removed at a future date.
-
-from SemanticTypes import *
-
-s = []
-i = ""
-while (not (len(i) == 1 and ord(i) == 5)):
-    s.append(i)
-    i = input("> ").strip()
-
-print(eval("\n".join(s)))
