@@ -1,5 +1,5 @@
 # SNePS3 Syntactics Types
-#currently only a skeleton
+#currently only a partial skeleton
 
 import re
 

@@ -3,3 +3,11 @@
 
 #this file is for tesing only
 #should be removed at a future date.
+i = input("Enter File Name:\n> ").strip()
+f = open(i)
+c = f.read(1)
+while c != "":
+    if (ord(c) < 20 and ord(c) not in [9, 10]) or ord(c) > 127:
+        print(ord(c))
+    c = f.read(1)
+f.close()
