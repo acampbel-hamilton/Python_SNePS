@@ -16,7 +16,7 @@ class Term:
 
 #consider replacing the following 3 functions with a dictionary which
 #traces the entirety of the inheritance hierarchy for the syntactic types
-    def classStrip(self, s):
+    def _classStrip(self, s):
         r = re.compile('(\()?\<class\s*\'SyntacticTypes\.' + \
         '(?P<C>[A-Z][A-z]*)\'\>(,\))?')
         m = r.match(str(s))
@@ -24,10 +24,10 @@ class Term:
 
     def getParent(self):
         """returns the parent class of the given node instance"""
-        return self.classStrip(self.__class__.__bases__)
+        return self._classStrip(self.__class__.__bases__)
 
     def getClass(self):
-        return self.classStrip(self.__class__)
+        return self._classStrip(self.__class__)
 
 class Atom(Term):
     """Named terms containing up cablesets and no structure"""

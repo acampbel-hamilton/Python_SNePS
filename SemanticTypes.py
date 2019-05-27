@@ -8,7 +8,7 @@ class Entity:
     def __init__(self):
         pass
 
-    def classStrip(self, s):
+    def _classStrip(self, s):
         r = re.compile('(\()?\<class\s*\'SemanticTypes\.' + \
         '(?P<C>[A-Z][A-z]*)\'\>(,\))?')
         m = r.match(str(s))
@@ -16,10 +16,10 @@ class Entity:
 
     def getParent(self):
         """returns the parent class of the given node instance"""
-        return self.classStrip(self.__class__.__bases__)
+        return self._classStrip(self.__class__.__bases__)
 
     def getClass(self):
-        return self.classStrip(self.__class__)
+        return self._classStrip(self.__class__)
 
 class Proposition(Entity):
     """an entity who can be believed and whose negation can be believed"""
