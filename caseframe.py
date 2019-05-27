@@ -7,7 +7,7 @@ import inspect
 
 class CaseFrame:
     def __init__(self, type, slots=[], adj_to=set(), adj_from=set(), terms=set()):
-        self.type = type
+        self.type = type #must be either obj or class itself
         self.slots = slots
         self.adj_to = adj_to
         self.adj_from = adj_from
@@ -34,8 +34,8 @@ def pos_adj(srcframe, tgtframe):
             1. C_src is the same, or a subtype of C_tgt
             2. Every slot in R_src - R_tgt is pos_adj reducible and min = 0
             3. Every slot in R_tgt - R_src is pos_adj expandable and min = 0"""
-    return (srcframe.type is tgtframe.type or
-                tgtframe.__class__ in inspect.getmro(type(srcframe))) and \
+    return (srcframe.type is tgtframe.type or tgtframe.type.__class__
+                in inspect.getmro(type(srcframe.type))) and \
             all(s.pos_adj is "reduce" and s.min == 0
                 for s in (srcframe.slots - tgtframe.slots)) and \
             all(s.pos_adj is "expand" and s.min == 0
@@ -48,8 +48,8 @@ def neg_adj(srcframe, tgtframe):
             1. C_src is the same, or a subtype of C_tgt
             2. Every slot in R_src - R_tgt is neg_adj reducible and min = 0
             3. Every slot in R_tgt - R_src is neg_adj expandable and min = 0"""
-    return (srcframe.type is tgtframe.type or
-                tgtframe.__class__ in inspect.getmro(type(srcframe))) and \
+    return (srcframe.type is tgtframe.type or tgtframe.type.__class__
+                in inspect.getmro(type(srcframe))) and \
             all(s.neg_adj is "reduce" and s.min == 0
                 for s in (srcframe.slots - tgtframe.slots)) and \
             all(s.neg_adj is "expand" and s.min == 0
