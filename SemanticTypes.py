@@ -1,12 +1,11 @@
 # SNePS3 Semantic Types
-# currently a skeleton
-
+#currently a copy of the corresponding Allegro lisp implementation file
 import re
 
 class Entity:
     """root of the semantic type hierarchy"""
     def __init__(self):
-        pass
+        self.type_name = self.getClass()
 
     def _classStrip(self, s):
         r = re.compile('(\()?\<class\s*\'SemanticTypes\.' + \
@@ -23,30 +22,28 @@ class Entity:
 
 class Proposition(Entity):
     """an entity who can be believed and whose negation can be believed"""
-    def __init__(self):
-        pass
+    def __init__(self, support_set=set(), supported_nodes=set()):
+        Entity.__init__(self)
+        self.support_set = support_set
+        self.supported_nodes = supported_nodes
 
 class Act(Entity):
     """an Entity that can be performed"""
-    def __init__(self):
-        pass
+    def __init__(self, primaction=None):
+        Entity.__init__(self)
+        self.primaction = primaction
 
 class Policy(Entity):
     """an Entity that relates Propositions to Acts"""
-    def __init__(self):
-        pass
 
 class Thing(Entity):
     """everything not a Proposition, Act, or Policy"""
-    def __init__(self):
-        pass
 
 class Category(Thing):
     """a category of entities"""
-    def __init__(self):
-        pass
 
 class Action(Thing):
     """an action that can be performed on one or more argument entities"""
-    def __init(self):
-        pass
+    def __init(self, primaction=None):
+        Thing.__init__(self)
+        self.primaction = primaction
