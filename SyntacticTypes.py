@@ -37,33 +37,54 @@ class Base(Atom):
 
 class Variable(Atom):
     """a variable term ranging over a restricted domain"""
-    def __init__(self, restriction_set=set(), var_label=None):
+    def __init__(self, name, activation_value=0, fired=None,
+     recorded_firing=None, activation_marker=None, up_cableset={},
+     restriction_set=set(), var_label=None):
+        Atom.__init__(self, name, activation_value, fired,
+         recorded_firing, activation_marker, up_cableset)
         self.restriction_set = restriction_set
         self.var_label = var_label
 
 class Indefinite(Variable):
     """an indefinite object"""
-    def __init__(self, ind_counter=1, dependencies=set()):
+    def __init__(self, name, activation_value=0, fired=None,
+     recorded_firing=None, activation_marker=None, up_cableset={},
+     restriction_set=set(), var_label=None, ind_counter=1, dependencies=set()):
+        Variable.__init__(self, name, activation_value, fired, recorded_firing,
+         activation_marker, up_cableset, restriction_set, var_label)
         self.ind_counter = ind_counter
         self.dependencies = dependencies
 
 class Arbitrary(Variable):
     """an arbitaray individual"""
-    def __init__(self, arb_counter=1):
+    def __init__(self, name, activation_value=0, fired=None,
+     recorded_firing=None, activation_marker=None, up_cableset={},
+     restriction_set=set(), var_label=None, arb_counter=1):
+        Variable.__init__(self, name, activation_value, fired, recorded_firing,
+         activation_marker, up_cableset, restriction_set, var_label)
         self.arb_counter = arb_counter
 
 class Molecular(Term):
     """a functional term with zero or more arguments
     equivalently a frame with slots and fillers"""
     wftcounter = 0
-    def __init__(self, caseframe, down_cableset, down_weights):
+    def __init__(self, name, caseframe, down_cableset, down_weights,
+     activation_value=0, fired=None, recorded_firing=None,
+      activation_marker=None, up_cableset={}):
+        Term.__init__(self, name, activation_value, fired,
+         recorded_firing, activation_marker, up_cableset)
         self.caseframe = caseframe
         self.down_cableset = down_cableset
         self.down_weights = down_weights
 
 class Param2Op(Molecular):
     """the andor or thresh of some proposition(s)"""
-    def __init__(self, min, max):
+    def __init__(self, name, caseframe, down_cableset, down_weights, min, max,
+     activation_value=0, fired=None, recorded_firing=None,
+     activation_marker=None, up_cableset={}):
+        Molecular.__init__(self, name, caseframe, down_cableset, down_weights,
+         activation_value, fired, recorded_firing, activation_marker,
+         up_cableset)
         self.min = min
         self.max = max
 
@@ -90,7 +111,12 @@ class Equivalence(Thresh):
 
 class NumericalEntailment(Molecular):
     """a numerical entailment"""
-    def __init__(self, min):
+    def __init__(self, name, caseframe, down_cableset, down_weights, min,
+     activation_value=0, fired=None, recorded_firing=None,
+     activation_marker=None, up_cableset={}):
+        Molecular.__init__(self, name, caseframe, down_cableset, down_weights,
+         activation_value, fired, recorded_firing, activation_marker,
+         up_cableset)
         self.min = min
 
 class OrEntailment(NumericalEntailment):

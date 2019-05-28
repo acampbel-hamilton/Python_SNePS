@@ -3,11 +3,28 @@
 
 #this file is for tesing only
 #should be removed at a future date.
-i = input("Enter File Name:\n> ").strip()
-f = open(i)
-c = f.read(1)
-while c != "":
-    if (ord(c) < 20 and ord(c) not in [9, 10]) or ord(c) > 127:
-        print(ord(c))
-    c = f.read(1)
-f.close()
+class Fake:
+    def __init__(self, int):
+        self.num = int
+
+    def __eq__(self, other):
+        return self.num == other.num or (self.num == 1 and other.num == 4) or\
+            (self.num == 4 and other.num == 1)
+
+    def __hash__(self):
+        return hash(self.num)
+
+    def __str__(self):
+        return str(self.num)
+
+print(Fake(1) == Fake(4))
+
+a = set()
+a.add(Fake(4))
+print(len(a))
+a.add(Fake(2))
+print(len(a))
+a.add(Fake(4))
+print(len(a))
+a.add(Fake(1))
+print(len(a))
