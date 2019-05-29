@@ -10,3 +10,11 @@ class Context:
         self.hyps = hyps
         self.ders = ders
         self.kinconsistent = kinconsistent
+
+    def addToContext(self, molecular):
+        """adds a given molecular term to the context"""
+        pass
+
+    def removeFromContext(self, mol):
+        """removes the molecular term from the context"""
+        pass
