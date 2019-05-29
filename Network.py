@@ -3,8 +3,11 @@
 import inspect, re
 from caseframe import CaseFrame
 from contexts import Context
-from SemanticTypes import *
-from SyntacticTypes import *
+from SemanticTypes import Entity, Proposition, Act, Policy, Thing, Category, Action
+from SyntacticTypes import Term, Atom, Base, Variable, Indefinite, Arbitrary, \
+    Molecular, Param2Op, AndOr, Disjunction, Xor, Nand, Thresh, Equivalence, \
+    NumericalEntailment, OrEntailment, Implication, Categorization, \
+    NegationByFailure, Conjunction, Negation
 
 class SNePS:
     def __init__(self):
@@ -15,8 +18,12 @@ class SNePS:
 
         #stores all indifinite (existentially quantified) terms
         self.indefinites = set()
-        self.syntacticTypeRoot = Term #root of the syntatic class hierarchy
-        self.semanticTypeRoot = Entity #root of the semantic class hierarchy
+
+        #root of the syntatic class hierarchy
+        self.syntacticTypeRoot = SyntacticTypes.Term
+
+        #root of the semantic class hierarchy
+        self.semanticTypeRoot = SemanticTypes.Entity
         self.caseframes = set() #stores all caseframes
         self.slots = {} # maps slot names to slot objs
         self.contexts = {} #maps context names to context objs
