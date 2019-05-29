@@ -20,10 +20,10 @@ class SNePS:
         self.indefinites = set()
 
         #root of the syntatic class hierarchy
-        self.syntacticTypeRoot = SyntacticTypes.Term
+        self.syntacticTypeRoot = Term
 
         #root of the semantic class hierarchy
-        self.semanticTypeRoot = SemanticTypes.Entity
+        self.semanticTypeRoot = Entity
         self.caseframes = set() #stores all caseframes
         self.slots = {} # maps slot names to slot objs
         self.contexts = {} #maps context names to context objs
@@ -32,6 +32,11 @@ class SNePS:
         #determine whether inferences are traced
         self.goaltrace = None
         self.trace = False
+
+    def initialize(self):
+        """this function will set up the default state for a SNePS object once
+        implemented, including default contexts, slots, and caseframes."""
+        pass
 
     def findContext(self, ctx):
         """if ctx is a context obj, returns it.
@@ -55,6 +60,30 @@ class SNePS:
     def listContexts(self):
         """prints list of all context names"""
         print(*self.contexts.keys(), sep="\n")
+
+    def listSemanticTypes(self):
+        print(*[cls.__name__ for cls in self.semanticTypeRoot.__subclasses__()], sep="\n")
+
+    def slotBasedEntails(self, source, target):
+        """Slot based inference on the given source and target"""
+        assert(isinstance(source, Term))
+        assert(isinstance(target, Term))
+
+        if isinstance(source, Atom) or isinstance(target, Atom):
+            return
+        if isinstance(source, Negation) and isinstance(target, Nand):
+            return
+        if isinstance(source, Implication) and isinstance(target, Implication):
+            return
+        if isinstance(source, AndOr) and isinstance(target, AndOr):
+            return
+        if isinstance(source, thresh) and isinstance(target, Thresh):
+            return
+        if isinstance(source, Negation) and isinstance(target, Negation):
+            return
+        if isinstance(source, Molecular) and isinstance(target, Molecular):
+            return
+        raise TypeError("Inappropriate type for slot-based inference.")
 
     #psuedo adjustability should be added here once it is understood
     def adjustable(srcframe, tgtframe):
