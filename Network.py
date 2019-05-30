@@ -64,6 +64,7 @@ class SNePS:
     def listSemanticTypes(self):
         print(*[cls.__name__ for cls in self.semanticTypeRoot.__subclasses__()], sep="\n")
 
+## Slot based Inference
     def slotBasedEntails(self, source, target):
         """Slot based inference on the given source and target"""
         assert(isinstance(source, Term))
@@ -82,9 +83,26 @@ class SNePS:
         if isinstance(source, Negation) and isinstance(target, Negation):
             return
         if isinstance(source, Molecular) and isinstance(target, Molecular):
+            # if self.adjustable(source.caseframe, target.caseframe) and \
+            #     all(map(lambda s : self.validAdjust(x.pos_adj, x.min, x.max, )))
             return
-        raise TypeError("Inappropriate type for slot-based inference.")
+        raise TypeError("Inappropriate syntactic type for slot-based inference.")
 
+## Path based Inference
+    def buildPathFn(self, path):
+        """Given a path expr, returns a function which will traverse that path"""
+        if path[0] == "compose":
+            return lambda x : composeHelper(reverse(path[1:]))
+            #return function that doesnt depend on input?!?
+
+    def composeHelper(self, pathElts):
+        """Given a list of path element in reverse order, return a function which
+         will traverse a path in the original order"""
+        if pathElts[1:] != []:
+            return buildPathFn(pathElts[0])(composeHelper(pathElts[1:]))
+        return buildPathFn(pathElts[0])
+
+#####
     #psuedo adjustability should be added here once it is understood
     def adjustable(srcframe, tgtframe):
         """returns true if srcframe is a caseframe which is
