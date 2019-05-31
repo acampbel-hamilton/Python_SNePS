@@ -1,7 +1,7 @@
 #SNePS3 Slot Based Inference Methods
 
 class SlotInference:
-	"""contains methods for slot based inference for use in SNePS class in Network.py"""
+	"""contains methods for slot based inference for use in SNePS class in Network"""
 
 	def slotBasedEntails(self, source, target):
         """Slot based inference on the given source and target"""

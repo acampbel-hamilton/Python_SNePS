@@ -1,7 +1,7 @@
 #SNePS3 Path Based Inference Methods
 
 class PathInference:
-	"""contains methods for path based inference for use in Network.py"""
+	"""contains methods for path based inference for use in Network"""
     def buildPathFn(self, path):
         """Given a path expr, returns a function which will traverse that path"""
         if path[0] == "compose":
