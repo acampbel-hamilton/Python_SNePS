@@ -1,6 +1,6 @@
 # Python SNePS3 class
 
-import inspect, re
+import inspect, re, sys
 from caseframe import CaseFrame
 from contexts import Context, Context_Mixin
 from SemanticTypes import Entity, Proposition, Act, Policy, Thing, Category, Action
@@ -41,4 +41,25 @@ class Network(Context_Mixin, SlotInference, PathInference):
         pass
 
     def listSemanticTypes(self):
+		"""Prints all semantic types for the user"""
         print(*[cls.__name__ for cls in self.semanticTypeRoot.__subclasses__()], sep="\n")
+
+	def defineSemanticType(self, newtype, supers, docstring=""):
+		"""allows user to defined new semantic types to be added to the semantic type
+			hierarchy for the Network"""
+		assert isinstance(newtype, str)
+		assert isinstance(supers, list)
+		assert all(map((lambda s: isinstance(s, str)), supers))
+		assert isinstance(docstring, str)
+		try:
+			getattr(sys.modules[__name__], newtype)
+			raise AssertionError("{} already names a SNePS semantic type".format(newtype))
+		except:
+			for super in supers:
+				try:
+					cls = getattr(sys.modules[__name__], super)
+					if not isinstance(cls, self.semanticTypeRoot):
+						raise AssertionError("{} is not a SNePS semantic type".format(super))
+				except:
+					raise AssertionError("{} is not a SNePS semantic type".format(super))
+		exec("""class {}({}):\n \"\"\"{}\"\"\"""".format(newtype, str(supers)[1:-1], docstring))
