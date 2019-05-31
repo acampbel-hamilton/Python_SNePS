@@ -8,6 +8,8 @@ from SyntacticTypes import Term, Atom, Base, Variable, Indefinite, Arbitrary, \
     Molecular, Param2Op, AndOr, Disjunction, Xor, Nand, Thresh, Equivalence, \
     NumericalEntailment, OrEntailment, Implication, Categorization, \
     NegationByFailure, Conjunction, Negation
+from SlotInference import SlotInference
+from PathInference import PathInference
 
 class Network(Context_Mixin, SlotInference, PathInference):
     def __init__(self):
