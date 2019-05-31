@@ -11,7 +11,7 @@ from SyntacticTypes import Term, Atom, Base, Variable, Indefinite, Arbitrary, \
 from SlotInference import SlotInference
 from PathInference import PathInference
 
-class Network(Context_Mixin, SlotInference, PathInference):
+class Network(Context_Mixin, SlotInference, PathInference, CaseFrame_Mixin):
     def __init__(self):
         self.terms = {} #maps term names to term objs
 

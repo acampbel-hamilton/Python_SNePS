@@ -20,6 +20,9 @@ class Entity:
     def getClass(self):
         return self._classStrip(self.__class__)
 
+    def __str__(self):
+        return str(self.type_name)
+
 class Proposition(Entity):
     """an entity who can be believed and whose negation can be believed"""
     def __init__(self, support_set=set(), supported_nodes=set()):

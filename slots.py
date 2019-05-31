@@ -12,3 +12,6 @@ class Slot:
         self.path = path
         self.f_path_fn = f_path_fn
         self.b_path_fn = b_path_fn
+
+    def __str__(self):
+        return "<{}, {}, pos: {}, neg: {}, {}>".format(self.name, self.type, self.pos_adj, self.neg_adj, self.min)
