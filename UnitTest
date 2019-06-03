@@ -1,0 +1,21 @@
+#!/usr/bin/python3
+
+# This file is for unit tests of portions of the SNePS module
+
+import Network
+
+def assertedMembersTest():
+	N = Network.Network()
+	T1 = Network.Term("1")
+	T2 = Network.Term("2")
+	T3 = Network.Term("3")
+	T4 = Network.Term("4")
+	C = Network.Context("test", hyps=set([T1, T2]), ders=set([T3, T4]))
+
+	lst = [T1, T3, Network.Term("5"), Network.Term("6")]
+	print(*lst, sep="\n")
+	print()
+	print(*N.assertedMembers(set(lst), C), sep="\n")
+
+if __name__ == "__main__":
+	assertedMembersTest()
