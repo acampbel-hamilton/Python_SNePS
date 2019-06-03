@@ -1,7 +1,7 @@
 #SNePs3 slot class definition
 
 class Slot:
-	def __init__(self, name, type, pos_adj="reduce", neg_adj="expand",
+	def __init__(self, name, type, docstring="", pos_adj="reduce", neg_adj="expand",
 	 min=1, max=None, path=None, f_path_fn=None, b_path_fn=None):
 		self.name = name
 		self.type = type

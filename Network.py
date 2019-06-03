@@ -112,4 +112,4 @@ class Network(Context_Mixin, SlotInference, PathInference, CaseFrame_Mixin):
 		assert isinstance(min, int)
 		assert isinstance(max, int) or max is None
 
-		self.slots[name] = Slot(name, type, pos_adj, neg_adj, min, max, path)
+		self.slots[name] = Slot(name, type, docstring, pos_adj, neg_adj, min, max, path)
