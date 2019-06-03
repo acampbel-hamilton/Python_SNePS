@@ -3,17 +3,16 @@
 from SyntacticTypes import Term
 
 class Context:
-	hierarchy = {} #is this necessary?
-
-	def __init__(self, name, parents=[],
+	def __init__(self, name, parents=None, docstring=""
 					hyps=set(), ders=set(), kinconsistent=False):
-		self.name = name
-		self.parents = parents
-		self.hyps = hyps
-		self.ders = ders
-		self.kinconsistent = kinconsistent
+		self.name = name #string
+		self.parents = parents #list of context objects
+		self.docstring = docstring #string
+		self.hyps = hyps #set term objects
+		self.ders = ders #set of term objects
+		self.kinconsistent = kinconsistent #boolean
 
-	def addToContext(self, molecular):
+	def addToContext(self, mol):
 		"""adds a given molecular term to the context"""
 		pass
 

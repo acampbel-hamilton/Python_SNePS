@@ -26,6 +26,11 @@ class Network(Context_Mixin, SlotInference, PathInference, CaseFrame_Mixin):
 
 		#root of the semantic class hierarchy
 		self.semanticRoot = Entity
+
+		#root of the context hierarchy
+		self.contextRoot = None
+		self.contextHierachy = {} #maps context names to lists of parent names
+
 		self.caseframes = set() #stores all caseframes
 		self.slots = {} # maps slot names to slot objs
 		self.contexts = {} #maps context names to context objs
@@ -38,7 +43,10 @@ class Network(Context_Mixin, SlotInference, PathInference, CaseFrame_Mixin):
 	def initialize(self):
 		"""this function will set up the default state for a SNePS object once
 		implemented, including default contexts, slots, and caseframes."""
-		pass
+		#declares BaseCT (base context) as the root of the context hierarchy and properly stores it
+		self.contextRoot = Context("BaseCT", parents=None)
+		self.contextHierachy[self.contextRoot.name] = self.contextRoot.parents
+		self.contexts[self.contextRoot.name] = self.contextRoot
 
 	def listSemanticTypes(self):
 		"""Prints all semantic types for the user"""
@@ -51,6 +59,25 @@ class Network(Context_Mixin, SlotInference, PathInference, CaseFrame_Mixin):
 		assert isinstance(ctx, Context)
 
 		return list(filter((lambda t: t in ctx), terms))
+
+	#currently requires self.initialize to be called (this decision should be revisited)
+	def defineContext(self, name, docstring="", parents=set([self.contextRoot.name]), hyps=set()):
+		"""allows a user defined contexts within a context hierarchy rooted at self.contextRoot"""
+		assert isinstance(name, str)
+		assert name not in self.contexts.keys(), "A context {} already exists".format(name)
+		assert isinstance(docstring, str)
+		assert isinstance(parents, set)
+		#parents is a set of strings denoting the names of contexts
+		assert all(map((lambda c: c in self.contexts.keys()), parents))
+		assert isinstance(hyps, set)
+		#hyps is a set of strings denoting the names of terms
+		assert all(map((lambda t: t in self.terms.keys()), hyps))
+
+		self.contexts[name] = Context(name, docstring,
+								parents=set(map((lambda n: self.contexts[n]), parents)),
+								hyps=set(map((lambda t: self.terms[t]), hyps)))
+		self.contextHierachy[name] = parents
+
 
 	def defineSemanticType(self, newtype, supers, docstring=""):
 		"""allows user to defined new semantic types to be added to the semantic type
