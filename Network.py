@@ -40,6 +40,9 @@ class Network(Context_Mixin, SlotInference, PathInference, CaseFrame_Mixin):
 		self.goaltrace = None
 		self.trace = False
 
+		#contains possible values for pos_adj and neg_adj attributes of slots
+		self._adjustments = ["reduce", "expand", None]
+
 	def initialize(self):
 		"""this function will set up the default state for a SNePS object once
 		implemented, including default contexts, slots, and caseframes."""
@@ -60,6 +63,7 @@ class Network(Context_Mixin, SlotInference, PathInference, CaseFrame_Mixin):
 
 		return list(filter((lambda t: t in ctx), terms))
 
+
 	#currently requires self.initialize to be called (this decision should be revisited)
 	def defineContext(self, name, docstring="", parents=set([self.contextRoot.name]), hyps=set()):
 		"""allows a user defined contexts within a context hierarchy rooted at self.contextRoot"""
@@ -77,7 +81,6 @@ class Network(Context_Mixin, SlotInference, PathInference, CaseFrame_Mixin):
 								parents=set(map((lambda n: self.contexts[n]), parents)),
 								hyps=set(map((lambda t: self.terms[t]), hyps)))
 		self.contextHierachy[name] = parents
-
 
 	def defineSemanticType(self, newtype, supers, docstring=""):
 		"""allows user to defined new semantic types to be added to the semantic type
@@ -98,3 +101,15 @@ class Network(Context_Mixin, SlotInference, PathInference, CaseFrame_Mixin):
 				except AttributeError:
 					raise AssertionError("{} is not a SNePS semantic type".format(super))
 		exec("""class {}({}):\n \"\"\"{}\"\"\"""".format(newtype, str(supers)[1:-1], docstring))
+
+	def defineSlot(self, name, type="Entity", docstring="", pos_adj="reduce", neg_adj="expand",
+					min=1, max=None, path=None):
+		"""Defines a slot"""
+		assert type == "Entity" or type in Entity.__subclasses__()
+		assert isinstance(docstring, str)
+		assert pos_adj in self._adjustments
+		assert neg_adj in self._adjustments
+		assert isinstance(min, int)
+		assert isinstance(max, int) or max is None
+
+		self.slots[name] = Slot(name, type, pos_adj, neg_adj, min, max, path)
