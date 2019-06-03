@@ -62,12 +62,12 @@ class Network(Context_Mixin, SlotInference, PathInference, CaseFrame_Mixin):
 		try:
 			getattr(sys.modules[__name__], newtype)
 			raise AssertionError("{} already names a SNePS semantic type".format(newtype))
-		except:
+		except AttributeError:
 			for super in supers:
 				try:
 					cls = getattr(sys.modules[__name__], super)
 					if not isinstance(cls, self.semanticRoot):
 						raise AssertionError("{} is not a SNePS semantic type".format(super))
-				except:
+				except AttributeError:
 					raise AssertionError("{} is not a SNePS semantic type".format(super))
 		exec("""class {}({}):\n \"\"\"{}\"\"\"""".format(newtype, str(supers)[1:-1], docstring))
