@@ -5,6 +5,7 @@ class Slot:
 	 min=1, max=None, path=None, f_path_fn=None, b_path_fn=None):
 		self.name = name
 		self.type = type
+		self.docstring = docstring
 		self.pos_adj = pos_adj
 		self.neg_adj = ned_adj
 		self.min = min
@@ -14,5 +15,17 @@ class Slot:
 		self.b_path_fn = b_path_fn
 
 	def __str__(self):
-		return "<{}, {}, pos: {}, neg: {}, {}>".format(self.name, self.type,
-		 		self.pos_adj, self.neg_adj, self.min)
+		return "<{}, {}, pos: {}, neg: {}, min: {}>\nDesc: {}".format(self.name, self.type,
+		 		self.pos_adj, self.neg_adj, self.min, self.docstring)
+
+class Slot_Mixin:
+	def findSlot(self, slot):
+		if isinstance(slot, Slot):
+			return slot
+		if slot in self.slots.keys():
+			return self.slots[slot]
+		raise TypeError("Inappropriate type passed to findSlot function.")
+
+	def listSlots(self):
+		"""prints all slots for the user"""
+		print(*self.slots.keys(), sep="\n")
