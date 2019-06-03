@@ -31,7 +31,7 @@ class Network(Context_Mixin, SlotInference, PathInference, CaseFrame_Mixin):
 		self.contextRoot = None
 		self.contextHierachy = {} #maps context names to lists of parent names
 
-		self.caseframes = set() #stores all caseframes
+		self.caseframes = {} # maps CaseFrame names to CaseFrame objects
 		self.slots = {} # maps slot names to slot objs
 		self.contexts = {} #maps context names to context objs
 		self.currentContext = None #stores the current context
@@ -54,6 +54,12 @@ class Network(Context_Mixin, SlotInference, PathInference, CaseFrame_Mixin):
 	def listSemanticTypes(self):
 		"""Prints all semantic types for the user"""
 		print(*[cls.__name__ for cls in self.semanticRoot.__subclasses__()], sep="\n")
+
+	def findSemanticType(self, typeName):
+		"""Returns the semantic object for the type name"""
+		for type in (self.semanticRoot.__subclasses__() + self.semanticRoot):
+			if typeName == type.getClass(): return type
+		return False
 
 	def assertedMembers(self, terms, ctx):
 		"""returns all and only the asserted members of the given set of terms"""
