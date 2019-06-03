@@ -12,14 +12,6 @@ class Context:
 		self.ders = ders #set of term objects
 		self.kinconsistent = kinconsistent #boolean
 
-	def addToContext(self, mol):
-		"""adds a given molecular term to the context"""
-		pass
-
-	def removeFromContext(self, mol):
-		"""removes the molecular term from the context"""
-		pass
-
 	def __contains__(self, term):
 		"""overloads the 'in' operator for use on contexts.
 		checks if the given term object asserted in the context,
@@ -53,3 +45,20 @@ class Context_Mixin:
 	def listContexts(self):
 		"""prints list of all context names"""
 		print(*self.contexts.keys(), sep="\n")
+
+	#this should be reviewed to ensure this has been properly understood and implemented
+	def addToContext(self, mol, ctx):
+		"""adds a given molecular term to the given context"""
+		assert isinstance(mol, Molecular)
+		assert isinstance(ctx, Context)
+
+		ctx.hyps.add(mol)
+
+
+	def removeFromContext(self, mol, ctx):
+		"""removes the molecular term from the given context"""
+		assert isinstance(mol, Molecular) #must be an object
+		assert isinstance(ctx, Context) #must be an object
+
+		ctx.hyps.discard(mol)
+		ctx.ders.discard(mol)
