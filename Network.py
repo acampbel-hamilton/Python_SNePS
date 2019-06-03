@@ -1,6 +1,7 @@
 # Python SNePS3 class
 
 import inspect, re, sys
+from slots import Slot, Slot_Mixin
 from caseframe import CaseFrame, CaseFrame_Mixin
 from contexts import Context, Context_Mixin
 from SemanticTypes import Entity, Proposition, Act, Policy, Thing, Category, Action
@@ -11,7 +12,7 @@ from SyntacticTypes import Term, Atom, Base, Variable, Indefinite, Arbitrary, \
 from SlotInference import SlotInference
 from PathInference import PathInference
 
-class Network(Context_Mixin, SlotInference, PathInference, CaseFrame_Mixin):
+class Network(Context_Mixin, SlotInference, PathInference, CaseFrame_Mixin, Slot_Mixin):
 	def __init__(self):
 		self.terms = {} #maps term names to term objs
 
@@ -53,7 +54,8 @@ class Network(Context_Mixin, SlotInference, PathInference, CaseFrame_Mixin):
 
 	def listSemanticTypes(self):
 		"""Prints all semantic types for the user"""
-		print(*[cls.__name__ for cls in self.semanticRoot.__subclasses__()], sep="\n")
+		print(*([cls.__name__ for cls in self.semanticRoot.__subclasses__()]
+				.append(self.semanticRoot.type_name)), sep="\n")
 
 	def assertedMembers(self, terms, ctx):
 		"""returns all and only the asserted members of the given set of terms"""
