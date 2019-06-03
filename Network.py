@@ -22,10 +22,10 @@ class Network(Context_Mixin, SlotInference, PathInference, CaseFrame_Mixin):
         self.indefinites = set()
 
         #root of the syntatic class hierarchy
-        self.syntacticTypeRoot = Term
+        self.syntaticRoot = Term
 
         #root of the semantic class hierarchy
-        self.semanticTypeRoot = Entity
+        self.semanticRoot = Entity
         self.caseframes = set() #stores all caseframes
         self.slots = {} # maps slot names to slot objs
         self.contexts = {} #maps context names to context objs
@@ -42,7 +42,15 @@ class Network(Context_Mixin, SlotInference, PathInference, CaseFrame_Mixin):
 
     def listSemanticTypes(self):
 		"""Prints all semantic types for the user"""
-        print(*[cls.__name__ for cls in self.semanticTypeRoot.__subclasses__()], sep="\n")
+        print(*[cls.__name__ for cls in self.semanticRoot.__subclasses__()], sep="\n")
+
+	def assertedMembers(self, terms, ctx):
+		"""returns all and only the asserted members of the given set of terms"""
+		assert isinstance(terms set())
+		assert all(map((lambda t: isinstance(t, self.syntaticRoot)), terms))
+		assert isinstance(ctx, Context)
+
+		return filter((lambda t: t in ctx), terms)
 
 	def defineSemanticType(self, newtype, supers, docstring=""):
 		"""allows user to defined new semantic types to be added to the semantic type
@@ -58,7 +66,7 @@ class Network(Context_Mixin, SlotInference, PathInference, CaseFrame_Mixin):
 			for super in supers:
 				try:
 					cls = getattr(sys.modules[__name__], super)
-					if not isinstance(cls, self.semanticTypeRoot):
+					if not isinstance(cls, self.semanticRoot):
 						raise AssertionError("{} is not a SNePS semantic type".format(super))
 				except:
 					raise AssertionError("{} is not a SNePS semantic type".format(super))

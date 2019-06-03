@@ -1,5 +1,7 @@
 #SNePS3 Contexts
 
+from SyntacticTypes import Term
+
 class Context:
     hierarchy = {} #is this necessary?
 
@@ -18,6 +20,13 @@ class Context:
     def removeFromContext(self, mol):
         """removes the molecular term from the context"""
         pass
+
+	def __contains__(self, term):
+		"""overloads the 'in' operator for use on contexts.
+		checks if the given term object asserted in the context,
+		i.e. that term in in either hyps or ders"""
+		assert isinstance(term, Term)
+		return term in self.hyps or term in self.ders
 
 
 class Context_Mixin:
