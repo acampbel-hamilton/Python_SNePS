@@ -34,7 +34,8 @@ class CaseFrame_Mixin:
 
     def defineCaseframe (typename, slots, docstring="", print_pattern, frameSymbols):
         assert some(map (lambda x: x.type_name == typename) (set(self.semanticRoot) + set(self.semanticRoot.__subclasses__())))
-        # assert that the CaseFrame doesn't already exist
+		semType = self.findSemanticType(typename)
+		checkNewCaseframe(type, slots)
         assert isinstance(docstring, str)
         assert isinstance(print_pattern, list)
         assert (isinstance(fsymbols, list) or fsymbols == null)
@@ -51,6 +52,13 @@ class CaseFrame_Mixin:
                     case.adj_to.add(newCF)
                     newCF.adj_from.add(case)
 
+	def checkNewCaseframe (self, newType, slots):
+		"""If there is already a caseframe with the given type and slots
+		   (order doesn't matter), then raises error, else returns"""
+		for key in self.caseframes:
+			oldCF = self.caseframes[key]
+			if oldCF.type == newType and (set(oldCF.slots) - set(slots) == set([])):
+				error
 
     def adjustable(self, srcframe, tgtframe):
 		"""returns true if srcframe is a caseframe which is
