@@ -51,22 +51,17 @@ class Variable(Atom):
 
 class Indefinite(Variable):
 	"""an indefinite object"""
+	ind_counter = 0
 	def __init__(self, name, activation_value=0, fired=None,
 	 recorded_firing=None, activation_marker=None, up_cableset={},
-	 restriction_set=set(), var_label=None, ind_counter=1, dependencies=set()):
+	 restriction_set=set(), var_label=None, dependencies=set()):
 		Variable.__init__(self, name, activation_value, fired, recorded_firing,
 		 activation_marker, up_cableset, restriction_set, var_label)
-		self.ind_counter = ind_counter
 		self.dependencies = dependencies
 
 class Arbitrary(Variable):
 	"""an arbitaray individual"""
-	def __init__(self, name, activation_value=0, fired=None,
-	 recorded_firing=None, activation_marker=None, up_cableset={},
-	 restriction_set=set(), var_label=None, arb_counter=1):
-		Variable.__init__(self, name, activation_value, fired, recorded_firing,
-		 activation_marker, up_cableset, restriction_set, var_label)
-		self.arb_counter = arb_counter
+	self.arb_counter = 0
 
 class Molecular(Term):
 	"""a functional term with zero or more arguments
