@@ -11,8 +11,9 @@ from SyntacticTypes import Term, Atom, Base, Variable, Indefinite, Arbitrary, \
 	NegationByFailure, Conjunction, Negation
 from SlotInference import SlotInference
 from PathInference import PathInference
+from Find import Find
 
-class Network(Context_Mixin, SlotInference, PathInference, CaseFrame_Mixin, Slot_Mixin):
+class Network(Context_Mixin, SlotInference, PathInference, CaseFrame_Mixin, Slot_Mixin, Find):
 	def __init__(self):
 		self.terms = {} #maps term names to term objs
 
