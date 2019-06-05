@@ -61,7 +61,7 @@ class Indefinite(Variable):
 
 class Arbitrary(Variable):
 	"""an arbitaray individual"""
-	self.arb_counter = 0
+	arb_counter = 0
 
 class Molecular(Term):
 	"""a functional term with zero or more arguments

@@ -1,17 +1,14 @@
 # Python SNePS3 class
 
 import inspect, re, sys
-from slots import Slot, Slot_Mixin
-from caseframe import CaseFrame, CaseFrame_Mixin
-from contexts import Context, Context_Mixin
-from SemanticTypes import Entity, Proposition, Act, Policy, Thing, Category, Action
-from SyntacticTypes import Term, Atom, Base, Variable, Indefinite, Arbitrary, \
-	Molecular, Param2Op, AndOr, Disjunction, Xor, Nand, Thresh, Equivalence, \
-	NumericalEntailment, OrEntailment, Implication, Categorization, \
-	NegationByFailure, Conjunction, Negation
-from SlotInference import SlotInference
-from PathInference import PathInference
-from Find import Find
+from slots import *
+from caseframe import *
+from contexts import *
+from SemanticTypes import *
+from SyntacticTypes import *
+from SlotInference import *
+from PathInference import *
+from Find import *
 
 class Network(Context_Mixin, SlotInference, PathInference, CaseFrame_Mixin, Slot_Mixin, Find):
 	def __init__(self):
