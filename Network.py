@@ -69,6 +69,15 @@ class Network(Context_Mixin, SlotInference, PathInference, CaseFrame_Mixin, Slot
 
 		return list(filter((lambda t: t in ctx), terms))
 
+	def supertypes(self, type):
+		"""returns the list of all supertypes of the given type"""
+		return type.mro()[:-1]
+
+	def subtypes(self, type):
+		"""returns the list of all subtypes of the given type"""
+		return (set(type.__subclasses__())
+				.union([s for c in type.__subclasses__() for s in self.subtypes(c)]))
+
 
 	#currently requires self.initialize to be called (this decision should be revisited)
 	def defineContext(self, name, docstring="", parents=set([self.contextRoot.name]), hyps=set()):
