@@ -28,11 +28,11 @@ class CaseFrame:
 class CaseFrame_Mixin:
 	"""contains caseframe related methods for Network class"""
 
-    def find_frame(self, frameName):
+	def find_frame(self, frameName):
         """Returns the caseframe associated with the given function symbol"""
         return self.caseframes[frameName]
 
-    def defineCaseframe (typename, slots, docstring="", print_pattern, frameSymbols):
+	def defineCaseframe (typename, slots, docstring="", print_pattern, frameSymbols):
         assert some(map (lambda x: x.type_name == typename) (set(self.semanticRoot) + set(self.semanticRoot.__subclasses__())))
 		semType = self.findSemanticType(typename)
 		checkNewCaseframe(type, slots)
@@ -60,18 +60,26 @@ class CaseFrame_Mixin:
 			if oldCF.type == newType and (set(oldCF.slots) - set(slots) == set([])):
 				error
 
+	def add_caseframe_term(self, term, cf = None):
+		"""Adds a term to a caseframe's list of terms that use it.
+		If the caseframe cf is given, add the term to that caseframe.
+		Else, add the term to the caseframe that term uses."""
+		if not(cf): cf = term.CaseFrame
+		cf.terms.add(term)
+
     def adjustable(self, srcframe, tgtframe):
 		"""returns true if srcframe is a caseframe which is
 			adjustable to the caseframe tgtframe"""
-		return pos_adj(srcframe, tgtframe) or\
-				neg_adj(srcframe, tgtframe)
-				# the CL inplementation also has a psudeo-adjustable (Add this later?)
+		return  pos_adj(srcframe, tgtframe) or\
+				neg_adj(srcframe, tgtframe) or\
+				pseudo_adjustable(srcframe, tgtframe)
 
-    # def pseudo_adjustable(self, srcFrame, tgtFrame):
-    #       """Returns t if srcframe is 'pseudo-adjustable' to tgtframe.
-    #            Pseudo-adjustability allows slot-based inference to operate on frames
-    #            that are not actually adjustable, e.g. nor and andor"""
-    #     return
+    def pseudo_adjustable(self, srcFrame, tgtFrame):
+		"""Returns t if srcframe is 'pseudo-adjustable' to tgtframe.
+           Pseudo-adjustability allows slot-based inference to operate on frames
+           that are not actually adjustable, e.g. nor and andor"""
+        return srcFrame == find_frame("Nor") and tgtFrame == find_frame("AndOr")
+		# NOR does not exist until defined in initialization
 
 #isinstance check for C_src subtype of C_tgt may be incorrect (see caseframes.cl ln 368)
 	def pos_adj(self, srcframe, tgtframe):
