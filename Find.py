@@ -16,3 +16,29 @@ class Find:
 		return set(reduce((lambda a,b: union(a, b)),
 						filter((lambda s: s not is None),
 							map((lambda n: self.findTerm(n)), names))))
+
+	def findto(self, n, r):
+		"""returns the set of nodes which a slot r goes to from a node n, possibly the empty set"""
+		if isinstance(r, Slot):
+			r = r.name
+		if isinstance(n, str):
+			n = self.terms.get(n)
+			if n is None:
+				return set()
+
+		assert isinstance(r, str)
+		assert isinstance(n, Molecular)
+		return set(map((lambda k: self.terms[k]), set(n.down_cableset.get(r))))
+
+	def findfrom(self, m, r):
+		"""returns the set of nodes from which a slot r goes to m"""
+		if isinstance(r, Slot):
+			r = r.name
+		if isinstance(m, str):
+			m = self.terms.get(m)
+			if m is None:
+				return set()
+
+		assert isinstance(r, str)
+		assert isinstance(m, Term)
+		return set(map((lambda k: self.terms[k]), set(m.up_cableset.get(r))))

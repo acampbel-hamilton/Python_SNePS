@@ -12,7 +12,7 @@ class Term:
 		self.fired = fired
 		self.recorded_firing = recorded_firing
 		self.activation_marker = activation_marker
-		self.up_cableset = up_cableset
+		self.up_cableset = up_cableset #maps slot names to sets of term names
 
 #consider replacing the following 3 functions with a dictionary which
 #traces the entirety of the inheritance hierarchy for the syntactic types
@@ -73,7 +73,7 @@ class Molecular(Term):
 		Term.__init__(self, name, activation_value, fired,
 		 recorded_firing, activation_marker, up_cableset)
 		self.caseframe = caseframe
-		self.down_cableset = down_cableset
+		self.down_cableset = down_cableset #map from slot names to sets of term names
 		self.down_weights = down_weights
 
 class Param2Op(Molecular):
