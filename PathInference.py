@@ -1,5 +1,5 @@
 #SNePS3 Path Based Inference Methods
-
+# A mix-in
 class PathInference:
 	"""contains methods for path based inference for use in Network"""
 	def buildPathFn(self, path):
@@ -14,3 +14,7 @@ class PathInference:
 		if pathElts[1:] != []:
 			return buildPathFn(pathElts[0])(composeHelper(pathElts[1:]))
 		return buildPathFn(pathElts[0])
+
+	def asserted_members(termSet, ctxt):
+		"""Given a set of terms, returns the set of terms asserted in the context"""
+		return filter(lambda term: term in (ctxt.hyps + ctxt.der), termSet)
