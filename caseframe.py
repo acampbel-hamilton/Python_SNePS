@@ -3,12 +3,10 @@
 #the folowing is a link to historic SNePS caseframes:
 #https://cse.buffalo.edu/sneps/Manuals/dictionary.pdf
 
-from SyntacticTypes import AndOr, Nor
-
 class CaseFrame:
 	def __init__(self, type, docstring="", slots=[], adj_to=set(), adj_from=set(), terms=set()):
 		self.type = type #must be either obj or class itself
-        self.docstring = docstring
+		self.docstring = docstring
 		self.slots = slots
 		self.adj_to = adj_to
 		self.adj_from = adj_from
@@ -23,34 +21,35 @@ class CaseFrame:
 
 	def __str__(self):
 		"""Creates a string representation of a CaseFrame"""
-		return "<{}, \{{}\} >".format(self.type, (str(list(map(lambda slot: slot.__str__(), self.slots)))[1:-1]))
+		return "<{}, \{{}\} >".format(self.type,
+		 			(str(list(map(lambda slot: str(slot), self.slots)))[1:-1]))
 
 class CaseFrame_Mixin:
 	"""contains caseframe related methods for Network class"""
 
 	def find_frame(self, frameName):
-        """Returns the caseframe associated with the given function symbol"""
-        return self.caseframes[frameName]
+		"""Returns the caseframe associated with the given function symbol"""
+		return self.caseframes[frameName]
 
-	def defineCaseframe (typename, slots, docstring="", print_pattern, frameSymbols):
-        assert some(map (lambda x: x.type_name == typename) (set(self.semanticRoot) + set(self.semanticRoot.__subclasses__())))
-		semType = self.findSemanticType(typename)
+	def defineCaseframe (self, typename, slots, frameSymbols, docstring="", print_pattern = None):
+		assert isinstance(findSemanticType(typename), self.semanticRoot)
 		checkNewCaseframe(type, slots)
-        assert isinstance(docstring, str)
-        assert isinstance(print_pattern, list)
-        assert (isinstance(fsymbols, list) or fsymbols == null)
-        newCF = CaseFrame(self.findSemanticType(type), docstring, slots)
-        map (self.caseframes[fs] = newCF) frameSymbols
-        # Look at all existing caseframes, check whether they are adjustable to
-        # or from this one. If so, store that information in the frames.
-        for case in self.caseframes:
-            if case != newCF:
-                if adjustable(newCF, case):
-                    newCF.adj_to.add(case)
-                    case.adj_from.add(newCF)
-                if adjustable(case, newCF):
-                    case.adj_to.add(newCF)
-                    newCF.adj_from.add(case)
+		assert isinstance(docstring, str)
+		assert isinstance(print_pattern, list)
+		assert (isinstance(fsymbols, list) or fsymbols == null)
+		newCF = CaseFrame(self.findSemanticType(type), docstring, slots)
+		for fs in frameSymbols:
+			self.caseframes[fs] = newCF
+		# Look at all existing caseframes, check whether they are adjustable to
+		# or from this one. If so, store that information in the frames.
+		for case in self.caseframes:
+			if case != newCF:
+				if adjustable(newCF, case):
+					newCF.adj_to.add(case)
+					case.adj_from.add(newCF)
+				if adjustable(case, newCF):
+					case.adj_to.add(newCF)
+					newCF.adj_from.add(case)
 
 	def checkNewCaseframe (self, newType, slots):
 		"""If there is already a caseframe with the given type and slots
@@ -67,18 +66,18 @@ class CaseFrame_Mixin:
 		if not(cf): cf = term.CaseFrame
 		cf.terms.add(term)
 
-    def adjustable(self, srcframe, tgtframe):
+	def adjustable(self, srcframe, tgtframe):
 		"""returns true if srcframe is a caseframe which is
 			adjustable to the caseframe tgtframe"""
 		return  pos_adj(srcframe, tgtframe) or\
 				neg_adj(srcframe, tgtframe) or\
 				pseudo_adjustable(srcframe, tgtframe)
 
-    def pseudo_adjustable(self, srcFrame, tgtFrame):
+	def pseudo_adjustable(self, srcFrame, tgtFrame):
 		"""Returns t if srcframe is 'pseudo-adjustable' to tgtframe.
-           Pseudo-adjustability allows slot-based inference to operate on frames
-           that are not actually adjustable, e.g. nor and andor"""
-        return srcFrame == find_frame("Nor") and tgtFrame == find_frame("AndOr")
+		   Pseudo-adjustability allows slot-based inference to operate on frames
+		   that are not actually adjustable, e.g. nor and andor"""
+		return srcFrame == find_frame("Nor") and tgtFrame == find_frame("AndOr")
 		# NOR does not exist until defined in initialization
 
 #isinstance check for C_src subtype of C_tgt may be incorrect (see caseframes.cl ln 368)

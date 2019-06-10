@@ -7,12 +7,15 @@ class Slot:
 		self.type = type
 		self.docstring = docstring
 		self.pos_adj = pos_adj
-		self.neg_adj = ned_adj
+		self.neg_adj = neg_adj
 		self.min = min
 		self.max = max
 		self.path = path
 		self.f_path_fn = f_path_fn
 		self.b_path_fn = b_path_fn
+
+	def __repr__(self):
+		return "<Slot {} id: {}>".format(self.name, hex(id(self)))
 
 	def __str__(self):
 		return "<{}, {}, pos: {}, neg: {}, min: {}>\nDesc: {}".format(self.name, self.type,

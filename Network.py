@@ -42,13 +42,41 @@ class Network(Context_Mixin, SlotInference, PathInference, CaseFrame_Mixin, Slot
 		#contains possible values for pos_adj and neg_adj attributes of slots
 		self._adjustments = ["reduce", "expand", None]
 
+	def __str__(self):
+		"""returns a string representation of the network"""
+		s = ""
+		for k,v in sorted(self.__dict__.items()):
+			if isinstance(v, dict):
+				s += "\n{:<}:\n".format(str(k))
+				for p,q in v.items():
+					s += "\t{:<16}: {:>40}\n".format(str(p), repr(q))
+			elif isinstance(v, list) or isinstance(v, set):
+				s += "\n{:<}:\n".format(str(k))
+				for i in v:
+					s += "\t{:>24}\n".format(str(i))
+			else:
+				s += "\n{:<16}: {:>40}\n".format(str(k), repr(v))
+		return s
+
 	def initialize(self):
 		"""this function will set up the default state for a SNePS object once
 		implemented, including default contexts, slots, and caseframes."""
 		#declares BaseCT (base context) as the root of the context hierarchy and properly stores it
-		self.contextRoot = Context("BaseCT", parents=None)
+		self.contextRoot = Context("BaseCT", parents=None, docstring="The root of all contexts")
 		self.contextHierachy[self.contextRoot.name] = self.contextRoot.parents
 		self.contexts[self.contextRoot.name] = self.contextRoot
+
+		DefaultCT = self.defineContext("DefaultCT", docstring="The default current context")
+		self.currentContext = DefaultCT
+
+		self.defineSlot("class", type="Category",
+				docstring="Points to a Category that some Entity is a member of.",
+				neg_adj="reduce")
+		self.defineSlot("member",
+				docstring="Points to the Entity that is a member of some Category",
+				neg_adj="reduce")
+		#equiv slot is missing a path init from initialize.cl
+		self.defineSlot("equiv", docstring="All fillers are coreferential", neg_adj="reduce")
 
 	def listSemanticTypes(self):
 		"""Prints all semantic types for the user"""
@@ -75,13 +103,14 @@ class Network(Context_Mixin, SlotInference, PathInference, CaseFrame_Mixin, Slot
 
 	def subtypes(self, type):
 		"""returns the list of all subtypes of the given type"""
-		return (set(type.__subclasses__())
-				.union([s for c in type.__subclasses__() for s in self.subtypes(c)]))
-
+		return (set(type.__subclasses__()).union(
+						[s for c in type.__subclasses__() for s in self.subtypes(c)]))
 
 	#currently requires self.initialize to be called (this decision should be revisited)
-	def defineContext(self, name, docstring="", parents=set([self.contextRoot.name]), hyps=set()):
+	def defineContext(self, name, docstring="", parents=None, hyps=set()):
 		"""allows a user defined contexts within a context hierarchy rooted at self.contextRoot"""
+		if parents is None:
+			parents = set([self.contextRoot.name])
 		assert isinstance(name, str)
 		assert name not in self.contexts.keys(), "A context {} already exists".format(name)
 		assert isinstance(docstring, str)
@@ -92,10 +121,11 @@ class Network(Context_Mixin, SlotInference, PathInference, CaseFrame_Mixin, Slot
 		#hyps is a set of strings denoting the names of terms
 		assert all(map((lambda t: t in self.terms.keys()), hyps))
 
-		self.contexts[name] = Context(name, docstring,
+		self.contexts[name] = Context(name, docstring=docstring,
 								parents=set(map((lambda n: self.contexts[n]), parents)),
 								hyps=set(map((lambda t: self.terms[t]), hyps)))
 		self.contextHierachy[name] = parents
+		return self.contexts[name]
 
 	def defineSemanticType(self, newtype, supers, docstring=""):
 		"""allows user to defined new semantic types to be added to the semantic type
@@ -120,7 +150,9 @@ class Network(Context_Mixin, SlotInference, PathInference, CaseFrame_Mixin, Slot
 	def defineSlot(self, name, type="Entity", docstring="", pos_adj="reduce", neg_adj="expand",
 					min=1, max=None, path=None):
 		"""Defines a slot"""
-		assert type == "Entity" or type in Entity.__subclasses__()
+		assert isinstance(name, str)
+		cls = getattr(sys.modules[__name__], type)
+		assert cls is self.semanticRoot or cls in self.subtypes(self.semanticRoot)
 		assert isinstance(docstring, str)
 		assert pos_adj in self._adjustments
 		assert neg_adj in self._adjustments
@@ -128,3 +160,4 @@ class Network(Context_Mixin, SlotInference, PathInference, CaseFrame_Mixin, Slot
 		assert isinstance(max, int) or max is None
 
 		self.slots[name] = Slot(name, type, docstring, pos_adj, neg_adj, min, max, path)
+		return self.slots[name]

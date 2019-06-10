@@ -19,7 +19,7 @@ class SlotInference:
 		if isinstance(source, Thresh) and isinstance(target, Thresh):
 			return
 		if isinstance(source, Negation) and isinstance(target, Negation):
-			if source not is target:
+			if not source is target:
 				srcset = self.findto(source, "nor")
 				tgtset = self.findto(target, "nor")
 				if len(srcset) == 1 and len(tgtset) == 1:

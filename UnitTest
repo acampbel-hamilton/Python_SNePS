@@ -37,5 +37,10 @@ def assertedMembersTest():
 	except AssertionError:
 		print("'ctx' parameter has been properly type checked")
 
+def networkTest():
+	N = Network.Network()
+	N.initialize()
+	print(N)
+
 if __name__ == "__main__":
-	assertedMembersTest()
+	networkTest()

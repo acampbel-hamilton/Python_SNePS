@@ -31,7 +31,13 @@ class Term:
 
 #this should be updated to a more through representation of the object
 	def __str__(self):
-		return str(self.name)
+		s = ""
+		for k,v in sorted(self.__dict__.items())[:-1]:
+			s += "{!s:<24}: {!s:>20}\n".format(str(k), str(v))
+		s += "\nUpCableSet:\n"
+		for k,v in self.up_cableset.items():
+			s += "\t{:<24}: {:>20}\n".format(str(k), str(v))
+		return s
 
 class Atom(Term):
 	"""Named terms containing up cablesets and no structure"""

@@ -3,7 +3,7 @@
 from SyntacticTypes import Term
 
 class Context:
-	def __init__(self, name, parents=None, docstring=""
+	def __init__(self, name, parents=None, docstring="",
 					hyps=set(), ders=set(), kinconsistent=False):
 		self.name = name #string
 		self.parents = parents #list of context objects
@@ -18,6 +18,15 @@ class Context:
 		i.e. that term in in either hyps or ders"""
 		assert isinstance(term, Term)
 		return term in self.hyps or term in self.ders
+
+	def __repr__(self):
+		return "<Context {} id: {}>".format(self.name, hex(id(self)))
+
+	def __str__(self):
+		s = ""
+		for k,v in sorted(self.__dict__.items()):
+			s += "{:<16}: {:>20}\n".format(str(k), str(v))
+		return s
 
 
 class Context_Mixin:
