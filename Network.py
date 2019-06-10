@@ -61,6 +61,7 @@ class Network(Context_Mixin, SlotInference, PathInference, CaseFrame_Mixin, Slot
 	def initialize(self):
 		"""this function will set up the default state for a SNePS object once
 		implemented, including default contexts, slots, and caseframes."""
+#################### Default Context Definitions ####################
 		#declares BaseCT (base context) as the root of the context hierarchy and properly stores it
 		self.contextRoot = Context("BaseCT", parents=None, docstring="The root of all contexts")
 		self.contextHierachy[self.contextRoot.name] = self.contextRoot.parents
@@ -68,7 +69,8 @@ class Network(Context_Mixin, SlotInference, PathInference, CaseFrame_Mixin, Slot
 
 		DefaultCT = self.defineContext("DefaultCT", docstring="The default current context")
 		self.currentContext = DefaultCT
-
+#################### Default Slot Definitions ####################
+	## Slots for built in propositions
 		self.defineSlot("class", type="Category",
 				docstring="Points to a Category that some Entity is a member of.",
 				neg_adj="reduce")
@@ -77,6 +79,31 @@ class Network(Context_Mixin, SlotInference, PathInference, CaseFrame_Mixin, Slot
 				neg_adj="reduce")
 		#equiv slot is missing a path init from initialize.cl
 		self.defineSlot("equiv", docstring="All fillers are coreferential", neg_adj="reduce")
+
+	## Slots for Rules
+		self.defineSlot("and", type="Proposition",
+		 				docstring="Fillers are arguments of a conjunction",
+						min=2, pos_adj="reduce", neg_adj="expand")
+		self.defineSlot("nor", type="Proposition", docstring="Fillers are arguments of a nor")
+		self.defineSlot("andorargs", type="Proposition",
+						docstring="Fillers are arguments of an andor",
+						min=2, pos_adj=None, neg_adj=None)
+		self.defineSlot("threshargs", type="Proposition",
+						docstring="Fillers are arguments of a thresh",
+						min=2, pos_adj=None, neg_adj=None)
+		self.defineSlot("thnor", type="Proposition", docstring="Fillers are arguments of a thnor",
+						pos_adj="reduce", neg_adj="reduce")
+		self.defineSlot("ant", type="Proposition", docstring="Antecedent for a set",
+						pos_adj="expand", neg_adj="reduce")
+		self.defineSlot("cq", type="Proposition", docstring="Consequent for a set")
+
+	## Slots for SNeRE (currently SNeRE is not implemented)
+		self.defineSlot("actions", type="Action", docstring="The actions of an act",
+						max=1, pos_adj=None, neg_adj=None)
+
+#################### Default Caseframe Definitions ####################
+		# self.defineCaseframe("Isa", "Proposition", ["member", "class"])
+		#implementation of defineCaseframe needs to be checked concerning print_pattern
 
 	def listSemanticTypes(self):
 		"""Prints all semantic types for the user"""

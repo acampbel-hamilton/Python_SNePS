@@ -19,9 +19,12 @@ class CaseFrame:
 				2. They have the same slots (disregarding order)"""
 		return self.type is other.type and set(self.slots) - set(other.slots) == set([])
 
+	def __repr__(self):
+		return "Caseframe {} id: {}".format(self.name, hex(id(self)))
+
 	def __str__(self):
 		"""Creates a string representation of a CaseFrame"""
-		return "<{}, \{{}\} >".format(self.type,
+		return "<{} [{}], \{{}\} >".format(self.name, self.type,
 		 			(str(list(map(lambda slot: str(slot), self.slots)))[1:-1]))
 
 class CaseFrame_Mixin:
@@ -31,13 +34,13 @@ class CaseFrame_Mixin:
 		"""Returns the caseframe associated with the given function symbol"""
 		return self.caseframes[frameName]
 
-	def defineCaseframe (self, typename, slots, frameSymbols, docstring="", print_pattern = None):
-		assert isinstance(findSemanticType(typename), self.semanticRoot)
-		checkNewCaseframe(type, slots)
+	def defineCaseframe(self, type, slots, frameSymbols, docstring="", print_pattern = None):
+		assert isinstance(self.findSemanticType(type), self.semanticRoot)
+		assert checkNewCaseframe(type, slots)
 		assert isinstance(docstring, str)
 		assert isinstance(print_pattern, list)
 		assert (isinstance(fsymbols, list) or fsymbols == null)
-		newCF = CaseFrame(self.findSemanticType(type), docstring, slots)
+		newCF = CaseFrame(name, self.findSemanticType(type), docstring, slots)
 		for fs in frameSymbols:
 			self.caseframes[fs] = newCF
 		# Look at all existing caseframes, check whether they are adjustable to
@@ -54,10 +57,10 @@ class CaseFrame_Mixin:
 	def checkNewCaseframe (self, newType, slots):
 		"""If there is already a caseframe with the given type and slots
 		   (order doesn't matter), then raises error, else returns"""
-		for key in self.caseframes:
-			oldCF = self.caseframes[key]
-			if oldCF.type == newType and (set(oldCF.slots) - set(slots) == set([])):
-				error
+		for oldCF in self.caseframes.values():
+			if oldCF.type == newType and (set(oldCF.slots) - set(slots) == set()):
+				return False
+		return True
 
 	def add_caseframe_term(self, term, cf = None):
 		"""Adds a term to a caseframe's list of terms that use it.
