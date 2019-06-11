@@ -34,12 +34,12 @@ class PathInference:
 	        elif name == "irreflexive-restrict":
 	            return (lambda x: set(buildPathFn(path[1])(x)) - set(x))
 	        elif name == "restrict":
-	            # not sure if I translated this assertion correctly:
+	            # not sure if I translated this assertion correctly: (why do they have (path) in theirs?)
 	            assert(len(path) == 3, "restrict must have two arguments, a path, and an atomicwft in {}".format(path))
 	            return (lambda x: set(filter(lambda trm: memberOrVar(path[2], (buildPathFn(path[1]))([trm])), x)))
 	        else:
 	            assert(False, ("Unrecognized path expression operator: {}".format(path[0])))
-	    # elif (equal '! (intern path :snip)):    # Do not know how to translate this, or what it's doing.
+	    # elif (equal '! (intern path :snip)):    # Do not know how to translate this, or what it's doing!!!
 	   	#     return (lambda trms: assertedMembers(trms, self.currentContext))
 		else:
 			rev = revSlotname(path)
@@ -65,6 +65,30 @@ class PathInference:
 			retvel.add(res)
 			res = fn(res) - retval
 		return retvalue
+
+	def converse(path):
+		"""Given a path expression, returns its converse"""
+		if atom(path):
+			if (equal '! (intern path :snip):    # THIS again...  NEED TO FIX
+				return path
+			else:
+				revname = revSlotname(path)
+				if revname:
+					return revname
+				else:
+					return symbolName(path) +  "-"   # got rid of "intern", thus is not a symbol
+		elif isPathKeyword(path[0]):
+			if (symbolName(path[0]) == "restrict"):
+				return path
+			else:
+				return path[0] + reversed(map(lambda elt: converse(elt), path[1:]))
+		else:
+			return reversed(map(lambda elt: converse(elt), path[1:]))
+
+	def isPathKeyword(word):
+		"""returns False if the argument is not a path keyword"""
+		return word in ["or", "and", "compose", "kstar", "kplus", "not",
+		"relative-complement", "irreflexive-restrict", "restrict", "converse"]
 
 		# compile name &optional definition => function, warnings-p, failure-p
 			# name: nil
