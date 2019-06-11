@@ -3,20 +3,7 @@
 class PathInference:
 	"""contains methods for path based inference for use in Network"""
 
-	def buildPathFn(self, path):
-		"""Given a path expr, returns a function which will traverse that path"""
-		if path[0] == "compose":
-			return lambda x : composeHelper(reverse(path[1:]))
-			#return function that doesnt depend on input?!?
-
-	def composeHelper(self, pathElts):
-		"""Given a list of path element in reverse order, return a function which
-		 will traverse a path in the original order"""
-		if pathElts[1:] != []:
-			return buildPathFn(pathElts[0])(composeHelper(pathElts[1:]))
-		return buildPathFn(pathElts[0])
-
-	def asserted_members(termSet, ctxt):
+	def assertedMembers(self, termSet, ctxt):
 		"""Given a set of terms, returns the set of terms asserted in the context"""
 		return filter(lambda term: term in (ctxt.hyps + ctxt.der), termSet)
 
@@ -29,52 +16,55 @@ class PathInference:
 		aslot.b_path_fn = build_path_fn(converse(pathexpr))
 		aslot.f_path_fn = build_path_fn(pathexpr)
 
-	def build_path_fn(self, path):
+	def buildPathFn(self, path):
 		"""Given a path expression, returns the function that will traverse that path"""
-
-		# if isinstance(path, list):
-		# 	switch = {
-		# 		compose: 	`(lambda (x) ,(compose-helper (reverse (rest path))))
-		# 		or:			`(lambda (x) ,(or-helper (rest path)))
-		# 		and: 		`(lambda (x) ,(and-helper (rest path)))
-		# 		kstar:		(assert (null (cddr path)) (path)
-		# 	    			"kstar must have only one path argument in ~S" path)
-		# 	  				`(lambda (x) (f* x ,(build-path-fn (second path))))
-		# 		kplus:		(assert (null (cddr path)) (path)
-		# 				    "kplus must have only one path argument in ~S" path)
-		# 					`(lambda (x) (f+ x ,(build-path-fn (second path)))))
-		# 		converse:	(build-path-fn (converse (second path)))
-		# 		irreflexive-restrict:
-		# 					 `(lambda (x) (set:difference  (funcall ,(build-path-fn (second path)) x) x))
-		# 		restrict:
-		# 					(assert (and (= (length path) 3)) (path)
-		# 				    "restrict must have two arguments, a path, and an atomicwft in ~S" path)
-		# 					`(lambda (x)
-		# 				     (set:new-set
-		# 				      :items
-		# 				      (set:loopset for trm in x
-		# 						   if (memberOrVar ',(third path)
-		# 								   (funcall ,(build-path-fn (second path))
-		# 									    (set:singleton trm)))
-		# 						   collect trm))))
-		# 	}
-		# 	switch.get( (intern (first path) :snip),  (error "Unrecognized path expression operator: ~S" (first path))  )
-		# elif (equal '! (intern path :snip):
-		# 	`(lambda (x) (asserted-members x (ct::currentContext)))
-		# else:
-		# 	rev = rev-slotname(path)
-		# 	if rev:
-		# 		 `(lambda (x) (get-froms x (quote ,rev)))
-		# 	 else:
-		# 		 `(lambda (x) (get-tos x (quote ,path)))
+	    if isinstance(path, list):
+	        name = path[0]
+	        if   name == "compose":
+	            return (lambda x: composeHelper(list(reversed(path[1:])), x))
+	        elif name == "or":
+				return (lambda x: reduce(lambda a,b: a|b, (map(lambda elt: set((buildPathFn(elt))(x)), pathElts[1:]))))
+	        elif name == "and":
+				return (lambda x: reduce(lambda a,b: a&b, (map(lambda elt: set((buildPathFn(elt))(x)), pathElts[1:]))))
+	        elif name == "kstar":
+	            assert(len(path[1]) == 0, "kstar must hvae only one path argument in {}".format(path))
+	            return (lambda x: fPlus(x, (buildPathFn(path[1]))))
+	        elif name == "converse"
+	            return (buildPathFn(converse(path[1])))
+	        elif name == "irreflexive-restrict":
+	            return (lambda x: set(buildPathFn(path[1])(x)) - set(x))
+	        elif name == "restrict":
+	            # not sure if I translated this assertion correctly:
+	            assert(len(path) == 3, "restrict must have two arguments, a path, and an atomicwft in {}".format(path))
+	            return (lambda x: set(filter(lambda trm: memberOrVar(path[2], (buildPathFn(path[1]))([trm])), x)))
+	        else:
+	            assert(False, ("Unrecognized path expression operator: {}".format(path[0])))
+	    # elif (equal '! (intern path :snip)):    # Do not know how to translate this, or what it's doing.
+	   	#     return (lambda trms: assertedMembers(trms, self.currentContext))
+		else:
+			rev = revSlotname(path)
+			if rev:
+				 return (lambda x: getFroms(x, rev))
+			else:
+				 return (lambda x: getTos(x, path))
 
 
+	def composeHelper(self, pathElts, x):
+		"""Given a list of path element in reverse order, return a function which
+		 will traverse a path in the original order"""
+		if pathElts[1:] != []:
+			return buildPathFn(pathElts[0])(composeHelper(pathElts[1:], x))
+		return buildPathFn(pathElts[0])(x)
 
-
-
-
-
-
+	def fPlus(self, nodeset, fn):
+		"""Given a nodeset and a function, return the nodeset that results
+		from repeately applying the function to the nodeset one or more times"""
+		res = fn(nodeset)
+		retval = set()
+		while res:
+			retvel.add(res)
+			res = fn(res) - retval
+		return retvalue
 
 		# compile name &optional definition => function, warnings-p, failure-p
 			# name: nil
