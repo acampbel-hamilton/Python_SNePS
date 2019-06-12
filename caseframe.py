@@ -4,7 +4,8 @@
 #https://cse.buffalo.edu/sneps/Manuals/dictionary.pdf
 
 class CaseFrame:
-	def __init__(self, type, docstring="", slots=[], adj_to=set(), adj_from=set(), terms=set()):
+	def __init__(self, name, type, docstring="", slots=[], adj_to=set(), adj_from=set(), terms=set()):
+		self.name = name
 		self.type = type #must be either obj or class itself
 		self.docstring = docstring
 		self.slots = slots
@@ -37,19 +38,18 @@ class CaseFrame_Mixin:
 		"""Returns the caseframe associated with the given function symbol"""
 		return self.caseframes[frameName]
 
-	def defineCaseframe(self, type, slots, frameSymbols, docstring="", print_pattern = None):
+	def defineCaseframe(self, name, type, slots, docstring=""):
+		assert isinstance(name, str)
 		assert isinstance(self.findSemanticType(type), self.semanticRoot)
 		assert checkNewCaseframe(type, slots)
 		assert isinstance(docstring, str)
-		assert isinstance(print_pattern, list)
-		assert (isinstance(fsymbols, list) or fsymbols == null)
-		newCF = CaseFrame(name, self.findSemanticType(type), docstring, slots)
-		for fs in frameSymbols:
-			self.caseframes[fs] = newCF
+
+		self.caseframes[name] = CaseFrame(name, self.findSemanticType(type),
+		 									docstring, slots)
 		# Look at all existing caseframes, check whether they are adjustable to
 		# or from this one. If so, store that information in the frames.
 		for case in self.caseframes:
-			if case != newCF:
+			if case != self.caseframes[name]:
 				if adjustable(newCF, case):
 					newCF.adj_to.add(case)
 					case.adj_from.add(newCF)
