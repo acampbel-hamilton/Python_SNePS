@@ -1,16 +1,16 @@
 # Python SNePS3 class
 
-import inspect, re, sys
+import inspect, sys
 from slots import *
 from caseframe import *
 from contexts import *
 from SemanticTypes import *
 from SyntacticTypes import *
 from SlotInference import *
-from PathInference import *
+# from PathInference import * #add this back once the file is finished being written
 from Find import *
 
-class Network(Context_Mixin, SlotInference, PathInference, CaseFrame_Mixin, Slot_Mixin, Find):
+class Network(Context_Mixin, SlotInference, CaseFrame_Mixin, Slot_Mixin, Find):
 	def __init__(self):
 		self.terms = {} #maps term names to term objs
 
@@ -107,8 +107,8 @@ class Network(Context_Mixin, SlotInference, PathInference, CaseFrame_Mixin, Slot
 
 	def listSemanticTypes(self):
 		"""Prints all semantic types for the user"""
-		print(*([cls.__name__ for cls in self.semanticRoot.__subclasses__()]
-				.append(self.semanticRoot.type_name)), sep="\n")
+		print(*([cls.__name__ for cls in self.semanticRoot.__subclasses__()] +
+		 			[self.semanticRoot.__name__]), sep='\n')
 
 	def findSemanticType(self, typeName):
 		"""Returns the semantic object for the type name"""

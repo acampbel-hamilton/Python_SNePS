@@ -1,0 +1,114 @@
+#!/usr/local/bin/python3.5
+
+import re
+from Network import *
+from LisParse import parse
+
+
+from cmd import Cmd
+
+class UI(Cmd):
+	network = None
+
+	def __init__(self, completekey='tab', stdin=None, stdout=None):
+		self.line = ""
+		super().__init__(completekey, stdin, stdout)
+
+	def preloop(self):
+		UI.network = Network()
+		UI.network.initialize()
+
+	def precmd(self, line):
+		if line[0] == '(' and line[-1] == ')':
+			self.line = line
+			line = line[1:-1]
+		else:
+			self.line = '(' + line + ')'
+		return line
+
+################ USER METHODS ################
+
+	def do_build(self, args):
+		"""Builds the specified term and adds it to the network.
+		If an identical object exists, the existing object is returned"""
+		pass
+
+	def do_describe(self, args):
+		"""Prints a representation of the object specified by name"""
+		name = args.split()[0]
+		if UI.network.terms.get(name):
+			print(UI.network.terms.get(name))
+		elif UI.network.caseframes.get(name):
+			print(UI.network.caseframes.get(name))
+		elif UI.network.slots.get(name):
+			print(UI.network.slots.get(name))
+		elif UI.network.contexts.get(name):
+			print(UI.network.contexts.get(name))
+		else:
+			print("Given name does not correspond to any object.")
+
+	def do_dump(self, args):
+		"""Prints the network. Should be rewritten"""
+		print(UI.network)
+
+	def do_exit(self, args):
+		"""Exits the PySNePS UI"""
+		print("Exiting PySNePS")
+		raise SystemExit
+
+	def do_list(self, args):
+		"""Lists all instances defined on the network of the given object"""
+		par = parse(self.line)[0][1:]
+		if par == []:
+			return
+		if par[0] in ["caseframe", "caseframes"]:
+			UI.network.listCaseframe()
+		elif par[0] in ["context", "contexts"]:
+			UI.network.listContexts()
+		elif par[0] in ["semantic", "semantictype", "semantictypes"]:
+			UI.network.listSemanticTypes()
+		elif par[0] in ["slot", "slots"]:
+			UI.network.listSlots()
+		else:
+			print("Error: Invalid argument to list")
+
+
+
+
+
+if __name__ == "__main__":
+	prompt = UI()
+	prompt.prompt = '[> '
+	prompt.cmdloop("Welcome to the rudimentary UI for PySNePS!")
+
+# print("Welcome to the rudimentary User Interface for PSNePS")
+#
+# cmd = ""
+# net = Network()
+# net.initialize()
+# while not cmd == "exit":
+# 	usrin = input("[> ").strip()
+# 	if not usrin[0] == '(':
+# 		usrin = '(' + usrin + ')'
+# 	par = parse(usrin)
+# 	cmd = par[0][0]
+# 	if cmd == "describe":
+# 		pass
+# 	elif cmd == "dump":
+# 		print(net)
+# 	elif cmd == "list":
+# 		type = par[0][1]
+# 		if type in ["semantic", "semantictype", "semantictypes"]:
+# 			net.listSemanticTypes()
+# 		elif type in ["caseframe", "caseframes"]:
+# 			net.listCaseframe()
+# 		elif type in ["context", "contexts"]:
+# 			net.listContexts()
+# 		elif type in ["slot", "slots"]:
+# 			net.listSlots()
+# 		else:
+# 			print("Invalid list option.")
+# 	print(par)
+#
+#
+# print("Closing User Interface")

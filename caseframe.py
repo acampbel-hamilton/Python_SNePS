@@ -30,6 +30,9 @@ class CaseFrame:
 class CaseFrame_Mixin:
 	"""contains caseframe related methods for Network class"""
 
+	def listCaseframe(self):
+		print(*(sorted(self.caseframes.keys())), sep='\n')
+
 	def find_frame(self, frameName):
 		"""Returns the caseframe associated with the given function symbol"""
 		return self.caseframes[frameName]
