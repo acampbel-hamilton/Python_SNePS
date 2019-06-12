@@ -17,6 +17,8 @@ class UI(Cmd):
 	def preloop(self):
 		UI.network = Network()
 		UI.network.initialize()
+		for name in ["T1", "T2", "T3", "T4"]:
+			UI.network.terms[name] = Term(name)
 
 	def precmd(self, line):
 		if line[0] == '(' and line[-1] == ')':
@@ -31,7 +33,42 @@ class UI(Cmd):
 	def do_build(self, args):
 		"""Builds the specified term and adds it to the network.
 		If an identical object exists, the existing object is returned"""
-		pass
+		slots = parse(self.line)[0][1:]
+		print(slots)
+		if not all([len(slot) > 1 for slot in slots]):
+			print("Build command contains an unfilled slot")
+			return
+		rels, fillers = [list(l) for l in zip(*[(slot[0], slot[1:])
+		 										for slot in slots])]
+		for r in rels: # slots must be defined
+			if not r in UI.network.slots.keys():
+				print("Error: Use of undefined slot {}".format(r))
+				return
+		for n in [i for sl in fillers for i in sl]: #terms must be defined
+			if not n in UI.network.terms.keys():
+				print("Error: Use of undefined term {}".format(n))
+				return
+		if not len(rels) == len(set(rels)): #slots must be unique
+			print("Error: Repeated slot")
+			return
+		#insert caseframe check here
+
+
+		# for slot in slots:
+		# 	if isinstance(slot, list):
+		# 		name = slot[0]
+		# 		filler = slot[1:]
+		# 		if not name in UI.network.slots.keys():
+		# 			print("Use of undefined slot {}".format(name))
+		# 			return
+		# 		if filler == []:
+		# 			print("Slot {} has no fillers".format(name))
+		# 		for node in filler:
+		# 			if not UI.network.terms.get(node):
+		# 				print("Use of undefined node {}".format(node))
+		# 				return
+		# print("Given slots and fillers are defined")
+
 
 	def do_describe(self, args):
 		"""Prints a representation of the object specified by name"""
