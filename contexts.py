@@ -5,7 +5,7 @@ from SyntacticTypes import Term
 class Context:
 	def __init__(self, name, parents=None, docstring="",
 					hyps=set(), ders=set(), kinconsistent=False):
-		self.name = name #string
+		self.name = Sym(name) #symbol
 		self.parents = parents #list of context objects
 		self.docstring = docstring #string
 		self.hyps = hyps #set term objects
@@ -37,7 +37,7 @@ class Context_Mixin:
 		Otherwise returns the context named ctx, or none if such DNE"""
 		if isinstance(ctx, Context):
 			return ctx
-		return self.contexts.get(ctx)
+		return self.contexts.get(Sym(ctx))
 
 	def currentContext(self):
 		return currentContext

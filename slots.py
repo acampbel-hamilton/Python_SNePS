@@ -1,7 +1,9 @@
 #SNePs3 slot class definition
 
+from Symbols import *
+
 class Slot:
-	def __init__(self, name, type, docstring="", pos_adj="reduce", neg_adj="expand",
+	def __init__(self, name, type, docstring="", pos_adj=Sym("reduce"), neg_adj=Sym("expand"),
 	 min=1, max=None, path=None, f_path_fn=None, b_path_fn=None):
 		self.name = name
 		self.type = type
@@ -25,8 +27,8 @@ class Slot_Mixin:
 	def findSlot(self, slot):
 		if isinstance(slot, Slot):
 			return slot
-		if slot in self.slots.keys():
-			return self.slots[slot]
+		if Sym(slot) in self.slots.keys():
+			return self.slots[Sym(slot)]
 		raise TypeError("Inappropriate type passed to findSlot function.")
 
 	def listSlots(self):

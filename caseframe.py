@@ -7,9 +7,7 @@ from Symbols import *
 
 class CaseFrame:
 	def __init__(self, name, type, docstring="", slots=[], adj_to=set(), adj_from=set(), terms=set()):
-		if isinstance(name, str):
-			name = Sym(name)
-		self.name = name
+		self.name = Sym(name)
 		self.type = type #must be either obj or class itself
 		self.docstring = docstring
 		self.slots = slots
@@ -39,9 +37,9 @@ class CaseFrame_Mixin:
 	def listCaseframe(self):
 		print(*(sorted(self.caseframes.keys())), sep='\n')
 
-	def find_frame(self, frameName):
+	def find_frame(self, name):
 		"""Returns the caseframe associated with the given function symbol"""
-		return self.caseframes.get(frameName)
+		return self.caseframes.get(Sym(name))
 
 	def defineCaseframe(self, name, type, slots, docstring=""):
 		assert isinstance(name, str)
@@ -49,9 +47,9 @@ class CaseFrame_Mixin:
 		assert self.checkNewCaseframe(type, slots)
 		assert isinstance(docstring, str)
 
-		self.caseframes[name] = CaseFrame(name, self.findSemanticType(type),
-		 									docstring, slots)
-		newCF = self.caseframes[name]
+		self.caseframes[Sym(name)] = CaseFrame(Sym(name),
+					self.findSemanticType(type), docstring, slots)
+		newCF = self.caseframes[Sym(name)]
 		# Look at all existing caseframes, check whether they are adjustable to
 		# or from this one. If so, store that information in the frames.
 		for case in self.caseframes.values():
@@ -102,10 +100,10 @@ class CaseFrame_Mixin:
 				3. Every slot in R_tgt - R_src is pos_adj expandable and min = 0"""
 		return (srcframe.type is tgtframe.type or
 				isinstance(srcframe.type, tgtframe.type.__class__)) and \
-				all([(s.pos_adj is "reduce" and s.min == 0)
+				all([(s.pos_adj is _reduce and s.min == 0)
 					for s in map(self.findSlot,
 						set(srcframe.slots) - set(tgtframe.slots))]) and \
-				all([(s.pos_adj is "expand" and s.min == 0)
+				all([(s.pos_adj is _expand and s.min == 0)
 					for s in map(self.findSlot,
 						set(tgtframe.slots) - set(srcframe.slots))])
 
@@ -118,9 +116,9 @@ class CaseFrame_Mixin:
 				3. Every slot in R_tgt - R_src is neg_adj expandable and min = 0"""
 		return (srcframe.type is tgtframe.type or
 					isinstance(srcframe.type, tgtframe.type.__class__)) and \
-				all([(s.neg_adj is "reduce" and s.min == 0)
+				all([(s.neg_adj is _reduce and s.min == 0)
 					for s in map(self.findSlot,
 						set(srcframe.slots) - set(tgtframe.slots))]) and \
-				all([(s.neg_adj is "expand" and s.min == 0)
+				all([(s.neg_adj is _expand and s.min == 0)
 					for s in map(self.findSlot,
 						set(tgtframe.slots) - set(srcframe.slots))])

@@ -1,6 +1,7 @@
 # Python SNePS3 class
 
 import inspect, sys
+from Symbol import *
 from slots import *
 from caseframe import *
 from contexts import *
@@ -40,7 +41,7 @@ class Network(Context_Mixin, SlotInference, CaseFrame_Mixin, Slot_Mixin, Find):
 		self.trace = False
 
 		#contains possible values for pos_adj and neg_adj attributes of slots
-		self._adjustments = ["reduce", "expand", None]
+		self._adjustments = [_reduce, _expand, _none]
 
 	def __str__(self):
 		"""returns a string representation of the network"""
@@ -73,33 +74,33 @@ class Network(Context_Mixin, SlotInference, CaseFrame_Mixin, Slot_Mixin, Find):
 	## Slots for built in propositions
 		self.defineSlot("class", type="Category",
 				docstring="Points to a Category that some Entity is a member of.",
-				neg_adj="reduce")
+				neg_adj=_reduce)
 		self.defineSlot("member",
 				docstring="Points to the Entity that is a member of some Category",
-				neg_adj="reduce")
+				neg_adj=_reduce)
 		#equiv slot is missing a path init from initialize.cl
-		self.defineSlot("equiv", docstring="All fillers are coreferential", neg_adj="reduce")
+		self.defineSlot("equiv", docstring="All fillers are coreferential", neg_adj=_reduce)
 
 	## Slots for Rules
 		self.defineSlot("and", type="Proposition",
 		 				docstring="Fillers are arguments of a conjunction",
-						min=2, pos_adj="reduce", neg_adj="expand")
+						min=2, pos_adj=_reduce, neg_adj=_expand)
 		self.defineSlot("nor", type="Proposition", docstring="Fillers are arguments of a nor")
 		self.defineSlot("andorargs", type="Proposition",
 						docstring="Fillers are arguments of an andor",
-						min=2, pos_adj=None, neg_adj=None)
+						min=2, pos_adj=_none, neg_adj=_none)
 		self.defineSlot("threshargs", type="Proposition",
 						docstring="Fillers are arguments of a thresh",
-						min=2, pos_adj=None, neg_adj=None)
+						min=2, pos_adj=_none, neg_adj=_none)
 		self.defineSlot("thnor", type="Proposition", docstring="Fillers are arguments of a thnor",
-						pos_adj="reduce", neg_adj="reduce")
+						pos_adj=_reduce, neg_adj=_reduce)
 		self.defineSlot("ant", type="Proposition", docstring="Antecedent for a set",
-						pos_adj="expand", neg_adj="reduce")
+						pos_adj=_expand, neg_adj=_reduce)
 		self.defineSlot("cq", type="Proposition", docstring="Consequent for a set")
 
 	## Slots for SNeRE (currently SNeRE is not implemented)
 		self.defineSlot("actions", type="Action", docstring="The actions of an act",
-						max=1, pos_adj=None, neg_adj=None)
+						max=1, pos_adj=_none, neg_adj=_none)
 
 #################### Default Caseframe Definitions ####################
 		self.defineCaseframe("isa", "Proposition", ["member", "class"],
@@ -125,7 +126,7 @@ class Network(Context_Mixin, SlotInference, CaseFrame_Mixin, Slot_Mixin, Find):
 	def findSemanticType(self, typeName):
 		"""Returns the semantic object for the type name"""
 		for type in (self.semanticRoot.__subclasses__() + [self.semanticRoot]):
-			if typeName == type.__name__:
+			if typeName is Sym(type.__name__):
 				return type
 		return False
 
@@ -152,7 +153,7 @@ class Network(Context_Mixin, SlotInference, CaseFrame_Mixin, Slot_Mixin, Find):
 		if parents is None:
 			parents = set([self.contextRoot.name])
 		assert isinstance(name, str)
-		assert name not in self.contexts.keys(), "A context {} already exists".format(name)
+		assert Sym(name) not in self.contexts.keys(), "A context {} already exists".format(name)
 		assert isinstance(docstring, str)
 		assert isinstance(parents, set)
 		#parents is a set of strings denoting the names of contexts
@@ -161,11 +162,11 @@ class Network(Context_Mixin, SlotInference, CaseFrame_Mixin, Slot_Mixin, Find):
 		#hyps is a set of strings denoting the names of terms
 		assert all(map((lambda t: t in self.terms.keys()), hyps))
 
-		self.contexts[name] = Context(name, docstring=docstring,
+		self.contexts[Sym(name)] = Context(Sym(name), docstring=docstring,
 								parents=set(map((lambda n: self.contexts[n]), parents)),
 								hyps=set(map((lambda t: self.terms[t]), hyps)))
-		self.contextHierachy[name] = parents
-		return self.contexts[name]
+		self.contextHierachy[Sym(name)] = map(Sym, parents)
+		return self.contexts[Sym(name)]
 
 	def defineSemanticType(self, newtype, supers, docstring=""):
 		"""allows user to defined new semantic types to be added to the semantic type
@@ -187,7 +188,7 @@ class Network(Context_Mixin, SlotInference, CaseFrame_Mixin, Slot_Mixin, Find):
 					raise AssertionError("{} is not a SNePS semantic type".format(super))
 		exec("""class {}({}):\n \"\"\"{}\"\"\"""".format(newtype, str(supers)[1:-1], docstring))
 
-	def defineSlot(self, name, type="Entity", docstring="", pos_adj="reduce", neg_adj="expand",
+	def defineSlot(self, name, type="Entity", docstring="", pos_adj=_reduce, neg_adj=_expand,
 					min=1, max=None, path=None):
 		"""Defines a slot"""
 		assert isinstance(name, str)
@@ -199,5 +200,5 @@ class Network(Context_Mixin, SlotInference, CaseFrame_Mixin, Slot_Mixin, Find):
 		assert isinstance(min, int)
 		assert isinstance(max, int) or max is None
 
-		self.slots[name] = Slot(name, type, docstring, pos_adj, neg_adj, min, max, path)
-		return self.slots[name]
+		self.slots[Sym(name)] = Slot(Sym(name), type, docstring, pos_adj, neg_adj, min, max, path)
+		return self.slots[Sym(name)]
