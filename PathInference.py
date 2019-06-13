@@ -13,6 +13,7 @@ class PathInference:
 		aslot = self.findSlot(slotname)
 
 		aslot.path = pathexpr
+<<<<<<< HEAD
 		aslot.b_path_fn = build_path_fn(converse(pathexpr))
 		aslot.f_path_fn = build_path_fn(pathexpr)
 
@@ -48,6 +49,44 @@ class PathInference:
 			else:
 				 return (lambda x: getTos(x, path))
 
+=======
+		aslot.b_path_fn = buildPathFn(converse(pathexpr))
+		aslot.f_path_fn = buildPathFn(pathexpr)
+
+	def buildPathFn(self, path):
+		"""Given a path expression, returns the function that will traverse that path"""
+
+		if isinstance(path, list):
+			if path[0] == "compose":
+				return (lambda x: composeHelper(list(reversed(path[1:])), x))
+			elif path[0] == "or":
+				return (lambda x: reduce(lambda a,b: a|b, (map(lambda elt: set((buildPathFn(elt))(x)), pathElts[1:]))))
+			elif path[0] == "and":
+				return (lambda x: reduce(lambda a,b: a&b, (map(lambda elt: set((buildPathFn(elt))(x)), pathElts[1:]))))
+			elif path[0] == "kstar":
+				assert len(path[1]) == 0, "kstar must have only one path argument in {}".format(path)
+				return (lambda x: fStar(x, (buildPathFn(path[1]))))
+			elif path[0] == "kplus":
+				assert path[1:][1:] == [], "kplus must have only one path argument in {}".format(path)
+				return (lambda x: fplus(x, buildPathFn(path[1])))
+			elif path[0] == "converse":
+				return (buildPathFn(converse(path[1])))
+			elif path[0] == "irreflexive-restrict":
+				return (lambda x: set(buildPathFn(path[1])(x)) - set(x))
+			elif path[0] == "restrict":
+				assert len(path) == 3, "restrict must have two arguments, a path, and an atomicwft in {}".format(path)
+				return (lambda x: set(filter(lambda trm: memberOrVar(path[2], (buildPathFn(path[1]))([trm])), x)))
+			else:
+				assert False, ("Unrecognized path expression operator: {}".format(path[0]))
+		elif path == "!":
+			return (lambda trms: assertedMembers(trms, self.currentContext))
+		else:
+			# If a backwards slot: getFroms of the forward version of the slot
+			if path[-1] == "-":
+				return (lambda x: getFroms(x, path[:-1]))
+			# Else, is a forward slot: getTos of the slot
+			return (lambda x: getTos(x, path))
+>>>>>>> 08859b1adbdd467816908822a5cc75c5c8284a70
 
 	def composeHelper(self, pathElts, x):
 		"""Given a list of path element in reverse order, return a function which
@@ -66,19 +105,42 @@ class PathInference:
 			res = fn(res) - retval
 		return retvalue
 
+<<<<<<< HEAD
 	def converse(path):
 		"""Given a path expression, returns its converse"""
 		if atom(path):
 			if (equal '! (intern path :snip):	# THIS again...  NEED TO FIX
+=======
+	def fStar(self, nodeset, fn):
+		"""Given a nodeset and a funciton, returns the nodeset that results from
+		applying the function to the nodeset zero or more times"""
+		return set(nodeset) | set(fplus(nodeset, fn))
+
+	def memberOrVar(self, sym, termSet):
+		""" True if : sym is "?" and termSet not empty, OR
+					  the term named sym is in the termSet """
+		return (sym == "?" and termSet) or (self.findTerm(sym) in termSet)
+
+	def converse(path):
+		"""Given a path expression, returns its converse"""
+		if atom(path):
+			if path == "!":
+>>>>>>> 08859b1adbdd467816908822a5cc75c5c8284a70
 				return path
 			else:
 				revname = revSlotname(path)
 				if revname:
 					return revname
 				else:
+<<<<<<< HEAD
 					return symbolName(path) +  "-"   # got rid of "intern", thus is not a symbol
 		elif isPathKeyword(path[0]):
 			if (symbolName(path[0]) == "restrict"):
+=======
+					return path + "-"
+		elif isPathKeyword(path[0]):
+			if ((path[0]) == "restrict"):
+>>>>>>> 08859b1adbdd467816908822a5cc75c5c8284a70
 				return path
 			else:
 				return path[0] + reversed(map(lambda elt: converse(elt), path[1:]))
@@ -90,6 +152,11 @@ class PathInference:
 		return word in ["or", "and", "compose", "kstar", "kplus", "not",
 		"relative-complement", "irreflexive-restrict", "restrict", "converse"]
 
+<<<<<<< HEAD
+=======
+	# def pathBasedDerivable(prop, context):
+
+>>>>>>> 08859b1adbdd467816908822a5cc75c5c8284a70
 		# compile name &optional definition => function, warnings-p, failure-p
 			# name: nil
 			# definition: a lambda expression or a function
