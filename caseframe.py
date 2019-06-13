@@ -18,7 +18,8 @@ class CaseFrame:
 			Two caseframes are equivalent when:
 				1. They have the same type
 				2. They have the same slots (disregarding order)"""
-		return self.type is other.type and set(self.slots) - set(other.slots) == set([])
+		return not other is None and self.type is other.type and\
+		 		set(self.slots) - set(other.slots) == set([])
 
 	def __repr__(self):
 		return "Caseframe {} id: {}".format(self.name, hex(id(self)))
@@ -36,28 +37,29 @@ class CaseFrame_Mixin:
 
 	def find_frame(self, frameName):
 		"""Returns the caseframe associated with the given function symbol"""
-		return self.caseframes[frameName]
+		return self.caseframes.get(frameName)
 
 	def defineCaseframe(self, name, type, slots, docstring=""):
 		assert isinstance(name, str)
-		assert isinstance(self.findSemanticType(type), self.semanticRoot)
-		assert checkNewCaseframe(type, slots)
+		assert issubclass(self.findSemanticType(type), self.semanticRoot)
+		assert self.checkNewCaseframe(type, slots)
 		assert isinstance(docstring, str)
 
 		self.caseframes[name] = CaseFrame(name, self.findSemanticType(type),
 		 									docstring, slots)
+		newCF = self.caseframes[name]
 		# Look at all existing caseframes, check whether they are adjustable to
 		# or from this one. If so, store that information in the frames.
-		for case in self.caseframes:
-			if case != self.caseframes[name]:
-				if adjustable(newCF, case):
+		for case in self.caseframes.values():
+			if not case == newCF:
+				if self.adjustable(newCF, case):
 					newCF.adj_to.add(case)
 					case.adj_from.add(newCF)
-				if adjustable(case, newCF):
+				if self.adjustable(case, newCF):
 					case.adj_to.add(newCF)
 					newCF.adj_from.add(case)
 
-	def checkNewCaseframe (self, newType, slots):
+	def checkNewCaseframe(self, newType, slots):
 		"""If there is already a caseframe with the given type and slots
 		   (order doesn't matter), then raises error, else returns"""
 		for oldCF in self.caseframes.values():
@@ -75,15 +77,15 @@ class CaseFrame_Mixin:
 	def adjustable(self, srcframe, tgtframe):
 		"""returns true if srcframe is a caseframe which is
 			adjustable to the caseframe tgtframe"""
-		return  pos_adj(srcframe, tgtframe) or\
-				neg_adj(srcframe, tgtframe) or\
-				pseudo_adjustable(srcframe, tgtframe)
+		return  self.pos_adj(srcframe, tgtframe) or\
+				self.neg_adj(srcframe, tgtframe) or\
+				self.pseudo_adjustable(srcframe, tgtframe)
 
 	def pseudo_adjustable(self, srcFrame, tgtFrame):
 		"""Returns t if srcframe is 'pseudo-adjustable' to tgtframe.
 		   Pseudo-adjustability allows slot-based inference to operate on frames
 		   that are not actually adjustable, e.g. nor and andor"""
-		return srcFrame == find_frame("Nor") and tgtFrame == find_frame("AndOr")
+		return srcFrame == self.find_frame("Nor") and tgtFrame == self.find_frame("AndOr")
 		# NOR does not exist until defined in initialization
 
 #isinstance check for C_src subtype of C_tgt may be incorrect (see caseframes.cl ln 368)
@@ -96,10 +98,12 @@ class CaseFrame_Mixin:
 				3. Every slot in R_tgt - R_src is pos_adj expandable and min = 0"""
 		return (srcframe.type is tgtframe.type or
 				isinstance(srcframe.type, tgtframe.type.__class__)) and \
-				all(s.pos_adj is "reduce" and s.min == 0
-					for s in (set(srcframe.slots) - set(tgtframe.slots))) and \
-				all(s.pos_adj is "expand" and s.min == 0
-					for s in (set(tgtframe.slots) - set(srcframe.slots)))
+				all([(s.pos_adj is "reduce" and s.min == 0)
+					for s in map(self.findSlot,
+						set(srcframe.slots) - set(tgtframe.slots))]) and \
+				all([(s.pos_adj is "expand" and s.min == 0)
+					for s in map(self.findSlot,
+						set(tgtframe.slots) - set(srcframe.slots))])
 
 	def neg_adj(self, srcframe, tgtframe):
 		"""returns true if srcframe is a caseframe that is neg_adj to the caseframe
@@ -110,7 +114,9 @@ class CaseFrame_Mixin:
 				3. Every slot in R_tgt - R_src is neg_adj expandable and min = 0"""
 		return (srcframe.type is tgtframe.type or
 					isinstance(srcframe.type, tgtframe.type.__class__)) and \
-				all(s.neg_adj is "reduce" and s.min == 0
-					for s in (set(srcframe.slots) - set(tgtframe.slots))) and \
-				all(s.neg_adj is "expand" and s.min == 0
-					for s in (set(tgtframe.slots) - set(srcframe.slots)))
+				all([(s.neg_adj is "reduce" and s.min == 0)
+					for s in map(self.findSlot,
+						set(srcframe.slots) - set(tgtframe.slots))]) and \
+				all([(s.neg_adj is "expand" and s.min == 0)
+					for s in map(self.findSlot,
+						set(tgtframe.slots) - set(srcframe.slots))])

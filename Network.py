@@ -102,7 +102,20 @@ class Network(Context_Mixin, SlotInference, CaseFrame_Mixin, Slot_Mixin, Find):
 						max=1, pos_adj=None, neg_adj=None)
 
 #################### Default Caseframe Definitions ####################
-		# self.defineCaseframe("Isa", "Proposition", ["member", "class"])
+		self.defineCaseframe("isa", "Proposition", ["member", "class"],
+							"[member] is a [class]")
+		self.defineCaseframe("equiv", "Proposition", ["equiv"],
+							"[equiv] are all coreferential")
+		self.defineCaseframe("and", "Proposition", ["and"],
+							"it is the case that [and]")
+		self.defineCaseframe("nor", "Proposition", ['nor'],
+							"it is not the case that [nor]")
+		self.defineCaseframe("thnor", "Proposition", ["thnor"],
+							"I don't know that it is the case that [thnor]")
+		self.defineCaseframe("andor", "Proposition", ["andorargs"])
+		self.defineCaseframe("thresh", "Proposition", ["threshargs"])
+		self.defineCaseframe("if", "Proposition", ["ant", "cq"],
+							"if [ant] then [cq]")
 		#implementation of defineCaseframe needs to be checked concerning print_pattern
 
 	def listSemanticTypes(self):
@@ -112,8 +125,9 @@ class Network(Context_Mixin, SlotInference, CaseFrame_Mixin, Slot_Mixin, Find):
 
 	def findSemanticType(self, typeName):
 		"""Returns the semantic object for the type name"""
-		for type in (self.semanticRoot.__subclasses__() + self.semanticRoot):
-			if typeName == type.getClass(): return type
+		for type in (self.semanticRoot.__subclasses__() + [self.semanticRoot]):
+			if typeName == type.__name__:
+				return type
 		return False
 
 	def assertedMembers(self, terms, ctx):
