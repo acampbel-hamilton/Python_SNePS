@@ -13,7 +13,6 @@ class PathInference:
 		aslot = self.findSlot(slotname)
 
 		aslot.path = pathexpr
-<<<<<<< HEAD
 		aslot.b_path_fn = build_path_fn(converse(pathexpr))
 		aslot.f_path_fn = build_path_fn(pathexpr)
 
@@ -49,7 +48,6 @@ class PathInference:
 			else:
 				 return (lambda x: getTos(x, path))
 
-=======
 		aslot.b_path_fn = buildPathFn(converse(pathexpr))
 		aslot.f_path_fn = buildPathFn(pathexpr)
 
@@ -86,7 +84,6 @@ class PathInference:
 				return (lambda x: getFroms(x, path[:-1]))
 			# Else, is a forward slot: getTos of the slot
 			return (lambda x: getTos(x, path))
->>>>>>> 08859b1adbdd467816908822a5cc75c5c8284a70
 
 	def composeHelper(self, pathElts, x):
 		"""Given a list of path element in reverse order, return a function which
@@ -105,12 +102,10 @@ class PathInference:
 			res = fn(res) - retval
 		return retvalue
 
-<<<<<<< HEAD
 	def converse(path):
 		"""Given a path expression, returns its converse"""
 		if atom(path):
 			if (equal '! (intern path :snip):	# THIS again...  NEED TO FIX
-=======
 	def fStar(self, nodeset, fn):
 		"""Given a nodeset and a funciton, returns the nodeset that results from
 		applying the function to the nodeset zero or more times"""
@@ -125,22 +120,18 @@ class PathInference:
 		"""Given a path expression, returns its converse"""
 		if atom(path):
 			if path == "!":
->>>>>>> 08859b1adbdd467816908822a5cc75c5c8284a70
 				return path
 			else:
 				revname = revSlotname(path)
 				if revname:
 					return revname
 				else:
-<<<<<<< HEAD
 					return symbolName(path) +  "-"   # got rid of "intern", thus is not a symbol
 		elif isPathKeyword(path[0]):
 			if (symbolName(path[0]) == "restrict"):
-=======
 					return path + "-"
 		elif isPathKeyword(path[0]):
 			if ((path[0]) == "restrict"):
->>>>>>> 08859b1adbdd467816908822a5cc75c5c8284a70
 				return path
 			else:
 				return path[0] + reversed(map(lambda elt: converse(elt), path[1:]))
@@ -152,11 +143,8 @@ class PathInference:
 		return word in ["or", "and", "compose", "kstar", "kplus", "not",
 		"relative-complement", "irreflexive-restrict", "restrict", "converse"]
 
-<<<<<<< HEAD
-=======
 	# def pathBasedDerivable(prop, context):
 
->>>>>>> 08859b1adbdd467816908822a5cc75c5c8284a70
 		# compile name &optional definition => function, warnings-p, failure-p
 			# name: nil
 			# definition: a lambda expression or a function
