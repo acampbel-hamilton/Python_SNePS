@@ -61,6 +61,7 @@ class Arbitrary(Variable):
 	arb_counter = 0
 
 class Molecular(Term):
+	mol_counter = 0
 	"""a functional term with zero or more arguments
 	equivalently a frame with slots and fillers"""
 	wftcounter = 0
