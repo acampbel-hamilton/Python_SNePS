@@ -3,8 +3,12 @@
 #the folowing is a link to historic SNePS caseframes:
 #https://cse.buffalo.edu/sneps/Manuals/dictionary.pdf
 
+from Symbols import *
+
 class CaseFrame:
 	def __init__(self, name, type, docstring="", slots=[], adj_to=set(), adj_from=set(), terms=set()):
+		if isinstance(name, str):
+			name = Sym(name)
 		self.name = name
 		self.type = type #must be either obj or class itself
 		self.docstring = docstring
@@ -26,8 +30,8 @@ class CaseFrame:
 
 	def __str__(self):
 		"""Creates a string representation of a CaseFrame"""
-		return "<{} [{}], \{{}\} >".format(self.name, self.type,
-		 			(str(list(map(lambda slot: str(slot), self.slots)))[1:-1]))
+		return "<{} [{}], {{{}}} >".format(self.name, self.type,
+		 			(str([repr(s) for s in self.slots])[1:-1]))
 
 class CaseFrame_Mixin:
 	"""contains caseframe related methods for Network class"""

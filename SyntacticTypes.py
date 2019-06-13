@@ -68,7 +68,6 @@ class Molecular(Term):
 		Term.__init__(self, name, up_cableset)
 		self.caseframe = caseframe
 		self.down_cableset = down_cableset #map from slot names to sets of term names
-		self.down_weights = down_weights
 
 class Param2Op(Molecular):
 	"""the andor or thresh of some proposition(s)"""

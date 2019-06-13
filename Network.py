@@ -116,7 +116,6 @@ class Network(Context_Mixin, SlotInference, CaseFrame_Mixin, Slot_Mixin, Find):
 		self.defineCaseframe("thresh", "Proposition", ["threshargs"])
 		self.defineCaseframe("if", "Proposition", ["ant", "cq"],
 							"if [ant] then [cq]")
-		#implementation of defineCaseframe needs to be checked concerning print_pattern
 
 	def listSemanticTypes(self):
 		"""Prints all semantic types for the user"""

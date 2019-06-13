@@ -4,7 +4,7 @@ import re
 from Network import *
 from LisParse import parse
 
-
+import os
 from cmd import Cmd
 
 class UI(Cmd):
@@ -51,23 +51,17 @@ class UI(Cmd):
 		if not len(rels) == len(set(rels)): #slots must be unique
 			print("Error: Repeated slot")
 			return
-		#insert caseframe check here
-
-
-		# for slot in slots:
-		# 	if isinstance(slot, list):
-		# 		name = slot[0]
-		# 		filler = slot[1:]
-		# 		if not name in UI.network.slots.keys():
-		# 			print("Use of undefined slot {}".format(name))
-		# 			return
-		# 		if filler == []:
-		# 			print("Slot {} has no fillers".format(name))
-		# 		for node in filler:
-		# 			if not UI.network.terms.get(node):
-		# 				print("Use of undefined node {}".format(node))
-		# 				return
-		# print("Given slots and fillers are defined")
+		cf = None
+		for c in UI.network.caseframes.values():
+			if set(c.slots) == set(rels):
+				cf = c
+				break
+		if cf is None:
+			print("Error: No caseframe with given slots <{}> is defined"
+				.format(str(rels)[1:-1]))
+			return
+		print(rels)
+		print(fillers)
 
 
 	def do_describe(self, args):
@@ -108,6 +102,10 @@ class UI(Cmd):
 			UI.network.listSlots()
 		else:
 			print("Error: Invalid argument to list")
+
+	def do_shell(self, s):
+		"""executes shell commands"""
+		os.system(s)
 
 
 
