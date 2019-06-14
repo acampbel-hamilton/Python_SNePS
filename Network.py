@@ -1,7 +1,7 @@
 # Python SNePS3 class
 
 import inspect, sys
-from Symbol import *
+from Symbol import Symbol, Sym, _reduce, _expand, _none
 from slots import *
 from caseframe import *
 from contexts import *
@@ -104,11 +104,11 @@ class Network(Context_Mixin, SlotInference, CaseFrame_Mixin, Slot_Mixin, Find):
 
 #################### Default Caseframe Definitions ####################
 		self.defineCaseframe("isa", "Proposition", ["member", "class"],
-							"[member] is a [class]")
+							docstring="[member] is a [class]")
 		self.defineCaseframe("equiv", "Proposition", ["equiv"],
-							"[equiv] are all coreferential")
+							docstring="[equiv] are all coreferential")
 		self.defineCaseframe("and", "Proposition", ["and"],
-							"it is the case that [and]")
+							docstring="it is the case that [and]")
 		self.defineCaseframe("nor", "Proposition", ['nor'],
 							"it is not the case that [nor]")
 		self.defineCaseframe("thnor", "Proposition", ["thnor"],
@@ -125,10 +125,10 @@ class Network(Context_Mixin, SlotInference, CaseFrame_Mixin, Slot_Mixin, Find):
 
 	def findSemanticType(self, typeName):
 		"""Returns the semantic object for the type name"""
-		for type in (self.semanticRoot.__subclasses__() + [self.semanticRoot]):
-			if typeName is Sym(type.__name__):
+		for type in (list(self.subtypes(self.semanticRoot)) + [self.semanticRoot]):
+			if typeName is type.__name__:
 				return type
-		return False
+		return object
 
 	def assertedMembers(self, terms, ctx):
 		"""returns all and only the asserted members of the given set of terms"""

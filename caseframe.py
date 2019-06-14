@@ -3,7 +3,7 @@
 #the folowing is a link to historic SNePS caseframes:
 #https://cse.buffalo.edu/sneps/Manuals/dictionary.pdf
 
-from Symbols import *
+from Symbol import Sym, _reduce, _expand, _none
 
 class CaseFrame:
 	def __init__(self, name, type, docstring="", slots=[], adj_to=set(), adj_from=set(), terms=set()):
@@ -13,7 +13,7 @@ class CaseFrame:
 		self.slots = slots
 		self.adj_to = adj_to
 		self.adj_from = adj_from
-		self.terms = terms
+		self.terms = terms #set of term names
 
 	def __eq__(self, other):
 		"""Returns true if both arguments are equivalent caseframes.

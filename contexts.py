@@ -1,6 +1,7 @@
 #SNePS3 Contexts
 
 from SyntacticTypes import Term
+from Symbol import Sym
 
 class Context:
 	def __init__(self, name, parents=None, docstring="",

@@ -1,6 +1,6 @@
 #SNePs3 slot class definition
 
-from Symbols import *
+from Symbol import *
 
 class Slot:
 	def __init__(self, name, type, docstring="", pos_adj=Sym("reduce"), neg_adj=Sym("expand"),
