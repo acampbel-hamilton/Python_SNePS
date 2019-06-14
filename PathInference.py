@@ -21,25 +21,25 @@ class PathInference:
 
 		if isinstance(path, list):
 			if path[0] == "compose":
-				return f"(lambda x: {composeHelper(list(reversed(path[1:])))})"
+				return "(lambda x: {})".format(composeHelper(list(reversed(path[1:]))))
 			elif path[0] == "or":
-				return f"(lambda x: reduce(lambda a,b: a|b, map(lambda fn: set(fn(x)), {(map(lambda elt: buildPathFn(elt), pathElts[1:]))})))"
+				return "(lambda x: reduce(lambda a,b: a|b, map(lambda fn: set(fn(x)), {})))".format(map(lambda elt: buildPathFn(elt), pathElts[1:]))
 			elif path[0] == "and":
-				return f"(lambda x: reduce(lambda a,b: a&b, map(lambda fn: set(fn(x)), {(map(lambda elt: buildPathFn(elt), pathElts[1:]))})))"
+				return "(lambda x: reduce(lambda a,b: a&b, map(lambda fn: set(fn(x)), {})))".format(map(lambda elt: buildPathFn(elt), pathElts[1:]))
 			elif path[0] == "kstar":
 				assert path[1:][1:] == [], "kstar must have only one path argument in {}".format(path)
-				return f"(lambda x: fStar(x, {(buildPathFn(path[1]))}))"
+				return "(lambda x: fStar(x, {}))".format(buildPathFn(path[1]))
 			elif path[0] == "kplus":
 				assert path[1:][1:] == [], "kplus must have only one path argument in {}".format(path)
-				return f"(lambda x: fplus(x, {(buildPathFn(path[1]))}))"
+				return "(lambda x: fplus(x, {}))".format(buildPathFn(path[1]))
 			elif path[0] == "converse":
 				return (buildPathFn(converse(path[1])))
 			elif path[0] == "irreflexive-restrict":
 				# If P is a path from node x to node y, and x != y, then (irreflexive-restrict P) is a path from x to y.
-				return f"(lambda x: set(({buildPathFn(path[1])})(x)) - set(x))"
+				return "(lambda x: set(({})(x)) - set(x))".format(buildPathFn(path[1]))
 			elif path[0] == "restrict":
 				assert len(path) == 3, "restrict must have two arguments, a path, and an atomicwft in {}".format(path)
-				return f"(lambda x: set(filter(lambda trm: memberOrVar(path[2], ({buildPathFn(path[1])})([trm])), x)))"
+				return "(lambda x: set(filter(lambda trm: memberOrVar(path[2], {}([trm])), x)))".format(buildPathFn(path[1]))
 			else:
 				assert False, ("Unrecognized path expression operator: {}".format(path[0]))
 		elif path == "!":
@@ -47,16 +47,16 @@ class PathInference:
 		else:
 			# If a backwards slot: getFroms of the forward version of the slot
 			if path[-1] == "-":
-				return f"(lambda x: getFroms(x, {path[:-1]}))"
+				return "(lambda x: getFroms(x, {}))".format(path[:-1])
 			# Else, is a forward slot: getTos of the slot
-			return f"(lambda x: getTos(x, {path}))"
+			return "(lambda x: getTos(x, {}))".format(path)
 
 	def composeHelper(self, pathElts, x):
 		"""Given a list of path element in reverse order, return a function which
 		 will traverse a path in the original order"""
 		if pathElts[1:] != []:
-			return f"{buildPathFn(pathElts[0])}({(composeHelper(pathElts[1:]))})"
-		return f"{buildPathFn(pathElts[0])}(x)"
+			return "{}({})".format(buildPathFn(pathElts[0]), composeHelper(pathElts[1:]))
+		return "{}(x)".format(buildPathFn(pathElts[0]))
 
 	def fPlus(self, nodeset, fn):
 		"""Given a nodeset and a function, return the nodeset that results
@@ -94,13 +94,3 @@ class PathInference:
 		"""returns False if the argument is not a path keyword"""
 		return word in ["or", "and", "compose", "kstar", "kplus", "not",
 		"relative-complement", "irreflexive-restrict", "restrict", "converse"]
-
-	# def pathBasedDerivable(prop, context):
-
-		# compile name &optional definition => function, warnings-p, failure-p
-			# name: nil
-			# definition: a lambda expression or a function
-			# function: the function-name, or a compiled function
-
-		# intern string &optional package => symbol
-			# enters a symbol named string into package
