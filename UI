@@ -33,7 +33,7 @@ class UI(Cmd):
 		"""Builds the specified term and adds it to the network.
 		If an identical object exists, the existing object is returned"""
 		slots = parse(self.line)[0][1:]
-		print(slots)
+		# print(slots)
 		if not all([len(slot) > 1 for slot in slots]):
 			print("Build command contains an unfilled slot")
 			return
@@ -43,10 +43,6 @@ class UI(Cmd):
 			if not r in UI.network.slots.keys():
 				print("Error: Use of undefined slot {}".format(r))
 				return
-		#if undefined terms are used, define them
-		for n in [i for sl in fillers for i in sl]:
-			if not n in UI.network.terms.keys():
-				UI.network.terms[Sym(n)] = Term(n)
 		if not len(rels) == len(set(rels)): #slots must be unique
 			print("Error: Repeated slot")
 			return
@@ -59,22 +55,27 @@ class UI(Cmd):
 			print("Error: No caseframe with given slots <{}> is defined"
 				.format(str(rels)[1:-1]))
 			return
-		for term in self.terms.values(): #no identical term exists
+		#if undefined terms are used, define them
+		for n in [i for sl in fillers for i in sl]:
+			if not n in UI.network.terms.keys():
+				UI.network.terms[Sym(n)] = Term(n)
+		for term in UI.network.terms.values(): #no identical term exists
 			if isinstance(term, Molecular) and term.caseframe == cf and\
 				[sorted(sl) for sl in sorted(fillers)] ==\
 				 [sorted(sl) for sl in sorted(term.down_cableset.values())]:
-				 print("Identical Term <{}>".format(term))
+				 print("Identical Term <{}>".format(repr(term)))
 				 return
 		Molecular.counter += 1
-		term  = Molecular(Sym("M{}".format(Molecular.counter)), cf, fillers)
+		term  = Molecular(Sym("M{}".format(Molecular.counter)), cf,
+					down_cableset=dict(zip(rels, fillers)))
 		UI.network.terms[Sym(term.name)] = term
-		print(term)
 		cf.terms.add(Sym(term.name))
 		for i in range(len(rels)):
 			for n in fillers[i]:
-				n.up_cableset.update({Sym(rels[i]):
-							n.up_cableset.get(Sym(rels[i])) + [Sym(term.name)]})
 				print(n)
+				UI.network.terms[n].up_cableset.update({Sym(rels[i]):
+							UI.network.terms[n].up_cableset.get(Sym(rels[i]), [])
+							+ [Sym(term.name)]})
 
 
 

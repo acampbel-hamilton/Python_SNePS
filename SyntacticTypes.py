@@ -24,6 +24,9 @@ class Term:
 	def getClass(self):
 		return self._classStrip(self.__class__)
 
+	def __repr__(self):
+		return "<{} {}: {}>".format(self.getClass(), self.name, hex(id(self)))
+
 #this should be updated to a more through representation of the object
 	def __str__(self):
 		s = ""
