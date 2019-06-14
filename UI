@@ -74,8 +74,8 @@ class UI(Cmd):
 			for n in fillers[i]:
 				print(n)
 				UI.network.terms[n].up_cableset.update({Sym(rels[i]):
-							UI.network.terms[n].up_cableset.get(Sym(rels[i]), [])
-							+ [Sym(term.name)]})
+							list(set(UI.network.terms[n].up_cableset.get(Sym(rels[i]), [])
+							+ [Sym(term.name)]})))
 
 
 
