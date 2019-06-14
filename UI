@@ -77,7 +77,9 @@ class UI(Cmd):
 							UI.network.terms[n].up_cableset.get(Sym(rels[i]), [])
 							+ [Sym(term.name)]})
 
-
+	def do_definePath(self, args):
+		par = parse(self.line)[0]
+		UI.network.definePath(par[1], par[2])
 
 
 	def do_describe(self, args):
@@ -122,6 +124,7 @@ class UI(Cmd):
 	def do_shell(self, s):
 		"""executes shell commands"""
 		os.system(s)
+
 
 
 
