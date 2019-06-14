@@ -73,11 +73,21 @@ class UI(Cmd):
 		for i in range(len(rels)):
 			for n in fillers[i]:
 				print(n)
-				UI.network.terms[n].up_cableset.update({Sym(rels[i]):
-							list(set(UI.network.terms[n].up_cableset.get(Sym(rels[i]), [])
-							+ [Sym(term.name)]})))
+				UI.network.terms[n].up_cableset.update(
+				{Sym(rels[i]): (list(set(UI.network.terms[n].up_cableset\
+					.get(Sym(rels[i]), []) + [Sym(term.name)])))})
+	def do_clear(self, args):
+		""""calls bash clear command"""
+		os.system('clear')
+
+	def do_defineFrame(self, args):
+		"""defines a new caseframe as specified by arguments
+		in the form: defineFrame [name] [semantic type] ([slots]) ([docstring])"""
+		par = parse(self.line)[0]
+		UI.network.defineCaseframe(par[1], par[2], par[3], " ".join(par[4]))
 
 	def do_definePath(self, args):
+		"""Defines path rule for path based inference"""
 		par = parse(self.line)[0]
 		UI.network.definePath(par[1], par[2])
 
@@ -123,7 +133,10 @@ class UI(Cmd):
 
 	def do_shell(self, s):
 		"""executes shell commands"""
-		os.system(s)
+		try:
+			print(eval(s))
+		except:
+			print("Python incompatible with limited interpreter")
 
 
 

@@ -126,7 +126,7 @@ class Network(Context_Mixin, SlotInference, CaseFrame_Mixin, Slot_Mixin, Find, P
 	def findSemanticType(self, typeName):
 		"""Returns the semantic object for the type name"""
 		for type in (list(self.subtypes(self.semanticRoot)) + [self.semanticRoot]):
-			if typeName is type.__name__:
+			if typeName == type.__name__:
 				return type
 		return object
 
@@ -192,8 +192,8 @@ class Network(Context_Mixin, SlotInference, CaseFrame_Mixin, Slot_Mixin, Find, P
 					min=1, max=None, path=None):
 		"""Defines a slot"""
 		assert isinstance(name, str)
-		cls = getattr(sys.modules[__name__], type)
-		assert cls is self.semanticRoot or cls in self.subtypes(self.semanticRoot)
+		assert getattr(sys.modules[__name__], type) in\
+			(self.subtypes(self.semanticRoot).union(set([self.semanticRoot])))
 		assert isinstance(docstring, str)
 		assert pos_adj in self._adjustments
 		assert neg_adj in self._adjustments

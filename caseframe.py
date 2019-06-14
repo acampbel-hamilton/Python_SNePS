@@ -43,7 +43,9 @@ class CaseFrame_Mixin:
 
 	def defineCaseframe(self, name, type, slots, docstring=""):
 		assert isinstance(name, str)
-		assert issubclass(self.findSemanticType(type), self.semanticRoot)
+		print(self.findSemanticType(type))
+		assert self.findSemanticType(type) in\
+			self.subtypes(self.semanticRoot).union(set([self.semanticRoot]))
 		assert self.checkNewCaseframe(type, slots)
 		assert isinstance(docstring, str)
 
