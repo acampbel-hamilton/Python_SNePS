@@ -35,6 +35,7 @@ class PathInference:
 			elif path[0] == "converse":
 				return (buildPathFn(converse(path[1])))
 			elif path[0] == "irreflexive-restrict":
+				# If P is a path from node x to node y, and x != y, then (irreflexive-restrict P) is a path from x to y.
 				return f"(lambda x: set(({buildPathFn(path[1])})(x)) - set(x))"
 			elif path[0] == "restrict":
 				assert len(path) == 3, "restrict must have two arguments, a path, and an atomicwft in {}".format(path)
@@ -79,22 +80,15 @@ class PathInference:
 
 	def converse(path):
 		"""Given a path expression, returns its converse"""
-		if atom(path):
-			if path == "!":
-				return path
-			else:
-				revname = revSlotname(path)
-				if revname:
-					return revname
-				else:
-					return path + "-"
-		elif isPathKeyword(path[0]):
-			if ((path[0]) == "restrict"):
-				return path
-			else:
-				return path[0] + reversed(map(lambda elt: converse(elt), path[1:]))
+
+		if isPathKeyword(path[0]):
+			return [path[0]] + list(reversed(list(map(lambda elt: converse(elt), path[1:]))))
+		elif path == "!":
+			return "!"
+		elif path[-1] == "-":
+			return path[:-1]
 		else:
-			return reversed(map(lambda elt: converse(elt), path[1:]))
+			return path + "-"
 
 	def isPathKeyword(word):
 		"""returns False if the argument is not a path keyword"""
