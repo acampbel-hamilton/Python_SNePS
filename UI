@@ -33,7 +33,6 @@ class UI(Cmd):
 		"""Builds the specified term and adds it to the network.
 		If an identical object exists, the existing object is returned"""
 		slots = parse(self.line)[0][1:]
-		# print(slots)
 		if not all([len(slot) > 1 for slot in slots]):
 			print("Build command contains an unfilled slot")
 			return
@@ -72,10 +71,10 @@ class UI(Cmd):
 		cf.terms.add(Sym(term.name))
 		for i in range(len(rels)):
 			for n in fillers[i]:
-				print(n)
 				UI.network.terms[n].up_cableset.update(
-				{Sym(rels[i]): (list(set(UI.network.terms[n].up_cableset\
-					.get(Sym(rels[i]), []) + [Sym(term.name)])))})
+				{Sym(rels[i]):(UI.network.terms[n].up_cableset\
+					.get(Sym(rels[i]), []) + [Sym(term.name)])})
+
 	def do_clear(self, args):
 		""""calls bash clear command"""
 		os.system('clear')

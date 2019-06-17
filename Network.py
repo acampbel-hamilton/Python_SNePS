@@ -148,10 +148,12 @@ class Network(Context_Mixin, SlotInference, CaseFrame_Mixin, Slot_Mixin, Find, P
 						[s for c in type.__subclasses__() for s in self.subtypes(c)]))
 
 	#currently requires self.initialize to be called (this decision should be revisited)
-	def defineContext(self, name, docstring="", parents=None, hyps=set()):
+	def defineContext(self, name, docstring="", parents=None, hyps=None):
 		"""allows a user defined contexts within a context hierarchy rooted at self.contextRoot"""
 		if parents is None:
 			parents = set([self.contextRoot.name])
+		if hyps is None:
+			hyps = set()
 		assert isinstance(name, str)
 		assert Sym(name) not in self.contexts.keys(), "A context {} already exists".format(name)
 		assert isinstance(docstring, str)

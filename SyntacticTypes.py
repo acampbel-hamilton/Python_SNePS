@@ -5,9 +5,9 @@ import re
 
 class Term:
 	"""root of the syntactic type class hierarchy"""
-	def __init__(self, name, up_cableset={}):
+	def __init__(self, name, up_cableset=None):
 		self.name = name
-		self.up_cableset = up_cableset #maps slot names to sets of term names
+		self.up_cableset = {} if up_cableset is None else up_cableset #maps slot names to sets of term names
 
 #consider replacing the following 3 functions with a dictionary which
 #traces the entirety of the inheritance hierarchy for the syntactic types
@@ -45,7 +45,7 @@ class Base(Atom):
 
 class Variable(Atom):
 	"""a variable term ranging over a restricted domain"""
-	def __init__(self, name, up_cableset={},
+	def __init__(self, name, up_cableset=None,
 	 restriction_set=set(), var_label=None):
 		Atom.__init__(self, name, up_cableset)
 		self.restriction_set = restriction_set
@@ -54,7 +54,7 @@ class Variable(Atom):
 class Indefinite(Variable):
 	"""an indefinite object"""
 	ind_counter = 0
-	def __init__(self, name, up_cableset={},
+	def __init__(self, name, up_cableset=None,
 	 restriction_set=set(), var_label=None, dependencies=set()):
 		Variable.__init__(self, name, up_cableset, restriction_set, var_label)
 		self.dependencies = dependencies
@@ -68,14 +68,14 @@ class Molecular(Term):
 	"""a functional term with zero or more arguments
 	equivalently a frame with slots and fillers"""
 	wftcounter = 0
-	def __init__(self, name, caseframe, down_cableset, up_cableset={}):
+	def __init__(self, name, caseframe, down_cableset, up_cableset=None):
 		Term.__init__(self, name, up_cableset)
 		self.caseframe = caseframe
 		self.down_cableset = down_cableset #map from slot names to sets of term names
 
 class Param2Op(Molecular):
 	"""the andor or thresh of some proposition(s)"""
-	def __init__(self, name, caseframe, down_cableset, min, max, up_cableset={}):
+	def __init__(self, name, caseframe, down_cableset, min, max, up_cableset=None):
 		Molecular.__init__(self, name, caseframe, down_cableset, up_cableset)
 		self.min = min
 		self.max = max
@@ -103,7 +103,7 @@ class Equivalence(Thresh):
 
 class NumericalEntailment(Molecular):
 	"""a numerical entailment"""
-	def __init__(self, name, caseframe, down_cableset, min, up_cableset={}):
+	def __init__(self, name, caseframe, down_cableset, min, up_cableset=None):
 		Molecular.__init__(self, name, caseframe, down_cableset, up_cableset)
 		self.min = min
 

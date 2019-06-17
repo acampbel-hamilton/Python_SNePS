@@ -5,12 +5,12 @@ from Symbol import Sym
 
 class Context:
 	def __init__(self, name, parents=None, docstring="",
-					hyps=set(), ders=set(), kinconsistent=False):
+					hyps=None, ders=None, kinconsistent=False):
 		self.name = Sym(name) #symbol
 		self.parents = parents #list of context objects
 		self.docstring = docstring #string
-		self.hyps = hyps #set term objects
-		self.ders = ders #set of term objects
+		self.hyps = set() if hyps is None else hyps #set term objects
+		self.ders = set() if ders is None else ders #set of term objects
 		self.kinconsistent = kinconsistent #boolean
 
 	def __contains__(self, term):

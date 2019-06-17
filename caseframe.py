@@ -6,14 +6,14 @@
 from Symbol import Sym, _reduce, _expand, _none
 
 class CaseFrame:
-	def __init__(self, name, type, docstring="", slots=[], adj_to=set(), adj_from=set(), terms=set()):
+	def __init__(self, name, type, docstring="", slots=None, adj_to=None, adj_from=None, terms=None):
 		self.name = Sym(name)
 		self.type = type #must be either obj or class itself
 		self.docstring = docstring
-		self.slots = slots
-		self.adj_to = adj_to
-		self.adj_from = adj_from
-		self.terms = terms #set of term names
+		self.slots = [] if slots is None else slots
+		self.adj_to = set() if adj_to is None else adj_to
+		self.adj_from = set() if adj_from is None else adj_from
+		self.terms = set() if terms is None else terms #set of term names
 
 	def __eq__(self, other):
 		"""Returns true if both arguments are equivalent caseframes.
@@ -43,7 +43,6 @@ class CaseFrame_Mixin:
 
 	def defineCaseframe(self, name, type, slots, docstring=""):
 		assert isinstance(name, str)
-		print(self.findSemanticType(type))
 		assert self.findSemanticType(type) in\
 			self.subtypes(self.semanticRoot).union(set([self.semanticRoot]))
 		assert self.checkNewCaseframe(type, slots)

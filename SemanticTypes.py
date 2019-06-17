@@ -25,10 +25,10 @@ class Entity:
 
 class Proposition(Entity):
 	"""an entity who can be believed and whose negation can be believed"""
-	def __init__(self, support_set=set(), supported_nodes=set()):
+	def __init__(self, support_set=None, supported_nodes=None):
 		Entity.__init__(self)
-		self.support_set = support_set
-		self.supported_nodes = supported_nodes
+		self.support_set = set() if support_set is None else support_set
+		self.supported_nodes = set() if supported_nodes is None else supported_nodes
 
 class Act(Entity):
 	"""an Entity that can be performed"""
