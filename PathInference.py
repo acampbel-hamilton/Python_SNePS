@@ -94,3 +94,35 @@ class PathInference:
 		"""returns False if the argument is not a path keyword"""
 		return word in ["or", "and", "compose", "kstar", "kplus", "not",
 		"relative-complement", "irreflexive-restrict", "restrict", "converse"]
+
+	def getFroms(self, nodes, slotname):
+		"""Given a nodeset and slot name,
+		returns all nodes with an arc to 1+ of the input nodes"""
+		retValue = set()
+		for node in nodeset:
+			retValue.update(self.findfrom(node, slotname))
+		return retValue
+
+	def getTos(self, nodeset, slotname):
+		"""Given a nodeset and slot name,
+		returns all nodes with an arc from 1+ of the input nodes"""
+		retValue = set()
+		for node in nodeset:
+			retValue.update(self.findfrom(node, slotname))
+		return retValue
+
+	def pb_findfroms (terms, slot):
+		"""Returns the nodeset pointed to by the given slot/path"""
+		# TODO: add the other cases of pb_findfroms
+		if slot.b_path_fn:
+			(slot.b_path_fn)(terms)
+		else:
+			getFroms(terms, slot)
+
+	# def path_based_derivable (selff, prop, context):
+	# 	if (prop is molecular):   #check how?
+	# 		cf = caseframe of prop
+	# 		dcs = down_cableset of prop
+	# 		ldcs = list of dcs
+	# 		firstTime = True
+	# 		results = set()
