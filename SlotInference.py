@@ -11,13 +11,41 @@ class SlotInference:
 		if isinstance(source, Atom) or isinstance(target, Atom):
 			return None
 		if isinstance(source, Negation) and isinstance(target, Nand):
-			return
+			for arg in self.findto(source, "nor"):
+				if (arg.getClass() == 'Conjunction' and
+					self.findto(arg, "and").issubset(
+					self.findto(targe, "andorargs"))):
+						return target
 		if isinstance(source, Implication) and isinstance(target, Implication):
-			return
+			src_ant = source.down_cableset[0]
+			src_cq  = source.down_cableset[1]
+			tgt_ant = target.down_cableset[0]
+			tgt_cq  = target.down_cableset[1]
+			if src_ant.issubset(tgt_ant) and tgt_cq.issubset(src_cq):
+				return target
 		if isinstance(source, AndOr) and isinstance(target, AndOr):
-			return
+			i = source.min
+			j = source.max
+			src_set = source.down_cableset[0]
+			tgt_set = source.down_cableset[0]
+			k = len(src_set) - len(tgt_set)
+			if (k >= 0 and tgt_set.issubset(src_set) and
+				max(i-k, 0) == target.min and
+				min(j, len(tgt_set)) == target.max) or
+				(src_set.issubset(tgt_set) and i == targett.min
+				and j-k == target.max):
+				return target
 		if isinstance(source, Thresh) and isinstance(target, Thresh):
-			return
+			i = source.min
+			j = source.max
+			src_set = source.down_cableset[0]
+			tgt_set = target.down_cableset[0]
+			k = len(src_set) - len(tgt_set)
+			if (k >= 0 and tgt_set.issubset(src_set) and
+				min(i, len(tgt_set)) == target.min and
+				max(j-k, i) == target.max) or (src_set.issubset(tgt_set) and
+				i-k == target.min and j == target.max):
+				return target
 		if isinstance(source, Negation) and isinstance(target, Negation):
 			if not source is target:
 				srcset = self.findto(source, "nor")
@@ -63,3 +91,24 @@ class SlotInference:
 						 		s is t or self.slotBasedEntails(s, t)),
 							srcset))),
 					tgtset))
+
+	def slot_based_derivable(self, target, context, termstack):
+		"""If the term "target" is entailed in the given context, assert it and
+		return set([target]), else return set(). The termstack is a stack of
+		propositions that this goal is a subgoal of."""
+		for term in target.caseframe.terms:
+			if sb_derivable_test(trm, target, context, termstack):
+				return set(list(target))
+		for cf in target.caseframe.adj_from:
+			for trm in cf.terms:
+				if sb-sb_derivable_test(trm, target, context, termstack):
+					return set(list(target))
+		return set()
+
+	def sb_derivable_test(self, term, target, context, termstack):
+		"""True if: target is slot-based-entailed by term, and if term is
+		asserted in the current context. Else: False"""
+		return (term != target and
+			term not in termstack and
+			self.slotBasedEntails(term, target) and
+			self.askif(term, contec, termstack + [target]))

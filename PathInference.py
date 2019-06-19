@@ -119,10 +119,37 @@ class PathInference:
 		else:
 			getFroms(terms, slot)
 
-	# def path_based_derivable (selff, prop, context):
-	# 	if (prop is molecular):   #check how?
-	# 		cf = caseframe of prop
-	# 		dcs = down_cableset of prop
-	# 		ldcs = list of dcs
-	# 		firstTime = True
-	# 		results = set()
+	def path_based_derivable (selff, prop, context):
+		"""If proposition prop is derivable given context by path-based-inference
+		return set([prop]), else return set([])"""
+		if prop.getClass() = 'Molecular':
+	        cf = prop.caseframe
+	        dcs = prop.down_cableset
+	        firstTime = True
+	        results = set()
+
+	        for slot in dcs:
+            	if firstTime:
+                    results.add(pb_findfroms(dcs[slot], slot)) # TODO: figure out if this pb_findfroms call is good
+                    firstTime = False
+                else:
+                    results = results & pb_findfroms(dcs[slot], slot)
+
+	        results = filter( ... , results)
+	        if results and some(map(lambda result: result.down_cableset == list(dcs), results)): #TODO: Figure out this lambda
+	            return set([prop])
+		return set()
+
+
+
+
+
+
+
+
+
+
+
+
+
+#
