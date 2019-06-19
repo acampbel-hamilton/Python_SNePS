@@ -6,13 +6,19 @@ from Network import *
 from LisParse import parse
 
 import os
+from functools import reduce
 from cmd import Cmd
 
 class UI(Cmd):
 	network = None
+	cmds = ""
+	slot_filler = "\(\w+(\s+\w+)*\)\s*"
+	qstr = "\"(\s*\w+)+\""
+	arg_gen = "\s+\w+\s*"
 
 	def __init__(self, completekey='tab', stdin=None, stdout=None):
 		self.line = ""
+		self.recur = False
 		super().__init__(completekey, stdin, stdout)
 
 	def preloop(self):
@@ -20,6 +26,8 @@ class UI(Cmd):
 		UI.network.initialize()
 
 	def precmd(self, line):
+		self.recur = True
+		line = re.sub('\s+', ' ', line)
 		if line[0] == '(' and line[-1] == ')':
 			self.line = line
 			line = line[1:-1]
@@ -27,17 +35,34 @@ class UI(Cmd):
 			self.line = '(' + line + ')'
 		return line
 
+	def postcmd(self, stop, line):
+		self.recur = False
+
+	def _reval(self, args):
+		"""recursively evaluates the arguments to any do_* method, allowing the
+		only appropriate functions to be used as arguments"""
+		if not UI.cmds:
+			UI.cmds = "|".join(map((lambda s: s[3:]),
+					filter((lambda i: re.match("^do_\w+$", i) is not None),
+					[m for m in dir(self) if callable(getattr(self, m))])))
+		subcmd = re.compile("\(((?P<cmd>{})\s+((?P<sf>{})|(?P<qstr>{})|(?P<arg_gen>{}))+)\)"
+			.format(UI.cmds, UI.slot_filler, UI.qstr, UI.arg_gen))
+		while subcmd.search(args) is not None:
+			args = subcmd.sub((lambda mobj: self.onecmd(mobj.group(1))), args)
+		return args
+
 ################ USER METHODS ################
 
 	def do_build(self, args):
 		"""Builds the specified term and adds it to the network.
 		If an identical object exists, the existing object is returned"""
-		slots = parse(self.line)[0][1:]
-		if not all([len(slot) > 1 for slot in slots]):
-			print("Build command contains an unfilled slot")
-			return
-		rels, fillers = [list(l) for l in zip(*[(slot[0], slot[1:])
-		 										for slot in slots])]
+		args = re.sub('\((\w+)((\s+\w+)+)\)',
+				(lambda mobj: '{0}{1}{0}{2}{0}'
+					.format(chr(0), mobj.group(1), mobj.group(2))),
+				self._reval(args))
+		args = [i.strip() for i in args.split(chr(0)) if i]
+		rels = args[::2]
+		fillers = [i.split() for i in args[1::2]]
 		for r in rels: # slots must be defined
 			if not r in UI.network.slots.keys():
 				print("Error: Use of undefined slot {}".format(r))
@@ -74,10 +99,41 @@ class UI(Cmd):
 				UI.network.terms[n].up_cableset.update(
 				{Sym(rels[i]):(UI.network.terms[n].up_cableset\
 					.get(Sym(rels[i]), []) + [Sym(term.name)])})
+		if self.recur:
+			return Sym("M{}".format(Molecular.counter))
 
 	def do_clear(self, args):
 		""""calls bash clear command"""
 		os.system('clear')
+
+	def do_defContext(self, args):
+		""" defines a new caseframe as specified by arguments in the form:
+			definedContext [name] ([docstring]) ([parents]) ([hyps])"""
+		m = re.match('\s*(?P<name>\w+)' + \
+				'(\s+(?P<docstr>{}))?'.format(UI.qstr) + \
+				'(?(docstr)\s+\((?P<parents>(\s*\w+)+)\s*\)|\s*)' + \
+				'(?(parents)\s+\((?P<hyps>(\s*\w+)+)\s*\)|\s*)',
+			args)
+		if m.group('name'):
+			print(m.group('name'))
+		if m.group('docstr'):
+			print(m.group('docstr'))
+		if m.group('parents'):
+			print(m.group('parents'))
+		if m.group('hyps'):
+			print(m.group('hyps'))
+
+		# if len(par) == 2: #only name provided
+		# 	UI.network.defineContext(par[1])
+		# elif len(par) == 3: #name and docstr specified
+		# 	UI.network.defineContext(par[1], " ".join(par[2]))
+		# elif len(par) == 4: #name, docstr, parents specified
+		# 	UI.network.defineContext(par[1], " ".join(par[2]), set(par[3]))
+		# elif len(par) == 5: #name, docstr, parents, hyps specified
+		# 	UI.network.defineContext(par[1], " ".join(par[2]),
+		# 		set(par[3]), set(par[4]))
+		# else:
+		# 	print("Error: Inappropriate number of arguments to defineContext")
 
 	def do_defineFrame(self, args):
 		"""defines a new caseframe as specified by arguments
@@ -85,11 +141,18 @@ class UI(Cmd):
 		par = parse(self.line)[0]
 		UI.network.defineCaseframe(par[1], par[2], par[3], " ".join(par[4]))
 
-	def do_definePath(self, args):
+	def do_defPath(self, args):
 		"""Defines path rule for path based inference"""
 		par = parse(self.line)[0]
 		UI.network.definePath(par[1], par[2])
 
+	def do_defSlot(self, args): #requires testing
+		"""defines a new slot as specified by arguments in the form :
+			defineSlot [name] [type] ([docstring]) [pos_adj] [neg_adj] [min]
+			[max]"""
+		par = parse(self.line)[0]
+		UI.network.defineSlot(par[1], par[2], " ".join(par[3]), Sym(par[4]),
+			Sym(par[5]), int(par[6]), int(par[7]))
 
 	def do_describe(self, args):
 		"""Prints a representation of the object specified by name"""
@@ -116,16 +179,16 @@ class UI(Cmd):
 
 	def do_list(self, args):
 		"""Lists all instances defined on the network of the given object"""
-		par = parse(self.line)[0][1:]
-		if par == []:
+		args = args.split()[0]
+		if args == []:
 			return
-		if par[0] in ["caseframe", "caseframes"]:
+		if args[0] in ["caseframe", "caseframes"]:
 			UI.network.listCaseframe()
-		elif par[0] in ["context", "contexts"]:
+		elif args[0] in ["context", "contexts"]:
 			UI.network.listContexts()
-		elif par[0] in ["semantic", "semantictype", "semantictypes"]:
+		elif args[0] in ["semantic", "semantictype", "semantictypes"]:
 			UI.network.listSemanticTypes()
-		elif par[0] in ["slot", "slots"]:
+		elif args[0] in ["slot", "slots"]:
 			UI.network.listSlots()
 		else:
 			print("Error: Invalid argument to list")
@@ -138,43 +201,7 @@ class UI(Cmd):
 			print("Python incompatible with limited interpreter")
 
 
-
-
-
-
 if __name__ == "__main__":
 	prompt = UI()
 	prompt.prompt = '[> '
 	prompt.cmdloop("Welcome to the rudimentary UI for PySNePS!")
-
-# print("Welcome to the rudimentary User Interface for PSNePS")
-#
-# cmd = ""
-# net = Network()
-# net.initialize()
-# while not cmd == "exit":
-# 	usrin = input("[> ").strip()
-# 	if not usrin[0] == '(':
-# 		usrin = '(' + usrin + ')'
-# 	par = parse(usrin)
-# 	cmd = par[0][0]
-# 	if cmd == "describe":
-# 		pass
-# 	elif cmd == "dump":
-# 		print(net)
-# 	elif cmd == "list":
-# 		type = par[0][1]
-# 		if type in ["semantic", "semantictype", "semantictypes"]:
-# 			net.listSemanticTypes()
-# 		elif type in ["caseframe", "caseframes"]:
-# 			net.listCaseframe()
-# 		elif type in ["context", "contexts"]:
-# 			net.listContexts()
-# 		elif type in ["slot", "slots"]:
-# 			net.listSlots()
-# 		else:
-# 			print("Invalid list option.")
-# 	print(par)
-#
-#
-# print("Closing User Interface")
