@@ -13,7 +13,7 @@ class UI(Cmd):
 	network = None
 	cmds = ""
 	slot_filler = "\(\w+(\s+\w+)*\)\s*"
-	qstr = "\"(\s*\w+)+\""
+	qstr = "\"(\s*\w+)+\s*\""
 	arg_gen = "\s+\w+\s*"
 
 	def __init__(self, completekey='tab', stdin=None, stdout=None):
@@ -41,7 +41,7 @@ class UI(Cmd):
 	def _reval(self, args):
 		"""recursively evaluates the arguments to any do_* method, allowing the
 		only appropriate functions to be used as arguments"""
-		if not UI.cmds:
+		if not UI.cmds: #create and store the list, instead of computing on call
 			UI.cmds = "|".join(map((lambda s: s[3:]),
 					filter((lambda i: re.match("^do_\w+$", i) is not None),
 					[m for m in dir(self) if callable(getattr(self, m))])))
@@ -108,32 +108,25 @@ class UI(Cmd):
 
 	def do_defContext(self, args):
 		""" defines a new caseframe as specified by arguments in the form:
-			definedContext [name] ([docstring]) ([parents]) ([hyps])"""
-		m = re.match('\s*(?P<name>\w+)' + \
-				'(\s+(?P<docstr>{}))?'.format(UI.qstr) + \
-				'(?(docstr)\s+\((?P<parents>(\s*\w+)+)\s*\)|\s*)' + \
-				'(?(parents)\s+\((?P<hyps>(\s*\w+)+)\s*\)|\s*)',
-			args)
-		if m.group('name'):
-			print(m.group('name'))
-		if m.group('docstr'):
-			print(m.group('docstr'))
-		if m.group('parents'):
-			print(m.group('parents'))
-		if m.group('hyps'):
-			print(m.group('hyps'))
+			definedContext [name] \"[docstring]\" ([parents]) ([hyps])"""
+		m = re.match("^(?P<name>\s*\w+)\s*" + \
+					"(?P<docstr>\"(\s*\w+)+\s*\")?" + \
+					"(?(docstr)\s+\((?P<parents>(\s*\w+)+)\s*\))?" + \
+					"(?(parents)\s+\((?P<hyps>(\s*\w+)+)\s*\)\s*)?$",args)
 
-		# if len(par) == 2: #only name provided
-		# 	UI.network.defineContext(par[1])
-		# elif len(par) == 3: #name and docstr specified
-		# 	UI.network.defineContext(par[1], " ".join(par[2]))
-		# elif len(par) == 4: #name, docstr, parents specified
-		# 	UI.network.defineContext(par[1], " ".join(par[2]), set(par[3]))
-		# elif len(par) == 5: #name, docstr, parents, hyps specified
-		# 	UI.network.defineContext(par[1], " ".join(par[2]),
-		# 		set(par[3]), set(par[4]))
-		# else:
-		# 	print("Error: Inappropriate number of arguments to defineContext")
+		if m is None:
+			print("Error: Inappropriate number of arguments to defineContext")
+		elif m.group('hyps'):
+			UI.network.defineContext(m.group('name'), m.group('docstr'),
+				set(m.group('parents').split()), set(m.group('hyps').split()))
+		elif m.group('parents'):
+			UI.network.defineContext(m.group('name'), m.group('docstr'),
+				set(m.group('parents').split()))
+		elif m.group('docstr'):
+			UI.network.defineContext(m.group('name'), m.group('docstr'))
+		else:
+			UI.network.defineContext(m.group('name'))
+
 
 	def do_defineFrame(self, args):
 		"""defines a new caseframe as specified by arguments
