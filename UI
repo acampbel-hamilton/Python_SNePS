@@ -1,5 +1,10 @@
 #!/usr/local/bin/python3.5
 
+
+#### Note: str and repr methods should be rewritten to provide a more
+####		informative and asceticaly pleasing representation of the
+####		appropriate object
+
 import re
 from Symbol import *
 from Network import *
@@ -38,7 +43,7 @@ class UI(Cmd):
 	def postcmd(self, stop, line):
 		self.recur = False
 
-	def _reval(self, args):
+	def _reval(self, args): #this can change the network even if an error occurs
 		"""recursively evaluates the arguments to any do_* method, allowing the
 		only appropriate functions to be used as arguments"""
 		if not UI.cmds: #create and store the list, instead of computing on call
@@ -60,7 +65,7 @@ class UI(Cmd):
 				(lambda mobj: '{0}{1}{0}{2}{0}'
 					.format(chr(0), mobj.group(1), mobj.group(2))),
 				self._reval(args))
-		args = [i.strip() for i in args.split(chr(0)) if i]
+		args = [i.strip() for i in args.split(chr(0))if i.strip() != '']
 		rels = args[::2]
 		fillers = [i.split() for i in args[1::2]]
 		for r in rels: # slots must be defined
@@ -99,6 +104,7 @@ class UI(Cmd):
 				UI.network.terms[n].up_cableset.update(
 				{Sym(rels[i]):(UI.network.terms[n].up_cableset\
 					.get(Sym(rels[i]), []) + [Sym(term.name)])})
+		print("M{}".format(Molecular.counter))
 		if self.recur:
 			return Sym("M{}".format(Molecular.counter))
 
@@ -110,7 +116,7 @@ class UI(Cmd):
 		""" defines a new caseframe as specified by arguments in the form:
 			definedContext [name] \"[docstring]\" ([parents]) ([hyps])"""
 		m = re.match("^(?P<name>\s*\w+)\s*" + \
-					"(?P<docstr>\"(\s*\w+)+\s*\")?" + \
+					"(?P<docstr>{})?".format(UI.qstr) + \
 					"(?(docstr)\s+\((?P<parents>(\s*\w+)+)\s*\))?" + \
 					"(?(parents)\s+\((?P<hyps>(\s*\w+)+)\s*\)\s*)?$",args)
 
@@ -127,12 +133,21 @@ class UI(Cmd):
 		else:
 			UI.network.defineContext(m.group('name'))
 
-
-	def do_defineFrame(self, args):
+	def do_defFrame(self, args):
 		"""defines a new caseframe as specified by arguments
-		in the form: defineFrame [name] [semantic type] ([slots]) ([docstring])"""
-		par = parse(self.line)[0]
-		UI.network.defineCaseframe(par[1], par[2], par[3], " ".join(par[4]))
+		in the form: defineFrame [name] [semantic type] ([slots]) \"[docstring]\'"""
+		args = re.match("^\s*(?P<name>\w+)\s+" +\
+						"(?P<semtype>\w+)\s+" +\
+						"\((?P<slots>(\s*\w+)+)\)\s+" +\
+						"(?P<docstr>{})?$".format(UI.qstr)
+				, args)
+		if args is not None:
+			UI.network.defineCaseframe(args.group('name'),
+										args.group('semtype'),
+										args.group('slots').split(),
+										args.group('docstr'))
+		else:
+			print("Invalid arguments to defFrame")
 
 	def do_defPath(self, args):
 		"""Defines path rule for path based inference"""
@@ -141,11 +156,37 @@ class UI(Cmd):
 
 	def do_defSlot(self, args): #requires testing
 		"""defines a new slot as specified by arguments in the form :
-			defineSlot [name] [type] ([docstring]) [pos_adj] [neg_adj] [min]
+			defineSlot [name] [type] \"[docstring]\" [pos_adj] [neg_adj] [min]
 			[max]"""
-		par = parse(self.line)[0]
-		UI.network.defineSlot(par[1], par[2], " ".join(par[3]), Sym(par[4]),
-			Sym(par[5]), int(par[6]), int(par[7]))
+		args = re.match("^\s*(?P<name>\w+)" +\
+						"\s+(?P<semtype>\w+)" +\
+						"\s+(?P<docstr>{})".format(UI.qstr) +\
+						"\s*(?(docstr)(?P<posadj>(reduce|expand|none)))?" +\
+						"\s*(?(posadj)(?P<negadj>(reduce|expand|none)))?" +\
+						"\s*(?(negadj)(?P<min>\d+))?" +\
+						"\s*(?(min)(?P<max>\d+))?"
+						, args)
+
+		if args is None:
+			print("Invalid arguments to defSlot")
+		elif args.group('max'):
+			UI.network.defineSlot(args.group('name'), args.group('semtype'),
+				args.group('docstr'), args.group('posadj'), args.group('negadj')
+				, int(args.group('min')), int(args.group('max')))
+		elif args.group('min'):
+			UI.network.defineSlot(args.group('name'), args.group('semtype'),
+				args.group('docstr'), args.group('posadj'), args.group('negadj')
+				, int(args.group('min')))
+		elif args.group('negadj'):
+			UI.network.defineSlot(args.group('name'), args.group('semtype'),
+				args.group('docstr'), args.group('posadj'), args.group('negadj'))
+		elif args.group('posadj'):
+			UI.network.defineSlot(args.group('name'), args.group('semtype'),
+				args.group('docstr'), args.group('posadj'))
+		else:
+			UI.network.defineSlot(args.group('name'), args.group('semtype'),
+				args.group('docstr'))
+
 
 	def do_describe(self, args):
 		"""Prints a representation of the object specified by name"""
@@ -175,13 +216,13 @@ class UI(Cmd):
 		args = args.split()[0]
 		if args == []:
 			return
-		if args[0] in ["caseframe", "caseframes"]:
+		if args in ["caseframe", "caseframes"]:
 			UI.network.listCaseframe()
-		elif args[0] in ["context", "contexts"]:
+		elif args in ["context", "contexts"]:
 			UI.network.listContexts()
-		elif args[0] in ["semantic", "semantictype", "semantictypes"]:
+		elif args in ["semantic", "semantictype", "semantictypes"]:
 			UI.network.listSemanticTypes()
-		elif args[0] in ["slot", "slots"]:
+		elif args in ["slot", "slots"]:
 			UI.network.listSlots()
 		else:
 			print("Error: Invalid argument to list")

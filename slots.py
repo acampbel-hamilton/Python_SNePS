@@ -27,7 +27,7 @@ class Slot_Mixin:
 	def findSlot(self, slot):
 		if isinstance(slot, Slot):
 			return slot
-		if Sym(slot) in self.slots.keys():
+		if isinstance(slot, str) and Sym(slot) in self.slots.keys():
 			return self.slots[Sym(slot)]
 		raise TypeError("Inappropriate type passed to findSlot function.")
 

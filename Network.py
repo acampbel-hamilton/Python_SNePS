@@ -7,11 +7,11 @@ from caseframe import *
 from contexts import *
 from SemanticTypes import *
 from SyntacticTypes import *
-from SlotInference import *
-from PathInference import * #add this back once the file is finished being written
+# from SlotInference import *
+# from PathInference import * #add this back once the file is finished being written
 from Find import *
 
-class Network(Context_Mixin, SlotInference, CaseFrame_Mixin, Slot_Mixin, Find, PathInference):
+class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find):
 	def __init__(self):
 		self.terms = {} #maps term names to term objs
 
@@ -197,10 +197,13 @@ class Network(Context_Mixin, SlotInference, CaseFrame_Mixin, Slot_Mixin, Find, P
 		assert getattr(sys.modules[__name__], type) in\
 			(self.subtypes(self.semanticRoot).union(set([self.semanticRoot])))
 		assert isinstance(docstring, str)
-		assert pos_adj in self._adjustments
-		assert neg_adj in self._adjustments
+		pos_adj, neg_adj = Sym(pos_adj), Sym(neg_adj)
+		assert pos_adj is _reduce or pos_adj is _expand or pos_adj is _none
+		assert neg_adj is _reduce or neg_adj is _expand or neg_adj is _none
 		assert isinstance(min, int)
 		assert isinstance(max, int) or max is None
+
+		#insert check for duplicate slot
 
 		self.slots[Sym(name)] = Slot(Sym(name), type, docstring, pos_adj, neg_adj, min, max, path)
 		return self.slots[Sym(name)]
