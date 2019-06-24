@@ -11,13 +11,10 @@ class PathInference:
 		"""Given a slot name and a path expression, generate the functions that
 		will compute that path and its converse, and store them in the slot."""
 		aslot = self.findSlot(slotname)
-		print(pathexpr)
-		aslot.path = pathexpr
-		# aslot.b_path_fn = self.buildPathFn(self.converse(pathexpr))
-		aslot.f_path_fn = self.buildPathFn(pathexpr)
 
-		# print(aslot.b_path_fn)
-		# print(aslot.f_path_fn)
+		aslot.path = pathexpr
+		aslot.b_path_fn = self.buildPathFn(self.converse(pathexpr))
+		aslot.f_path_fn = self.buildPathFn(pathexpr)
 
 	def buildPathFn(self, path):
 		"""Given a path expression, returns the function that will traverse that path"""
