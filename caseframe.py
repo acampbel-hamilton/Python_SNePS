@@ -10,7 +10,7 @@ class CaseFrame:
 		self.name = Sym(name)
 		self.type = type #must be either obj or class itself
 		self.docstring = docstring
-		self.slots = [] if slots is None else slots
+		self.slots = [] if slots is None else slots #list of slot names
 		self.adj_to = set() if adj_to is None else adj_to
 		self.adj_from = set() if adj_from is None else adj_from
 		self.terms = set() if terms is None else terms #set of term names

@@ -61,52 +61,19 @@ class UI(Cmd):
 	def do_build(self, args):
 		"""Builds the specified term and adds it to the network.
 		If an identical object exists, the existing object is returned"""
-		args = re.sub('\((\w+)((\s+\w+)+)\)',
-				(lambda mobj: '{0}{1}{0}{2}{0}'
-					.format(chr(0), mobj.group(1), mobj.group(2))),
-				self._reval(args))
-		args = [i.strip() for i in args.split(chr(0))if i.strip() != '']
-		rels = args[::2]
-		fillers = [i.split() for i in args[1::2]]
-		for r in rels: # slots must be defined
-			if not r in UI.network.slots.keys():
-				print("Error: Use of undefined slot {}".format(r))
-				return
-		if not len(rels) == len(set(rels)): #slots must be unique
-			print("Error: Repeated slot")
-			return
-		cf = None
-		for c in UI.network.caseframes.values():
-			if set(c.slots) == set(rels):
-				cf = c
-				break
-		if cf is None: #specified slots correspond to an existing caseframe
-			print("Error: No caseframe with given slots <{}> is defined"
-				.format(str(rels)[1:-1]))
-			return
-		#if undefined terms are used, define them
-		for n in [i for sl in fillers for i in sl]:
-			if not n in UI.network.terms.keys():
-				UI.network.terms[Sym(n)] = Term(n)
-		for term in UI.network.terms.values(): #no identical term exists
-			if isinstance(term, Molecular) and term.caseframe == cf and\
-				[sorted(sl) for sl in sorted(fillers)] ==\
-				 [sorted(sl) for sl in sorted(term.down_cableset.values())]:
-				 print("Identical Term <{}>".format(repr(term)))
-				 return
-		Molecular.counter += 1
-		term  = Molecular(Sym("M{}".format(Molecular.counter)), cf,
-					down_cableset=dict(zip(rels, fillers)))
-		UI.network.terms[Sym(term.name)] = term
-		cf.terms.add(Sym(term.name))
-		for i in range(len(rels)):
-			for n in fillers[i]:
-				UI.network.terms[n].up_cableset.update(
-				{Sym(rels[i]):(UI.network.terms[n].up_cableset\
-					.get(Sym(rels[i]), []) + [Sym(term.name)])})
-		print("M{}".format(Molecular.counter))
-		if self.recur:
-			return Sym("M{}".format(Molecular.counter))
+		# rel = '(?:' + '|'.join(UI.network.slots.keys()) + ')'
+		frames = '(?:' + '|'.join(UI.network.caseframes.keys()) + ')'
+		filler = '(?:\w+|\((?:\s*\w+)+\s*\))'
+		# prim = re.findall('\s*({})\s+({})'.format(rel, filler), args)
+		case = re.findall('\s*\(\s*({})\s+((?:\s*{})+)\s*\)'.format(frames, filler), args)
+		if case:
+			for param in case:
+				print(UI.network.casebuild(*param).name)
+		# elif prim:
+		# 	print(UI.network.primbuild(*zip(*prim)).name)
+		else:
+			print('Error: Improperly formatted build command')
+
 
 	def do_clear(self, args):
 		""""calls bash clear command"""
