@@ -117,7 +117,6 @@ class UI(Cmd):
 		if m is None:
 			print("Error: incorrect format for defPath command")
 			return
-		print(m.group('path'))
 		path = []
 		lst = path
 		word = ''
@@ -127,8 +126,9 @@ class UI(Cmd):
 				lst.append(word)
 				word = ''
 			elif c == '(':
-				lst.append(word)
-				word = ''
+				if word:
+					lst.append(word)
+					word = ''
 				lst.append([])
 				lst = lst[-1]
 				count += 1
@@ -140,7 +140,7 @@ class UI(Cmd):
 				count -= 1
 			else:
 				word += c
-		print(path)
+		UI.network.definePath(m[1], path)
 
 	def do_defSlot(self, args): #requires testing
 		"""defines a new slot as specified by arguments in the form :
