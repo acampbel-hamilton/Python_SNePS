@@ -11,10 +11,13 @@ class PathInference:
 		"""Given a slot name and a path expression, generate the functions that
 		will compute that path and its converse, and store them in the slot."""
 		aslot = self.findSlot(slotname)
-
+		print(pathexpr)
 		aslot.path = pathexpr
-		aslot.b_path_fn = self.buildPathFn(self.converse(pathexpr))
+		# aslot.b_path_fn = self.buildPathFn(self.converse(pathexpr))
 		aslot.f_path_fn = self.buildPathFn(pathexpr)
+
+		# print(aslot.b_path_fn)
+		# print(aslot.f_path_fn)
 
 	def buildPathFn(self, path):
 		"""Given a path expression, returns the function that will traverse that path"""
@@ -47,6 +50,7 @@ class PathInference:
 		else:
 			# If a backwards slot: getFroms of the forward version of the slot
 			if len(path) > 0 and path[-1] == "-":
+				# print(path)
 				return "(lambda x: self.getFroms(x, {}))".format(path[:-1])
 			# Else, is a forward slot: getTos of the slot
 			return "(lambda x: self.getTos(x, {}))".format(path)
@@ -80,7 +84,6 @@ class PathInference:
 
 	def converse(self, path):
 		"""Given a path expression, returns its converse"""
-
 		if self.isPathKeyword(path[0]):
 			return [path[0]] + list(reversed(list(map(lambda elt: self.converse(elt), path[1:]))))
 		elif path == "!":
@@ -119,26 +122,45 @@ class PathInference:
 		else:
 			getFroms(terms, slot)
 
-	def path_based_derivable (selff, prop, context):
+	def path_based_derivable (self, prop, context):
 		"""If proposition prop is derivable given context by path-based-inference
 		return set([prop]), else return set([])"""
-		if prop.getClass() = 'Molecular':
-	        cf = prop.caseframe
-	        dcs = prop.down_cableset
-	        firstTime = True
-	        results = set()
+		if prop.type_name == 'Molecular':
+			cf = prop.caseframe
+			dcs = prop.down_cableset
+			firstTime = True
+			results = set()
 
-	        for slot in dcs:
-            	if firstTime:
-                    results.add(pb_findfroms(dcs[slot], slot)) # TODO: figure out if this pb_findfroms call is good
-                    firstTime = False
-                else:
-                    results = results & pb_findfroms(dcs[slot], slot)
+			for slot in dcs:
+				if firstTime:
+					results.add(pb_findfroms(dcs[slot], slot))
+					# TODO: figure out if this pb_findfroms call is good
+					firstTime = False
+				else:
+					results = results & pb_findfroms(dcs[slot], slot)
 
-	        results = filter( ... , results)
-	        if results and some(map(lambda result: result.down_cableset == list(dcs), results)): #TODO: Figure out this lambda
-	            return set([prop])
+			results = filter(lambda term: self.assertedProp(term, context), results)
+			if results and some(map(lambda result: result.down_cableset == list(dcs), results)):
+				#TODO: Figure out this^^ lambda
+				return set([prop])
 		return set()
+
+	# If we make an assert file, move this there.
+	def assertedProp (self, prop, context=None):
+		"""Returns first context that the proposition is asserted in, else None"""
+		# TODO: the lisp implementation used "resource-value" and "build",
+		# which I didn't understand/seemed overly complicated. Not sure if this works:
+		if not(context):
+			context = self.currentContext
+		if prop.type_name == 'Proposition':
+			for ctxt in ([context] + context.parents):
+				if prop in (ctxt.hyps + ctxt.ders):
+					return ctxt
+		return None
+
+
+
+
 
 
 
