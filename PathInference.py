@@ -137,8 +137,7 @@ class PathInference:
 					results = results & pb_findfroms(dcs[slot], slot)
 
 			results = filter(lambda term: self.assertedProp(term, context), results)
-			if results and some(map(lambda result: result.down_cableset == list(dcs), results)):
-				#TODO: Figure out this^^ lambda
+			if results and some(map(lambda result: self.eqfillersets(result.down_cableset, dcs), results)):
 				return set([prop])
 		return set()
 
@@ -155,6 +154,14 @@ class PathInference:
 					return ctxt
 		return None
 
+	def eqfillersets (self, set1, set2):
+		"""True if corresponding elements of sets are non-sets or same size"""
+		for i in range(len(set1)):
+			if isinstance(set1[i], set) and isinstance(set2[i], set) and len(set[i]) != len(set[i]):
+				return False
+			elif isinstance(set1[i], set) or isinstance(set2[i], set):
+				return False
+		return True
 
 
 
