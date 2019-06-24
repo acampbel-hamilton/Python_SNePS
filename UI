@@ -8,7 +8,6 @@
 import re
 from Symbol import *
 from Network import *
-from LisParse import parse
 
 import os
 from functools import reduce
@@ -22,7 +21,6 @@ class UI(Cmd):
 	arg_gen = "\s+\w+\s*"
 
 	def __init__(self, completekey='tab', stdin=None, stdout=None):
-		self.line = ""
 		self.recur = False
 		super().__init__(completekey, stdin, stdout)
 
@@ -33,11 +31,6 @@ class UI(Cmd):
 	def precmd(self, line):
 		self.recur = True
 		line = re.sub('\s+', ' ', line)
-		if line[0] == '(' and line[-1] == ')':
-			self.line = line
-			line = line[1:-1]
-		else:
-			self.line = '(' + line + ')'
 		return line
 
 	def postcmd(self, stop, line):
@@ -118,8 +111,36 @@ class UI(Cmd):
 
 	def do_defPath(self, args):
 		"""Defines path rule for path based inference"""
-		par = parse(self.line)[0]
-		UI.network.definePath(par[1], par[2])
+		m = re.match('^\s*(?P<slot>{})\s+(?P<path>.*)$'
+						.format('|'.join(UI.network.slots.keys())),
+					args)
+		if m is None:
+			print("Error: incorrect format for defPath command")
+			return
+		print(m.group('path'))
+		path = []
+		lst = path
+		word = ''
+		count = 0
+		for c in m.group('path'):
+			if c in [' ', '\t']:
+				lst.append(word)
+				word = ''
+			elif c == '(':
+				lst.append(word)
+				word = ''
+				lst.append([])
+				lst = lst[-1]
+				count += 1
+			elif c == ')':
+				if word:
+					lst.append(word)
+					word = ''
+				lst = eval('path' + '[-1]'*count)
+				count -= 1
+			else:
+				word += c
+		print(path)
 
 	def do_defSlot(self, args): #requires testing
 		"""defines a new slot as specified by arguments in the form :
