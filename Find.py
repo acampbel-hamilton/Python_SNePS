@@ -42,3 +42,12 @@ class Find:
 		assert isinstance(r, str)
 		assert isinstance(m, Term)
 		return set(map((lambda k: self.terms[k]), set(m.up_cableset.get(r))))
+
+	def eqfillersets (self, set1, set2):
+		"""True if corresponding elements of sets are non-sets or same size"""
+		for i in range(len(set1)):
+			if isinstance(set1[i], set) and isinstance(set2[i], set) and len(set[i]) != len(set[i]):
+				return False
+			elif isinstance(set1[i], set) or isinstance(set2[i], set):
+				return False
+		return True

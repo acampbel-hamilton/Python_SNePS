@@ -15,6 +15,8 @@ class PathInference:
 		aslot.path = pathexpr
 		aslot.b_path_fn = self.buildPathFn(self.converse(pathexpr))
 		aslot.f_path_fn = self.buildPathFn(pathexpr)
+		print (aslot.b_path_fn)
+		print (aslot.f_path_fn)
 
 	def buildPathFn(self, path):
 		"""Given a path expression, returns the function that will traverse that path"""
@@ -141,7 +143,7 @@ class PathInference:
 				return set([prop])
 		return set()
 
-	# If we make an assert file, move this there.
+	# If we make an "assert" file, move this there.
 	def assertedProp (self, prop, context=None):
 		"""Returns first context that the proposition is asserted in, else None"""
 		# TODO: the lisp implementation used "resource-value" and "build",
@@ -154,14 +156,16 @@ class PathInference:
 					return ctxt
 		return None
 
-	def eqfillersets (self, set1, set2):
-		"""True if corresponding elements of sets are non-sets or same size"""
-		for i in range(len(set1)):
-			if isinstance(set1[i], set) and isinstance(set2[i], set) and len(set[i]) != len(set[i]):
-				return False
-			elif isinstance(set1[i], set) or isinstance(set2[i], set):
-				return False
-		return True
+	# Move to an "ask" file, if one is created
+	def askif(self, prop, context, termstack):
+		""" If prop is derivable in the context, return set([prop]), else set().
+		Termstack is a stack of propositions that this goal is a subset of. """
+		if self.assertedProp(prop, context):
+			return set([prop])
+		#TODO: update this when natural-deducation, slot-based, sort-based are done
+		return self.path_based_derivable(prop, context)
+
+
 
 
 
