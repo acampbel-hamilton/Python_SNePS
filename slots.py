@@ -33,4 +33,4 @@ class Slot_Mixin:
 
 	def listSlots(self):
 		"""prints all slots for the user"""
-		print(*self.slots.keys(), sep="\n")
+		print(*sorted(self.slots.keys()), sep="\n")

@@ -9,8 +9,8 @@ class Term:
 		self.name = name
 		self.up_cableset = {} if up_cableset is None else up_cableset #maps slot names to sets of term names
 
-#consider replacing the following 3 functions with a dictionary which
-#traces the entirety of the inheritance hierarchy for the syntactic types
+	#consider replacing the following 3 functions with a dictionary which
+	#traces the entirety of the inheritance hierarchy for the syntactic types
 	def _classStrip(self, s):
 		r = re.compile('(\()?\<class\s*\'SyntacticTypes\.' + \
 		'(?P<C>[A-Z][A-z]*)\'\>(,\))?')
@@ -27,7 +27,7 @@ class Term:
 	def __repr__(self):
 		return "<{} {}: {}>".format(self.getClass(), self.name, hex(id(self)))
 
-#this should be updated to a more through representation of the object
+	#this should be updated to a more through representation of the object
 	def __str__(self):
 		s = ""
 		for k,v in sorted(self.__dict__.items())[:-1]:
@@ -53,7 +53,7 @@ class Variable(Atom):
 
 class Indefinite(Variable):
 	"""an indefinite object"""
-	ind_counter = 0
+	counter = 0
 	def __init__(self, name, up_cableset=None,
 	 restriction_set=set(), var_label=None, dependencies=set()):
 		Variable.__init__(self, name, up_cableset, restriction_set, var_label)
@@ -61,7 +61,7 @@ class Indefinite(Variable):
 
 class Arbitrary(Variable):
 	"""an arbitaray individual"""
-	arb_counter = 0
+	counter = 0
 
 class Molecular(Term):
 	counter = 0
@@ -92,14 +92,11 @@ class Xor(AndOr):
 class Nand(AndOr):
 	"""the negation of the conjunction of some proposition(s)"""
 
-
 class Thresh(Param2Op):
 	"""the thresh of some proposition(s)"""
 
-
 class Equivalence(Thresh):
 	"""an equivalence proposition"""
-
 
 class NumericalEntailment(Molecular):
 	"""a numerical entailment"""
@@ -110,23 +107,18 @@ class NumericalEntailment(Molecular):
 class OrEntailment(NumericalEntailment):
 	"""the consequents are implied by any antecedent"""
 
-
 class Implication(NumericalEntailment):
 	"""a conditional propostion"""
-
 
 class Categorization(Molecular):
 	"""a proposition stating that some Entities
 	are instances of some Categories"""
 
-
 class NegationByFailure(Molecular):
 	"""the generalized thnor of some proposition(s)"""
 
-
 class Conjunction(Molecular):
 	"""the conjunction of some propositions"""
-
 
 class Negation(Molecular):
 	"""the generalized nor of some proposition(s)"""

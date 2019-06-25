@@ -120,7 +120,7 @@ class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find):
 
 	def listSemanticTypes(self):
 		"""Prints all semantic types for the user"""
-		print(*([cls.__name__ for cls in self.semanticRoot.__subclasses__()] +
+		print(*sorted([cls.__name__ for cls in self.semanticRoot.__subclasses__()] +
 		 			[self.semanticRoot.__name__]), sep='\n')
 
 	def findSemanticType(self, typeName):
@@ -132,9 +132,10 @@ class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find):
 
 	def assertedMembers(self, terms, ctx):
 		"""returns all and only the asserted members of the given set of terms"""
-		assert isinstance(terms, set)
-		assert all(map((lambda t: isinstance(t, self.syntaticRoot)), terms))
-		assert isinstance(ctx, Context)
+		assert isinstance(terms, set), 'The given terms must be a set object'
+		assert all(map((lambda t: isinstance(t, self.syntaticRoot)), terms)),\
+				"Every term in the given set must be an instantiation of a term object"
+		assert isinstance(ctx, Context), "the given context is a context"
 
 		return list(filter((lambda t: t in ctx), terms))
 
@@ -159,10 +160,12 @@ class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find):
 		assert isinstance(docstring, str)
 		assert isinstance(parents, set)
 		#parents is a set of strings denoting the names of contexts
-		assert all(map((lambda c: c in self.contexts.keys()), parents))
+		assert all(map((lambda c: c in self.contexts.keys()), parents)),\
+				"A proposed parent is not a context"
 		assert isinstance(hyps, set)
 		#hyps is a set of strings denoting the names of terms
-		assert all(map((lambda t: t in self.terms.keys()), hyps))
+		assert all(map((lambda t: t in self.terms.keys()), hyps)),\
+				"A proposed hypothesis does not exist"
 
 		self.contexts[Sym(name)] = Context(Sym(name), docstring=docstring,
 								parents=set(map((lambda n: self.contexts[n]), parents)),
@@ -195,11 +198,14 @@ class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find):
 		"""Defines a slot"""
 		assert isinstance(name, str)
 		assert getattr(sys.modules[__name__], type) in\
-			(self.subtypes(self.semanticRoot).union(set([self.semanticRoot])))
+			(self.subtypes(self.semanticRoot).union(set([self.semanticRoot]))),\
+			"The specified type must exist"
 		assert isinstance(docstring, str)
 		pos_adj, neg_adj = Sym(pos_adj), Sym(neg_adj)
-		assert pos_adj is _reduce or pos_adj is _expand or pos_adj is _none
-		assert neg_adj is _reduce or neg_adj is _expand or neg_adj is _none
+		assert pos_adj is _reduce or pos_adj is _expand or pos_adj is _none,\
+				"positive adjust must be \"reduce\", \"expand\", or \"none\""
+		assert neg_adj is _reduce or neg_adj is _expand or neg_adj is _none,\
+				"negative adjust must be \"reduce\", \"expand\", or \"none\""
 		assert isinstance(min, int)
 		assert isinstance(max, int) or max is None
 
@@ -214,7 +220,7 @@ class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find):
 	def build(self, caseframe, fillers, SynType=Molecular, uassert=False):
 		"""build a molecular node based on the given caseframe
 		 and list of fillers"""
-		assert isinstance(caseframe, CaseFrame)
+		assert isinstance(caseframe, CaseFrame), "Given caseframe must exist"
 		assert isinstance(fillers, list) #fillers should be a list of lists of strings
 		assert all([isinstance(s, str) for s in [i for sl in fillers for i in sl]])
 
@@ -226,8 +232,7 @@ class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find):
 			if isinstance(term, Molecular) and term.caseframe == caseframe and \
 				[sorted(sl) for sl in sorted(term.down_cableset.values())] == \
 				[sorted(sl) for sl in sorted(fillers)]:
-				print("Identical term {} already exists".format(term.name))
-				return
+				raise AssertionError("Identical term {} already exists".format(term.name))
 
 		Molecular.counter += 1
 		term = SynType(Sym("M{}").format(Molecular.counter), caseframe,
@@ -260,14 +265,14 @@ class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find):
 				break
 		for r in rfdict.keys():
 			if not r in self.slots.keys():
-				print("Error: Use of undefined slot {}".format(r))
+				raise AssertionError("Use of undefined slot {}".format(r))
 		cf = None
 		for c in self.caseframes.values:
 			if set(c.slots) == set(rfdict.keys()):
 				cf = c
 				break
 		if cf is None:
-			print('Error: No caseframe with given slots <{}> is defined'
+			raise AssertionError('No caseframe with given slots <{}> is defined'
 					.format(str(rfdict.keys())[1:-1]))
 			return
 		return self.build(cf, [rfdict[r] for r in cf.slots])
@@ -290,7 +295,6 @@ class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find):
 				lst += [m.group('mult').split()]
 			fillers = fillers[len(m.group(0)):]
 		if not len(self.caseframes[casename].slots) == len(lst):
-			print("Error: Insufficient fillers for the given caseframe {}"
+			raise AssertionError("Insufficient fillers for the given caseframe {}"
 				.format(casename))
-			return
 		return self.build(self.caseframes[casename], lst)

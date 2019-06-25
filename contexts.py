@@ -54,7 +54,7 @@ class Context_Mixin:
 
 	def listContexts(self):
 		"""prints list of all context names"""
-		print(*self.contexts.keys(), sep="\n")
+		print(*sorted(self.contexts.keys()), sep="\n")
 
 	#this should be reviewed to ensure this has been properly understood and implemented
 	def addToContext(self, mol, ctx):

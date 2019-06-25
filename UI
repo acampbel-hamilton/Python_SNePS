@@ -49,10 +49,20 @@ class UI(Cmd):
 			args = subcmd.sub((lambda mobj: self.onecmd(mobj.group(1))), args)
 		return args
 
+	def netcall(self, func, args):
+		"""calls the given function func on args where func is defined on
+		the network class and handles appropriate errors"""
+		result = None
+		try:
+			result = eval('UI.network.{}(*{})'.format(func, args))
+		except AssertionError as AE:
+			print(AE)
+		return result
+
 ################ USER METHODS ################
 
 	def do_build(self, args):
-		"""Builds the specified term and adds it to the network.
+		"""Builds the specified molecular term and adds it to the network.
 		If an identical object exists, the existing object is returned"""
 		# rel = '(?:' + '|'.join(UI.network.slots.keys()) + ')'
 		frames = '(?:' + '|'.join(UI.network.caseframes.keys()) + ')'
@@ -61,12 +71,14 @@ class UI(Cmd):
 		case = re.findall('\s*\(\s*({})\s+((?:\s*{})+)\s*\)'.format(frames, filler), args)
 		if case:
 			for param in case:
-				print(UI.network.casebuild(*param).name)
+				term = self.netcall('casebuild', param)
+				if term is None:
+					return
+				print(term.name)
 		# elif prim:
 		# 	print(UI.network.primbuild(*zip(*prim)).name)
 		else:
 			print('Error: Improperly formatted build command')
-
 
 	def do_clear(self, args):
 		""""calls bash clear command"""
@@ -79,19 +91,21 @@ class UI(Cmd):
 					"(?P<docstr>{})?".format(UI.qstr) + \
 					"(?(docstr)\s+\((?P<parents>(\s*\w+)+)\s*\))?" + \
 					"(?(parents)\s+\((?P<hyps>(\s*\w+)+)\s*\)\s*)?$",args)
-
+		param = [m.group('name'), m.group('docstr'),
+				set(m.group('parents').split()), set(m.group('hyps').split())]
+		count = None
 		if m is None:
-			print("Error: Inappropriate number of arguments to defineContext")
+			print("Inappropriate number of arguments to defineContext")
+			return
 		elif m.group('hyps'):
-			UI.network.defineContext(m.group('name'), m.group('docstr'),
-				set(m.group('parents').split()), set(m.group('hyps').split()))
+			count = 4
 		elif m.group('parents'):
-			UI.network.defineContext(m.group('name'), m.group('docstr'),
-				set(m.group('parents').split()))
+			count
 		elif m.group('docstr'):
-			UI.network.defineContext(m.group('name'), m.group('docstr'))
+			count = 2
 		else:
-			UI.network.defineContext(m.group('name'))
+			count = 1
+		self.netcall('defineContext', param[:count])
 
 	def do_defFrame(self, args):
 		"""defines a new caseframe as specified by arguments
@@ -142,7 +156,7 @@ class UI(Cmd):
 				word += c
 		UI.network.definePath(m[1], path)
 
-	def do_defSlot(self, args): #requires testing
+	def do_defSlot(self, args):
 		"""defines a new slot as specified by arguments in the form :
 			defineSlot [name] [type] \"[docstring]\" [pos_adj] [neg_adj] [min]
 			[max]"""
@@ -174,7 +188,6 @@ class UI(Cmd):
 		else:
 			UI.network.defineSlot(args.group('name'), args.group('semtype'),
 				args.group('docstr'))
-
 
 	def do_describe(self, args):
 		"""Prints a representation of the object specified by name"""
@@ -221,6 +234,7 @@ class UI(Cmd):
 			print(eval(s))
 		except:
 			print("Python incompatible with limited interpreter")
+
 
 
 if __name__ == "__main__":
