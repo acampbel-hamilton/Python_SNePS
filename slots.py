@@ -20,8 +20,8 @@ class Slot:
 		return "<Slot {} id: {}>".format(self.name, hex(id(self)))
 
 	def __str__(self):
-		return "<{}, {}, pos: {}, neg: {}, min: {}>\nDesc: {}".format(self.name, self.type,
-		 		self.pos_adj, self.neg_adj, self.min, self.docstring)
+		return "<{}, {}, pos: {}, neg: {}, min: {}>\nDesc: {}\nForward: {}\nBackward: {}".format(self.name, self.type,
+		 		self.pos_adj, self.neg_adj, self.min, self.docstring, self.f_path_fn, self.b_path_fn)
 
 class Slot_Mixin:
 	def findSlot(self, slot):

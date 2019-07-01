@@ -80,6 +80,8 @@ class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find):
 				neg_adj=_reduce)
 		#equiv slot is missing a path init from initialize.cl
 		self.defineSlot("equiv", docstring="All fillers are coreferential", neg_adj=_reduce)
+		self.defineSlot("subclass", docstring="Points to a class that is a subclass", neg_adj=_reduce)
+		self.defineSlot("superclass", docstring="Points to a class that is a superclass", neg_adj=_reduce)
 
 	## Slots for Rules
 		self.defineSlot("and", type="Proposition",
@@ -117,6 +119,8 @@ class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find):
 		self.defineCaseframe("thresh", "Proposition", ["threshargs"])
 		self.defineCaseframe("if", "Proposition", ["ant", "cq"],
 							"if [ant] then [cq]")
+		self.defineCaseframe("are", "Proposition", ["subclass", "superclass"],
+							docstring="[subclass]s are [superclass]s")
 
 	def listSemanticTypes(self):
 		"""Prints all semantic types for the user"""

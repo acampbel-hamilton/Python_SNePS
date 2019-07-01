@@ -1,5 +1,9 @@
 #SNePS Find Methods
-
+from slots import *
+from caseframe import *
+from contexts import *
+from SemanticTypes import *
+from SyntacticTypes import *
 
 class Find:
 	def findTerm(self, name):
@@ -35,13 +39,15 @@ class Find:
 		if isinstance(r, Slot):
 			r = r.name
 		if isinstance(m, str):
-			m = self.terms.get(m)
+			m = self.findTerm(m)
 			if m is None:
 				return set()
 
 		assert isinstance(r, str)
 		assert isinstance(m, Term)
-		return set(map((lambda k: self.terms[k]), set(m.up_cableset.get(r))))
+		if m.up_cableset == {}:
+			return set()
+		return set(map(lambda k: self.terms[k], set(m.up_cableset.get(r))))
 
 	def eqfillersets (self, set1, set2):
 		"""True if corresponding elements of sets are non-sets or same size"""
