@@ -121,8 +121,8 @@ class PathInference:
 		context = self.currentContext if context == None else context
 
 		#Debug info:
-		print("\nTRAVERSE\n  node: {}\n  path: {}".format(node.name, path))
-		input("")
+		# print("\nTRAVERSE\n  node: {}\n  path: {}".format(node.name, path))
+		# input("")
 
 		# At the end of the path:
 		if not(path):
@@ -182,7 +182,7 @@ class PathInference:
 			elif path[0][0] == "kstar":
 				assert len(path[0]) == 2, "Improper kstar format"
 				nextNodes = self.traverseKplus(set([node]), path[0][1])
-				return set([node]).update(self.traverseFromNodes(nextNodes, path[1:]))
+				return (set([node]) | self.traverseFromNodes(nextNodes, path[1:]))
 
 			elif path[0][0] == "kplus":
 				assert len(path[0]) == 2, "Improper kplus format"
