@@ -16,7 +16,7 @@ from cmd import Cmd
 class UI(Cmd):
 	network = None
 	cmds = ""
-	slot_filler = "\(\w+(\s+\w+)*\)\s*"
+	slot_filler = "\((\s*\w+)+\)\s*"
 	qstr = "\"(\s*\w+)+\s*\""
 	arg_gen = "\s+\w+\s*"
 
@@ -43,13 +43,14 @@ class UI(Cmd):
 			UI.cmds = "|".join(map((lambda s: s[3:]),
 					filter((lambda i: re.match("^do_\w+$", i) is not None),
 					[m for m in dir(self) if callable(getattr(self, m))])))
-		subcmd = re.compile("\(((?P<cmd>{})\s+((?P<sf>{})|(?P<qstr>{})|(?P<arg_gen>{}))+)\)"
+		subcmd = re.compile("\(({}\s+((?:{})|(?:{})|(?:{}))+)\)"
 			.format(UI.cmds, UI.slot_filler, UI.qstr, UI.arg_gen))
+		print(subcmd.search(args) is not None)
 		while subcmd.search(args) is not None:
 			args = subcmd.sub((lambda mobj: self.onecmd(mobj.group(1))), args)
 		return args
 
-	def netcall(self, func, args):
+	def netcall(self, func, *args):
 		"""calls the given function func on args where func is defined on
 		the network class and handles appropriate errors"""
 		result = None
@@ -64,21 +65,27 @@ class UI(Cmd):
 	def do_build(self, args):
 		"""Builds the specified molecular term and adds it to the network.
 		If an identical object exists, the existing object is returned"""
+		print(args)
 		# rel = '(?:' + '|'.join(UI.network.slots.keys()) + ')'
 		frames = '(?:' + '|'.join(UI.network.caseframes.keys()) + ')'
-		filler = '(?:\w+|\((?:\s*\w+)+\s*\))'
+		filler = '(?:\w+|\((?:\s*\w+)+\s*\))'.format(frames)
 		# prim = re.findall('\s*({})\s+({})'.format(rel, filler), args)
-		case = re.findall('\s*\(\s*({})\s+((?:\s*{})+)\s*\)'.format(frames, filler), args)
-		if case:
-			for param in case:
-				term = self.netcall('casebuild', param)
-				if term is None:
-					return
-				print(term.name)
-		# elif prim:
-		# 	print(UI.network.primbuild(*zip(*prim)).name)
-		else:
-			print('Error: Improperly formatted build command')
+		case = re.compile('(.*)(\s*\(\s*({})\s+((?:\s*{})+)\s*\))'.format(frames, filler))
+		while case.search(args) is not None:
+			args = case.sub((lambda m: '{} {} '.format(m.group(1),
+					self.netcall('casebuild', m.group(3), m.group(4)).name)),
+					args)
+			print(args)
+		return args
+		# if case:
+		# 	for param in case:
+		# 		term = self.netcall('casebuild', param)
+		# 		if term is None:
+		# 			return
+		# 		print(term.name)
+		# 	return term.name
+		# else:
+		# 	print('Error: Improperly formatted build command')
 
 	def do_clear(self, args):
 		""""calls bash clear command"""
@@ -191,7 +198,9 @@ class UI(Cmd):
 
 	def do_describe(self, args):
 		"""Prints a representation of the object specified by name"""
-		name = args.split()[0]
+		print(args)
+		name = self._reval(args).split()[0]
+		print(name)
 		if UI.network.terms.get(name):
 			print(UI.network.terms.get(name))
 		elif UI.network.caseframes.get(name):
