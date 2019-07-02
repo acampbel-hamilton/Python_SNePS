@@ -4,7 +4,7 @@ from Symbol import *
 
 class Slot:
 	def __init__(self, name, type, docstring="", pos_adj=Sym("reduce"), neg_adj=Sym("expand"),
-	 min=1, max=None, path=None, f_path_fn=None, b_path_fn=None):
+	 min=1, max=None, path=None, f_path=None, b_path=None):
 		self.name = name
 		self.type = type
 		self.docstring = docstring
@@ -13,8 +13,8 @@ class Slot:
 		self.min = min
 		self.max = max
 		self.path = path
-		self.f_path_fn = f_path_fn
-		self.b_path_fn = b_path_fn
+		self.f_path = f_path
+		self.b_path = b_path
 
 	def __repr__(self):
 		return "<Slot {} id: {}>".format(self.name, hex(id(self)))
