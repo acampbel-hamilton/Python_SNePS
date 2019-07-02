@@ -41,6 +41,8 @@ class PathInference:
 	def pb_buildProp(self, caseframe, fillers, SynType=Molecular, uassert=False):
 		"""Builds a molecular node based on the given caseframe
 		 and list of fillers. Does not add the node to the network."""
+		print ('caseframe:', caseframe)
+		print ('fillers:', fillers)
 		assert isinstance(caseframe, CaseFrame), "Given caseframe must exist"
 		assert isinstance(fillers, list) #fillers should be a list of lists of strings
 		assert all([isinstance(s, str) for s in [i for sl in fillers for i in sl]])
@@ -85,13 +87,16 @@ class PathInference:
 
 		nodes = self.pb_derivable(prop, context)
 
-	def pb_findfrom(self, prop, context):
-		"""Returns the set of nodes from which the given slot,
+	def pb_findfroms(self, term, slot, context = None):
+		"""Returns the set of nodes from which the slot,
 		or a path for the slot, goes to term."""
 
-		results = self.findfrom(filler, slot)
-		if slot.f_path:
-			pass
+		# default to the currentContext
+		context = self.currentContext if context == None else context
+
+		if slot.b_path:
+			return self.traverse(term, slot.b_path, context)
+		return self.findfrom(term, slot)
 
 	def pb_derivable(self, prop, context):
 		dcs = prop.down_cableset
@@ -101,8 +106,8 @@ class PathInference:
 			for filler in dcs[slot]:
 				# for the nodes that point to filler with the arc name slot, or
 				# that point to filler via the defined path for the slot
-				for node in self.pb_findfrom(filler, slot, context):
-					pass
+				for node in self.pb_findfroms(filler, slot, context):
+					self.traverse()
 
 	def traverse(self, node, path, context = None):
 		"""Takes a node, a path. Reads the next direction given by the path,
