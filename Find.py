@@ -45,7 +45,8 @@ class Find:
 
 		assert isinstance(r, str)
 		assert isinstance(m, Term)
-		if m.up_cableset == {}:
+
+		if not(m.up_cableset.get(r)):
 			return set()
 		return set(map(lambda k: self.terms[k], set(m.up_cableset.get(r))))
 

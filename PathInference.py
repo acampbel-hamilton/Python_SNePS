@@ -104,10 +104,11 @@ class PathInference:
 		for slot in dcs:
 			# for each filler of the slot
 			for filler in dcs[slot]:
-				# for the nodes that point to filler with the arc name slot, or
+				# for the nodes that point to filler with the arc named slot, or
 				# that point to filler via the defined path for the slot
 				for node in self.pb_findfroms(filler, slot, context):
-					self.traverse()
+					for s in dcs - set([slot]):
+						self.pb_findfroms(filler, s, context)
 
 	def traverse(self, node, path, context = None):
 		"""Takes a node, a path. Reads the next direction given by the path,
@@ -138,26 +139,28 @@ class PathInference:
 			# Asserted Node
 			if path[0] == "!":
 				if self.isAsserted(node, context):
-					return self.traverse(node, path[1:])
+					return self.traverse(node, path[1:], context)
 				return set()
 
 			# Backward Arc
 			elif path[0][-1] == "-":
 				# for node n along the backwards slot listed in path
 				nextNodes = node.up_cableset.get(path[0][:-1], set())
-				return self.traverseFromNodes(nextNodes, path[1:])
+				return self.traverseFromNodes(nextNodes, path[1:], context)
 
 			# Forward Arc
 			else:
 				# for node n along the next slot in path
-				nextNodes = node.down_cableset[path[0]]
-				return self.traverseFromNodes(nextNodes, path[1:])
+				nextNodes = set()
+				if isinstance(node, Molecular):
+					nextNodes = node.down_cableset[path[0]]
+				return self.traverseFromNodes(nextNodes, path[1:], context)
 		elif isinstance(path[0], list):
 			if path[0][0] == "and":
 				assert len(path[0]) >= 2, "Incomplete AND statement"
 
 				# get initial value for nextNodes from evaluating first path in the and
-				nextNodes = self.traverse(node, path[0][1])
+				nextNodes = self.traverse(node, path[0][1], context)
 
 				# for the rest of the paths in the and statement:
 				for p in path[0][2:]:
@@ -167,10 +170,10 @@ class PathInference:
 
 					# Intersect/And together nextNodes and nodes returned from
 					# traversing from current node along path p
-					nextNodes.intersection(self.traverse(node, p))
+					nextNodes.intersection(self.traverse(node, p, context))
 
 				# From each node in nextNodes, evaluate the rest of the path
-				return self.traverseFromNodes(nextNodes, path[1:])
+				return self.traverseFromNodes(nextNodes, path[1:], context)
 
 			elif path[0][0] == "or":
 				assert len(path[0]) >= 2, "Incomplete OR statement"
@@ -179,36 +182,36 @@ class PathInference:
 				# for paths in the or statement:
 				for p in path[0][1:]:
 					# traverse from current node, using that path
-					nextNodes.update(self.traverse(node, p))
+					nextNodes.update(self.traverse(node, p, context))
 
 				# From each node in nextNodes, evaluate the rest of the path
-				return self.traverseFromNodes(nextNodes, path[1:])
+				return self.traverseFromNodes(nextNodes, path[1:], context)
 
 			elif path[0][0] == "kstar":
 				assert len(path[0]) == 2, "Improper kstar format"
-				nextNodes = self.traverseKplus(set([node]), path[0][1])
-				return (set([node]) | self.traverseFromNodes(nextNodes, path[1:]))
+				nextNodes = self.traverseKplus(set([node]), path[0][1], context)
+				return (self.traverse(node, path[1:], context) | self.traverseFromNodes(nextNodes, path[1:], context))
 
 			elif path[0][0] == "kplus":
 				assert len(path[0]) == 2, "Improper kplus format"
-				nextNodes = self.traverseKplus(set([node]), path[0][1])
-				return self.traverseFromNodes(nextNodes, path[1:])
+				nextNodes = self.traverseKplus(set([node]), path[0][1], context)
+				return self.traverseFromNodes(nextNodes, path[1:], context)
 
-	def traverseFromNodes(self, nodes, path):
+	def traverseFromNodes(self, nodes, path, context):
 		retVals = set()
 		if nodes:
-			for s in map(lambda n: self.traverse(n, path), nodes):
+			for s in map(lambda n: self.traverse(n, path, context), nodes):
 				if s:
 					retVals.update(s)
 		return retVals
 
-	def traverseKplus(self, nodes, path):
+	def traverseKplus(self, nodes, path, context):
 		nextNodes = set()
 		next = nodes
 
 		while True:
 			# get nodes from traversing the path another time
-			next = self.traverseFromNodes(next, path)
+			next = self.traverseFromNodes(next, path, context)
 			# add those nodes to nextNodes
 			nextNodes.update(next)
 			# break case:
@@ -216,7 +219,11 @@ class PathInference:
 				break
 		return nextNodes
 
-
+# Eample Paths
+# defPath member (member (kstar (equiv- ! equiv)))
+# defPath member (or member(member (kstar (equiv- ! equiv))))
+# defPath class (or class (class (kstar (subclass- superclass))))
+# defPath class (class (kstar (subclass- superclass)))
 
 
 
