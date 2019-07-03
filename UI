@@ -16,7 +16,7 @@ from cmd import Cmd
 class UI(Cmd):
 	network = None
 	cmds = ""
-	slot_filler = "\((\s*\w+)+\)\s*"
+	slot_filler = "\((\s*\w+)+\s*\)\s*"
 	qstr = "\"(\s*\w+)+\s*\""
 	arg_gen = "\s+\w+\s*"
 
@@ -43,9 +43,8 @@ class UI(Cmd):
 			UI.cmds = "|".join(map((lambda s: s[3:]),
 					filter((lambda i: re.match("^do_\w+$", i) is not None),
 					[m for m in dir(self) if callable(getattr(self, m))])))
-		subcmd = re.compile("\(({}\s+((?:{})|(?:{})|(?:{}))+)\)"
+		subcmd = re.compile("\(\s*((?:{})\s+((?:{})|(?:{})|(?:{}))+)\)"
 			.format(UI.cmds, UI.slot_filler, UI.qstr, UI.arg_gen))
-		print(subcmd.search(args) is not None)
 		while subcmd.search(args) is not None:
 			args = subcmd.sub((lambda mobj: self.onecmd(mobj.group(1))), args)
 		return args
@@ -65,7 +64,6 @@ class UI(Cmd):
 	def do_build(self, args):
 		"""Builds the specified molecular term and adds it to the network.
 		If an identical object exists, the existing object is returned"""
-		print(args)
 		# rel = '(?:' + '|'.join(UI.network.slots.keys()) + ')'
 		frames = '(?:' + '|'.join(UI.network.caseframes.keys()) + ')'
 		filler = '(?:\w+|\((?:\s*\w+)+\s*\))'.format(frames)
@@ -198,7 +196,6 @@ class UI(Cmd):
 
 	def do_describe(self, args):
 		"""Prints a representation of the object specified by name"""
-		print(args)
 		name = self._reval(args).split()[0]
 		print(name)
 		if UI.network.terms.get(name):
