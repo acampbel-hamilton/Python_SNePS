@@ -151,7 +151,7 @@ class UI(Cmd):
 			else:
 				word += c
 		UI.network.definePath(m[1], path)
-		print(True)
+		print(" Done")
 
 	def do_defSlot(self, args):
 		"""defines a new slot as specified by arguments in the form :

@@ -41,8 +41,6 @@ class PathInference:
 	def pb_buildProp(self, caseframe, fillers, SynType=Molecular, uassert=False):
 		"""Builds a molecular node based on the given caseframe
 		 and list of fillers. Does not add the node to the network."""
-		print ('caseframe:', caseframe)
-		print ('fillers:', fillers)
 		assert isinstance(caseframe, CaseFrame), "Given caseframe must exist"
 		assert isinstance(fillers, list) #fillers should be a list of lists of strings
 		assert all([isinstance(s, str) for s in [i for sl in fillers for i in sl]])
@@ -74,9 +72,9 @@ class PathInference:
 		""" If prop is derivable in the context, return set([prop]), else set()"""
 
 		# Prints for debugging...
-		print ("\nASK IF: ")
-		print ("prop: {}".format(prop))
-		input("waiting...")
+		# print ("\nASK IF: ")
+		# print ("prop: {}".format(prop))
+		# input("waiting...")
 
 		# default to the currentContext
 		context = self.currentContext if context == None else context
@@ -85,7 +83,22 @@ class PathInference:
 		if self.isAsserted(prop, context):
 			return True
 
-		nodes = self.pb_derivable(prop, context)
+		if self.pb_derivable(prop, context):
+			Molecular.counter += 1
+			prop.name = "M{}".format(Molecular.counter)
+			prop.caseframe.terms.add(prop.name)
+			self.terms[prop.name] = prop
+
+			for i in range(len(caseframe.slots)):
+				for node in fillers[i]:
+					self.terms[node].up_cableset.update({Sym(caseframe.slots[i]):
+						self.terms[node].up_cableset.get(Sym(caseframe.slots[i]), [])
+						+ [term.name]})
+
+			context.ders.add(prop)
+			print (" True")
+			return
+		print (" False")
 
 	def pb_findfroms(self, term, slot, context = None):
 		"""Returns the set of nodes from which the slot,
@@ -94,21 +107,31 @@ class PathInference:
 		# default to the currentContext
 		context = self.currentContext if context == None else context
 
+		if isinstance(slot, str):
+			slot = self.slots[slot]
+
 		if slot.b_path:
 			return self.traverse(term, slot.b_path, context)
 		return self.findfrom(term, slot)
 
 	def pb_derivable(self, prop, context):
 		dcs = prop.down_cableset
+
+		first = True
+		nodes = set()
+
 		# for each slot
 		for slot in dcs:
 			# for each filler of the slot
 			for filler in dcs[slot]:
-				# for the nodes that point to filler with the arc named slot, or
-				# that point to filler via the defined path for the slot
-				for node in self.pb_findfroms(filler, slot, context):
-					for s in dcs - set([slot]):
-						self.pb_findfroms(filler, s, context)
+				if first:
+					nodes = self.pb_findfroms(filler, slot, context)
+					first = False
+				else:
+					nodes &= self.pb_findfroms(filler, slot, context)
+		if nodes:
+			return True
+		return False
 
 	def traverse(self, node, path, context = None):
 		"""Takes a node, a path. Reads the next direction given by the path,
