@@ -38,10 +38,9 @@ class Find:
 		"""returns the set of nodes from which a slot r goes to m"""
 		if isinstance(r, Slot):
 			r = r.name
-		if isinstance(m, str):
-			m = self.findTerm(m)
-			if m is None:
-				return set()
+		m = self.findTerm(m)
+		if m is None:
+			return set()
 
 		assert isinstance(r, str)
 		assert isinstance(m, Term)
