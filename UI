@@ -75,15 +75,6 @@ class UI(Cmd):
 					args)
 			print(args)
 		return args
-		# if case:
-		# 	for param in case:
-		# 		term = self.netcall('casebuild', param)
-		# 		if term is None:
-		# 			return
-		# 		print(term.name)
-		# 	return term.name
-		# else:
-		# 	print('Error: Improperly formatted build command')
 
 	def do_clear(self, args):
 		""""calls bash clear command"""
@@ -160,7 +151,7 @@ class UI(Cmd):
 			else:
 				word += c
 		UI.network.definePath(m[1], path)
-		print(" True")
+		print(True)
 
 	def do_defSlot(self, args):
 		"""defines a new slot as specified by arguments in the form :
@@ -218,6 +209,23 @@ class UI(Cmd):
 		"""Exits the PySNePS UI"""
 		print("Exiting PySNePS")
 		raise SystemExit
+
+	def do_find(self, args):
+		"""checks for any propositions compatible with the given for are
+		believed by the system"""
+		args = args.strip()[1:-1]
+		frames = '(?:' + '|'.join(UI.network.caseframes.keys()) + ')'
+		filler = '(?:\w+|\((?:\s*\w+)+\s*\))'.format(frames)
+		case = re.compile('(.*)(\s*\(\s*({})\s+((?:\s*{})+)\s*\))'.format(frames, filler))
+		while case.search(args) is not None:
+			args = case.sub((lambda m: '{} {} '.format(m.group(1),
+					self.netcall('casebuild', m.group(3), m.group(4), "inSys=False").name)),
+					args)
+		m = re.match("\s*({})\s+(?:\s*({}))+\s*".format(frames, filler), args)
+		term = self.netcall('casebuild', m.group(1), m.group(2), "inSys=False")
+		for t in UI.network.currentContext.hyps:
+			if t == term:
+				print(t.name)
 
 	def do_list(self, args):
 		"""Lists all instances defined on the network of the given object"""

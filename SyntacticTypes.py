@@ -73,6 +73,15 @@ class Molecular(Term):
 		self.caseframe = caseframe
 		self.down_cableset = down_cableset #map from slot names to sets of term names
 
+	def __eq__(self, other):
+		"""determines if two molecular terms are equivalent"""
+		self_fill = self.down_cableset.values()
+		other_fill = other.down_cableset.values()
+		return isinstance(other, Molecular) and\
+				other.caseframe == self.caseframe and \
+				[sorted(sl) for sl in sorted(term.down_cableset.values())] == \
+				[sorted(sl) for sl in sorted(fillers)]
+
 class Param2Op(Molecular):
 	"""the andor or thresh of some proposition(s)"""
 	def __init__(self, name, caseframe, down_cableset, min, max, up_cableset=None):

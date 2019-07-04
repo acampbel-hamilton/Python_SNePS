@@ -219,16 +219,14 @@ class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find):
 										neg_adj, min, max, path)
 		return self.slots[Sym(name)]
 
-######## The following methods are untested ########
-
-	def build(self, caseframe, fillers, SynType=Molecular, uassert=False):
+	def build(self, caseframe, fillers, SynType=Molecular, uassert=False, inSys=True):
 		"""build a molecular node based on the given caseframe
 		 and list of fillers"""
 		assert isinstance(caseframe, CaseFrame), "Given caseframe must exist"
 		assert isinstance(fillers, list) #fillers should be a list of lists of strings
 		assert all([isinstance(s, str) for s in [i for sl in fillers for i in sl]])
 
-		#all base terms  must exist
+		#all base terms must exist
 		for name in set([i for sl in fillers for i in sl]):
 			if name not in self.terms.keys():
 				self.terms[Sym(name)] = Term(name)
@@ -237,51 +235,52 @@ class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find):
 				[sorted(sl) for sl in sorted(term.down_cableset.values())] == \
 				[sorted(sl) for sl in sorted(fillers)]:
 				raise AssertionError("Identical term {} already exists".format(term.name))
+		if inSys:
+			Molecular.counter += 1
+			term = SynType(Sym("M{}").format(Molecular.counter), caseframe,
+			 			down_cableset=dict(zip(caseframe.slots, fillers)))
+			self.terms[term.name] = term
+			caseframe.terms.add(term.name)
+			for i in range(len(caseframe.slots)):
+				for node in fillers[i]:
+					self.terms[node].up_cableset.update({Sym(caseframe.slots[i]):
+						self.terms[node].up_cableset.get(Sym(caseframe.slots[i]), [])
+						+ [term.name]})
+			if uassert:
+				self.currentContext.hyps.add(term)
+			return term
+		return SynType(Sym("_"), caseframe, down_cableset=dict(zip(caseframe.slots, fillers)))
 
-		Molecular.counter += 1
-		term = SynType(Sym("M{}").format(Molecular.counter), caseframe,
-		 			down_cableset=dict(zip(caseframe.slots, fillers)))
-		self.terms[term.name] = term
-		caseframe.terms.add(term.name)
-		for i in range(len(caseframe.slots)):
-			for node in fillers[i]:
-				self.terms[node].up_cableset.update({Sym(caseframe.slots[i]):
-					self.terms[node].up_cableset.get(Sym(caseframe.slots[i]), [])
-					+ [term.name]})
-		if uassert:
-			self.currentContext.hyps.add(term)
-		return term
+	# def primbuild(self, rfstr):
+	# 	"""parses a string containing relations and fillers and validates
+	# 	the result as input"""
+	# 	assert isinstance(rfstr, str)
+	#
+	# 	rfregex = re.compile("^\s*(?P<rel>\w+)\s+\((?P<fill>(\s*\w+)+)\)")
+	# 	rfdict = {}
+	# 	while not rfstr == '':
+	# 		m = rfregex.match(rfstr)
+	# 		if m is not None:
+	# 			rfdict.update({m.group('rel'):
+	# 				m.group('fill').split() + rfdict.get(m.group('rel'), [])})
+	# 			rfstr = rfstr[len(m.group(0)):]
+	# 		else:
+	# 			break
+	# 	for r in rfdict.keys():
+	# 		if not r in self.slots.keys():
+	# 			raise AssertionError("Use of undefined slot {}".format(r))
+	# 	cf = None
+	# 	for c in self.caseframes.values:
+	# 		if set(c.slots) == set(rfdict.keys()):
+	# 			cf = c
+	# 			break
+	# 	if cf is None:
+	# 		raise AssertionError('No caseframe with given slots <{}> is defined'
+	# 				.format(str(rfdict.keys())[1:-1]))
+	# 		return
+	# 	return self.build(cf, [rfdict[r] for r in cf.slots])
 
-	def primbuild(self, rfstr):
-		"""parses a string containing relations and fillers and validates
-		the result as input"""
-		assert isinstance(rfstr, str)
-
-		rfregex = re.compile("^\s*(?P<rel>\w+)\s+\((?P<fill>(\s*\w+)+)\)")
-		rfdict = {}
-		while not rfstr == '':
-			m = rfregex.match(rfstr)
-			if m is not None:
-				rfdict.update({m.group('rel'):
-					m.group('fill').split() + rfdict.get(m.group('rel'), [])})
-				rfstr = rfstr[len(m.group(0)):]
-			else:
-				break
-		for r in rfdict.keys():
-			if not r in self.slots.keys():
-				raise AssertionError("Use of undefined slot {}".format(r))
-		cf = None
-		for c in self.caseframes.values:
-			if set(c.slots) == set(rfdict.keys()):
-				cf = c
-				break
-		if cf is None:
-			raise AssertionError('No caseframe with given slots <{}> is defined'
-					.format(str(rfdict.keys())[1:-1]))
-			return
-		return self.build(cf, [rfdict[r] for r in cf.slots])
-
-	def casebuild(self, casename, fillers):
+	def casebuild(self, casename, fillers, inSys=True):
 		"""parses a string of fillers and associates them with the appropriate
 		slots from the designated caseframe"""
 		assert casename in self.caseframes.keys()
@@ -301,4 +300,4 @@ class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find):
 		if not len(self.caseframes[casename].slots) == len(lst):
 			raise AssertionError("Insufficient fillers for the given caseframe {}"
 				.format(casename))
-		return self.build(self.caseframes[casename], lst)
+		return self.build(self.caseframes[casename], lst, inSys=inSys)
