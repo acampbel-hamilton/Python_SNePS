@@ -64,10 +64,9 @@ class Arbitrary(Variable):
 	counter = 0
 
 class Molecular(Term):
-	counter = 0
 	"""a functional term with zero or more arguments
 	equivalently a frame with slots and fillers"""
-	wftcounter = 0
+	counter = 0
 	def __init__(self, name, caseframe, down_cableset, up_cableset=None):
 		Term.__init__(self, name, up_cableset)
 		self.caseframe = caseframe

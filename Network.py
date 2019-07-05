@@ -62,7 +62,7 @@ class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find):
 	def initialize(self):
 		"""this function will set up the default state for a SNePS object once
 		implemented, including default contexts, slots, and caseframes."""
-#################### Default Context Definitions ####################
+		#################### Default Context Definitions ####################
 		#declares BaseCT (base context) as the root of the context hierarchy and properly stores it
 		self.contextRoot = Context("BaseCT", parents=None, docstring="The root of all contexts")
 		self.contextHierachy[self.contextRoot.name] = self.contextRoot.parents
@@ -70,8 +70,8 @@ class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find):
 
 		DefaultCT = self.defineContext("DefaultCT", docstring="The default current context")
 		self.currentContext = DefaultCT
-#################### Default Slot Definitions ####################
-	## Slots for built in propositions
+		#################### Default Slot Definitions ####################
+		## Slots for built in propositions
 		self.defineSlot("class", type="Category",
 				docstring="Points to a Category that some Entity is a member of.",
 				neg_adj=_reduce)
@@ -83,7 +83,7 @@ class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find):
 		self.defineSlot("subclass", docstring="Subcategories of some category/ies.", neg_adj=_reduce)
 		self.defineSlot("superclass", docstring="Supercategories of some category/ies.", neg_adj=_reduce)
 
-	## Slots for Rules
+		## Slots for Rules
 		self.defineSlot("and", type="Proposition",
 		 				docstring="Fillers are arguments of a conjunction",
 						min=2, pos_adj=_reduce, neg_adj=_expand)
@@ -100,11 +100,11 @@ class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find):
 						pos_adj=_expand, neg_adj=_reduce)
 		self.defineSlot("cq", type="Proposition", docstring="Consequent for a set")
 
-	## Slots for SNeRE (currently SNeRE is not implemented)
+		## Slots for SNeRE (currently SNeRE is not implemented)
 		self.defineSlot("actions", type="Action", docstring="The actions of an act",
 						max=1, pos_adj=_none, neg_adj=_none)
 
-#################### Default Caseframe Definitions ####################
+		#################### Default Caseframe Definitions ####################
 		self.defineCaseframe("isa", "Proposition", ["member", "class"],
 							docstring="[member] is a [class]")
 		self.defineCaseframe("equiv", "Proposition", ["equiv"],
