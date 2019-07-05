@@ -8,10 +8,10 @@ from contexts import *
 from SemanticTypes import *
 from SyntacticTypes import *
 # from SlotInference import *
-from PathInference import * #add this back once the file is finished being written
+# from PathInference import * #add this back once the file is finished being written
 from Find import *
 
-class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find, PathInference):
+class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find):
 	def __init__(self):
 		self.terms = {} #maps term names to term objs
 
@@ -231,7 +231,7 @@ class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find, PathInference):
 				OutOfContext += [Term(name)]
 		return (SynType("_", caseframe, down_cableset=dict(zip(caseframe.slots, fillers))), OutOfContext)
 
-	def build(self, caseframe, fillers, SynType=Molecular, uassert=False, inSys=True):
+	def build(self, caseframe, fillers, SynType=Molecular, uassert=False):
 		"""build a molecular node based on the given caseframe
 		 and list of fillers"""
 		assert isinstance(caseframe, CaseFrame), "Given caseframe must exist"
@@ -248,7 +248,7 @@ class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find, PathInference):
 		#make appropriate changes to the network
 		Molecular.counter += 1
 		term.name = Sym("M{}".format(Molecular.counter))
-
+		print(term.name)
 		self.terms[term.name] = term
 		caseframe.terms.add(term.name)
 		for i in range(len(caseframe.slots)):
@@ -289,7 +289,7 @@ class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find, PathInference):
 	# 		return
 	# 	return self.build(cf, [rfdict[r] for r in cf.slots])
 
-	def casebuild(self, casename, fillers, inSys=True):
+	def casebuild(self, casename, fillers):
 		"""parses a string of fillers and associates them with the appropriate
 		slots from the designated caseframe"""
 		assert casename in self.caseframes.keys()
@@ -309,4 +309,4 @@ class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find, PathInference):
 		if not len(self.caseframes[casename].slots) == len(lst):
 			raise AssertionError("Insufficient fillers for the given caseframe {}"
 				.format(casename))
-		return self.build(self.caseframes[casename], lst, inSys=inSys)
+		return self.build(self.caseframes[casename], lst)

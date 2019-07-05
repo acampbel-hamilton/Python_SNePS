@@ -249,20 +249,24 @@ class UI(Cmd):
 		args = re.sub("(^\s*\()|(\)\s*$)", "", args) #strip outer parentheses
 		frames = '(?:' + '|'.join(UI.network.caseframes.keys()) + ')'
 		filler = '(?:\w+|\((?:\s*\w+)+\s*\))'
-		case = re.compile('(.*)(\s*\(\s*({})\s+((?:\s*{})+)\s*\))'.format(frames, filler))
+		case = re.compile('(?P<begin>.*)(\s*\(\s*(?P<frame>{})\s+(?P<fill>(?:\s*{})+)\s*\))'
+				.format(frames, filler))
 		while case.search(args) is not None:
-			args = case.sub((lambda m: '{} {} '.format(m.group(1),
-					self.netcall('casebuild', m.group(3), m.group(4), "inSys=False").name)),
-					args)
-			print(args)
-		print("last match")
-		m = re.match("\s*(?P<frame>{})\s+(?P<fill>(?:\s*{})+)\s*".format(frames, filler), args)
-		print(m.group("frame"))
-		print(m.group("fill"))
-		term = self.netcall('casebuild', m.group(1), m.group(2), "inSys=False")
-		for t in UI.network.currentContext.hyps:
-			if t == term:
-				print(t.name)
+			#consider replacement mechanism for
+			#both collating the terms as they are created and
+			#replacing them as appropriate in the expression
+		# 	args = case.sub((lambda m: '{} {} '.format(m.group("begin"),
+		# 			self.netcall('construct', m.group("frame"), m.group("fill")).name)),
+		# 			args)
+		# 	print(args)
+		# print("last match")
+		# m = re.match("\s*(?P<frame>{})\s+(?P<fill>(?:\s*{})+)\s*".format(frames, filler), args)
+		# print(m.group("frame"))
+		# print(m.group("fill"))
+		# term = self.netcall('casebuild', m.group(1), m.group(2), "inSys=False")
+		# for t in UI.network.currentContext.hyps:
+		# 	if t == term:
+		# 		print(t.name)
 
 	def do_list(self, args):
 		"""Lists all instances defined on the network of the given object"""
