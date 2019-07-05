@@ -63,7 +63,7 @@ class PathInference:
 		"""Return true if an asserted prop's caseframe and fillers match the given prop"""
 		# TODO: make sure this works for if fillers of a slot are in different order
 		for prop in (context.hyps | context.ders):
-			if proposition.down_cableset == prop.down_cableset:
+			if proposition.down_cableset == self.terms[prop].down_cableset:
 				return True
 		return False
 
@@ -95,11 +95,11 @@ class PathInference:
 			# 			self.terms[node].up_cableset.get(Sym(caseframe.slots[i]), [])
 			# 			+ [term.name]})
 
-			context.ders.add(prop)
-			print (" True")
+			context.ders.add(Sym(prop.name))
+			print ("True")
 			print (prop.name)
 			return
-		print (" False")
+		print ("False")
 
 	def pb_findfroms(self, term, slot, context = None):
 		"""Returns the list of nodes from which the slot,
