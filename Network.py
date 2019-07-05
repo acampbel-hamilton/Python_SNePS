@@ -229,7 +229,7 @@ class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find):
 			if name not in self.terms.keys() and\
 					name not in map((lambda t: t.name), OutOfContext):
 				OutOfContext += [Term(name)]
-		return (SynType("_", caseframe, down_cableset=dict(zip(caseframe.slots, filler))), OutOfContext)
+		return (SynType("_", caseframe, down_cableset=dict(zip(caseframe.slots, fillers))), OutOfContext)
 
 	def build(self, caseframe, fillers, SynType=Molecular, uassert=False, inSys=True):
 		"""build a molecular node based on the given caseframe
@@ -238,18 +238,17 @@ class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find):
 		assert isinstance(fillers, list) #fillers should be a list of lists of strings
 		assert all([isinstance(s, str) for s in [i for sl in fillers for i in sl]])
 
-		#all base terms must exist
-		for name in set([i for sl in fillers for i in sl]):
-			if name not in self.terms.keys():
-				self.terms[Sym(name)] = Term(name)
-		for term in self.terms.values(): #no identical term exists
-			if isinstance(term, Molecular) and term.caseframe == caseframe and \
-				[sorted(sl) for sl in sorted(term.down_cableset.values())] == \
-				[sorted(sl) for sl in sorted(fillers)]:
-				raise AssertionError("Identical term {} already exists".format(term.name))
+		term, newBT = self.construct(caseframe, fillers)
+
+		for t in newBT: #add created base terms
+			self.terms[Sym(t.name)] = t
+		for t in self.terms.values(): #check for identical term
+			if term == t:
+				raise AssertionError("Identical term {} already exists".format(t.name))
+		#make appropriate changes to the network
 		Molecular.counter += 1
-		term = SynType(Sym("M{}").format(Molecular.counter), caseframe,
-		 			down_cableset=dict(zip(caseframe.slots, fillers)))
+		term.name = Sym("M{}".format(Molecular.counter))
+
 		self.terms[term.name] = term
 		caseframe.terms.add(term.name)
 		for i in range(len(caseframe.slots)):

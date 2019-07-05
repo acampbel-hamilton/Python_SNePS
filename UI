@@ -68,12 +68,12 @@ class UI(Cmd):
 		frames = '(?:' + '|'.join(UI.network.caseframes.keys()) + ')'
 		filler = '(?:\w+|\((?:\s*\w+)+\s*\))'.format(frames)
 		# prim = re.findall('\s*({})\s+({})'.format(rel, filler), args)
-		case = re.compile('(.*)(\s*\(\s*({})\s+((?:\s*{})+)\s*\))'.format(frames, filler))
+		case = re.compile('(?P<begin>.*)(\s*\(\s*(?P<frame>{})\s+(?P<fill>(?:\s*{})+)\s*\))'
+			.format(frames, filler))
 		while case.search(args) is not None:
-			args = case.sub((lambda m: '{} {} '.format(m.group(1),
-					self.netcall('casebuild', m.group(3), m.group(4)).name)),
+			args = case.sub((lambda m: '{} {} '.format(m.group("begin"),
+					self.netcall('casebuild', m.group("frame"), m.group("fill")).name)),
 					args)
-			print(args)
 		return args
 
 	def do_clear(self, args):

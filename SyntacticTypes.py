@@ -75,12 +75,13 @@ class Molecular(Term):
 
 	def __eq__(self, other):
 		"""determines if two molecular terms are equivalent"""
+		if not isinstance(other, Molecular):
+			return False
 		self_fill = self.down_cableset.values()
 		other_fill = other.down_cableset.values()
-		return isinstance(other, Molecular) and\
-				other.caseframe == self.caseframe and \
-				[sorted(sl) for sl in sorted(term.down_cableset.values())] == \
-				[sorted(sl) for sl in sorted(fillers)]
+		return other.caseframe == self.caseframe and \
+				[sorted(sl) for sl in sorted(other_fill)] == \
+				[sorted(sl) for sl in sorted(self_fill)]
 
 class Param2Op(Molecular):
 	"""the andor or thresh of some proposition(s)"""
