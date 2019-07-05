@@ -69,7 +69,7 @@ class PathInference:
 
 	# Move to an "ask" file, if one is created
 	def askif(self, prop, context=None):
-		""" If prop is derivable in the context, return set([prop]), else set()"""
+		""" If prop is derivable in the context, adds prop to network"""
 
 		# Prints for debugging...
 		# print ("\nASK IF: ")
@@ -89,19 +89,20 @@ class PathInference:
 			prop.caseframe.terms.add(prop.name)
 			self.terms[prop.name] = prop
 
-			for i in range(len(caseframe.slots)):
-				for node in fillers[i]:
-					self.terms[node].up_cableset.update({Sym(caseframe.slots[i]):
-						self.terms[node].up_cableset.get(Sym(caseframe.slots[i]), [])
-						+ [term.name]})
+			# for i in range(len(prop.caseframe.slots)):
+			# 	for node in fillers[i]:
+			# 		self.terms[node].up_cableset.update({Sym(caseframe.slots[i]):
+			# 			self.terms[node].up_cableset.get(Sym(caseframe.slots[i]), [])
+			# 			+ [term.name]})
 
 			context.ders.add(prop)
 			print (" True")
+			print (prop.name)
 			return
 		print (" False")
 
 	def pb_findfroms(self, term, slot, context = None):
-		"""Returns the set of nodes from which the slot,
+		"""Returns the list of nodes from which the slot,
 		or a path for the slot, goes to term."""
 
 		# default to the currentContext
@@ -128,7 +129,8 @@ class PathInference:
 					nodes = self.pb_findfroms(filler, slot, context)
 					first = False
 				else:
-					nodes &= self.pb_findfroms(filler, slot, context)
+					froms = self.pb_findfroms(filler, slot, context)
+					nodes = [n for n in froms if n in nodes]
 		if nodes:
 			return True
 		return False
@@ -155,7 +157,7 @@ class PathInference:
 
 		# At the end of the path:
 		if not(path):
-			return set([node])
+			return [node]
 
 		# If a string
 		elif isinstance(path[0], str):
@@ -163,18 +165,18 @@ class PathInference:
 			if path[0] == "!":
 				if self.isAsserted(node, context):
 					return self.traverse(node, path[1:], context)
-				return set()
+				return list()
 
 			# Backward Arc
 			elif path[0][-1] == "-":
 				# for node n along the backwards slot listed in path
-				nextNodes = node.up_cableset.get(path[0][:-1], set())
+				nextNodes = node.up_cableset.get(path[0][:-1], list())
 				return self.traverseFromNodes(nextNodes, path[1:], context)
 
 			# Forward Arc
 			else:
 				# for node n along the next slot in path
-				nextNodes = set()
+				nextNodes = list()
 				if isinstance(node, Molecular):
 					nextNodes = node.down_cableset[path[0]]
 				return self.traverseFromNodes(nextNodes, path[1:], context)
@@ -188,57 +190,62 @@ class PathInference:
 				# for the rest of the paths in the and statement:
 				for p in path[0][2:]:
 					# short cicuit out of AND if nextNodes is empty
-					if nextNodes == set():
-						return set()
+					if not(nextNodes):
+						return list()
 
 					# Intersect/And together nextNodes and nodes returned from
 					# traversing from current node along path p
-					nextNodes.intersection(self.traverse(node, p, context))
+					nextNodes = [n for n in nextNodes if n in self.traverse(node, p, context)]
 
 				# From each node in nextNodes, evaluate the rest of the path
 				return self.traverseFromNodes(nextNodes, path[1:], context)
 
 			elif path[0][0] == "or":
 				assert len(path[0]) >= 2, "Incomplete OR statement"
-				nextNodes = set()
+				nextNodes = list()
 
 				# for paths in the or statement:
 				for p in path[0][1:]:
 					# traverse from current node, using that path
-					nextNodes.update(self.traverse(node, p, context))
+					nextNodes += [n for n in self.traverse(node, p, context) if n not in nextNodes]
 
 				# From each node in nextNodes, evaluate the rest of the path
 				return self.traverseFromNodes(nextNodes, path[1:], context)
 
 			elif path[0][0] == "kstar":
 				assert len(path[0]) == 2, "Improper kstar format"
-				nextNodes = self.traverseKplus(set([node]), path[0][1], context)
-				return (self.traverse(node, path[1:], context) | self.traverseFromNodes(nextNodes, path[1:], context))
+
+				zeroTimes = self.traverse(node, path[1:], context)
+
+				nextNodes = self.traverseKplus([node], path[0][1], context)
+				multTimes = self.traverseFromNodes(nextNodes, path[1:], context)
+
+				return multTimes + [n for n in zeroTimes if n not in multTimes]
 
 			elif path[0][0] == "kplus":
 				assert len(path[0]) == 2, "Improper kplus format"
-				nextNodes = self.traverseKplus(set([node]), path[0][1], context)
+				nextNodes = self.traverseKplus([node], path[0][1], context)
 				return self.traverseFromNodes(nextNodes, path[1:], context)
 
 	def traverseFromNodes(self, nodes, path, context):
-		retVals = set()
+		retVals = list()
 		if nodes:
 			for s in map(lambda n: self.traverse(n, path, context), nodes):
 				if s:
-					retVals.update(s)
+					retVals += [n for n in s if n not in retVals]
 		return retVals
 
 	def traverseKplus(self, nodes, path, context):
-		nextNodes = set()
+		nextNodes = list()
 		next = nodes
 
 		while True:
 			# get nodes from traversing the path another time
 			next = self.traverseFromNodes(next, path, context)
 			# add those nodes to nextNodes
-			nextNodes.update(next)
+			nextNodes += [n for n in next if n not in nextNodes]
 			# break case:
-			if next == set():
+			if not(next):
 				break
 		return nextNodes
 

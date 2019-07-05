@@ -61,6 +61,39 @@ class UI(Cmd):
 
 ################ USER METHODS ################
 
+	def do_ask(self, args):
+		print ("ask if danny is a thing")
+		prop = UI.network.pb_buildProp(UI.network.find_frame("isa"), [["danny"], ["thing"]])
+		UI.network.askif(prop)
+
+		input()
+
+		print ("ask if danny is a person")
+		prop = UI.network.pb_buildProp(UI.network.find_frame("isa"), [["danny"], ["person"]])
+		UI.network.askif(prop)
+
+		input()
+
+		print ("ask if nate is a person")
+		prop = UI.network.pb_buildProp(UI.network.find_frame("isa"), [["nate"], ["person"]])
+		UI.network.askif(prop)
+
+		input()
+
+		print ("ask if danny is a whale")
+		prop = UI.network.pb_buildProp(UI.network.find_frame("isa"), [["danny"], ["whale"]])
+		UI.network.askif(prop)
+		# print ( UI.network.traverse( UI.network.terms['danny'], ['member-', 'class', 'subclass-'] ) )
+
+		# frames = '(?:' + '|'.join(UI.network.caseframes.keys()) + ')'
+		# filler = '(?:\w+|\((?:\s*\w+)+\s*\))'
+		# # prim = re.findall('\s*({})\s+({})'.format(rel, filler), args)
+		# case = re.findall('\s*\(\s*({})\s+((?:\s*{})+)\s*\)'.format(frames, filler), args)
+		# for param in case:
+		# 	print (param)
+		# 	term = self.netcall('pb_buildProp', param)
+
+
 	def do_build(self, args):
 		"""Builds the specified molecular term and adds it to the network.
 		If an identical object exists, the existing object is returned"""

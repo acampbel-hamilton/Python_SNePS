@@ -14,46 +14,37 @@ class Find:
 			return self.terms.get(name)
 		return None
 
-	def findTerms(self, names):
+	def findTerms(self, names):	# Needs to be re-written to return list instead of set
 		"""returns all terms specified by a valid name in names and the empty set if none exist"""
 		assert isinstance(names, list)
-		return set(reduce((lambda a,b: union(a, b)),
+		return set(reduce((lambda a,b: a | b),
 						filter((lambda s: not s is None),
 							map((lambda n: self.findTerm(n)), names))))
 
 	def findto(self, n, r):
-		"""returns the set of nodes which a slot r goes to from a node n, possibly the empty set"""
+		"""returns the list of nodes which a slot r goes to from a node n"""
 		if isinstance(r, Slot):
 			r = r.name
 		if isinstance(n, str):
 			n = self.terms.get(n)
 			if n is None:
-				return set()
+				return list()
 
 		assert isinstance(r, str)
 		assert isinstance(n, Molecular)
-		return set(map((lambda k: self.terms[k]), set(n.down_cableset.get(r))))
+		return list(map((lambda k: self.terms[k]), n.down_cableset.get(r)))
 
 	def findfrom(self, m, r):
-		"""returns the set of nodes from which a slot r goes to m"""
+		"""returns the list of nodes from which a slot r goes to m"""
 		if isinstance(r, Slot):
 			r = r.name
 		m = self.findTerm(m)
 		if m is None:
-			return set()
+			return list()
 
 		assert isinstance(r, str)
 		assert isinstance(m, Term)
 
 		if not(m.up_cableset.get(r)):
-			return set()
-		return set(map(lambda k: self.terms[k], set(m.up_cableset.get(r))))
-
-	def eqfillersets (self, set1, set2):
-		"""True if corresponding elements of sets are non-sets or same size"""
-		for i in range(len(set1)):
-			if isinstance(set1[i], set) and isinstance(set2[i], set) and len(set[i]) != len(set[i]):
-				return False
-			elif isinstance(set1[i], set) or isinstance(set2[i], set):
-				return False
-		return True
+			return list()
+		return list(map(lambda k: self.terms[k], m.up_cableset.get(r) ))
