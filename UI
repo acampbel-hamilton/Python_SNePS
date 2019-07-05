@@ -151,7 +151,7 @@ class UI(Cmd):
 			else:
 				word += c
 		UI.network.definePath(m[1], path)
-		print(" Done")
+		print("Done")
 
 	def do_defSlot(self, args):
 		"""defines a new slot as specified by arguments in the form :
@@ -210,18 +210,22 @@ class UI(Cmd):
 		print("Exiting PySNePS")
 		raise SystemExit
 
-	def do_find(self, args):
+	def do_find(self, args): #rework using find.py
 		"""checks for any propositions compatible with the given for are
 		believed by the system"""
-		args = args.strip()[1:-1]
+		args = re.sub("(^\s*\()|(\)\s*$)", "", args) #strip outer parentheses
 		frames = '(?:' + '|'.join(UI.network.caseframes.keys()) + ')'
-		filler = '(?:\w+|\((?:\s*\w+)+\s*\))'.format(frames)
+		filler = '(?:\w+|\((?:\s*\w+)+\s*\))'
 		case = re.compile('(.*)(\s*\(\s*({})\s+((?:\s*{})+)\s*\))'.format(frames, filler))
 		while case.search(args) is not None:
 			args = case.sub((lambda m: '{} {} '.format(m.group(1),
 					self.netcall('casebuild', m.group(3), m.group(4), "inSys=False").name)),
 					args)
-		m = re.match("\s*({})\s+(?:\s*({}))+\s*".format(frames, filler), args)
+			print(args)
+		print("last match")
+		m = re.match("\s*(?P<frame>{})\s+(?P<fill>(?:\s*{})+)\s*".format(frames, filler), args)
+		print(m.group("frame"))
+		print(m.group("fill"))
 		term = self.netcall('casebuild', m.group(1), m.group(2), "inSys=False")
 		for t in UI.network.currentContext.hyps:
 			if t == term:
