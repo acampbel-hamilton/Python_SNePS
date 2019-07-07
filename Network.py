@@ -8,10 +8,10 @@ from contexts import *
 from SemanticTypes import *
 from SyntacticTypes import *
 # from SlotInference import *
-# from PathInference import * #add this back once the file is finished being written
+from PathInference import * #add this back once the file is finished being written
 from Find import *
 
-class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find):
+class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find, PathInference):
 	def __init__(self):
 		self.terms = {} #maps term names to term objs
 

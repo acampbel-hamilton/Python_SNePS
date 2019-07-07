@@ -62,6 +62,20 @@ class UI(Cmd):
 ################ USER METHODS ################
 
 	def do_ask(self, args):
+		frames = '(?:' + '|'.join(UI.network.caseframes.keys()) + ')'
+		filler = '(?:\w+|\((?:\s*\w+)+\s*\))'.format(frames)
+		# prim = re.findall('\s*({})\s+({})'.format(rel, filler), args)
+		case = re.compile('(?P<begin>.*)(\s*\(\s*(?P<frame>{})\s+(?P<fill>(?:\s*{})+)\s*\))'
+			.format(frames, filler))
+
+		dict =  case.search(args).groupdict()
+		cf = UI.network.caseframes.get(dict['frame'])
+		fill = [[n] for n in dict['fill'].split()]
+		prop = UI.network.construct(cf, fill)
+		print (prop)
+		UI.network.askif(prop)
+
+	def do_asktest(self,args):
 		print ("ask if danny is a thing")
 		prop = UI.network.pb_buildProp(UI.network.find_frame("isa"), [["danny"], ["thing"]])
 		UI.network.askif(prop)
@@ -83,15 +97,6 @@ class UI(Cmd):
 		print ("ask if danny is a whale")
 		prop = UI.network.pb_buildProp(UI.network.find_frame("isa"), [["danny"], ["whale"]])
 		UI.network.askif(prop)
-		# print ( UI.network.traverse( UI.network.terms['danny'], ['member-', 'class', 'subclass-'] ) )
-
-		# frames = '(?:' + '|'.join(UI.network.caseframes.keys()) + ')'
-		# filler = '(?:\w+|\((?:\s*\w+)+\s*\))'
-		# # prim = re.findall('\s*({})\s+({})'.format(rel, filler), args)
-		# case = re.findall('\s*\(\s*({})\s+((?:\s*{})+)\s*\)'.format(frames, filler), args)
-		# for param in case:
-		# 	print (param)
-		# 	term = self.netcall('pb_buildProp', param)
 
 
 	def do_build(self, args):
@@ -251,7 +256,7 @@ class UI(Cmd):
 		filler = '(?:\w+|\((?:\s*\w+)+\s*\))'
 		case = re.compile('(?P<begin>.*)(\s*\(\s*(?P<frame>{})\s+(?P<fill>(?:\s*{})+)\s*\))'
 				.format(frames, filler))
-		while case.search(args) is not None:
+		# while case.search(args) is not None:
 			#consider replacement mechanism for
 			#both collating the terms as they are created and
 			#replacing them as appropriate in the expression

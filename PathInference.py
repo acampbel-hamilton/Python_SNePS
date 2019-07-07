@@ -139,10 +139,7 @@ class PathInference:
 		"""Takes a node, a path. Reads the next direction given by the path,
 		performs the direction, and recursively calls traverse on the next node
 		with the rest of the path. Returns a set of nodes led to by the path"""
-		# Got rid of compose and converse
-		# Still don't know what the restricts do...
-		# Maybe instead of expecting a node, it should be a node set...
-		# that way we can combine traverse() and traverseFromNodes().
+		# Got rid of compose and converse, still don't know what the restricts do...
 
 		# make node string into node
 		if isinstance(node, str):
