@@ -289,7 +289,7 @@ class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find, PathInference):
 	# 		return
 	# 	return self.build(cf, [rfdict[r] for r in cf.slots])
 
-	def casebuild(self, casename, fillers):
+	def casebuild(self, casename, fillers, uasser=False):
 		"""parses a string of fillers and associates them with the appropriate
 		slots from the designated caseframe"""
 		assert casename in self.caseframes.keys()
