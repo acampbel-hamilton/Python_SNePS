@@ -21,7 +21,7 @@ class Slot:
 
 	def __str__(self):
 		return "<{}, {}, pos: {}, neg: {}, min: {}>\nDesc: {}\nForward: {}\nBackward: {}".format(self.name, self.type,
-		 		self.pos_adj, self.neg_adj, self.min, self.docstring, self.f_path_fn, self.b_path_fn)
+		 		self.pos_adj, self.neg_adj, self.min, self.docstring, self.f_path, self.b_path)
 
 class Slot_Mixin:
 	def findSlot(self, slot):
