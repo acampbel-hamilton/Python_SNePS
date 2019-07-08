@@ -257,7 +257,7 @@ class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find, PathInference):
 					self.terms[node].up_cableset.get(Sym(caseframe.slots[i]), [])
 					+ [term.name]})
 		if uassert:
-			self.currentContext.hyps.add(term)
+			self.currentContext.hyps.add(term.name)
 		return term
 
 	# def primbuild(self, rfstr):
@@ -289,7 +289,7 @@ class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find, PathInference):
 	# 		return
 	# 	return self.build(cf, [rfdict[r] for r in cf.slots])
 
-	def casebuild(self, casename, fillers, uasser=False):
+	def casebuild(self, casename, fillers, uassert=False):
 		"""parses a string of fillers and associates them with the appropriate
 		slots from the designated caseframe"""
 		assert casename in self.caseframes.keys()
@@ -309,4 +309,4 @@ class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find, PathInference):
 		if not len(self.caseframes[casename].slots) == len(lst):
 			raise AssertionError("Insufficient fillers for the given caseframe {}"
 				.format(casename))
-		return self.build(self.caseframes[casename], lst)
+		return self.build(self.caseframes[casename], lst, uassert=uassert)

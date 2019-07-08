@@ -9,8 +9,8 @@ class Context:
 		self.name = Sym(name) #symbol
 		self.parents = parents #list of context objects
 		self.docstring = docstring #string
-		self.hyps = set() if hyps is None else hyps #set term objects
-		self.ders = set() if ders is None else ders #set of term objects
+		self.hyps = set() if hyps is None else hyps #set term object names
+		self.ders = set() if ders is None else ders #set of term object names
 		self.kinconsistent = kinconsistent #boolean
 
 	def __contains__(self, term):
