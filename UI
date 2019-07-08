@@ -99,8 +99,8 @@ class UI(Cmd):
 		dict =  case.search(args).groupdict()
 		cf = UI.network.caseframes.get(dict['frame'])
 		fill = [[n] for n in dict['fill'].split()]
-		prop = UI.network.construct(cf, fill)
-		UI.network.askif(prop[0])
+		prop = self.netcall("construct", cf, fill)
+		self.netcall("askif", prop[0])
 
 	def do_asktest(self,args):
 		print ("ask if danny is a thing")
@@ -289,7 +289,6 @@ class UI(Cmd):
 		for i in result:
 			print(i)
 		return result
-
 
 	def do_list(self, args):
 		"""Lists all instances defined on the network of the given object"""
