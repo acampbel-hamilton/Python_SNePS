@@ -90,10 +90,10 @@ class PathInference:
 			self.terms[prop.name] = prop
 
 			for i in range(len(prop.caseframe.slots)):
-				for node in prop.down_cableset.values()[i]:
-					self.terms[node].up_cableset.update({Sym(caseframe.slots[i]):
-						self.terms[node].up_cableset.get(Sym(caseframe.slots[i]), [])
-						+ [term.name]})
+				for node in list(prop.down_cableset.values())[i]:
+					self.terms[node].up_cableset.update({Sym(prop.caseframe.slots[i]):
+						self.terms[node].up_cableset.get(Sym(prop.caseframe.slots[i]), [])
+						+ [prop.name]})
 
 			context.ders.add(prop.name)
 			print ("True")

@@ -49,6 +49,34 @@ class UI(Cmd):
 			args = subcmd.sub((lambda mobj: self.onecmd(mobj.group(1))), args)
 		return args
 
+	def _parse_path(self, pstr):
+		"""parses a path expression passed as a string and returns nested lists
+		representing the path"""
+		path = []
+		lst = path
+		word = ''
+		count = 0
+		for c in pstr:
+			if c in [' ', '\t']:
+				lst.append(word)
+				word = ''
+			elif c == '(':
+				if word:
+					lst.append(word)
+					word = ''
+				lst.append([])
+				lst = lst[-1]
+				count += 1
+			elif c == ')':
+				if word:
+					lst.append(word)
+					word = ''
+				lst = eval('path' + '[-1]'*count)
+				count -= 1
+			else:
+				word += c
+		return path
+
 	def netcall(self, func, *args):
 		"""calls the given function func on args where func is defined on
 		the network class and handles appropriate errors"""
@@ -182,31 +210,7 @@ class UI(Cmd):
 		if m is None:
 			print("Error: incorrect format for defPath command")
 			return
-		path = []
-		lst = path
-		word = ''
-		count = 0
-		for c in m.group('path')[1:-1]:
-			if c in [' ', '\t']:
-				lst.append(word)
-				word = ''
-			elif c == '(':
-				if word:
-					lst.append(word)
-					word = ''
-				lst.append([])
-				lst = lst[-1]
-				count += 1
-			elif c == ')':
-				if word:
-					lst.append(word)
-					word = ''
-				lst = eval('path' + '[-1]'*count)
-				count -= 1
-			else:
-				word += c
-		UI.network.definePath(m[1], path)
-		print("Done")
+		self.netcall("definePath", m.group('slot'), self._parse_path(m.group('path')[1:-1]))
 
 	def do_defSlot(self, args):
 		"""defines a new slot as specified by arguments in the form :
@@ -264,9 +268,28 @@ class UI(Cmd):
 		print("Exiting PySNePS")
 		raise SystemExit
 
-	def do_find(self, args): #rework using find.py
+	def do_find(self, args):
 		"""checks for any propositions compatible with the given for are
 		believed by the system"""
+		r = re.compile("\s*(?P<path>(?:\(?:(?:\s*[\w\-!]+)+?\s*\))|\w+)\s+(?P<terminal>\w+)")
+		l = r.findall(args)
+		print(l)
+		if not l:
+			print("No compatible terms found")
+			return
+		node_set = []
+		for param in l:
+			node_set.append(self.netcall("traverse", param[1],
+				self.netcall("converse", param[0])))
+		result = set()
+		for term in node_set[0]:
+			if node_set[1:] and all([(term in lst) for lst in node_set[1:]])\
+				and term in UI.network.currentContext.hyps:
+				result.append(term.name)
+		for i in result:
+			print(i)
+		return result
+
 
 	def do_list(self, args):
 		"""Lists all instances defined on the network of the given object"""
