@@ -85,17 +85,17 @@ class PathInference:
 
 		if self.pb_derivable(prop, context):
 			Molecular.counter += 1
-			prop.name = "M{}".format(Molecular.counter)
+			prop.name = Sym("M{}".format(Molecular.counter))
 			prop.caseframe.terms.add(prop.name)
 			self.terms[prop.name] = prop
 
-			# for i in range(len(prop.caseframe.slots)):
-			# 	for node in fillers[i]:
-			# 		self.terms[node].up_cableset.update({Sym(caseframe.slots[i]):
-			# 			self.terms[node].up_cableset.get(Sym(caseframe.slots[i]), [])
-			# 			+ [term.name]})
+			for i in range(len(prop.caseframe.slots)):
+				for node in prop.down_cableset.values()[i]:
+					self.terms[node].up_cableset.update({Sym(caseframe.slots[i]):
+						self.terms[node].up_cableset.get(Sym(caseframe.slots[i]), [])
+						+ [term.name]})
 
-			context.ders.add(Sym(prop.name))
+			context.ders.add(prop.name)
 			print ("True")
 			print (prop.name)
 			return

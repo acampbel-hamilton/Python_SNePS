@@ -64,7 +64,7 @@ class UI(Cmd):
 	def do_ask(self, args):
 		frames = '(?:' + '|'.join(UI.network.caseframes.keys()) + ')'
 		filler = '(?:\w+|\((?:\s*\w+)+\s*\))'.format(frames)
-		# prim = re.findall('\s*({})\s+({})'.format(rel, filler), args)
+
 		case = re.compile('(?P<begin>.*)(\s*\(\s*(?P<frame>{})\s+(?P<fill>(?:\s*{})+)\s*\))'
 			.format(frames, filler))
 
@@ -72,8 +72,7 @@ class UI(Cmd):
 		cf = UI.network.caseframes.get(dict['frame'])
 		fill = [[n] for n in dict['fill'].split()]
 		prop = UI.network.construct(cf, fill)
-		print (prop)
-		UI.network.askif(prop)
+		UI.network.askif(prop[0])
 
 	def do_asktest(self,args):
 		print ("ask if danny is a thing")
