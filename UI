@@ -106,30 +106,6 @@ class UI(Cmd):
 			return
 		UI.network.askif(prop)
 
-	def do_asktest(self,args):
-		"""unit test function should be removed after testing is complete"""
-		print ("ask if danny is a thing")
-		prop = UI.network.pb_buildProp(UI.network.find_frame("isa"), [["danny"], ["thing"]])
-		UI.network.askif(prop)
-
-		input()
-
-		print ("ask if danny is a person")
-		prop = UI.network.pb_buildProp(UI.network.find_frame("isa"), [["danny"], ["person"]])
-		UI.network.askif(prop)
-
-		input()
-
-		print ("ask if nate is a person")
-		prop = UI.network.pb_buildProp(UI.network.find_frame("isa"), [["nate"], ["person"]])
-		UI.network.askif(prop)
-
-		input()
-
-		print ("ask if danny is a whale")
-		prop = UI.network.pb_buildProp(UI.network.find_frame("isa"), [["danny"], ["whale"]])
-		UI.network.askif(prop)
-
 	def do_assert(self, args):
 		"""Builds and asserts the specified molecular term and adds it to the network.\nIf an identical object exists, the existing object is returned"""
 		args = re.sub("(^\s*\()|(\)\s*$)", "", args) #strip outer parentheses
@@ -212,7 +188,7 @@ class UI(Cmd):
 		if m is None:
 			print("Error: incorrect format for defPath command")
 			return
-		UI.network.definePath(m.group('slot'), self._parse_path(m.group('path'))[1:-1])
+		UI.network.definePath(m.group('slot'), self._parse_path(m.group('path'))[0])
 
 	def do_defSlot(self, args):
 		"""defines a new slot as specified by arguments in the form:\ndefSlot [name] [type] \"[docstring]\" [pos_adj] [neg_adj] [min] [max]"""
@@ -285,7 +261,7 @@ class UI(Cmd):
 		print(node_set)
 		for term in node_set[0]:
 			if node_set[1:] and all([(term in lst) for lst in node_set[1:]])\
-				and term in UI.network.currentContext.hyps + UI.network.currentContext.ders:
+				and UI.network.isAsserted(term):
 				result.append(term.name)
 		for i in result:
 			print(i)

@@ -25,6 +25,8 @@ class PathInference:
 
 	def converse(self, p):
 		"""Given a path expression, returns its converse"""
+		if not(p):
+			return list()
 		path = p.copy() if self.isPathKeyword(p[0]) else list(reversed(p))
 		for i in range(len(path)):
 			if isinstance(path[i], str):
@@ -38,50 +40,36 @@ class PathInference:
 				path[i] = self.converse(path[i])
 		return path
 
-	def pb_buildProp(self, caseframe, fillers, SynType=Molecular, uassert=False):
-		"""Builds a molecular node based on the given caseframe
-		 and list of fillers. Does not add the node to the network."""
-		assert isinstance(caseframe, CaseFrame), "Given caseframe must exist"
-		assert isinstance(fillers, list) #fillers should be a list of lists of strings
-		assert all([isinstance(s, str) for s in [i for sl in fillers for i in sl]])
-
-		#all base terms  must exist
-		for name in set([i for sl in fillers for i in sl]):
-			if name not in self.terms.keys():
-				self.terms[Sym(name)] = Term(name)
-		for term in self.terms.values(): #no identical term exists
-			if isinstance(term, Molecular) and term.caseframe == caseframe and \
-				[sorted(sl) for sl in sorted(term.down_cableset.values())] == \
-				[sorted(sl) for sl in sorted(fillers)]:
-				raise AssertionError("Identical term {} already exists".format(term.name))
-
-		term = SynType(Sym("M?"), caseframe,
-		 			down_cableset=dict(zip(caseframe.slots, fillers)))
-		return (term)
-
-	def isAsserted(self, proposition, context):
-		"""Return true if an asserted prop's caseframe and fillers match the given prop"""
+	def isAsserted(self, prop, context):
+		"""Return the existing node if it is asserted in the context, else
+		return None"""
 		# TODO: make sure this works for if fillers of a slot are in different order
-		for prop in (context.hyps | context.ders):
-			if proposition.down_cableset == self.terms[prop].down_cableset:
-				return True
-		return False
+		# for prop in (context.hyps | context.ders):
+		# 	if proposition.down_cableset == self.terms[prop].down_cableset:
+		# 		return True
+		# return False
+		# return proposition.name in (context.hyps | context.ders)
+		for p in [self.terms[p] for p in (context.hyps | context.ders)]:
+			if prop == p:
+				return p
+		return None
+
 
 	# Move to an "ask" file, if one is created
 	def askif(self, prop, context=None):
-		""" If prop is derivable in the context, adds prop to network"""
-
-		# Prints for debugging...
-		# print ("\nASK IF: ")
-		# print ("prop: {}".format(prop))
-		# input("waiting...")
+		""" If already asserted, prints the asserted prop's name and returns it
+		If prop is derivable in the context, adds prop to network, prints it's
+		new name, and returns it"""
 
 		# default to the currentContext
 		context = self.currentContext if context == None else context
 
-		# return True if the proposition is asserted in the context
-		if self.isAsserted(prop, context):
-			return True
+		# check if the proposition is asserted in the context
+		isAsserted = self.isAsserted(prop, context)
+		if isAsserted:
+			print (isAsserted.name) 	# print the already asserted prop's name
+			return isAsserted
+
 
 		if self.pb_derivable(prop, context):
 			Molecular.counter += 1
@@ -96,9 +84,9 @@ class PathInference:
 						+ [prop.name]})
 
 			context.ders.add(prop.name)
-			print ("True")
 			print (prop.name)
-			return
+			return prop
+			
 		print ("False")
 
 	def pb_findfroms(self, term, slot, context = None):
@@ -143,7 +131,9 @@ class PathInference:
 
 		# make node string into node
 		if isinstance(node, str):
-			node = self.terms[node]
+			node = self.terms.get(node, node)
+			if isinstance(node, str):
+				raise AssertionError("term \'{}\' does not exist".format(node))
 
 		# default to the currentContext
 		context = self.currentContext if context == None else context
