@@ -90,19 +90,27 @@ class UI(Cmd):
 ################ USER METHODS ################
 
 	def do_ask(self, args):
+		"""triggers forward inference and attempts to prove the given expression"""
 		frames = '(?:' + '|'.join(UI.network.caseframes.keys()) + ')'
 		filler = '(?:\w+|\((?:\s*\w+)+\s*\))'.format(frames)
 
 		case = re.compile('(?P<begin>.*)(\s*\(\s*(?P<frame>{})\s+(?P<fill>(?:\s*{})+)\s*\))'
 			.format(frames, filler))
-
+		if case is None:
+			print("Invalid input {} to ask".format(args))
+			return
 		dict =  case.search(args).groupdict()
 		cf = UI.network.caseframes.get(dict['frame'])
 		fill = [[n] for n in dict['fill'].split()]
-		prop = self.netcall("construct", cf, fill)
-		self.netcall("askif", prop[0])
+		# prop = self.netcall("construct", 'UI.network.find_frame({})'.format(cf.name), fill)
+		prop, _ = UI.network.construct(cf, fill)
+		if prop is None:
+			return
+		# self.netcall("askif", prop[0])
+		UI.network.askif(prop)
 
 	def do_asktest(self,args):
+		"""unit test function should be removed after testing is complete"""
 		print ("ask if danny is a thing")
 		prop = UI.network.pb_buildProp(UI.network.find_frame("isa"), [["danny"], ["thing"]])
 		UI.network.askif(prop)
@@ -126,11 +134,10 @@ class UI(Cmd):
 		UI.network.askif(prop)
 
 	def do_assert(self, args):
-		"""Builds and asserts the specified molecular term and adds it to the
-		network. If an identical object exists, the existing object is returned"""
+		"""Builds and asserts the specified molecular term and adds it to the network.\nIf an identical object exists, the existing object is returned"""
 		args = re.sub("(^\s*\()|(\)\s*$)", "", args) #strip outer parentheses
 		frames = '(?:' + '|'.join(UI.network.caseframes.keys()) + ')'
-		filler = '(?:\w+|\((?:\s*\w+)+\s*\))'.format(frames)
+		filler = '(?:\w+|\((?:\s*\w+)+\s*\))'
 		case = re.compile('(?P<begin>.*)(\s*\(\s*(?P<frame>{})\s+(?P<fill>(?:\s*{})+)\s*\))'
 			.format(frames, filler))
 		while case.search(args) is not None: #only build internal nodes
@@ -138,6 +145,9 @@ class UI(Cmd):
 					self.netcall('casebuild', m.group("frame"),
 						m.group("fill")).name)),
 					args)
+		if not case.search('(' + args + ')'):
+			print("Invalid input: {}".format(args))
+			return
 		args = case.sub((lambda m: '{} {} '.format(m.group("begin"),
 				self.netcall('casebuild', m.group("frame"),
 					m.group("fill"), "uassert=True").name)),
@@ -145,8 +155,7 @@ class UI(Cmd):
 		return args
 
 	def do_build(self, args):
-		"""Builds the specified molecular term and adds it to the network.
-		If an identical object exists, the existing object is returned"""
+		"""Builds the specified molecular term and adds it to the network.\nIf an identical object exists, the existing object is returned"""
 		# rel = '(?:' + '|'.join(UI.network.slots.keys()) + ')'
 		frames = '(?:' + '|'.join(UI.network.caseframes.keys()) + ')'
 		filler = '(?:\w+|\((?:\s*\w+)+\s*\))'.format(frames)
@@ -160,12 +169,11 @@ class UI(Cmd):
 		return args
 
 	def do_clear(self, args):
-		""""calls bash clear command"""
+		"""calls bash clear command"""
 		os.system('clear')
 
 	def do_defContext(self, args):
-		""" defines a new caseframe as specified by arguments in the form:
-			definedContext [name] \"[docstring]\" ([parents]) ([hyps])"""
+		"""defines a new caseframe as specified by arguments in the form:\ndefinedContext [name] \"[docstring]\" ([parents]) ([hyps])"""
 		m = re.match("^(?P<name>\s*\w+)\s*" + \
 					"(?P<docstr>{})?".format(UI.qstr) + \
 					"(?(docstr)\s+\((?P<parents>(\s*\w+)+)\s*\))?" + \
@@ -179,7 +187,7 @@ class UI(Cmd):
 		elif m.group('hyps'):
 			count = 4
 		elif m.group('parents'):
-			count
+			count = 3
 		elif m.group('docstr'):
 			count = 2
 		else:
@@ -187,8 +195,7 @@ class UI(Cmd):
 		self.netcall('defineContext', param[:count])
 
 	def do_defFrame(self, args):
-		"""defines a new caseframe as specified by arguments
-		in the form: defineFrame [name] [semantic type] ([slots]) \"[docstring]\'"""
+		"""defines a new caseframe as specified by arguments in the form:\ndefFrame [name] [semantic type] ([slots]) \"[docstring]\'"""
 		args = re.match("^\s*(?P<name>\w+)\s+" +\
 						"(?P<semtype>\w+)\s+" +\
 						"\((?P<slots>(\s*\w+)+)\)\s+" +\
@@ -213,9 +220,7 @@ class UI(Cmd):
 		self.netcall("definePath", m.group('slot'), self._parse_path(m.group('path')[1:-1]))
 
 	def do_defSlot(self, args):
-		"""defines a new slot as specified by arguments in the form :
-			defineSlot [name] [type] \"[docstring]\" [pos_adj] [neg_adj] [min]
-			[max]"""
+		"""defines a new slot as specified by arguments in the form:\ndefSlot [name] [type] \"[docstring]\" [pos_adj] [neg_adj] [min] [max]"""
 		args = re.match("^\s*(?P<name>\w+)" +\
 						"\s+(?P<semtype>\w+)" +\
 						"\s+(?P<docstr>{})".format(UI.qstr) +\
@@ -269,8 +274,7 @@ class UI(Cmd):
 		raise SystemExit
 
 	def do_find(self, args):
-		"""checks for any propositions compatible with the given for are
-		believed by the system"""
+		"""Returns a node set containing all nodes which satisfy the given constraints.\nConstraints have the format: [path] [node]"""
 		r = re.compile("\s*(?P<path>(?:\(?:(?:\s*[\w\-!]+)+?\s*\))|\w+)\s+(?P<terminal>\w+)")
 		l = r.findall(args)
 		print(l)
@@ -303,6 +307,8 @@ class UI(Cmd):
 			UI.network.listSemanticTypes()
 		elif args in ["slot", "slots"]:
 			UI.network.listSlots()
+		elif args in ["term", "terms"]:
+			print(*sorted(UI.network.terms.keys()), sep='\n')
 		else:
 			print("Error: Invalid argument to list")
 

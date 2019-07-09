@@ -39,7 +39,8 @@ class CaseFrame_Mixin:
 
 	def find_frame(self, name):
 		"""Returns the caseframe associated with the given function symbol"""
-		return self.caseframes.get(Sym(name))
+		assert isinstance(name, str) or isinstance(name, CaseFrame)
+		return self.caseframes.get(Sym(name)) if isinstance(name, str) else name
 
 	def defineCaseframe(self, name, type, slots, docstring=""):
 		assert isinstance(name, str)

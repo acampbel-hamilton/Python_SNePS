@@ -295,7 +295,7 @@ class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find, PathInference):
 		assert casename in self.caseframes.keys()
 		assert isinstance(fillers, str)
 
-		fillregex = re.compile('^\s*(?:(?P<sing>\w+)|\((?P<mult>(?:\s*\w+)+)\))')
+		fillregex = re.compile('^\s*(?:(?P<sing>\w+)|\((?P<mult>(?:\s*\w+)+)\s*\))')
 		lst = []
 		while not fillers == '':
 			m = fillregex.match(fillers)
