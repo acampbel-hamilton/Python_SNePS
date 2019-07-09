@@ -33,6 +33,15 @@ class UI(Cmd):
 		line = re.sub('\s+', ' ', line)
 		return line
 
+	def onecmd(self, line):
+		"""error handling"""
+		res = None
+		try:
+			res = super().onecmd(line)
+		except AssertionError as AE:
+			print(AE)
+		return res
+
 	def postcmd(self, stop, line):
 		self.recur = False
 
@@ -77,16 +86,6 @@ class UI(Cmd):
 				word += c
 		return path
 
-	def netcall(self, func, *args):
-		"""calls the given function func on args where func is defined on
-		the network class and handles appropriate errors"""
-		result = None
-		try:
-			result = eval('UI.network.{}(*{})'.format(func, args))
-		except AssertionError as AE:
-			print(AE)
-		return result
-
 ################ USER METHODS ################
 
 	def do_ask(self, args):
@@ -102,11 +101,9 @@ class UI(Cmd):
 		dict =  case.search(args).groupdict()
 		cf = UI.network.caseframes.get(dict['frame'])
 		fill = [[n] for n in dict['fill'].split()]
-		# prop = self.netcall("construct", 'UI.network.find_frame({})'.format(cf.name), fill)
 		prop, _ = UI.network.construct(cf, fill)
 		if prop is None:
 			return
-		# self.netcall("askif", prop[0])
 		UI.network.askif(prop)
 
 	def do_asktest(self,args):
@@ -142,15 +139,13 @@ class UI(Cmd):
 			.format(frames, filler))
 		while case.search(args) is not None: #only build internal nodes
 			args = case.sub((lambda m: '{} {} '.format(m.group("begin"),
-					self.netcall('casebuild', m.group("frame"),
-						m.group("fill")).name)),
+					UI.network.casebuild(m.group("frame"), m.group("fill")).name)),
 					args)
 		if not case.search('(' + args + ')'):
 			print("Invalid input: {}".format(args))
 			return
 		args = case.sub((lambda m: '{} {} '.format(m.group("begin"),
-				self.netcall('casebuild', m.group("frame"),
-					m.group("fill"), "uassert=True").name)),
+				UI.network.casebuild(m.group('frame'), m.group('fill'), uassert=True))),
 				'(' + args + ')') #assert main node
 		return args
 
@@ -164,7 +159,7 @@ class UI(Cmd):
 			.format(frames, filler))
 		while case.search(args) is not None:
 			args = case.sub((lambda m: '{} {} '.format(m.group("begin"),
-					self.netcall('casebuild', m.group("frame"), m.group("fill")).name)),
+					UI.network.casebuild(m.group('frame'), m.group('fill')).name)),
 					args)
 		return args
 
@@ -192,7 +187,7 @@ class UI(Cmd):
 			count = 2
 		else:
 			count = 1
-		self.netcall('defineContext', param[:count])
+		UI.network.defineContext(*param[:count])
 
 	def do_defFrame(self, args):
 		"""defines a new caseframe as specified by arguments in the form:\ndefFrame [name] [semantic type] ([slots]) \"[docstring]\'"""
@@ -217,7 +212,7 @@ class UI(Cmd):
 		if m is None:
 			print("Error: incorrect format for defPath command")
 			return
-		self.netcall("definePath", m.group('slot'), self._parse_path(m.group('path')[1:-1]))
+		UI.network.definePath(m.group('slot'), self._parse_path(m.group('path'))[1:-1])
 
 	def do_defSlot(self, args):
 		"""defines a new slot as specified by arguments in the form:\ndefSlot [name] [type] \"[docstring]\" [pos_adj] [neg_adj] [min] [max]"""
@@ -283,12 +278,14 @@ class UI(Cmd):
 			return
 		node_set = []
 		for param in l:
-			node_set.append(self.netcall("traverse", param[1],
-				self.netcall("converse", param[0])))
+			subns = UI.network.traverse(param[1], UI.network.converse(param[0]))
+			print(subns)
+			node_set.append(subns)
 		result = set()
+		print(node_set)
 		for term in node_set[0]:
 			if node_set[1:] and all([(term in lst) for lst in node_set[1:]])\
-				and term in UI.network.currentContext.hyps:
+				and term in UI.network.currentContext.hyps + UI.network.currentContext.ders:
 				result.append(term.name)
 		for i in result:
 			print(i)
