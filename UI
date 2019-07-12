@@ -20,19 +20,26 @@ class UI(Cmd):
 	qstr = "\"(\s*\w+)+\s*\""
 	arg_gen = "\s+\w+\s*"
 
+	###### Overwritten default methods from Cmd ###
+
 	def __init__(self, completekey='tab', stdin=None, stdout=None):
 		self.recur = False
 		super().__init__(completekey, stdin, stdout)
 
+	#runs prior to the command loop
+	#enables all default functionality in the network
 	def preloop(self):
 		UI.network = Network()
 		UI.network.initialize()
 
+	#does slight preprocessing of input, allows for nested command processing
 	def precmd(self, line):
 		self.recur = True
 		line = re.sub('\s+', ' ', line)
 		return line
 
+	#overwrite of onecmd to handle error processing and propigation
+	#all error handling for the UI should fall here
 	def onecmd(self, line):
 		"""error handling"""
 		res = None
@@ -45,6 +52,9 @@ class UI(Cmd):
 	def postcmd(self, stop, line):
 		self.recur = False
 
+	#used to evaluate nested commands
+	#currently does not account for internally nested build, assert, or find
+	#there may be some errors in the evaluation of nested UI commands
 	def _reval(self, args): #this can change the network even if an error occurs
 		"""recursively evaluates the arguments to any do_* method, allowing the
 		only appropriate functions to be used as arguments"""
@@ -56,8 +66,10 @@ class UI(Cmd):
 			.format(UI.cmds, UI.slot_filler, UI.qstr, UI.arg_gen))
 		while subcmd.search(args) is not None:
 			args = subcmd.sub((lambda mobj: self.onecmd(mobj.group(1))), args)
+		print(args)
 		return args
 
+	#parses path expr into a nested list structure
 	def _parse_path(self, pstr):
 		"""parses a path expression passed as a string and returns nested lists
 		representing the path"""
@@ -88,6 +100,7 @@ class UI(Cmd):
 
 ################ USER METHODS ################
 
+	#needs to be modified to handle internall recursive queries
 	def do_ask(self, args):
 		"""triggers forward inference and attempts to prove the given expression"""
 		frames = '(?:' + '|'.join(UI.network.caseframes.keys()) + ')'
@@ -108,7 +121,7 @@ class UI(Cmd):
 
 	def do_assert(self, args):
 		"""Builds and asserts the specified molecular term and adds it to the network.\nIf an identical object exists, the existing object is returned"""
-		args = re.sub("(^\s*\()|(\)\s*$)", "", args) #strip outer parentheses
+		args = re.sub("(^\s*\()|(\)\s*$)", "", self._reval(args)) #strip outer parentheses
 		frames = '(?:' + '|'.join(UI.network.caseframes.keys()) + ')'
 		filler = '(?:\w+|\((?:\s*\w+)+\s*\))'
 		case = re.compile('(?P<begin>.*)(\s*\(\s*(?P<frame>{})\s+(?P<fill>(?:\s*{})+)\s*\))'
@@ -125,6 +138,8 @@ class UI(Cmd):
 				'(' + args + ')') #assert main node
 		return args
 
+	#structure remains to implement a primitive build accepting input in the form:
+	#		build [relation] [nodeset] ...
 	def do_build(self, args):
 		"""Builds the specified molecular term and adds it to the network.\nIf an identical object exists, the existing object is returned"""
 		# rel = '(?:' + '|'.join(UI.network.slots.keys()) + ')'
@@ -139,6 +154,7 @@ class UI(Cmd):
 					args)
 		return args
 
+	#enable windows compatiblity for this command?
 	def do_clear(self, args):
 		"""calls bash clear command"""
 		os.system('clear')
@@ -221,6 +237,7 @@ class UI(Cmd):
 			UI.network.defineSlot(args.group('name'), args.group('semtype'),
 				args.group('docstr'))
 
+	#consider updates to str and repr on all relevent objects
 	def do_describe(self, args):
 		"""Prints a representation of the object specified by name"""
 		name = self._reval(args).split()[0]
@@ -235,6 +252,7 @@ class UI(Cmd):
 		else:
 			print("Given name does not correspond to any object.")
 
+	#this needs to be rewritten to provide a more appropriate function
 	def do_dump(self, args):
 		"""Prints the network. Should be rewritten"""
 		print(UI.network)
@@ -244,6 +262,7 @@ class UI(Cmd):
 		print("Exiting PySNePS")
 		raise SystemExit
 
+	#needs to have internal recursion implemented
 	def do_find(self, args):
 		"""Returns a node set containing all nodes which satisfy the given constraints.\nConstraints have the format: [path] [node]"""
 		r = re.compile("\s*(?P<path>(?:\(?:(?:\s*[\w\-!]+)+?\s*\))|\w+)\s+(?P<terminal>\w+)")
@@ -258,7 +277,6 @@ class UI(Cmd):
 			print(subns)
 			node_set.append(subns)
 		result = set()
-		print(node_set)
 		for term in node_set[0]:
 			if node_set[1:] and all([(term in lst) for lst in node_set[1:]])\
 				and UI.network.isAsserted(term):
@@ -297,4 +315,4 @@ class UI(Cmd):
 if __name__ == "__main__":
 	prompt = UI()
 	prompt.prompt = '[> '
-	prompt.cmdloop("Welcome to the rudimentary UI for PySNePS!")
+	prompt.cmdloop("""Welcome to the UI for PySNePS!\nRead the associated ReadMe for more details on the operation of this UI.""")

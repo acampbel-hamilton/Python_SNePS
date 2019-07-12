@@ -6,9 +6,9 @@
 from Symbol import Sym, _reduce, _expand, _none
 
 class CaseFrame:
-	def __init__(self, name, type, docstring="", slots=None, adj_to=None, adj_from=None, terms=None):
+	def __init__(self, name, _type, docstring="", slots=None, adj_to=None, adj_from=None, terms=None):
 		self.name = Sym(name)
-		self.type = type #must be either obj or class itself
+		self.type = _type #must be either obj or class itself
 		self.docstring = docstring
 		self.slots = [] if slots is None else slots #list of slot names
 		self.adj_to = set() if adj_to is None else adj_to
@@ -28,7 +28,7 @@ class CaseFrame:
 
 	def __str__(self):
 		"""Creates a string representation of a CaseFrame"""
-		return "<{} [{}], {{{}}} >".format(self.name, self.type,
+		return "{} <{}>\nSlots: {}".format(self.name, self.type.getClass(),
 		 			(str([repr(s) for s in self.slots])[1:-1]))
 
 class CaseFrame_Mixin:
@@ -50,7 +50,7 @@ class CaseFrame_Mixin:
 		assert isinstance(docstring, str)
 
 		self.caseframes[Sym(name)] = CaseFrame(Sym(name),
-					self.findSemanticType(type), docstring, slots)
+					self.findSemanticType(type)(), docstring, slots)
 		newCF = self.caseframes[Sym(name)]
 		# Look at all existing caseframes, check whether they are adjustable to
 		# or from this one. If so, store that information in the frames.

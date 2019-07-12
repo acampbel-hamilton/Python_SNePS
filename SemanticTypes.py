@@ -18,9 +18,11 @@ class Entity:
 		return self._classStrip(self.__class__.__bases__)
 
 	def getClass(self):
+		"""returns the class name as a string"""
 		return self._classStrip(self.__class__)
 
 	def __str__(self):
+		"""represents the class as a string"""
 		return str(self.type_name)
 
 class Proposition(Entity):
