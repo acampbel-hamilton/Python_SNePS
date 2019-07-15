@@ -1,5 +1,15 @@
 # Python_SNePS
-This is a partial implementation of SNePS (Semantic Network Processing System) in Python. The system currently has the ability to build and represent a network and has an implementation of path-based inference as defined in the SNePS literature to allow for a limited inference capacity. This ReadMe will contain a brief explanation of the SNePS system as a whole (specifically SNePS 3) as well as a description of of the currently implemented user interface.
+This is a partial implementation of SNePS (Semantic Network Processing System) in Python. The system currently has the ability to build and represent a network and has an implementation of path-based inference as defined in the SNePS literature to allow for a limited inference capacity. This ReadMe will contain a brief explanation of the SNePS system as a whole (specifically SNePS 3) as well as a description of of the currently implemented user interface. It is recommended that the developers read the following papers before editing the source code for this module:
+
+	[An Introduction to SNePS 3](https://cse.buffalo.edu/~shapiro/Papers/sneps3intro.pdf)
+
+	[A Logic of Arbitrary and Indefinite Objects](https://cse.buffalo.edu/~shapiro/Papers/sha04a.pdf)
+
+	[SNePS: A Logic for Natural Language Understanding and Commonsense Reasoning](https://cse.buffalo.edu/~shapiro/Papers/snepslogic.pdf)
+
+	[Visually Interacting with a Knowledge Base Using Frames, Logic, and Propositional Graphs](https://cse.buffalo.edu/~shapiro/Papers/schsha2011b.pdf)
+
+	[A “Natural Logic'' for Natural Language Processing and Knowledge Representation](https://cse.buffalo.edu/sneps/Bibliography/ali94-01.pdf)
 
 ##SNePS 3 Description
 
@@ -20,7 +30,7 @@ The assert command should be written in the following format:
 where [node] signifies a nested molecular node description as specified in build. This command allows the evaluation of nested UI commands.
 
 ### build
-The build command should be written in the folowing format:
+The build command should be written in the following format:
 		build [node]
 where [node] is either ([caseframe] [filler] ...) or [base]. [filler] is either a set of nodes ([node] ...) or a singleton node [node]. [base] is a represents an atomic item, i.e. a noun, action, or non-propositional relation.
 
@@ -28,22 +38,65 @@ where [node] is either ([caseframe] [filler] ...) or [base]. [filler] is either 
 This command is called without parameters and clears the screen. This will only work on a linux based command line as far as I am aware. This command may require a rewrite if the system is used on another operating system.
 
 ### defContext
-
+The defContext command should be written in the following format:
+		defContext [name] "docstring" ([parents]) ([hyps])
+where [name] is the name of the new context, "docstring" is a short description of it, ([parents]) is a set of names of parent contexts, from which this new context will inherit the hypothesis and derived terms, and ([hyps]) which contains the names of any additional terms to be believed in the new context. This currently does not suppose nested UI commands
 
 ### defFrame
+The defFrame command should be written in the following format:
+		defFrame [name] [semantic type] ([slots]) "docstring"
+where [name] is the name of the new caseframe, [semantic type] is the semantic type of the given caseframe, ([slots]) is the set of names of slots contained in the caseframe, and "docstring" is a short description of the new caseframe. The command currently does not evaluate nested UI commands, which should be implemented in the future.
 
 ### defPath
+The defPath command defines a path for use in path based inference.
+		defPath [slot] [path]
+[path] has its own internal syntax as described below.
+
+ [slot] : the name of a slot to be traverse in the forward direction
+			(filler in the down cableset)
+ [slot]- : the name of a slot to be traverse in the backward direction
+			(filler in the up cableset)
+ kstar : the following expression is to be repeated zero or more times
+
+ kplus : the folowing expression is to be repeated one or more times
+
+ converse : the following path traversed in the backwards direction
+
+ ! : an asserted node must exist here
+
+ or : one of the following path expressions must hold
+
+ and : all of the following path expressions must hold
+
+ not : the following path expression must not hold
+
+ Ex:
+ defPath member (member (kstar (equiv- ! equiv)))
+ defPath member (or member(member (kstar (equiv- ! equiv))))
+ defPath class (or class (class (kstar (subclass- superclass))))
+ defPath class (class (kstar (subclass- superclass)))
 
 ### defSlot
+The defSlot command should be called in the following format:
+		defSlot [name] [type] "docstring" [positive adjust] [negative adjust] [min] [max]
+where [name] is the name of the new slot, [type] is the semantic type of the new slot, "docstring" is a short description of this new slot, [positive adjust] and [negative adjust] are one of reduce, "expand", or "none", which, together with [min] and [max], specify the behavior of the slot under forward and backward subsumption based inference. Arguments after "docstring" are optional, however, the presence of any argument necessitates the presence of those before it in this list as arguments are positionally evaluated.
 
 ### describe
+This command takes the name of an object as a parameter and prints a sting representation of that object. This command accepts nested UI commands. Consider updating the string representations of objects as they are currently slightly limited in their descriptive power and may not be particular useful to someone who is not familiar with the underlying implementation.
 
 ### dump
+This command is called without parameters and prints a representation of the current network at present. This should be rewritten at some point to better align with the behavior of the dump command present in the original implementation of SNePS 3.
 
 ### exit
+This command closes the PySNePS UI.
 
 ### find
+The find command should be written in the following format:
+		find ([node])
+where [node] signifies a non-nested molecular description as described in build. This command should be rewritten to handle a nested molecular description. Find has also not been fully tested and may contain unexpected bugs.
 
 ### list
+The list command is called with a single parameter denoting a particular type of object in the network. (i.e. term slot, semantic type, context, or caseframe). The command then lists all defined instances of the object in the network. (This is technically incorrect as it only lists all semantic type classes defined in the hierarchy and not every instance of a semantic type)
 
 ### shell
+This command can be called with a line of python code following it. This code is then passed to the eval function and the result printed. This can be abbreviated with '!'. This is most useful for looking at particular objects ad object attributes while debugging. Consider removing this functionality once the system is complete.
