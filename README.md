@@ -1,19 +1,14 @@
 # Python_SNePS
 This is a partial implementation of SNePS (Semantic Network Processing System) in Python. The system currently has the ability to build and represent a network and has an implementation of path-based inference as defined in the SNePS literature to allow for a limited inference capacity. This ReadMe will contain a brief explanation of the SNePS system as a whole (specifically SNePS 3) as well as a description of of the currently implemented user interface. It is recommended that the developers read the following papers before editing the source code for this module:
+* [An Introduction to SNePS 3](https://cse.buffalo.edu/~shapiro/Papers/sneps3intro.pdf);
+* [A Logic of Arbitrary and Indefinite Objects](https://cse.buffalo.edu/~shapiro/Papers/sha04a.pdf);
+* [SNePS: A Logic for Natural Language Understanding and Commonsense Reasoning](https://cse.buffalo.edu/~shapiro/Papers/snepslogic.pdf);
+* [Visually Interacting with a Knowledge Base Using Frames, Logic, and Propositional Graphs](https://cse.buffalo.edu/~shapiro/Papers/schsha2011b.pdf);
+* [A “Natural Logic'' for Natural Language Processing and Knowledge Representation](https://cse.buffalo.edu/sneps/Bibliography/ali94-01.pdf).
 
-	[An Introduction to SNePS 3](https://cse.buffalo.edu/~shapiro/Papers/sneps3intro.pdf)
+## SNePS 3 Description
 
-	[A Logic of Arbitrary and Indefinite Objects](https://cse.buffalo.edu/~shapiro/Papers/sha04a.pdf)
-
-	[SNePS: A Logic for Natural Language Understanding and Commonsense Reasoning](https://cse.buffalo.edu/~shapiro/Papers/snepslogic.pdf)
-
-	[Visually Interacting with a Knowledge Base Using Frames, Logic, and Propositional Graphs](https://cse.buffalo.edu/~shapiro/Papers/schsha2011b.pdf)
-
-	[A “Natural Logic'' for Natural Language Processing and Knowledge Representation](https://cse.buffalo.edu/sneps/Bibliography/ali94-01.pdf)
-
-##SNePS 3 Description
-
-##UI 'User Manual'
+## UI 'User Manual'
 
 ### Notes to the User
 The user should know a few things about the code before attempting to run it. First, the UI file is configured to be a script run from the command line. As such, the shebang path may need to be changed when this system is run outside of the Hamilton College Gemini Server. Furthermore, the clear command in the Ui is currently configured to use Linux/Unix system command. This will need to be changed to conform to the appropriate system command should your command line differ. If you plan to modify the system, specifically the UI, you should familiarize yourself with the Cmd module, as this UI heavily utilizes that module.
