@@ -8,6 +8,17 @@ This is a partial implementation of SNePS (Semantic Network Processing System) i
 
 ## SNePS 3 Description
 
+### Introduction
+SNePS (Semantic Network Processing System) is a knowledge representation and reasoning system. It is designed to model the common sense reasoning used in everyday speech. Specifically, SNePS is designed to account for the difficulties that First Order Predicate Logic (FOPL) and other more prevalent logics have in representing every day statements. SNePS contains an inference system, which allows the system to infer only relevant implied statements for the stored information.
+
+### Knowledge Representation
+SNePS is a Propositional Semantic Network, which means that every proposition is represented by a node. These nodes are either atomic or molecular. Atomic nodes are divided into two categories, Base Nodes and Variable Nodes. Base Nodes represent non-propositional terms, like nouns, verbs, or adjectives. Variables represent a particular arbitrary object. Variables are repstricted by their associated restriction set, which contains Molecular nodes. Molecular nodes represent propositions, allowing for statements to be made about base nodes, variable nodes, and other molecular nodes. In this implementation, nodes are instantiations of subclasses of the Term class found in [SyntacticTypes.py](./SyntacticTypes.py). These Syntatic Types are related to each other through a built-in class heirarchy rooted at the Term class.
+
+Molecular nodes are given their meaning through their associated caseframe, which defines how nodes are related to each other through a given Molecular node. Each caseframe is defined by a set of slots and an associated Semantic Type. The Semantic Type of a caseframe is used to group the caseframes based on its general properties (See the class docstrings in [SemanticTypes.py](./SemanticTypes.py) for further detail). Each slot (which used to be called relations) is filled by a set of nodes in the molecular node. The slots allow the system to interpret the meaning of the nodes within the caseframe. For instance, the isa caseframe has the slots member and class. The isa caseframe is interpreted as "[member] is a [class]". Thus a molecular node with the isa caseframe which has the [member] slot filled with "Nate" and the [class] slot filled with "student", would be interpreted as "Nate is a student".
+
+### Knowledge Reasoning
+SNePS contains an inference system, which allows for reasoning over the knowledge contained in the system. As of now, only path based inference is currently implemented. Other types of inference in the original SNePS 3 include natural deduction, slot based, and subsumption inference. Path based inference relies upon user defined paths of slots to infer a new molecular node relating the terminal points of the path. (This is a terrible description)
+
 ## UI 'User Manual'
 
 ### Notes to the User
@@ -16,8 +27,7 @@ The user should know a few things about the code before attempting to run it. Fi
 ### ask
 The ask command should be written in the following format:
 		ask [node]
-where [node] signifies a molecular node described using the appropriate syntax.
-See build for further description of the appropriate syntax. Note however, that the ask command does no accept any recursive evaluation and is thus limited in the scope of appropriate queries. The ask command should trigger forward and backward inference of all types (Subsumption, Slot-based, Path-based, Natural Deduction), though the current implementation only runs forward path-based inference. Support for all other forms of inference is currently missing from the back end.
+where [node] signifies a molecular node described using the appropriate syntax. See build for further description of the appropriate syntax. Note however, that the ask command does no accept any recursive evaluation and is thus limited in the scope of appropriate queries. The ask command should trigger forward and backward inference of all types (Subsumption, Slot-based, Path-based, Natural Deduction), though the current implementation only runs forward path-based inference. Support for all other forms of inference is currently missing from the back end.
 
 ### assert
 The assert command should be written in the following format:
