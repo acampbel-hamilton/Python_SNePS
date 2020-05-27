@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3.5
+#!/usr/bin/python3
 
 
 #### Note: str and repr methods should be rewritten to provide a more
