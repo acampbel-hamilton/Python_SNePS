@@ -1,4 +1,4 @@
-## From https://gist.github.com/roberthoenig/30f08b64b6ba6186a2cdee19502040b4 ##
+# From https://gist.github.com/roberthoenig/30f08b64b6ba6186a2cdee19502040b4 ##
 
 import sys
 
@@ -56,7 +56,7 @@ def get_ast(input_norm: List[str]) -> List[Any]:
     return ast
 
 def parse(str):
-	return get_ast(normalize_str(str))
+    return get_ast(normalize_str(str))
 
 def main():
     input_str = sys.stdin.read()
