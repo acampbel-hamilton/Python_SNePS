@@ -2,10 +2,6 @@ from ply import *
 from re import match
 from sys import argv, exit
 
-if len(argv) != 2:
-    print("Usage: python3 langalex.py filename")
-    exit(1)
-
 keywords = (
     'xor',
     'or',
@@ -64,18 +60,23 @@ def t_error(t):
     print("Invalid syntax: ", t.value)
     t.lexer.skip(1)
 
-t_ignore = '\n'
+t_ignore = r'\s+'
 
 # Build the lexer
 import ply.lex as lex
 lexer = lex.lex()
 
-lexer.input(''.join(open(argv[1]).readlines()))
+if __name__ == "__main__":
+    if len(argv) != 2:
+        print("Usage: python3 langalex.py filename")
+        exit(1)
 
-while True:
-     tok = lexer.token()
-     if tok == '\n':
-         continue
-     if not tok:
-         break      # No more input
-     print(tok)
+    # Read the input file
+    lexer.input(''.join(open(argv[1]).readlines()))
+
+    # Tokenize and print (this is just a test)
+    while True:
+         token = lexer.token()
+         if not token:
+             break
+         print(tok)
