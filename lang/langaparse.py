@@ -1,4 +1,29 @@
-tokens =  ['T_LParen', 'T_RParen', 'T_Impl', 'T_None', 'T_Integer', 'T_Identifier', 'T_And', 'T_Or', 'T_Not', 'T_Nor', 'T_Thnot', 'T_Thnor', 'T_Nand', 'T_Xor', 'T_Iff', 'T_AndOr', 'T_Thresh', 'T_SetOf', 'T_Every', 'T_Some', 'T_Close', 'T_WftNode', 'T_QIdentifier', 'T_String']
+tokens =  (
+    'Xor',
+    'Or',
+    'And',
+    'Thresh',
+    'Thnor',
+    'Thnot',
+    'AndOr',
+    'SetOf',
+    'Some',
+    'Every',
+    'Nand',
+    'Nor',
+    'None',
+    'Not',
+    'Close',
+    'LParen',
+    'RParen',
+    'WftNode',
+    'Impl',
+    'DoubImpl',
+    'Integer',
+    'QIdentifier',
+    'String',
+    'Identifier'
+)
 
 precedence =  []
 
@@ -6,210 +31,214 @@ precedence =  []
 
 def p_Wft(p):
     '''
-    Wft :           atomicwft
-        |           Y_WftNode
-        |           T_LParen Function Arguments T_RParen
-        |           T_LParen BinaryOp Argument Argument T_RParen
-        |           T_LParen NaryOp Wfts T_RParen
-        |           T_LParen Param2Op T_LParen Y_Integer Y_Integer T_RParen Wft Wfts T_RParen
-        |           T_LParen Y_Thresh T_LParen Y_Integer T_RParen Wft Wfts T_RParen
-        |           T_LParen Y_Close AtomicNameSet Wft T_RParen
-        |           Wft : T_LParen Y_Every AtomicName Wfts T_RParen
-        |           T_LParen Y_Some AtomicName T_LParen Wfts T_RParen Wfts T_RParen
-        |           T_LParen T_QIdentifier Wfts T_RParen
+    Wft:                atomicwft
+        |               Y_WftNode
+        |               LParen Function Arguments RParen
+        |               LParen BinaryOp Argument Argument RParen
+        |               LParen NaryOp Wfts RParen
+        |               LParen Param2Op LParen Y_Integer Y_Integer RParen Wft Wfts RParen
+        |               LParen Y_Thresh LParen Y_Integer RParen Wft Wfts RParen
+        |               LParen Y_Close AtomicNameSet Wft RParen
+        |               LParen Y_Every AtomicName Wfts RParen
+        |               LParen Y_Some AtomicName LParen Wfts RParen Wfts RParen
+        |               LParen QIdentifier Wfts RParen
     '''
 
 def p_BinaryOp(p):
     '''
-    BinaryOp :   Y_Impl
+    BinaryOp:           Y_Impl
     '''
 
 def p_NaryOp(p):
     '''
-    NaryOp :        Y_And
-        |           Y_Or
-        |           Y_Not
-        |           Y_Nor
-        |           Y_Thnot
-        |           Y_Thnor
-        |           Y_Nand _ Y_Xor
-        |           Y_Iff
+    NaryOp:             Y_And
+          |             Y_Or
+          |             Y_Not
+          |             Y_Nor
+          |             Y_Thnot
+          |             Y_Thnor
+          |             Y_Nand
+          |             Y_Xor
+          |             Y_Iff
     '''
 
 def p_Param2Op(p):
     '''
-    Param2Op:       Y_AndOr
-        |           Y_Thresh
+    Param2Op:           Y_AndOr
+            |           Y_Thresh
     '''
 
-def p_AtomicWtf(p):
+def p_AtomicWft(p):
     '''
-    AtomicWtf:      AtomicName
-        |           Y_String
-        |           Y_Integer
+    AtomicWft:          AtomicName
+             |          Y_String
+             |          Y_Integer
     '''
 
 def p_AtomicName(p):
     '''
-    AtomicName:     Y_String
+    AtomicName:         Y_String
     '''
 
 def p_Function(p):
     '''
-    Function:       Wft
+    Function:           Wft
     '''
 
 def p_Argument(p):
     '''
-    Argument:       Wft
-        |           T_None
-        |           T_LParen ArgumentFunction Wfts T_RParen
+    Argument:           Wft
+            |           None
+            |           LParen ArgumentFunction Wfts RParen
     '''
 
 def p_ArgumentFunction(p):
     '''
-    ArgumentFunction: Y_SetOf
+    ArgumentFunction:   Y_SetOf
     '''
 
 def p_ReservedWord(p):
     '''
-    ReservedWord:   Y_Every
-        |           Y_Some
-        |           Y_Close
-        |           Y_QIdentifier
-        |           BinaryOp
-        |           NaryOp
-        |           Param2Op
+    ReservedWord:       Y_Every
+                |       Y_Some
+                |       Y_Close
+                |       Y_QIdentifier
+                |       BinaryOp
+                |       NaryOp
+                |       Param2Op
     '''
 
 def p_Wfts(p):
     '''
     Wfts:
-        |           Wfts Wft
+        |               Wfts Wft
     '''
 
 def p_Arguments(p):
     '''
-    Arguments:      Argument
-        |           Arguments Argument
+    Arguments:          Argument
+             |          Arguments Argument
     '''
 
 def p_AtomicNameSet(p):
     '''
-    AtomicNameSet : AtomicName
-        |           T_LParen AtomicName AtomicNames T_RParen
+    AtomicNameSet:      AtomicName
+                 |      LParen AtomicName AtomicNames RParen
     '''
 
 def p_AtomicNames(p):
     '''
-    AtomicNames :
-        | AtomicName AtomicNames
+    AtomicNames:
+               |        AtomicName AtomicNames
     '''
 
 def p_Y_String(p):
     '''
-    Y_String : T_String
+    Y_String:           String
     '''
 
 def p_Y_Integer(p):
     '''
-    Y_Integer : T_Integer
+    Y_Integer:          Integer
     '''
 
 def p_Y_Impl(p):
     '''
-    Y_Impl : T_Impl
+    Y_Impl:             Impl
     '''
 
 def p_Y_Or(p):
     '''
-    Y_Or : T_Or
+    Y_Or:               Or
     '''
 
 def p_Y_Not(p):
     '''
-    Y_Not : T_Not
+    Y_Not:              Not
     '''
 
 def p_Y_Nor(p):
     '''
-    Y_Nor : T_Nor
+    Y_Nor:              Nor
     '''
 
 def p_Y_Thnot(p):
     '''
-    Y_Thnot : T_Thnot
+    Y_Thnot:            Thnot
     '''
 
 def p_Y_Thnor(p):
     '''
-    Y_Thnor : T_Thnor
+    Y_Thnor:            Thnor
     '''
 
 def p_Y_Nand(p):
     '''
-    Y_Nand : T_Nand
+    Y_Nand:             Nand
     '''
 
 def p_Y_Xor(p):
     '''
-    Y_Xor : T_Xor
+    Y_Xor:              Xor
     '''
 
 def p_Y_Iff(p):
     '''
-    Y_Iff : T_Iff
+    Y_Iff:              Iff
     '''
 
 def p_Y_AndOr(p):
     '''
-    Y_AndOr : T_AndOr
+    Y_AndOr:            AndOr
     '''
 
 def p_Y_Thresh(p):
     '''
-    Y_Thresh : T_Thresh
+    Y_Thresh:           Thresh
     '''
 
 def p_Y_SetOf(p):
     '''
-    Y_SetOf : T_SetOf
+    Y_SetOf:            SetOf
     '''
 
 def p_Y_Every(p):
     '''
-    Y_Every : T_Every
+    Y_Every:            Every
     '''
 
 def p_Y_Some(p):
     '''
-    Y_Some : T_Some
+    Y_Some:             Some
     '''
 
 def p_Y_Close(p):
     '''
-    Y_Close : T_Close
+    Y_Close:            Close
     '''
 
 def p_Y_And(p):
     '''
-    Y_And : T_And
+    Y_And:              And
     '''
 
 def p_Y_WftNode(p):
     '''
-    Y_WftNode : T_WftNode
+    Y_WftNode:          WftNode
     '''
 
 def p_Y_QIdentifier(p):
     '''
-    Y_QIdentifier : T_QIdentifier
+    Y_QIdentifier:      QIdentifier
     '''
 
 def p_Y_OrImpl(p):
     '''
-    Y_OrImpl : T_OrImpl
+    Y_OrImpl:           OrImpl
     '''
+
+ def p_error(p):
+     print("Syntax error in input!")
 
 # -------------- RULES END ----------------
 
