@@ -7,7 +7,7 @@ except ModuleNotFoundError:
 
 parse_tree_node_id = 0
 class ParseTree:
-    def __init__(self, description=None, value=None, *children):
+    def __init__(self, description=None, value=None):
         if description is value is None:
             raise ValueError("Parse tree initialized with no description and no value.")
 
@@ -17,16 +17,10 @@ class ParseTree:
 
         self.description = description
         self.value = value
-        self.children = children
 
-        if isinstance(value, ParseTree):
-            self.children = (value,) + self.children
-            self.value = None
-        if isinstance(description, ParseTree):
-            self.children = (description,) + self.children
-            self.description = None
+        self.children = []
 
-    def add_child(self, *children):
+    def add_children(self, *children):
         self.children += children
 
     def __repr__(self):

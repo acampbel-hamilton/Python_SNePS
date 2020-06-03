@@ -38,30 +38,32 @@ def p_Wft1(p):
     Wft:                AtomicWft
         |               Y_WftNode
     '''
-    top = p[0] = ParseTree(description="wft", p[1])
+    p[0] = ParseTree(description="wft")
+    p[0].add_children(p[1])
+    top = p[0]
 
 def p_Wft2(p):
     '''
     Wft:                LParen Function Arguments RParen
     '''
-    p[0] = ParseTree(description="wft", p[2])
-    for child in p[3]:
-        p[0].add_child(child)
+    p[0] = ParseTree(description="wft")
+    p[0].add_children(p[2], *p[3])
     top = p[0]
 
 def p_Wft3(p):
     '''
     Wft:                LParen BinaryOp Argument Argument RParen
     '''
-    top = p[0] = ParseTree(description="wft", p[2], p[3], p[4])
+    p[0] = ParseTree(description="wft")
+    p[0].add_children(p[2], p[3], p[4]))
+    top = p[0]
 
 def p_Wft4(p):
     '''
     Wft:                LParen NaryOp Wfts RParen
     '''
-    p[0] = ParseTree(description="wft", p[2])
-    for child in p[3]:
-        p[0].add_child(child)
+    p[0] = ParseTree(description="wft")
+    p[0].add_children(p[2], *p[3])
     top = p[0]
 
 def p_Wft5(p):
@@ -69,46 +71,33 @@ def p_Wft5(p):
     Wft:                LParen Param2Op Wft Wfts RParen
         |               LParen Param1Op Wft Wfts RParen
     '''
-    p[0] = ParseTree(description="wft", p[2], p[3])
-    for child in p[4]:
-        p[0].add_child(child)
+    p[0] = ParseTree(description="wft")
+    p[0].add_children(p[2], p[3], *p[4])
     top = p[0]
 
 def p_Wft6(p):
     '''
     Wft:                LParen Y_Close AtomicNameSet Wft RParen
     '''
-    p[0] = ParseTree(description="wft", p[2])
-    for child in p[3]:
-        p[0].add_child(child)
-    p[0].add_child(p[4])
+    p[0] = ParseTree(description="wft")
+    p[0].add_children(p[2], *p[3], p[4])
     top = p[0]
 
 def p_Wft7(p):
     '''
     Wft:                LParen Y_Every AtomicName Wfts RParen
     '''
-    p[0] = ParseTree(description="wft", p[2], p[3])
-    for child in p[4]:
-        p[0].add_child(child)
+    p[0] = ParseTree(description="wft")
+    p[0].add_children(p[2], p[3], *p[4])
     top = p[0]
 
 def p_Wft8(p):
     '''
     Wft:                LParen SomeCondition Wfts RParen
+        |               LParen QIdentifier Wfts RParen
     '''
-    p[0] = ParseTree(description="wft", p[2])
-    for child in p[3]:
-        p[0].add_child(child)
-    top = p[0]
-
-def p_Wft9(p):
-    '''
-    Wft:                LParen QIdentifier Wfts RParen
-    '''
-    p[0] = ParseTree(description="wft", p[2])
-    for child in p[3]:
-        p[0].add_child(child)
+    p[0] = ParseTree(description="wft")
+    p[0].add_children(p[2], *p[3])
     top = p[0]
 
 def p_BinaryOp(p):
@@ -136,13 +125,15 @@ def p_Param2Op(p):
     Param2Op:           Y_AndOr LParen Y_Integer Y_Integer RParen
             |           Y_Thresh LParen Y_Integer Y_Integer RParen
     '''
-    p[0] = ParseTree(description="operator", p[1], p[3], p[4])
+    p[0] = ParseTree(description="operator")
+    p[0].add_children(p[1], p[3], p[4])
 
 def p_Param1Op(p):
     '''
     Param1Op:           Y_Thresh LParen Y_Integer RParen
     '''
-    p[0] = ParseTree(description="operator", p[1], p[3])
+    p[0] = ParseTree(description="operator")
+    p[0].add_children(p[1], p[3])
 
 def p_AtomicWft(p):
     '''
@@ -156,13 +147,15 @@ def p_AtomicName(p):
     '''
     AtomicName:         Y_Identifier
     '''
-    p[0] = ParseTree(description="Atom", p[1])
+    p[0] = ParseTree(description="Atom")
+    p[0].add_children(p[1])
 
 def p_Function(p):
     '''
     Function:           Wft
     '''
-    p[0] = ParseTree(description="Function", p[1])
+    p[0] = ParseTree(description="Function")
+    p[0].add_children(p[1])
 
 def p_Argument(p):
     '''
@@ -171,12 +164,11 @@ def p_Argument(p):
             |           LParen ArgumentFunction Wfts RParen
     '''
     if len(p) == 2:
-        p[0] = ParseTree(description="Argument", p[1])
+        p[0] = ParseTree(description="Argument")
+        p[0].add_children(p[1])
     else:
-        # TODO
-        p[0] = ParseTree(description="Argument", p[2])
-        for child in p[3]:
-            p[0].add_child(child)
+        p[0] = ParseTree(description="Argument")
+        p[0].add_children(p[2], *p[3])
 
 def p_ArgumentFunction(p):
     '''
@@ -212,9 +204,8 @@ def p_AtomicNameSet(p):
     if len(p) == 2:
         p[0] = p[1]
     else:
-        p[0] = ParseTree(description="AtomicNameSet", p[2])
-        for child in p[3]:
-            p[0].add_child(child)
+        p[0] = ParseTree(description="AtomicNameSet")
+        p[0].add_children(p[2], *p[3])
 
 def p_AtomicNames(p):
     '''
@@ -230,9 +221,8 @@ def p_SomeCondition(p):
     '''
     SomeCondition:      Y_Some AtomicName LParen Wfts RParen
     '''
-    p[0] = ParseTree(description="Some", p[1])
-    for child in p[4]:
-        p[0].add_child(child)
+    p[0] = ParseTree(description="Some")
+    p[0].add_children(p[1], p[2], *p[4])
 
 def p_Y_String(p):
     '''Y_String: String'''
