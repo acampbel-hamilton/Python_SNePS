@@ -3,3 +3,4 @@ __pycache__
 lang/__pycache__
 lang/ply/__pycache__
 lang/parser.out
+lang/parsetab.py
