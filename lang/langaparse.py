@@ -95,13 +95,21 @@ def p_Wft7(p):
 
 def p_Wft8(p):
     '''
-    Wft:                LParen Y_Some AtomicName LParen Wfts RParen Wfts RParen
+    Wft:                LParen SomeCondition Wfts RParen
     '''
+    p[0] = ParseTree(description="wft", p[2])
+    for child in p[3]:
+        p[0].add_child(child)
+    top = p[0]
 
 def p_Wft9(p):
     '''
     Wft:                LParen QIdentifier Wfts RParen
     '''
+    p[0] = ParseTree(description="wft", p[2])
+    for child in p[3]:
+        p[0].add_child(child)
+    top = p[0]
 
 def p_BinaryOp(p):
     '''
@@ -166,7 +174,9 @@ def p_Argument(p):
         p[0] = ParseTree(description="Argument", p[1])
     else:
         # TODO
-        p[0] = ParseTree(description="Argument")
+        p[0] = ParseTree(description="Argument", p[2])
+        for child in p[3]:
+            p[0].add_child(child)
 
 def p_ArgumentFunction(p):
     '''
@@ -216,57 +226,65 @@ def p_AtomicNames(p):
     else:
         p[0] = p[1] + [p[2]]
 
+def p_SomeCondition(p):
+    '''
+    SomeCondition:      Y_Some AtomicName LParen Wfts RParen
+    '''
+    p[0] = ParseTree(description="Some", p[1])
+    for child in p[4]:
+        p[0].add_child(child)
+
 def p_Y_String(p):
     '''Y_String: String'''
     p[0] = ParseTree(description="String", value=p[1])
 
 def p_Y_Integer(p):
     '''Y_Integer: Integer'''
-    p[0] = ParseTree(description="String", value=p[1])
+    p[0] = ParseTree(description="Integer", value=p[1])
 
 def p_Y_Impl(p):
     '''Y_Impl: Impl'''
-    p[0] = ParseTree(description="String", value=p[1])
+    p[0] = ParseTree(description="Implication", value=p[1])
 
 def p_Y_Or(p):
     '''Y_Or: Or'''
-    p[0] = ParseTree(description="String", value=p[1])
+    p[0] = ParseTree(description="Or", value=p[1])
 
 def p_Y_Not(p):
     '''Y_Not: Not'''
-    p[0] = ParseTree(description="String", value=p[1])
+    p[0] = ParseTree(description="Not", value=p[1])
 
 def p_Y_Nor(p):
     '''Y_Nor: Nor'''
-    p[0] = ParseTree(description="String", value=p[1])
+    p[0] = ParseTree(description="Nor", value=p[1])
 
 def p_Y_Thnot(p):
     '''Y_Thnot: Thnot'''
-    p[0] = ParseTree(description="String", value=p[1])
+    p[0] = ParseTree(description="Thnot", value=p[1])
 
 def p_Y_Thnor(p):
     '''Y_Thnor: Thnor'''
-    p[0] = ParseTree(description="String", value=p[1])
+    p[0] = ParseTree(description="Thnor", value=p[1])
 
 def p_Y_Nand(p):
     '''Y_Nand: Nand'''
-    p[0] = ParseTree(description="String", value=p[1])
+    p[0] = ParseTree(description="Nand", value=p[1])
 
 def p_Y_Xor(p):
     '''Y_Xor: Xor'''
-    p[0] = ParseTree(description="String", value=p[1])
+    p[0] = ParseTree(description="Xor", value=p[1])
 
 def p_Y_Iff(p):
     '''Y_Iff: Iff'''
-    p[0] = ParseTree(description="String", value=p[1])
+    p[0] = ParseTree(description="Iff", value=p[1])
 
 def p_Y_AndOr(p):
     '''Y_AndOr: AndOr'''
-    p[0] = ParseTree(description="String", value=p[1])
+    p[0] = ParseTree(description="AndOr", value=p[1])
 
 def p_Y_Thresh(p):
     '''Y_Thresh: Thresh'''
-    p[0] = ParseTree(description="String", value=p[1])
+    p[0] = ParseTree(description="Thresh", value=p[1])
 
 def p_Y_SetOf(p):
     '''Y_SetOf: SetOf'''
@@ -274,35 +292,31 @@ def p_Y_SetOf(p):
 
 def p_Y_Every(p):
     '''Y_Every: Every'''
-    p[0] = ParseTree(description="String", value=p[1])
+    p[0] = ParseTree(description="Every", value=p[1])
 
 def p_Y_Some(p):
     '''Y_Some: Some'''
-    p[0] = ParseTree(description="String", value=p[1])
+    p[0] = ParseTree(description="Some", value=p[1])
 
 def p_Y_Close(p):
     '''Y_Close: Close'''
-    p[0] = ParseTree(description="String", value=p[1])
+    p[0] = ParseTree(description="Close", value=p[1])
 
 def p_Y_And(p):
     '''Y_And: And'''
-    p[0] = ParseTree(description="String", value=p[1])
+    p[0] = ParseTree(description="And", value=p[1])
 
 def p_Y_WftNode(p):
     '''Y_WftNode: WftNode'''
-    p[0] = ParseTree(description="String", value=p[1])
+    p[0] = ParseTree(description="WftNode", value=p[1])
 
 def p_Y_QIdentifier(p):
     '''Y_QIdentifier: QIdentifier'''
-    p[0] = ParseTree(description="String", value=p[1])
+    p[0] = ParseTree(description="QIdentifier", value=p[1])
 
 def p_Y_Identifier(p):
     '''Y_Identifier: Identifier'''
-    p[0] = ParseTree(description="String", value=p[1])
-
-def p_Y_OrImpl(p):
-    '''Y_OrImpl: OrImpl'''
-    p[0] = ParseTree(description="String", value=p[1])
+    p[0] = ParseTree(description="Identifier", value=p[1])
 
  def p_error(p):
      print("Syntax error in input!")
