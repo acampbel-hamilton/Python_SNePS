@@ -1,6 +1,5 @@
-from ..ply import *
+from ply import *
 from re import match
-from sys import argv, exit
 
 keywords = (
     'xor',

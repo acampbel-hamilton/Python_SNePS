@@ -314,6 +314,6 @@ def p_error(p):
 # -------------- RULES END ----------------
 
 if __name__ == '__main__':
-    from ..ply import *
+    from ply import *
     yacc.yacc()
     top.to_networkx()
