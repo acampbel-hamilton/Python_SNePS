@@ -85,7 +85,7 @@ def p_Wft6(p):
     Wft :               LParen Y_Close AtomicNameSet Wft RParen
     '''
     p[0] = ParseTree(description="wft")
-    p[0].add_children(p[2], *p[3], p[4])
+    p[0].add_children(p[2], p[3], p[4])
     global top
     top = p[0]
 
