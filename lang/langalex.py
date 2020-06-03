@@ -17,7 +17,7 @@ keywords = (
     'close'
 )
 
-tokens = keywords + (
+tokens = (
     'LParen',
     'RParen',
     'WftNode',
@@ -28,7 +28,20 @@ tokens = keywords + (
     'String',
     'Identifier',
     'AndOr',
-    'SetOf'
+    'SetOf',
+    'Xor',
+    'Or',
+    'And',
+    'Thresh',
+    'Thnor',
+    'Thnot',
+    'Some',
+    'Every',
+    'Nand',
+    'Nor',
+    'None',
+    'Not',
+    'Close'
 )
 
 t_LParen  = r'\('

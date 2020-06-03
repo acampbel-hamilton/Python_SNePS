@@ -13,7 +13,7 @@ Rule 7     Wft -> LParen Param1Op Wft Wfts RParen
 Rule 8     Wft -> LParen Y_Close AtomicNameSet Wft RParen
 Rule 9     Wft -> LParen Y_Every AtomicName Wfts RParen
 Rule 10    Wft -> LParen SomeCondition Wfts RParen
-Rule 11    Wft -> LParen QIdentifier Wfts RParen
+Rule 11    Wft -> LParen Y_QIdentifier Wfts RParen
 Rule 12    BinaryOp -> Y_Impl
 Rule 13    NaryOp -> Y_And
 Rule 14    NaryOp -> Y_Or
@@ -83,7 +83,7 @@ None                 : 31
 Nor                  : 48
 Not                  : 47
 Or                   : 46
-QIdentifier          : 11 62
+QIdentifier          : 62
 RParen               : 3 4 5 6 7 8 9 10 11 22 23 24 32 39 42
 SetOf                : 56
 Some                 : 58
@@ -124,7 +124,7 @@ Y_Nand               : 19
 Y_Nor                : 16
 Y_Not                : 15
 Y_Or                 : 14
-Y_QIdentifier        : 
+Y_QIdentifier        : 11
 Y_SetOf              : 33
 Y_Some               : 42
 Y_String             : 26
@@ -149,7 +149,7 @@ state 0
     (8) Wft -> . LParen Y_Close AtomicNameSet Wft RParen
     (9) Wft -> . LParen Y_Every AtomicName Wfts RParen
     (10) Wft -> . LParen SomeCondition Wfts RParen
-    (11) Wft -> . LParen QIdentifier Wfts RParen
+    (11) Wft -> . LParen Y_QIdentifier Wfts RParen
     (25) AtomicWft -> . AtomicName
     (26) AtomicWft -> . Y_String
     (27) AtomicWft -> . Y_Integer
@@ -217,7 +217,7 @@ state 4
     (8) Wft -> LParen . Y_Close AtomicNameSet Wft RParen
     (9) Wft -> LParen . Y_Every AtomicName Wfts RParen
     (10) Wft -> LParen . SomeCondition Wfts RParen
-    (11) Wft -> LParen . QIdentifier Wfts RParen
+    (11) Wft -> LParen . Y_QIdentifier Wfts RParen
     (29) Function -> . Wft
     (12) BinaryOp -> . Y_Impl
     (13) NaryOp -> . Y_And
@@ -235,6 +235,7 @@ state 4
     (59) Y_Close -> . Close
     (57) Y_Every -> . Every
     (42) SomeCondition -> . Y_Some AtomicName LParen Wfts RParen
+    (62) Y_QIdentifier -> . QIdentifier
     (1) Wft -> . AtomicWft
     (2) Wft -> . Y_WftNode
     (3) Wft -> . LParen Function Arguments RParen
@@ -245,7 +246,7 @@ state 4
     (8) Wft -> . LParen Y_Close AtomicNameSet Wft RParen
     (9) Wft -> . LParen Y_Every AtomicName Wfts RParen
     (10) Wft -> . LParen SomeCondition Wfts RParen
-    (11) Wft -> . LParen QIdentifier Wfts RParen
+    (11) Wft -> . LParen Y_QIdentifier Wfts RParen
     (45) Y_Impl -> . Impl
     (60) Y_And -> . And
     (46) Y_Or -> . Or
@@ -268,23 +269,23 @@ state 4
     (44) Y_Integer -> . Integer
     (63) Y_Identifier -> . Identifier
 
-    QIdentifier     shift and go to state 22
     Close           shift and go to state 35
     Every           shift and go to state 36
+    QIdentifier     shift and go to state 38
     LParen          shift and go to state 4
-    Impl            shift and go to state 38
-    And             shift and go to state 39
-    Or              shift and go to state 40
-    Not             shift and go to state 41
-    Nor             shift and go to state 42
-    Thnot           shift and go to state 43
-    Thnor           shift and go to state 44
-    Nand            shift and go to state 45
-    Xor             shift and go to state 46
-    DoubImpl        shift and go to state 47
-    AndOr           shift and go to state 48
-    Thresh          shift and go to state 49
-    Some            shift and go to state 50
+    Impl            shift and go to state 39
+    And             shift and go to state 40
+    Or              shift and go to state 41
+    Not             shift and go to state 42
+    Nor             shift and go to state 43
+    Thnot           shift and go to state 44
+    Thnor           shift and go to state 45
+    Nand            shift and go to state 46
+    Xor             shift and go to state 47
+    DoubImpl        shift and go to state 48
+    AndOr           shift and go to state 49
+    Thresh          shift and go to state 50
+    Some            shift and go to state 51
     WftNode         shift and go to state 8
     String          shift and go to state 10
     Integer         shift and go to state 11
@@ -300,6 +301,7 @@ state 4
     Y_Every                        shift and go to state 20
     AtomicName                     shift and go to state 5
     SomeCondition                  shift and go to state 21
+    Y_QIdentifier                  shift and go to state 22
     Y_Impl                         shift and go to state 23
     Y_And                          shift and go to state 24
     Y_Or                           shift and go to state 25
@@ -449,7 +451,7 @@ state 13
     (8) Wft -> . LParen Y_Close AtomicNameSet Wft RParen
     (9) Wft -> . LParen Y_Every AtomicName Wfts RParen
     (10) Wft -> . LParen SomeCondition Wfts RParen
-    (11) Wft -> . LParen QIdentifier Wfts RParen
+    (11) Wft -> . LParen Y_QIdentifier Wfts RParen
     (25) AtomicWft -> . AtomicName
     (26) AtomicWft -> . Y_String
     (27) AtomicWft -> . Y_Integer
@@ -459,16 +461,16 @@ state 13
     (44) Y_Integer -> . Integer
     (63) Y_Identifier -> . Identifier
 
-    None            shift and go to state 55
-    LParen          shift and go to state 51
+    None            shift and go to state 56
+    LParen          shift and go to state 52
     WftNode         shift and go to state 8
     String          shift and go to state 10
     Integer         shift and go to state 11
     Identifier      shift and go to state 12
 
-    Arguments                      shift and go to state 52
-    Argument                       shift and go to state 53
-    Wft                            shift and go to state 54
+    Arguments                      shift and go to state 53
+    Argument                       shift and go to state 54
+    Wft                            shift and go to state 55
     AtomicWft                      shift and go to state 2
     Y_WftNode                      shift and go to state 3
     AtomicName                     shift and go to state 5
@@ -492,7 +494,7 @@ state 14
     (8) Wft -> . LParen Y_Close AtomicNameSet Wft RParen
     (9) Wft -> . LParen Y_Every AtomicName Wfts RParen
     (10) Wft -> . LParen SomeCondition Wfts RParen
-    (11) Wft -> . LParen QIdentifier Wfts RParen
+    (11) Wft -> . LParen Y_QIdentifier Wfts RParen
     (25) AtomicWft -> . AtomicName
     (26) AtomicWft -> . Y_String
     (27) AtomicWft -> . Y_Integer
@@ -502,15 +504,15 @@ state 14
     (44) Y_Integer -> . Integer
     (63) Y_Identifier -> . Identifier
 
-    None            shift and go to state 55
-    LParen          shift and go to state 51
+    None            shift and go to state 56
+    LParen          shift and go to state 52
     WftNode         shift and go to state 8
     String          shift and go to state 10
     Integer         shift and go to state 11
     Identifier      shift and go to state 12
 
-    Argument                       shift and go to state 56
-    Wft                            shift and go to state 54
+    Argument                       shift and go to state 57
+    Wft                            shift and go to state 55
     AtomicWft                      shift and go to state 2
     Y_WftNode                      shift and go to state 3
     AtomicName                     shift and go to state 5
@@ -531,7 +533,7 @@ state 15
     Integer         reduce using rule 34 (Wfts -> .)
     Identifier      reduce using rule 34 (Wfts -> .)
 
-    Wfts                           shift and go to state 57
+    Wfts                           shift and go to state 58
 
 state 16
 
@@ -546,7 +548,7 @@ state 16
     (8) Wft -> . LParen Y_Close AtomicNameSet Wft RParen
     (9) Wft -> . LParen Y_Every AtomicName Wfts RParen
     (10) Wft -> . LParen SomeCondition Wfts RParen
-    (11) Wft -> . LParen QIdentifier Wfts RParen
+    (11) Wft -> . LParen Y_QIdentifier Wfts RParen
     (25) AtomicWft -> . AtomicName
     (26) AtomicWft -> . Y_String
     (27) AtomicWft -> . Y_Integer
@@ -562,7 +564,7 @@ state 16
     Integer         shift and go to state 11
     Identifier      shift and go to state 12
 
-    Wft                            shift and go to state 58
+    Wft                            shift and go to state 59
     AtomicWft                      shift and go to state 2
     Y_WftNode                      shift and go to state 3
     AtomicName                     shift and go to state 5
@@ -595,7 +597,7 @@ state 18
     (8) Wft -> . LParen Y_Close AtomicNameSet Wft RParen
     (9) Wft -> . LParen Y_Every AtomicName Wfts RParen
     (10) Wft -> . LParen SomeCondition Wfts RParen
-    (11) Wft -> . LParen QIdentifier Wfts RParen
+    (11) Wft -> . LParen Y_QIdentifier Wfts RParen
     (25) AtomicWft -> . AtomicName
     (26) AtomicWft -> . Y_String
     (27) AtomicWft -> . Y_Integer
@@ -611,7 +613,7 @@ state 18
     Integer         shift and go to state 11
     Identifier      shift and go to state 12
 
-    Wft                            shift and go to state 59
+    Wft                            shift and go to state 60
     AtomicWft                      shift and go to state 2
     Y_WftNode                      shift and go to state 3
     AtomicName                     shift and go to state 5
@@ -627,11 +629,11 @@ state 19
     (28) AtomicName -> . Y_Identifier
     (63) Y_Identifier -> . Identifier
 
-    LParen          shift and go to state 60
+    LParen          shift and go to state 61
     Identifier      shift and go to state 12
 
-    AtomicNameSet                  shift and go to state 61
-    AtomicName                     shift and go to state 62
+    AtomicNameSet                  shift and go to state 62
+    AtomicName                     shift and go to state 63
     Y_Identifier                   shift and go to state 9
 
 state 20
@@ -642,7 +644,7 @@ state 20
 
     Identifier      shift and go to state 12
 
-    AtomicName                     shift and go to state 63
+    AtomicName                     shift and go to state 64
     Y_Identifier                   shift and go to state 9
 
 state 21
@@ -658,11 +660,11 @@ state 21
     Integer         reduce using rule 34 (Wfts -> .)
     Identifier      reduce using rule 34 (Wfts -> .)
 
-    Wfts                           shift and go to state 64
+    Wfts                           shift and go to state 65
 
 state 22
 
-    (11) Wft -> LParen QIdentifier . Wfts RParen
+    (11) Wft -> LParen Y_QIdentifier . Wfts RParen
     (34) Wfts -> .
     (35) Wfts -> . Wfts Wft
 
@@ -673,7 +675,7 @@ state 22
     Integer         reduce using rule 34 (Wfts -> .)
     Identifier      reduce using rule 34 (Wfts -> .)
 
-    Wfts                           shift and go to state 65
+    Wfts                           shift and go to state 66
 
 state 23
 
@@ -799,7 +801,7 @@ state 33
 
     (22) Param2Op -> Y_AndOr . LParen Y_Integer Y_Integer RParen
 
-    LParen          shift and go to state 66
+    LParen          shift and go to state 67
 
 
 state 34
@@ -807,7 +809,7 @@ state 34
     (23) Param2Op -> Y_Thresh . LParen Y_Integer Y_Integer RParen
     (24) Param1Op -> Y_Thresh . LParen Y_Integer RParen
 
-    LParen          shift and go to state 67
+    LParen          shift and go to state 68
 
 
 state 35
@@ -833,10 +835,22 @@ state 37
 
     Identifier      shift and go to state 12
 
-    AtomicName                     shift and go to state 68
+    AtomicName                     shift and go to state 69
     Y_Identifier                   shift and go to state 9
 
 state 38
+
+    (62) Y_QIdentifier -> QIdentifier .
+
+    RParen          reduce using rule 62 (Y_QIdentifier -> QIdentifier .)
+    LParen          reduce using rule 62 (Y_QIdentifier -> QIdentifier .)
+    WftNode         reduce using rule 62 (Y_QIdentifier -> QIdentifier .)
+    String          reduce using rule 62 (Y_QIdentifier -> QIdentifier .)
+    Integer         reduce using rule 62 (Y_QIdentifier -> QIdentifier .)
+    Identifier      reduce using rule 62 (Y_QIdentifier -> QIdentifier .)
+
+
+state 39
 
     (45) Y_Impl -> Impl .
 
@@ -848,7 +862,7 @@ state 38
     Identifier      reduce using rule 45 (Y_Impl -> Impl .)
 
 
-state 39
+state 40
 
     (60) Y_And -> And .
 
@@ -860,7 +874,7 @@ state 39
     Identifier      reduce using rule 60 (Y_And -> And .)
 
 
-state 40
+state 41
 
     (46) Y_Or -> Or .
 
@@ -872,7 +886,7 @@ state 40
     Identifier      reduce using rule 46 (Y_Or -> Or .)
 
 
-state 41
+state 42
 
     (47) Y_Not -> Not .
 
@@ -884,7 +898,7 @@ state 41
     Identifier      reduce using rule 47 (Y_Not -> Not .)
 
 
-state 42
+state 43
 
     (48) Y_Nor -> Nor .
 
@@ -896,7 +910,7 @@ state 42
     Identifier      reduce using rule 48 (Y_Nor -> Nor .)
 
 
-state 43
+state 44
 
     (49) Y_Thnot -> Thnot .
 
@@ -908,7 +922,7 @@ state 43
     Identifier      reduce using rule 49 (Y_Thnot -> Thnot .)
 
 
-state 44
+state 45
 
     (50) Y_Thnor -> Thnor .
 
@@ -920,7 +934,7 @@ state 44
     Identifier      reduce using rule 50 (Y_Thnor -> Thnor .)
 
 
-state 45
+state 46
 
     (51) Y_Nand -> Nand .
 
@@ -932,7 +946,7 @@ state 45
     Identifier      reduce using rule 51 (Y_Nand -> Nand .)
 
 
-state 46
+state 47
 
     (52) Y_Xor -> Xor .
 
@@ -944,7 +958,7 @@ state 46
     Identifier      reduce using rule 52 (Y_Xor -> Xor .)
 
 
-state 47
+state 48
 
     (53) Y_DoubImpl -> DoubImpl .
 
@@ -956,28 +970,28 @@ state 47
     Identifier      reduce using rule 53 (Y_DoubImpl -> DoubImpl .)
 
 
-state 48
+state 49
 
     (54) Y_AndOr -> AndOr .
 
     LParen          reduce using rule 54 (Y_AndOr -> AndOr .)
 
 
-state 49
+state 50
 
     (55) Y_Thresh -> Thresh .
 
     LParen          reduce using rule 55 (Y_Thresh -> Thresh .)
 
 
-state 50
+state 51
 
     (58) Y_Some -> Some .
 
     Identifier      reduce using rule 58 (Y_Some -> Some .)
 
 
-state 51
+state 52
 
     (32) Argument -> LParen . ArgumentFunction Wfts RParen
     (3) Wft -> LParen . Function Arguments RParen
@@ -988,7 +1002,7 @@ state 51
     (8) Wft -> LParen . Y_Close AtomicNameSet Wft RParen
     (9) Wft -> LParen . Y_Every AtomicName Wfts RParen
     (10) Wft -> LParen . SomeCondition Wfts RParen
-    (11) Wft -> LParen . QIdentifier Wfts RParen
+    (11) Wft -> LParen . Y_QIdentifier Wfts RParen
     (33) ArgumentFunction -> . Y_SetOf
     (29) Function -> . Wft
     (12) BinaryOp -> . Y_Impl
@@ -1007,6 +1021,7 @@ state 51
     (59) Y_Close -> . Close
     (57) Y_Every -> . Every
     (42) SomeCondition -> . Y_Some AtomicName LParen Wfts RParen
+    (62) Y_QIdentifier -> . QIdentifier
     (56) Y_SetOf -> . SetOf
     (1) Wft -> . AtomicWft
     (2) Wft -> . Y_WftNode
@@ -1018,7 +1033,7 @@ state 51
     (8) Wft -> . LParen Y_Close AtomicNameSet Wft RParen
     (9) Wft -> . LParen Y_Every AtomicName Wfts RParen
     (10) Wft -> . LParen SomeCondition Wfts RParen
-    (11) Wft -> . LParen QIdentifier Wfts RParen
+    (11) Wft -> . LParen Y_QIdentifier Wfts RParen
     (45) Y_Impl -> . Impl
     (60) Y_And -> . And
     (46) Y_Or -> . Or
@@ -1041,30 +1056,30 @@ state 51
     (44) Y_Integer -> . Integer
     (63) Y_Identifier -> . Identifier
 
-    QIdentifier     shift and go to state 22
     Close           shift and go to state 35
     Every           shift and go to state 36
-    SetOf           shift and go to state 71
+    QIdentifier     shift and go to state 38
+    SetOf           shift and go to state 72
     LParen          shift and go to state 4
-    Impl            shift and go to state 38
-    And             shift and go to state 39
-    Or              shift and go to state 40
-    Not             shift and go to state 41
-    Nor             shift and go to state 42
-    Thnot           shift and go to state 43
-    Thnor           shift and go to state 44
-    Nand            shift and go to state 45
-    Xor             shift and go to state 46
-    DoubImpl        shift and go to state 47
-    AndOr           shift and go to state 48
-    Thresh          shift and go to state 49
-    Some            shift and go to state 50
+    Impl            shift and go to state 39
+    And             shift and go to state 40
+    Or              shift and go to state 41
+    Not             shift and go to state 42
+    Nor             shift and go to state 43
+    Thnot           shift and go to state 44
+    Thnor           shift and go to state 45
+    Nand            shift and go to state 46
+    Xor             shift and go to state 47
+    DoubImpl        shift and go to state 48
+    AndOr           shift and go to state 49
+    Thresh          shift and go to state 50
+    Some            shift and go to state 51
     WftNode         shift and go to state 8
     String          shift and go to state 10
     Integer         shift and go to state 11
     Identifier      shift and go to state 12
 
-    ArgumentFunction               shift and go to state 69
+    ArgumentFunction               shift and go to state 70
     Function                       shift and go to state 13
     BinaryOp                       shift and go to state 14
     NaryOp                         shift and go to state 15
@@ -1075,7 +1090,8 @@ state 51
     Y_Every                        shift and go to state 20
     AtomicName                     shift and go to state 5
     SomeCondition                  shift and go to state 21
-    Y_SetOf                        shift and go to state 70
+    Y_QIdentifier                  shift and go to state 22
+    Y_SetOf                        shift and go to state 71
     Y_Impl                         shift and go to state 23
     Y_And                          shift and go to state 24
     Y_Or                           shift and go to state 25
@@ -1095,7 +1111,7 @@ state 51
     Y_String                       shift and go to state 6
     Y_Identifier                   shift and go to state 9
 
-state 52
+state 53
 
     (3) Wft -> LParen Function Arguments . RParen
     (37) Arguments -> Arguments . Argument
@@ -1112,7 +1128,7 @@ state 52
     (8) Wft -> . LParen Y_Close AtomicNameSet Wft RParen
     (9) Wft -> . LParen Y_Every AtomicName Wfts RParen
     (10) Wft -> . LParen SomeCondition Wfts RParen
-    (11) Wft -> . LParen QIdentifier Wfts RParen
+    (11) Wft -> . LParen Y_QIdentifier Wfts RParen
     (25) AtomicWft -> . AtomicName
     (26) AtomicWft -> . Y_String
     (27) AtomicWft -> . Y_Integer
@@ -1122,16 +1138,16 @@ state 52
     (44) Y_Integer -> . Integer
     (63) Y_Identifier -> . Identifier
 
-    RParen          shift and go to state 72
-    None            shift and go to state 55
-    LParen          shift and go to state 51
+    RParen          shift and go to state 73
+    None            shift and go to state 56
+    LParen          shift and go to state 52
     WftNode         shift and go to state 8
     String          shift and go to state 10
     Integer         shift and go to state 11
     Identifier      shift and go to state 12
 
-    Argument                       shift and go to state 73
-    Wft                            shift and go to state 54
+    Argument                       shift and go to state 74
+    Wft                            shift and go to state 55
     AtomicWft                      shift and go to state 2
     Y_WftNode                      shift and go to state 3
     AtomicName                     shift and go to state 5
@@ -1139,7 +1155,7 @@ state 52
     Y_Integer                      shift and go to state 7
     Y_Identifier                   shift and go to state 9
 
-state 53
+state 54
 
     (36) Arguments -> Argument .
 
@@ -1152,7 +1168,7 @@ state 53
     Identifier      reduce using rule 36 (Arguments -> Argument .)
 
 
-state 54
+state 55
 
     (30) Argument -> Wft .
 
@@ -1165,7 +1181,7 @@ state 54
     Identifier      reduce using rule 30 (Argument -> Wft .)
 
 
-state 55
+state 56
 
     (31) Argument -> None .
 
@@ -1178,7 +1194,7 @@ state 55
     Identifier      reduce using rule 31 (Argument -> None .)
 
 
-state 56
+state 57
 
     (4) Wft -> LParen BinaryOp Argument . Argument RParen
     (30) Argument -> . Wft
@@ -1194,7 +1210,7 @@ state 56
     (8) Wft -> . LParen Y_Close AtomicNameSet Wft RParen
     (9) Wft -> . LParen Y_Every AtomicName Wfts RParen
     (10) Wft -> . LParen SomeCondition Wfts RParen
-    (11) Wft -> . LParen QIdentifier Wfts RParen
+    (11) Wft -> . LParen Y_QIdentifier Wfts RParen
     (25) AtomicWft -> . AtomicName
     (26) AtomicWft -> . Y_String
     (27) AtomicWft -> . Y_Integer
@@ -1204,15 +1220,15 @@ state 56
     (44) Y_Integer -> . Integer
     (63) Y_Identifier -> . Identifier
 
-    None            shift and go to state 55
-    LParen          shift and go to state 51
+    None            shift and go to state 56
+    LParen          shift and go to state 52
     WftNode         shift and go to state 8
     String          shift and go to state 10
     Integer         shift and go to state 11
     Identifier      shift and go to state 12
 
-    Argument                       shift and go to state 74
-    Wft                            shift and go to state 54
+    Argument                       shift and go to state 75
+    Wft                            shift and go to state 55
     AtomicWft                      shift and go to state 2
     Y_WftNode                      shift and go to state 3
     AtomicName                     shift and go to state 5
@@ -1220,7 +1236,7 @@ state 56
     Y_Integer                      shift and go to state 7
     Y_Identifier                   shift and go to state 9
 
-state 57
+state 58
 
     (5) Wft -> LParen NaryOp Wfts . RParen
     (35) Wfts -> Wfts . Wft
@@ -1234,7 +1250,7 @@ state 57
     (8) Wft -> . LParen Y_Close AtomicNameSet Wft RParen
     (9) Wft -> . LParen Y_Every AtomicName Wfts RParen
     (10) Wft -> . LParen SomeCondition Wfts RParen
-    (11) Wft -> . LParen QIdentifier Wfts RParen
+    (11) Wft -> . LParen Y_QIdentifier Wfts RParen
     (25) AtomicWft -> . AtomicName
     (26) AtomicWft -> . Y_String
     (27) AtomicWft -> . Y_Integer
@@ -1244,14 +1260,14 @@ state 57
     (44) Y_Integer -> . Integer
     (63) Y_Identifier -> . Identifier
 
-    RParen          shift and go to state 75
+    RParen          shift and go to state 76
     LParen          shift and go to state 4
     WftNode         shift and go to state 8
     String          shift and go to state 10
     Integer         shift and go to state 11
     Identifier      shift and go to state 12
 
-    Wft                            shift and go to state 76
+    Wft                            shift and go to state 77
     AtomicWft                      shift and go to state 2
     Y_WftNode                      shift and go to state 3
     AtomicName                     shift and go to state 5
@@ -1259,24 +1275,9 @@ state 57
     Y_Integer                      shift and go to state 7
     Y_Identifier                   shift and go to state 9
 
-state 58
-
-    (6) Wft -> LParen Param2Op Wft . Wfts RParen
-    (34) Wfts -> .
-    (35) Wfts -> . Wfts Wft
-
-    RParen          reduce using rule 34 (Wfts -> .)
-    LParen          reduce using rule 34 (Wfts -> .)
-    WftNode         reduce using rule 34 (Wfts -> .)
-    String          reduce using rule 34 (Wfts -> .)
-    Integer         reduce using rule 34 (Wfts -> .)
-    Identifier      reduce using rule 34 (Wfts -> .)
-
-    Wfts                           shift and go to state 77
-
 state 59
 
-    (7) Wft -> LParen Param1Op Wft . Wfts RParen
+    (6) Wft -> LParen Param2Op Wft . Wfts RParen
     (34) Wfts -> .
     (35) Wfts -> . Wfts Wft
 
@@ -1291,16 +1292,31 @@ state 59
 
 state 60
 
+    (7) Wft -> LParen Param1Op Wft . Wfts RParen
+    (34) Wfts -> .
+    (35) Wfts -> . Wfts Wft
+
+    RParen          reduce using rule 34 (Wfts -> .)
+    LParen          reduce using rule 34 (Wfts -> .)
+    WftNode         reduce using rule 34 (Wfts -> .)
+    String          reduce using rule 34 (Wfts -> .)
+    Integer         reduce using rule 34 (Wfts -> .)
+    Identifier      reduce using rule 34 (Wfts -> .)
+
+    Wfts                           shift and go to state 79
+
+state 61
+
     (39) AtomicNameSet -> LParen . AtomicName AtomicNames RParen
     (28) AtomicName -> . Y_Identifier
     (63) Y_Identifier -> . Identifier
 
     Identifier      shift and go to state 12
 
-    AtomicName                     shift and go to state 79
+    AtomicName                     shift and go to state 80
     Y_Identifier                   shift and go to state 9
 
-state 61
+state 62
 
     (8) Wft -> LParen Y_Close AtomicNameSet . Wft RParen
     (1) Wft -> . AtomicWft
@@ -1313,7 +1329,7 @@ state 61
     (8) Wft -> . LParen Y_Close AtomicNameSet Wft RParen
     (9) Wft -> . LParen Y_Every AtomicName Wfts RParen
     (10) Wft -> . LParen SomeCondition Wfts RParen
-    (11) Wft -> . LParen QIdentifier Wfts RParen
+    (11) Wft -> . LParen Y_QIdentifier Wfts RParen
     (25) AtomicWft -> . AtomicName
     (26) AtomicWft -> . Y_String
     (27) AtomicWft -> . Y_Integer
@@ -1329,7 +1345,7 @@ state 61
     Integer         shift and go to state 11
     Identifier      shift and go to state 12
 
-    Wft                            shift and go to state 80
+    Wft                            shift and go to state 81
     AtomicWft                      shift and go to state 2
     Y_WftNode                      shift and go to state 3
     AtomicName                     shift and go to state 5
@@ -1337,7 +1353,7 @@ state 61
     Y_Integer                      shift and go to state 7
     Y_Identifier                   shift and go to state 9
 
-state 62
+state 63
 
     (38) AtomicNameSet -> AtomicName .
 
@@ -1348,7 +1364,7 @@ state 62
     Identifier      reduce using rule 38 (AtomicNameSet -> AtomicName .)
 
 
-state 63
+state 64
 
     (9) Wft -> LParen Y_Every AtomicName . Wfts RParen
     (34) Wfts -> .
@@ -1361,9 +1377,9 @@ state 63
     Integer         reduce using rule 34 (Wfts -> .)
     Identifier      reduce using rule 34 (Wfts -> .)
 
-    Wfts                           shift and go to state 81
+    Wfts                           shift and go to state 82
 
-state 64
+state 65
 
     (10) Wft -> LParen SomeCondition Wfts . RParen
     (35) Wfts -> Wfts . Wft
@@ -1377,46 +1393,7 @@ state 64
     (8) Wft -> . LParen Y_Close AtomicNameSet Wft RParen
     (9) Wft -> . LParen Y_Every AtomicName Wfts RParen
     (10) Wft -> . LParen SomeCondition Wfts RParen
-    (11) Wft -> . LParen QIdentifier Wfts RParen
-    (25) AtomicWft -> . AtomicName
-    (26) AtomicWft -> . Y_String
-    (27) AtomicWft -> . Y_Integer
-    (61) Y_WftNode -> . WftNode
-    (28) AtomicName -> . Y_Identifier
-    (43) Y_String -> . String
-    (44) Y_Integer -> . Integer
-    (63) Y_Identifier -> . Identifier
-
-    RParen          shift and go to state 82
-    LParen          shift and go to state 4
-    WftNode         shift and go to state 8
-    String          shift and go to state 10
-    Integer         shift and go to state 11
-    Identifier      shift and go to state 12
-
-    Wft                            shift and go to state 76
-    AtomicWft                      shift and go to state 2
-    Y_WftNode                      shift and go to state 3
-    AtomicName                     shift and go to state 5
-    Y_String                       shift and go to state 6
-    Y_Integer                      shift and go to state 7
-    Y_Identifier                   shift and go to state 9
-
-state 65
-
-    (11) Wft -> LParen QIdentifier Wfts . RParen
-    (35) Wfts -> Wfts . Wft
-    (1) Wft -> . AtomicWft
-    (2) Wft -> . Y_WftNode
-    (3) Wft -> . LParen Function Arguments RParen
-    (4) Wft -> . LParen BinaryOp Argument Argument RParen
-    (5) Wft -> . LParen NaryOp Wfts RParen
-    (6) Wft -> . LParen Param2Op Wft Wfts RParen
-    (7) Wft -> . LParen Param1Op Wft Wfts RParen
-    (8) Wft -> . LParen Y_Close AtomicNameSet Wft RParen
-    (9) Wft -> . LParen Y_Every AtomicName Wfts RParen
-    (10) Wft -> . LParen SomeCondition Wfts RParen
-    (11) Wft -> . LParen QIdentifier Wfts RParen
+    (11) Wft -> . LParen Y_QIdentifier Wfts RParen
     (25) AtomicWft -> . AtomicName
     (26) AtomicWft -> . Y_String
     (27) AtomicWft -> . Y_Integer
@@ -1433,7 +1410,7 @@ state 65
     Integer         shift and go to state 11
     Identifier      shift and go to state 12
 
-    Wft                            shift and go to state 76
+    Wft                            shift and go to state 77
     AtomicWft                      shift and go to state 2
     Y_WftNode                      shift and go to state 3
     AtomicName                     shift and go to state 5
@@ -1443,17 +1420,46 @@ state 65
 
 state 66
 
-    (22) Param2Op -> Y_AndOr LParen . Y_Integer Y_Integer RParen
+    (11) Wft -> LParen Y_QIdentifier Wfts . RParen
+    (35) Wfts -> Wfts . Wft
+    (1) Wft -> . AtomicWft
+    (2) Wft -> . Y_WftNode
+    (3) Wft -> . LParen Function Arguments RParen
+    (4) Wft -> . LParen BinaryOp Argument Argument RParen
+    (5) Wft -> . LParen NaryOp Wfts RParen
+    (6) Wft -> . LParen Param2Op Wft Wfts RParen
+    (7) Wft -> . LParen Param1Op Wft Wfts RParen
+    (8) Wft -> . LParen Y_Close AtomicNameSet Wft RParen
+    (9) Wft -> . LParen Y_Every AtomicName Wfts RParen
+    (10) Wft -> . LParen SomeCondition Wfts RParen
+    (11) Wft -> . LParen Y_QIdentifier Wfts RParen
+    (25) AtomicWft -> . AtomicName
+    (26) AtomicWft -> . Y_String
+    (27) AtomicWft -> . Y_Integer
+    (61) Y_WftNode -> . WftNode
+    (28) AtomicName -> . Y_Identifier
+    (43) Y_String -> . String
     (44) Y_Integer -> . Integer
+    (63) Y_Identifier -> . Identifier
 
+    RParen          shift and go to state 84
+    LParen          shift and go to state 4
+    WftNode         shift and go to state 8
+    String          shift and go to state 10
     Integer         shift and go to state 11
+    Identifier      shift and go to state 12
 
-    Y_Integer                      shift and go to state 84
+    Wft                            shift and go to state 77
+    AtomicWft                      shift and go to state 2
+    Y_WftNode                      shift and go to state 3
+    AtomicName                     shift and go to state 5
+    Y_String                       shift and go to state 6
+    Y_Integer                      shift and go to state 7
+    Y_Identifier                   shift and go to state 9
 
 state 67
 
-    (23) Param2Op -> Y_Thresh LParen . Y_Integer Y_Integer RParen
-    (24) Param1Op -> Y_Thresh LParen . Y_Integer RParen
+    (22) Param2Op -> Y_AndOr LParen . Y_Integer Y_Integer RParen
     (44) Y_Integer -> . Integer
 
     Integer         shift and go to state 11
@@ -1462,12 +1468,22 @@ state 67
 
 state 68
 
-    (42) SomeCondition -> Y_Some AtomicName . LParen Wfts RParen
+    (23) Param2Op -> Y_Thresh LParen . Y_Integer Y_Integer RParen
+    (24) Param1Op -> Y_Thresh LParen . Y_Integer RParen
+    (44) Y_Integer -> . Integer
 
-    LParen          shift and go to state 86
+    Integer         shift and go to state 11
 
+    Y_Integer                      shift and go to state 86
 
 state 69
+
+    (42) SomeCondition -> Y_Some AtomicName . LParen Wfts RParen
+
+    LParen          shift and go to state 87
+
+
+state 70
 
     (32) Argument -> LParen ArgumentFunction . Wfts RParen
     (34) Wfts -> .
@@ -1480,9 +1496,9 @@ state 69
     Integer         reduce using rule 34 (Wfts -> .)
     Identifier      reduce using rule 34 (Wfts -> .)
 
-    Wfts                           shift and go to state 87
+    Wfts                           shift and go to state 88
 
-state 70
+state 71
 
     (33) ArgumentFunction -> Y_SetOf .
 
@@ -1494,7 +1510,7 @@ state 70
     Identifier      reduce using rule 33 (ArgumentFunction -> Y_SetOf .)
 
 
-state 71
+state 72
 
     (56) Y_SetOf -> SetOf .
 
@@ -1506,7 +1522,7 @@ state 71
     Identifier      reduce using rule 56 (Y_SetOf -> SetOf .)
 
 
-state 72
+state 73
 
     (3) Wft -> LParen Function Arguments RParen .
 
@@ -1520,7 +1536,7 @@ state 72
     RParen          reduce using rule 3 (Wft -> LParen Function Arguments RParen .)
 
 
-state 73
+state 74
 
     (37) Arguments -> Arguments Argument .
 
@@ -1533,14 +1549,14 @@ state 73
     Identifier      reduce using rule 37 (Arguments -> Arguments Argument .)
 
 
-state 74
+state 75
 
     (4) Wft -> LParen BinaryOp Argument Argument . RParen
 
-    RParen          shift and go to state 88
+    RParen          shift and go to state 89
 
 
-state 75
+state 76
 
     (5) Wft -> LParen NaryOp Wfts RParen .
 
@@ -1554,7 +1570,7 @@ state 75
     RParen          reduce using rule 5 (Wft -> LParen NaryOp Wfts RParen .)
 
 
-state 76
+state 77
 
     (35) Wfts -> Wfts Wft .
 
@@ -1566,7 +1582,7 @@ state 76
     Identifier      reduce using rule 35 (Wfts -> Wfts Wft .)
 
 
-state 77
+state 78
 
     (6) Wft -> LParen Param2Op Wft Wfts . RParen
     (35) Wfts -> Wfts . Wft
@@ -1580,46 +1596,7 @@ state 77
     (8) Wft -> . LParen Y_Close AtomicNameSet Wft RParen
     (9) Wft -> . LParen Y_Every AtomicName Wfts RParen
     (10) Wft -> . LParen SomeCondition Wfts RParen
-    (11) Wft -> . LParen QIdentifier Wfts RParen
-    (25) AtomicWft -> . AtomicName
-    (26) AtomicWft -> . Y_String
-    (27) AtomicWft -> . Y_Integer
-    (61) Y_WftNode -> . WftNode
-    (28) AtomicName -> . Y_Identifier
-    (43) Y_String -> . String
-    (44) Y_Integer -> . Integer
-    (63) Y_Identifier -> . Identifier
-
-    RParen          shift and go to state 89
-    LParen          shift and go to state 4
-    WftNode         shift and go to state 8
-    String          shift and go to state 10
-    Integer         shift and go to state 11
-    Identifier      shift and go to state 12
-
-    Wft                            shift and go to state 76
-    AtomicWft                      shift and go to state 2
-    Y_WftNode                      shift and go to state 3
-    AtomicName                     shift and go to state 5
-    Y_String                       shift and go to state 6
-    Y_Integer                      shift and go to state 7
-    Y_Identifier                   shift and go to state 9
-
-state 78
-
-    (7) Wft -> LParen Param1Op Wft Wfts . RParen
-    (35) Wfts -> Wfts . Wft
-    (1) Wft -> . AtomicWft
-    (2) Wft -> . Y_WftNode
-    (3) Wft -> . LParen Function Arguments RParen
-    (4) Wft -> . LParen BinaryOp Argument Argument RParen
-    (5) Wft -> . LParen NaryOp Wfts RParen
-    (6) Wft -> . LParen Param2Op Wft Wfts RParen
-    (7) Wft -> . LParen Param1Op Wft Wfts RParen
-    (8) Wft -> . LParen Y_Close AtomicNameSet Wft RParen
-    (9) Wft -> . LParen Y_Every AtomicName Wfts RParen
-    (10) Wft -> . LParen SomeCondition Wfts RParen
-    (11) Wft -> . LParen QIdentifier Wfts RParen
+    (11) Wft -> . LParen Y_QIdentifier Wfts RParen
     (25) AtomicWft -> . AtomicName
     (26) AtomicWft -> . Y_String
     (27) AtomicWft -> . Y_Integer
@@ -1636,7 +1613,7 @@ state 78
     Integer         shift and go to state 11
     Identifier      shift and go to state 12
 
-    Wft                            shift and go to state 76
+    Wft                            shift and go to state 77
     AtomicWft                      shift and go to state 2
     Y_WftNode                      shift and go to state 3
     AtomicName                     shift and go to state 5
@@ -1645,6 +1622,45 @@ state 78
     Y_Identifier                   shift and go to state 9
 
 state 79
+
+    (7) Wft -> LParen Param1Op Wft Wfts . RParen
+    (35) Wfts -> Wfts . Wft
+    (1) Wft -> . AtomicWft
+    (2) Wft -> . Y_WftNode
+    (3) Wft -> . LParen Function Arguments RParen
+    (4) Wft -> . LParen BinaryOp Argument Argument RParen
+    (5) Wft -> . LParen NaryOp Wfts RParen
+    (6) Wft -> . LParen Param2Op Wft Wfts RParen
+    (7) Wft -> . LParen Param1Op Wft Wfts RParen
+    (8) Wft -> . LParen Y_Close AtomicNameSet Wft RParen
+    (9) Wft -> . LParen Y_Every AtomicName Wfts RParen
+    (10) Wft -> . LParen SomeCondition Wfts RParen
+    (11) Wft -> . LParen Y_QIdentifier Wfts RParen
+    (25) AtomicWft -> . AtomicName
+    (26) AtomicWft -> . Y_String
+    (27) AtomicWft -> . Y_Integer
+    (61) Y_WftNode -> . WftNode
+    (28) AtomicName -> . Y_Identifier
+    (43) Y_String -> . String
+    (44) Y_Integer -> . Integer
+    (63) Y_Identifier -> . Identifier
+
+    RParen          shift and go to state 91
+    LParen          shift and go to state 4
+    WftNode         shift and go to state 8
+    String          shift and go to state 10
+    Integer         shift and go to state 11
+    Identifier      shift and go to state 12
+
+    Wft                            shift and go to state 77
+    AtomicWft                      shift and go to state 2
+    Y_WftNode                      shift and go to state 3
+    AtomicName                     shift and go to state 5
+    Y_String                       shift and go to state 6
+    Y_Integer                      shift and go to state 7
+    Y_Identifier                   shift and go to state 9
+
+state 80
 
     (39) AtomicNameSet -> LParen AtomicName . AtomicNames RParen
     (40) AtomicNames -> .
@@ -1655,18 +1671,18 @@ state 79
     RParen          reduce using rule 40 (AtomicNames -> .)
     Identifier      shift and go to state 12
 
-    AtomicName                     shift and go to state 91
-    AtomicNames                    shift and go to state 92
+    AtomicName                     shift and go to state 92
+    AtomicNames                    shift and go to state 93
     Y_Identifier                   shift and go to state 9
 
-state 80
+state 81
 
     (8) Wft -> LParen Y_Close AtomicNameSet Wft . RParen
 
-    RParen          shift and go to state 93
+    RParen          shift and go to state 94
 
 
-state 81
+state 82
 
     (9) Wft -> LParen Y_Every AtomicName Wfts . RParen
     (35) Wfts -> Wfts . Wft
@@ -1680,7 +1696,7 @@ state 81
     (8) Wft -> . LParen Y_Close AtomicNameSet Wft RParen
     (9) Wft -> . LParen Y_Every AtomicName Wfts RParen
     (10) Wft -> . LParen SomeCondition Wfts RParen
-    (11) Wft -> . LParen QIdentifier Wfts RParen
+    (11) Wft -> . LParen Y_QIdentifier Wfts RParen
     (25) AtomicWft -> . AtomicName
     (26) AtomicWft -> . Y_String
     (27) AtomicWft -> . Y_Integer
@@ -1690,7 +1706,7 @@ state 81
     (44) Y_Integer -> . Integer
     (63) Y_Identifier -> . Identifier
 
-    RParen          shift and go to state 94
+    RParen          shift and go to state 95
     LParen          shift and go to state 4
     WftNode         shift and go to state 8
     String          shift and go to state 10
@@ -1698,14 +1714,14 @@ state 81
     Identifier      shift and go to state 12
 
     AtomicName                     shift and go to state 5
-    Wft                            shift and go to state 76
+    Wft                            shift and go to state 77
     AtomicWft                      shift and go to state 2
     Y_WftNode                      shift and go to state 3
     Y_String                       shift and go to state 6
     Y_Integer                      shift and go to state 7
     Y_Identifier                   shift and go to state 9
 
-state 82
+state 83
 
     (10) Wft -> LParen SomeCondition Wfts RParen .
 
@@ -1719,41 +1735,41 @@ state 82
     RParen          reduce using rule 10 (Wft -> LParen SomeCondition Wfts RParen .)
 
 
-state 83
-
-    (11) Wft -> LParen QIdentifier Wfts RParen .
-
-    $end            reduce using rule 11 (Wft -> LParen QIdentifier Wfts RParen .)
-    None            reduce using rule 11 (Wft -> LParen QIdentifier Wfts RParen .)
-    LParen          reduce using rule 11 (Wft -> LParen QIdentifier Wfts RParen .)
-    WftNode         reduce using rule 11 (Wft -> LParen QIdentifier Wfts RParen .)
-    String          reduce using rule 11 (Wft -> LParen QIdentifier Wfts RParen .)
-    Integer         reduce using rule 11 (Wft -> LParen QIdentifier Wfts RParen .)
-    Identifier      reduce using rule 11 (Wft -> LParen QIdentifier Wfts RParen .)
-    RParen          reduce using rule 11 (Wft -> LParen QIdentifier Wfts RParen .)
-
-
 state 84
+
+    (11) Wft -> LParen Y_QIdentifier Wfts RParen .
+
+    $end            reduce using rule 11 (Wft -> LParen Y_QIdentifier Wfts RParen .)
+    None            reduce using rule 11 (Wft -> LParen Y_QIdentifier Wfts RParen .)
+    LParen          reduce using rule 11 (Wft -> LParen Y_QIdentifier Wfts RParen .)
+    WftNode         reduce using rule 11 (Wft -> LParen Y_QIdentifier Wfts RParen .)
+    String          reduce using rule 11 (Wft -> LParen Y_QIdentifier Wfts RParen .)
+    Integer         reduce using rule 11 (Wft -> LParen Y_QIdentifier Wfts RParen .)
+    Identifier      reduce using rule 11 (Wft -> LParen Y_QIdentifier Wfts RParen .)
+    RParen          reduce using rule 11 (Wft -> LParen Y_QIdentifier Wfts RParen .)
+
+
+state 85
 
     (22) Param2Op -> Y_AndOr LParen Y_Integer . Y_Integer RParen
     (44) Y_Integer -> . Integer
 
     Integer         shift and go to state 11
 
-    Y_Integer                      shift and go to state 95
+    Y_Integer                      shift and go to state 96
 
-state 85
+state 86
 
     (23) Param2Op -> Y_Thresh LParen Y_Integer . Y_Integer RParen
     (24) Param1Op -> Y_Thresh LParen Y_Integer . RParen
     (44) Y_Integer -> . Integer
 
-    RParen          shift and go to state 97
+    RParen          shift and go to state 98
     Integer         shift and go to state 11
 
-    Y_Integer                      shift and go to state 96
+    Y_Integer                      shift and go to state 97
 
-state 86
+state 87
 
     (42) SomeCondition -> Y_Some AtomicName LParen . Wfts RParen
     (34) Wfts -> .
@@ -1766,9 +1782,9 @@ state 86
     Integer         reduce using rule 34 (Wfts -> .)
     Identifier      reduce using rule 34 (Wfts -> .)
 
-    Wfts                           shift and go to state 98
+    Wfts                           shift and go to state 99
 
-state 87
+state 88
 
     (32) Argument -> LParen ArgumentFunction Wfts . RParen
     (35) Wfts -> Wfts . Wft
@@ -1782,7 +1798,7 @@ state 87
     (8) Wft -> . LParen Y_Close AtomicNameSet Wft RParen
     (9) Wft -> . LParen Y_Every AtomicName Wfts RParen
     (10) Wft -> . LParen SomeCondition Wfts RParen
-    (11) Wft -> . LParen QIdentifier Wfts RParen
+    (11) Wft -> . LParen Y_QIdentifier Wfts RParen
     (25) AtomicWft -> . AtomicName
     (26) AtomicWft -> . Y_String
     (27) AtomicWft -> . Y_Integer
@@ -1792,14 +1808,14 @@ state 87
     (44) Y_Integer -> . Integer
     (63) Y_Identifier -> . Identifier
 
-    RParen          shift and go to state 99
+    RParen          shift and go to state 100
     LParen          shift and go to state 4
     WftNode         shift and go to state 8
     String          shift and go to state 10
     Integer         shift and go to state 11
     Identifier      shift and go to state 12
 
-    Wft                            shift and go to state 76
+    Wft                            shift and go to state 77
     AtomicWft                      shift and go to state 2
     Y_WftNode                      shift and go to state 3
     AtomicName                     shift and go to state 5
@@ -1807,7 +1823,7 @@ state 87
     Y_Integer                      shift and go to state 7
     Y_Identifier                   shift and go to state 9
 
-state 88
+state 89
 
     (4) Wft -> LParen BinaryOp Argument Argument RParen .
 
@@ -1821,7 +1837,7 @@ state 88
     RParen          reduce using rule 4 (Wft -> LParen BinaryOp Argument Argument RParen .)
 
 
-state 89
+state 90
 
     (6) Wft -> LParen Param2Op Wft Wfts RParen .
 
@@ -1835,7 +1851,7 @@ state 89
     RParen          reduce using rule 6 (Wft -> LParen Param2Op Wft Wfts RParen .)
 
 
-state 90
+state 91
 
     (7) Wft -> LParen Param1Op Wft Wfts RParen .
 
@@ -1849,7 +1865,7 @@ state 90
     RParen          reduce using rule 7 (Wft -> LParen Param1Op Wft Wfts RParen .)
 
 
-state 91
+state 92
 
     (41) AtomicNames -> AtomicName . AtomicNames
     (40) AtomicNames -> .
@@ -1860,18 +1876,18 @@ state 91
     RParen          reduce using rule 40 (AtomicNames -> .)
     Identifier      shift and go to state 12
 
-    AtomicName                     shift and go to state 91
-    AtomicNames                    shift and go to state 100
+    AtomicName                     shift and go to state 92
+    AtomicNames                    shift and go to state 101
     Y_Identifier                   shift and go to state 9
 
-state 92
+state 93
 
     (39) AtomicNameSet -> LParen AtomicName AtomicNames . RParen
 
-    RParen          shift and go to state 101
+    RParen          shift and go to state 102
 
 
-state 93
+state 94
 
     (8) Wft -> LParen Y_Close AtomicNameSet Wft RParen .
 
@@ -1885,7 +1901,7 @@ state 93
     RParen          reduce using rule 8 (Wft -> LParen Y_Close AtomicNameSet Wft RParen .)
 
 
-state 94
+state 95
 
     (9) Wft -> LParen Y_Every AtomicName Wfts RParen .
 
@@ -1899,21 +1915,21 @@ state 94
     RParen          reduce using rule 9 (Wft -> LParen Y_Every AtomicName Wfts RParen .)
 
 
-state 95
-
-    (22) Param2Op -> Y_AndOr LParen Y_Integer Y_Integer . RParen
-
-    RParen          shift and go to state 102
-
-
 state 96
 
-    (23) Param2Op -> Y_Thresh LParen Y_Integer Y_Integer . RParen
+    (22) Param2Op -> Y_AndOr LParen Y_Integer Y_Integer . RParen
 
     RParen          shift and go to state 103
 
 
 state 97
+
+    (23) Param2Op -> Y_Thresh LParen Y_Integer Y_Integer . RParen
+
+    RParen          shift and go to state 104
+
+
+state 98
 
     (24) Param1Op -> Y_Thresh LParen Y_Integer RParen .
 
@@ -1924,7 +1940,7 @@ state 97
     Identifier      reduce using rule 24 (Param1Op -> Y_Thresh LParen Y_Integer RParen .)
 
 
-state 98
+state 99
 
     (42) SomeCondition -> Y_Some AtomicName LParen Wfts . RParen
     (35) Wfts -> Wfts . Wft
@@ -1938,7 +1954,7 @@ state 98
     (8) Wft -> . LParen Y_Close AtomicNameSet Wft RParen
     (9) Wft -> . LParen Y_Every AtomicName Wfts RParen
     (10) Wft -> . LParen SomeCondition Wfts RParen
-    (11) Wft -> . LParen QIdentifier Wfts RParen
+    (11) Wft -> . LParen Y_QIdentifier Wfts RParen
     (25) AtomicWft -> . AtomicName
     (26) AtomicWft -> . Y_String
     (27) AtomicWft -> . Y_Integer
@@ -1948,7 +1964,7 @@ state 98
     (44) Y_Integer -> . Integer
     (63) Y_Identifier -> . Identifier
 
-    RParen          shift and go to state 104
+    RParen          shift and go to state 105
     LParen          shift and go to state 4
     WftNode         shift and go to state 8
     String          shift and go to state 10
@@ -1956,14 +1972,14 @@ state 98
     Identifier      shift and go to state 12
 
     AtomicName                     shift and go to state 5
-    Wft                            shift and go to state 76
+    Wft                            shift and go to state 77
     AtomicWft                      shift and go to state 2
     Y_WftNode                      shift and go to state 3
     Y_String                       shift and go to state 6
     Y_Integer                      shift and go to state 7
     Y_Identifier                   shift and go to state 9
 
-state 99
+state 100
 
     (32) Argument -> LParen ArgumentFunction Wfts RParen .
 
@@ -1976,14 +1992,14 @@ state 99
     Identifier      reduce using rule 32 (Argument -> LParen ArgumentFunction Wfts RParen .)
 
 
-state 100
+state 101
 
     (41) AtomicNames -> AtomicName AtomicNames .
 
     RParen          reduce using rule 41 (AtomicNames -> AtomicName AtomicNames .)
 
 
-state 101
+state 102
 
     (39) AtomicNameSet -> LParen AtomicName AtomicNames RParen .
 
@@ -1994,7 +2010,7 @@ state 101
     Identifier      reduce using rule 39 (AtomicNameSet -> LParen AtomicName AtomicNames RParen .)
 
 
-state 102
+state 103
 
     (22) Param2Op -> Y_AndOr LParen Y_Integer Y_Integer RParen .
 
@@ -2005,7 +2021,7 @@ state 102
     Identifier      reduce using rule 22 (Param2Op -> Y_AndOr LParen Y_Integer Y_Integer RParen .)
 
 
-state 103
+state 104
 
     (23) Param2Op -> Y_Thresh LParen Y_Integer Y_Integer RParen .
 
@@ -2016,7 +2032,7 @@ state 103
     Identifier      reduce using rule 23 (Param2Op -> Y_Thresh LParen Y_Integer Y_Integer RParen .)
 
 
-state 104
+state 105
 
     (42) SomeCondition -> Y_Some AtomicName LParen Wfts RParen .
 
