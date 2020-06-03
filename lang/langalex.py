@@ -59,7 +59,7 @@ def t_error(t):
     print("Invalid syntax: ", t.value)
     t.lexer.skip(1)
 
-t_ignore = r'\s+'
+t_ignore = ' \t\r\n\f\v'
 
 # Build the lexer
 import ply.lex as lex
