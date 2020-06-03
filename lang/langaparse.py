@@ -330,4 +330,4 @@ if __name__ == '__main__':
         except EOFError:
             break
         yacc.parse(s)
-    top.to_networkx()
+        top.to_networkx()
