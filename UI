@@ -1,8 +1,7 @@
 #!/usr/bin/python3
 
-
 #### Note: str and repr methods should be rewritten to provide a more
-####		informative and asceticaly pleasing representation of the
+####		informative and aestheticaly pleasing representation of the
 ####		appropriate object
 
 import re
