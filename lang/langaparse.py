@@ -331,5 +331,7 @@ if __name__ == '__main__':
             s = input('Command: ')
         except EOFError:
             break
+        if str(s) == 'exit()':
+            break
         yacc.parse(s)
         top.to_networkx()
