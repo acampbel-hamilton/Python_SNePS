@@ -158,8 +158,7 @@ def p_AtomicName(p):
     '''
     AtomicName  :        Y_Identifier
     '''
-    p[0] = ParseTree(description="Atom")
-    p[0].add_children(p[1])
+    p[0] = p[1]
 
 def p_Function(p):
     '''
