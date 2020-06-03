@@ -1,3 +1,5 @@
 __pycache__
 .DS_Store
-
+lang/__pycache__
+lang/ply/__pycache__
+lang/parser.out
