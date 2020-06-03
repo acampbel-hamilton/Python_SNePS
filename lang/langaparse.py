@@ -116,7 +116,7 @@ def p_NaryOp(p):
           |             Y_Thnor
           |             Y_Nand
           |             Y_Xor
-          |             Y_Iff
+          |             Y_DoubImpl
     '''
     p[0] = p[1]
 
@@ -264,9 +264,9 @@ def p_Y_Xor(p):
     '''Y_Xor : Xor'''
     p[0] = ParseTree(description="Xor", value=p[1])
 
-def p_Y_Iff(p):
-    '''Y_Iff : Iff'''
-    p[0] = ParseTree(description="Iff", value=p[1])
+def p_Y_DoubImpl(p):
+    '''Y_DoubImpl : DoubImpl'''
+    p[0] = ParseTree(description="DoubImpl", value=p[1])
 
 def p_Y_AndOr(p):
     '''Y_AndOr : AndOr'''
