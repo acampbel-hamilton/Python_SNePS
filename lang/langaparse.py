@@ -40,6 +40,7 @@ def p_Wft1(p):
     '''
     p[0] = ParseTree(description="wft")
     p[0].add_children(p[1])
+    global top
     top = p[0]
 
 def p_Wft2(p):
@@ -48,6 +49,7 @@ def p_Wft2(p):
     '''
     p[0] = ParseTree(description="wft")
     p[0].add_children(p[2], *p[3])
+    global top
     top = p[0]
 
 def p_Wft3(p):
@@ -56,6 +58,7 @@ def p_Wft3(p):
     '''
     p[0] = ParseTree(description="wft")
     p[0].add_children(p[2], p[3], p[4])
+    global top
     top = p[0]
 
 def p_Wft4(p):
@@ -64,6 +67,7 @@ def p_Wft4(p):
     '''
     p[0] = ParseTree(description="wft")
     p[0].add_children(p[2], *p[3])
+    global top
     top = p[0]
 
 def p_Wft5(p):
@@ -73,6 +77,7 @@ def p_Wft5(p):
     '''
     p[0] = ParseTree(description="wft")
     p[0].add_children(p[2], p[3], *p[4])
+    global top
     top = p[0]
 
 def p_Wft6(p):
@@ -81,6 +86,7 @@ def p_Wft6(p):
     '''
     p[0] = ParseTree(description="wft")
     p[0].add_children(p[2], *p[3], p[4])
+    global top
     top = p[0]
 
 def p_Wft7(p):
@@ -89,6 +95,7 @@ def p_Wft7(p):
     '''
     p[0] = ParseTree(description="wft")
     p[0].add_children(p[2], p[3], *p[4])
+    global top
     top = p[0]
 
 def p_Wft8(p):
@@ -98,6 +105,7 @@ def p_Wft8(p):
     '''
     p[0] = ParseTree(description="wft")
     p[0].add_children(p[2], *p[3])
+    global top
     top = p[0]
 
 def p_BinaryOp(p):
