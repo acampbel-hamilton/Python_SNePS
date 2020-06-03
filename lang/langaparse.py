@@ -45,7 +45,7 @@ def p_Wft1(p):
 
 def p_Wft2(p):
     '''
-    Wft  :               LParen Function Arguments RParen
+    Wft :                LParen Function Arguments RParen
     '''
     p[0] = ParseTree(description="wft")
     p[0].add_children(p[2], *p[3])
@@ -54,7 +54,7 @@ def p_Wft2(p):
 
 def p_Wft3(p):
     '''
-    Wft  :              LParen BinaryOp Argument Argument RParen
+    Wft :               LParen BinaryOp Argument Argument RParen
     '''
     p[0] = ParseTree(description="wft")
     p[0].add_children(p[2], p[3], p[4])
@@ -153,7 +153,7 @@ def p_AtomicWft(p):
 
 def p_AtomicName(p):
     '''
-    AtomicName  :        Y_Identifier
+    AtomicName :         Y_Identifier
     '''
     p[0] = p[1]
 
