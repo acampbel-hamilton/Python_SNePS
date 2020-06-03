@@ -1,4 +1,4 @@
-from ply import *
+from ..ply import *
 from re import match
 from sys import argv, exit
 
@@ -73,10 +73,16 @@ if __name__ == "__main__":
 
     # Read the input file
     lexer.input(''.join(open(argv[1]).readlines()))
+else:
+    data = '''
 
-    # Tokenize and print (this is just a test)
-    while True:
-         token = lexer.token()
-         if not token:
-             break
-         print(tok)
+    '''
+
+    lexer.input(data)
+
+# Tokenize and print (this is just a test)
+while True:
+     token = lexer.token()
+     if not token:
+         break
+     print(tok)

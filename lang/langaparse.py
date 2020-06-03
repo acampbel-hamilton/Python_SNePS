@@ -1,5 +1,5 @@
 import langalex
-from langAInterpreter import ParseTree
+from langAInterpreter import * # For ParseTree
 
 tokens =  (
     'Xor',
@@ -55,7 +55,7 @@ def p_Wft3(p):
     Wft:                LParen BinaryOp Argument Argument RParen
     '''
     p[0] = ParseTree(description="wft")
-    p[0].add_children(p[2], p[3], p[4]))
+    p[0].add_children(p[2], p[3], p[4])
     top = p[0]
 
 def p_Wft4(p):
@@ -308,11 +308,12 @@ def p_Y_Identifier(p):
     '''Y_Identifier: Identifier'''
     p[0] = ParseTree(description="Identifier", value=p[1])
 
- def p_error(p):
-     print("Syntax error in input!")
+def p_error(p):
+    print("Syntax error in input!")
 
 # -------------- RULES END ----------------
 
 if __name__ == '__main__':
-    from ply import *
+    from ..ply import *
     yacc.yacc()
+    top.to_networkx()
