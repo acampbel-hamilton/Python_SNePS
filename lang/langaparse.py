@@ -317,7 +317,7 @@ def p_Y_Identifier(p):
     p[0] = ParseTree(description="Identifier", value=p[1])
 
 def p_error(p):
-    print("Syntax error in input!")
+    print(f"Syntax error at {p.value!r}")
 
 # -------------- RULES END ----------------
 
@@ -326,7 +326,7 @@ if __name__ == '__main__':
     yacc.yacc()
     while True:
         try:
-            s = input('John')
+            s = input('Command: ')
         except EOFError:
             break
         yacc.parse(s)
