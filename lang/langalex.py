@@ -65,23 +65,23 @@ t_ignore = ' \t\r\n\f\v'
 import ply.lex as lex
 lexer = lex.lex()
 
-if __name__ == "__main__":
-    if len(argv) != 2:
-        print("Usage: python3 langalex.py filename")
-        exit(1)
-
-    # Read the input file
-    lexer.input(''.join(open(argv[1]).readlines()))
-else:
-    data = '''
-
-    '''
-
-    lexer.input(data)
-
-# Tokenize and print (this is just a test)
-while True:
-     token = lexer.token()
-     if not token:
-         break
-     print(tok)
+# if __name__ == "__main__":
+#     if len(argv) != 2:
+#         print("Usage: python3 langalex.py filename")
+#         exit(1)
+#
+#     # Read the input file
+#     lexer.input(''.join(open(argv[1]).readlines()))
+# else:
+#     data = '''
+#         John
+#     '''
+#
+#     lexer.input(data)
+#
+# # Tokenize and print (this is just a test)
+# while True:
+#      token = lexer.token()
+#      if not token:
+#          break
+#      print(token)

@@ -324,4 +324,8 @@ def p_error(p):
 if __name__ == '__main__':
     from ply import *
     yacc.yacc()
+    s = input('John')
+    yacc.parse(s)
     top.to_networkx()
+
+bparser = yacc.yacc()
