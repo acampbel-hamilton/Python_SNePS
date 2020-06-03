@@ -324,6 +324,10 @@ def p_error(p):
 if __name__ == '__main__':
     from ply import *
     yacc.yacc()
-    s = input('John')
-    yacc.parse(s)
+    while True:
+        try:
+            s = input('John')
+        except EOFError:
+            break
+        yacc.parse(s)
     top.to_networkx()
