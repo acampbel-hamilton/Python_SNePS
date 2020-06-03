@@ -36,7 +36,7 @@ class ParseTree:
             raise ModuleNotFoundError("Networkx and matplotlib are required to visualize a parse tree.")
 
         if G is None:
-            G = nx.DiGraph()
+            G = nx.Graph()
             is_root = True
         else:
             is_root = False

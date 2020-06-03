@@ -77,9 +77,6 @@ def p_Wft5(p):
     '''
     p[0] = ParseTree(description="wft")
     p[0].add_children(p[2], p[3], *p[4])
-    for i in range(0, len(p[0].children)):
-        if i > 0:
-            p[0].children[i].value = i
     global top
     top = p[0]
 
@@ -195,6 +192,9 @@ def p_Wfts(p):
         p[0] = []
     else:
         p[0] = p[1] + [p[2]]
+        for i in range(0, len(p[0])):
+            if i > 0:
+                p[0][i].value = i
 
 def p_Arguments(p):
     '''
