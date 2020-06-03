@@ -101,7 +101,7 @@ def p_Wft7(p):
 def p_Wft8(p):
     '''
     Wft :               LParen SomeCondition Wfts RParen
-        |               LParen QIdentifier Wfts RParen
+        |               LParen Y_QIdentifier Wfts RParen
     '''
     p[0] = ParseTree(description="wft")
     p[0].add_children(p[2], *p[3])
