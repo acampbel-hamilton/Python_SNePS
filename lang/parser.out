@@ -1,0 +1,141 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    DoubImpl
+
+Grammar
+
+Rule 0     S' -> Wft
+Rule 1     Wft -> AtomicWft
+Rule 2     Wft -> Y_WftNode
+Rule 3     Wft -> LParen Function Arguments RParen
+Rule 4     Wft -> LParen BinaryOp Argument Argument RParen
+Rule 5     Wft -> LParen NaryOp Wfts RParen
+Rule 6     Wft -> LParen Param2Op Wft Wfts RParen
+Rule 7     Wft -> LParen Param1Op Wft Wfts RParen
+Rule 8     Wft -> LParen Y_Close AtomicNameSet Wft RParen
+Rule 9     Wft -> LParen Y_Every AtomicName Wfts RParen
+Rule 10    Wft -> LParen SomeCondition Wfts RParen
+Rule 11    Wft -> LParen QIdentifier Wfts RParen
+Rule 12    BinaryOp -> Y_Impl
+Rule 13    NaryOp -> Y_And
+Rule 14    NaryOp -> Y_Or
+Rule 15    NaryOp -> Y_Not
+Rule 16    NaryOp -> Y_Nor
+Rule 17    NaryOp -> Y_Thnot
+Rule 18    NaryOp -> Y_Thnor
+Rule 19    NaryOp -> Y_Nand
+Rule 20    NaryOp -> Y_Xor
+Rule 21    NaryOp -> Y_Iff
+Rule 22    Param2Op -> Y_AndOr LParen Y_Integer Y_Integer RParen
+Rule 23    Param2Op -> Y_Thresh LParen Y_Integer Y_Integer RParen
+Rule 24    Param1Op -> Y_Thresh LParen Y_Integer RParen
+Rule 25    AtomicWft -> AtomicName
+Rule 26    AtomicWft -> Y_String
+Rule 27    AtomicWft -> Y_Integer
+Rule 28    AtomicName -> Y_Identifier
+Rule 29    Function -> Wft
+Rule 30    Argument -> Wft
+Rule 31    Argument -> None
+Rule 32    Argument -> LParen ArgumentFunction Wfts RParen
+Rule 33    ArgumentFunction -> Y_SetOf
+Rule 34    Wfts -> <empty>
+Rule 35    Wfts -> Wfts Wft
+Rule 36    Arguments -> Argument
+Rule 37    Arguments -> Arguments Argument
+Rule 38    AtomicNameSet -> AtomicName
+Rule 39    AtomicNameSet -> LParen AtomicName AtomicNames RParen
+Rule 40    AtomicNames -> <empty>
+Rule 41    AtomicNames -> AtomicName AtomicNames
+Rule 42    SomeCondition -> Y_Some AtomicName LParen Wfts RParen
+Rule 43    Y_String -> String
+Rule 44    Y_Integer -> Integer
+Rule 45    Y_Impl -> Impl
+Rule 46    Y_Or -> Or
+Rule 47    Y_Not -> Not
+Rule 48    Y_Nor -> Nor
+Rule 49    Y_Thnot -> Thnot
+Rule 50    Y_Thnor -> Thnor
+Rule 51    Y_Nand -> Nand
+Rule 52    Y_Xor -> Xor
+Rule 53    Y_Iff -> Iff
+Rule 54    Y_AndOr -> AndOr
+Rule 55    Y_Thresh -> Thresh
+Rule 56    Y_SetOf -> SetOf
+Rule 57    Y_Every -> Every
+Rule 58    Y_Some -> Some
+Rule 59    Y_Close -> Close
+Rule 60    Y_And -> And
+Rule 61    Y_WftNode -> WftNode
+Rule 62    Y_QIdentifier -> QIdentifier
+Rule 63    Y_Identifier -> Identifier
+
+Terminals, with rules where they appear
+
+And                  : 60
+AndOr                : 54
+Close                : 59
+DoubImpl             : 
+Every                : 57
+Identifier           : 63
+Impl                 : 45
+Integer              : 44
+LParen               : 3 4 5 6 7 8 9 10 11 22 23 24 32 39 42
+Nand                 : 51
+None                 : 31
+Nor                  : 48
+Not                  : 47
+Or                   : 46
+QIdentifier          : 11 62
+RParen               : 3 4 5 6 7 8 9 10 11 22 23 24 32 39 42
+SetOf                : 56
+Some                 : 58
+String               : 43
+Thnor                : 50
+Thnot                : 49
+Thresh               : 55
+WftNode              : 61
+Xor                  : 52
+error                : 
+
+Nonterminals, with rules where they appear
+
+Argument             : 4 4 36 37
+ArgumentFunction     : 32
+Arguments            : 3 37
+AtomicName           : 9 25 38 39 41 42
+AtomicNameSet        : 8
+AtomicNames          : 39 41
+AtomicWft            : 1
+BinaryOp             : 4
+Function             : 3
+Iff                  : 53
+NaryOp               : 5
+Param1Op             : 7
+Param2Op             : 6
+SomeCondition        : 10
+Wft                  : 6 7 8 29 30 35 0
+Wfts                 : 5 6 7 9 10 11 32 35 42
+Y_And                : 13
+Y_AndOr              : 22
+Y_Close              : 8
+Y_Every              : 9
+Y_Identifier         : 28
+Y_Iff                : 21
+Y_Impl               : 12
+Y_Integer            : 22 22 23 23 24 27
+Y_Nand               : 19
+Y_Nor                : 16
+Y_Not                : 15
+Y_Or                 : 14
+Y_QIdentifier        : 
+Y_SetOf              : 33
+Y_Some               : 42
+Y_String             : 26
+Y_Thnor              : 18
+Y_Thnot              : 17
+Y_Thresh             : 23 24
+Y_WftNode            : 2
+Y_Xor                : 20
+
