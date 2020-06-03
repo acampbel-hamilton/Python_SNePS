@@ -327,4 +327,3 @@ if __name__ == '__main__':
     s = input('John')
     yacc.parse(s)
     top.to_networkx()
-    return
