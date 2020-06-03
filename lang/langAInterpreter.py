@@ -24,7 +24,12 @@ class ParseTree:
         self.children += children
 
     def __repr__(self):
-        return ", ".join(["(" + str(self.id) + ")", str(self.description), str(self.value)])
+        attrs = ["(" + str(self.id) + ")"]
+        if self.description is not None:
+            attrs.append(str(self.description))
+        if self.value is not None:
+            attrs.append(str(self.value))
+        return attrs[0] + ": " + ", ".join(attrs[1:])
 
     def to_networkx(self, G=None):
         if not has_nx:
