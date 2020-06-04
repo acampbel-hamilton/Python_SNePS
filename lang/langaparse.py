@@ -33,78 +33,39 @@ top = None
 
 # -------------- RULES ----------------
 
-def p_Wft1(p):
+# Wfts can be FWfts (function-eligible) or OWfts (other)
+def P_Wft(p):
     '''
-    Wft :               AtomicWft
+    Wft:                FWft
+        |               OWft
+    '''
+    p[0] = p[1]
+
+def p_FWft(p):
+    '''
+    FWft :              AtomicWft
         |               Y_WftNode
+        |               Function
+        |               Thresh
     '''
     p[0] = ParseTree(description="wft")
     p[0].add_children(p[1])
     global top
     top = p[0]
 
-def p_Wft2(p):
+def p_OWft1(p):
     '''
-    Wft :                LParen Function Arguments RParen
-    '''
-    p[0] = ParseTree(description="wft")
-    p[0].add_children(p[2], *p[3])
-    global top
-    top = p[0]
+    OWft :              BinaryOp
+        |               NaryOp
+        |               Param2Op
+        |               Close
+        |               Every
+        |               Some
+        |               QIdentifier
 
-def p_Wft3(p):
-    '''
-    Wft :               LParen BinaryOp Argument Argument RParen
     '''
     p[0] = ParseTree(description="wft")
-    p[0].add_children(p[2], p[3], p[4])
-    global top
-    top = p[0]
-
-def p_Wft4(p):
-    '''
-    Wft :               LParen NaryOp Wfts RParen
-    '''
-    p[0] = ParseTree(description="wft")
-    p[0].add_children(p[2], *p[3])
-    global top
-    top = p[0]
-
-def p_Wft5(p):
-    '''
-    Wft :               LParen Param2Op Wft Wfts RParen
-        |               LParen Param1Op Wft Wfts RParen
-    '''
-    p[0] = ParseTree(description="wft")
-    p[0].add_children(p[2], p[3], *p[4])
-    global top
-    top = p[0]
-
-def p_Wft6(p):
-    '''
-    Wft :               LParen Y_Close AtomicNameSet Wft RParen
-    '''
-    p[0] = ParseTree(description="wft")
-    p[0].add_children(p[2], p[3], p[4])
-    global top
-    top = p[0]
-
-def p_Wft7(p):
-    '''
-    Wft :               LParen Y_Every AtomicName Wfts RParen
-    '''
-    p[0] = ParseTree(description="wft")
-    p[0].add_children(p[2], p[3], *p[4])
-    global top
-    top = p[0]
-
-def p_Wft8(p):
-    '''
-    Wft :               LParen SomeCondition Wfts RParen
-        |               LParen Y_QIdentifier Wfts RParen
-    '''
-    p[0] = ParseTree(description="wft")
-    p[0].add_children(p[2], *p[3])
+    p[0].add_children(p[1])
     global top
     top = p[0]
 
@@ -158,6 +119,7 @@ def p_AtomicName(p):
     p[0] = p[1]
 
 def p_Function(p):
+    # TODO -- this isn't a wft proper . . .
     '''
     Function :          Wft
     '''
@@ -167,7 +129,7 @@ def p_Function(p):
 def p_Argument(p):
     '''
     Argument :          Wft
-             |          None
+             |          Y_None
              |          LParen ArgumentFunction Wfts RParen
     '''
     if len(p) == 2:
@@ -317,6 +279,10 @@ def p_Y_QIdentifier(p):
 def p_Y_Identifier(p):
     '''Y_Identifier :   Identifier'''
     p[0] = ParseTree(description="Identifier", value=p[1])
+
+def p_Y_None(p):
+    '''Y_None :   None'''
+    p[0] = ParseTree(description="None", value=p[1])
 
 def p_error(p):
     raise Exception("Syntax error")
