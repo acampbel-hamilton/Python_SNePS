@@ -319,7 +319,7 @@ def p_Y_Identifier(p):
     p[0] = ParseTree(description="Identifier", value=p[1])
 
 def p_error(p):
-    print(f"Syntax error at {p.value!r}")
+    raise Exception("Syntax error")
 
 # -------------- RULES END ----------------
 
@@ -333,5 +333,8 @@ if __name__ == '__main__':
             break
         if str(s) == 'exit()':
             break
-        yacc.parse(s)
-        top.to_networkx()
+        try:
+            yacc.parse(s)
+            top.to_networkx()
+        except:
+            print("Syntax error")
