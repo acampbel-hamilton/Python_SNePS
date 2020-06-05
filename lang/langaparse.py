@@ -178,8 +178,8 @@ def p_Wfts(p):
     Wfts :              Wft
          |              Wfts Comma Wft
     '''
-    if len(p) == 1:
-        p[0] = p[1]
+    if len(p) == 2:
+        p[0] = [p[1]]
     else:
         p[0] = p[1] + [p[3]]
 
@@ -188,7 +188,7 @@ def p_Arguments(p):
     Arguments :         Argument
               |         Arguments Comma Argument
     '''
-    if len(p) == 1:
+    if len(p) == 2:
         p[0] = [p[1]]
     else:
         p[0] = p[1] + [p[3]]
@@ -209,7 +209,7 @@ def p_AtomicNames(p):
     AtomicNames :       AtomicName
                 |       AtomicNames Comma AtomicName
     '''
-    if len(p) == 1:
+    if len(p) == 2:
         p[0] = [p[1]]
     else:
         p[0] = p[1] + [p[3]]
@@ -338,6 +338,4 @@ if __name__ == '__main__':
         if str(s) == 'exit()':
             break
         yacc.parse(s)
-        #     #top.to_networkx()
-        # except:
-        #     print("Syntax error")
+        top.to_networkx()
