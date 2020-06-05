@@ -81,7 +81,7 @@ def p_Param2Op(p):
     Param2Op :          Y_AndOr LBrace Integer Comma Integer RBrace LParen Wfts RParen
              |          Y_Thresh LBrace Integer Comma Integer RBrace LParen Wfts RParen
     '''
-    p[1].description = '<' + p[3] + '-' + p[5] + '>'
+    p[1].description = '<' + p[3] + ', ' + p[5] + '>'
     p[1].add_children(*p[8])
     p[0] = p[1]
 
@@ -90,7 +90,7 @@ def p_Param1Op(p):
     Param1Op :          Y_Thresh LBrace Integer RBrace LParen Wfts RParen
     '''
     p[1].description = '<' + p[3] + '>'
-    p[1].add_children(*p[7])
+    p[1].add_children(*p[6])
     p[0] = p[1]
 
 def p_EveryStmt(p):
@@ -337,5 +337,9 @@ if __name__ == '__main__':
             break
         if str(s) == 'exit()':
             break
-        yacc.parse(s)
-        top.to_networkx()
+        if s != '':
+            try:
+                yacc.parse(s)
+                top.to_networkx()
+            except:
+                print("Syntax error")
