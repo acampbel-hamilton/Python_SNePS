@@ -337,8 +337,7 @@ if __name__ == '__main__':
             break
         if str(s) == 'exit()':
             break
-        try:
-            yacc.parse(s)
-            #top.to_networkx()
-        except:
-            print("Syntax error")
+        yacc.parse(s)
+        #     #top.to_networkx()
+        # except:
+        #     print("Syntax error")
