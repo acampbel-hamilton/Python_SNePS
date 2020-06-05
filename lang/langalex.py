@@ -41,7 +41,12 @@ tokens = (
     'Nor',
     'None',
     'Not',
-    'Close'
+    'Close',
+    'OrImpl',
+    'AndImpl',
+    'LBrace',
+    'RBrace',
+    'Comma'
 )
 
 t_LParen  = r'\('
@@ -51,6 +56,11 @@ t_DoubImpl = r'<=>'
 t_Integer = r'\d+'
 t_QIdentifier = r'\?[A-Za-z_][A-Za-z0-9_]*'
 t_String = r'\".*\"'
+t_OrImpl = r'v=>'
+t_AndImpl = r'\d+=>'
+t_LBrace = r'{'
+t_RBrace = r'}'
+t_Comma = r','
 
 def t_Identifier(t):
     r'[A-Za-z_][A-Za-z0-9_]*'
@@ -78,23 +88,22 @@ t_ignore = ' \t\r\n\f\v'
 import ply.lex as lex
 lexer = lex.lex()
 
-# if __name__ == "__main__":
-#     if len(argv) != 2:
-#         print("Usage: python3 langalex.py filename")
-#         exit(1)
-#
-#     # Read the input file
-#     lexer.input(''.join(open(argv[1]).readlines()))
-# else:
-#     data = '''
-#         John
-#     '''
-#
-#     lexer.input(data)
-#
-# # Tokenize and print (this is just a test)
-# while True:
-#      token = lexer.token()
-#      if not token:
-#          break
-#      print(token)
+if __name__ == '__main__':
+    import ply.lex as lex
+    lexer = lex.lex()
+    while True:
+        try:
+            s = input('Command: ')
+        except EOFError:
+            break
+        if str(s) == 'exit()':
+            break
+        try:
+            lexer.input(s)
+            while True:
+                token = lexer.token()
+                if not token:
+                    break
+                print(token)
+        except:
+            print("Syntax error")
