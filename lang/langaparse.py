@@ -321,7 +321,7 @@ def p_Y_AndImpl(p):
     p[0] = ParseTree(description="AndImpl", value=p[1])
 
 def p_error(p):
-    raise Exception("Syntax error")
+    raise Exception("Syntax error on token '" + p.type + "'")
 
 # =====================================
 # ------------ RULES END --------------
@@ -341,5 +341,5 @@ if __name__ == '__main__':
             try:
                 yacc.parse(s)
                 top.to_networkx()
-            except:
-                print("Syntax error")
+            except Exception as e:
+                print(e)
