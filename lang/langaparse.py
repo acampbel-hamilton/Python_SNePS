@@ -8,7 +8,6 @@ top = None
 # -------------- RULES ----------------
 # =====================================
 
-# Wfts can be FWfts (function-eligible) or OWfts (other)
 def p_Wft(p):
     '''
     Wft :               FWft
@@ -18,6 +17,8 @@ def p_Wft(p):
     global top
     top = p[0]
 
+# Function-eligible wfts (Can serve as entities)
+# e.g. wft1
 def p_FWft(p):
     '''
     FWft :              AtomicWft
@@ -28,6 +29,8 @@ def p_FWft(p):
     p[0] = ParseTree(description="wft")
     p[0].add_children(p[1])
 
+# All other wfts
+# e.g. if(wft1, wft2)
 def p_OWft(p):
     '''
     OWft :              BinaryOp
@@ -42,6 +45,7 @@ def p_OWft(p):
     p[0] = ParseTree(description="wft")
     p[0].add_children(p[1])
 
+# e.g. if(wft1, wft2)
 def p_BinaryOp(p):
     '''
     BinaryOp :          Y_Impl LParen Argument Comma Argument RParen
@@ -51,6 +55,7 @@ def p_BinaryOp(p):
     p[1].add_children(p[3], p[5])
     p[0] = p[1]
 
+# e.g. and(wft1, wft2)
 def p_NaryOp(p):
     '''
     NaryOp :            Y_And LParen Wfts RParen
@@ -76,6 +81,7 @@ def p_NaryOp(p):
         p[1].add_children(*p[3])
     p[0] = p[1]
 
+# e.g. thresh{1, 2}(wft1)
 def p_Param2Op(p):
     '''
     Param2Op :          Y_AndOr LBrace Integer Comma Integer RBrace LParen Wfts RParen
@@ -85,6 +91,7 @@ def p_Param2Op(p):
     p[1].add_children(*p[8])
     p[0] = p[1]
 
+# e.g. thresh{1}(wft1)
 def p_Param1Op(p):
     '''
     Param1Op :          Y_Thresh LBrace Integer RBrace LParen Wfts RParen
@@ -93,6 +100,7 @@ def p_Param1Op(p):
     p[1].add_children(*p[6])
     p[0] = p[1]
 
+# e.g. every{x}(Isa(x, Dog))
 def p_EveryStmt(p):
     '''
     EveryStmt :         Y_Every LBrace AtomicName RBrace LParen Wfts RParen
@@ -105,6 +113,7 @@ def p_EveryStmt(p):
         p[1].add_children(wftTree)
     p[0] = p[1]
 
+# e.g. some{x(y)}(Isa(x, y))
 def p_SomeStmt(p):
     '''
     SomeStmt :          Y_Some LBrace AtomicName LParen AtomicName RParen RBrace LParen Wfts RParen
@@ -117,6 +126,7 @@ def p_SomeStmt(p):
         p[1].add_children(wftTree)
     p[0] = p[1]
 
+# e.g. close(Dog, wft1)
 def p_CloseStmt(p):
     '''
     CloseStmt :         Y_Close LParen AtomicNameSet Comma Wft RParen
@@ -124,6 +134,7 @@ def p_CloseStmt(p):
     p[1].add_children(p[3], p[5])
     p[0] = p[1]
 
+# e.g. America
 def p_AtomicWft(p):
     '''
     AtomicWft :         Y_Identifier
@@ -132,6 +143,7 @@ def p_AtomicWft(p):
     '''
     p[0] = p[1]
 
+# e.g. brothers(Tom, Ted)
 def p_Function(p):
     '''
     Function :          FWft LParen Arguments RParen
@@ -141,6 +153,7 @@ def p_Function(p):
     p[0] = ParseTree(description="Function")
     p[0].add_children(p[1], argsTree)
 
+# e.g. ?example()
 def p_QIdenStmt(p):
     '''
     QIdenStmt :         Y_QIdentifier LParen Wfts RParen
@@ -150,6 +163,7 @@ def p_QIdenStmt(p):
         p[1].add_children(*p[3])
     p[0] = p[1]
 
+# e.g. setOf(wft1, wft2)
 def p_Argument(p):
     '''
     Argument :          Wft
