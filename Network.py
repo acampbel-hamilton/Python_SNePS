@@ -1,7 +1,7 @@
 # Python SNePS3 class
 
 import inspect, sys, re
-from Symbol import Symbol, Sym, _reduce, _expand, _none
+from Symbol import Sym, _reduce, _expand, _none
 from slots import *
 from caseframe import *
 from contexts import *
@@ -68,8 +68,7 @@ class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find, PathInference):
         self.contextHierachy[self.contextRoot.name] = self.contextRoot.parents
         self.contexts[self.contextRoot.name] = self.contextRoot
 
-        DefaultCT = self.defineContext("DefaultCT", docstring="The default current context")
-        self.currentContext = DefaultCT
+        self.currentContext = self.defineContext("DefaultCT", docstring="The default current context")
         #################### Default Slot Definitions ####################
         ## Slots for built in propositions
         self.defineSlot("class", type="Category",
@@ -223,7 +222,7 @@ class Network(Context_Mixin, CaseFrame_Mixin, Slot_Mixin, Find, PathInference):
         """builds a given term and returns the term object"""
         assert isinstance(caseframe, CaseFrame), "Given caseframe must exist"
         assert isinstance(fillers, list) #fillers should be a list of lists of strings
-        assert all([isinstance(s, str) for s in [i for sl in fillers for i in sl]])
+        assert all(isinstance(s, str) for s in [i for sl in fillers for i in sl])
         OutOfContext = [] if OutOfContext is None else OutOfContext
         for name in set([i for sl in fillers for i in sl]):
             if name not in self.terms.keys() and\

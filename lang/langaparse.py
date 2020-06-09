@@ -12,7 +12,7 @@ top = None
 def p_Wft(p):
     '''
     Wft :               FWft
-       |                OWft
+        |               OWft
     '''
     p[0] = p[1]
     global top
@@ -335,7 +335,7 @@ if __name__ == '__main__':
             s = input('Command: ')
         except EOFError:
             break
-        if str(s) == 'exit()':
+        if s == 'exit()':
             break
         if s != '':
             try:

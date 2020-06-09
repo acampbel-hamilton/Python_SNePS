@@ -1,11 +1,13 @@
 #PySNePS Symbols
 
+
+# I don't understand why we wouldn't use str here. -Ben
 class Symbol(str):
-    """a representation of symbols"""
+    """ a representation of symbols """
     pass
 
 def Sym(s, sym_tab={}):
-    """return a symbol of the given string s if Symbol(s) DNE in sym_tab"""
+    """ return a symbol of the given string s if Symbol(s) DNE in sym_tab """
     if s not in sym_tab:
         sym_tab[s] = Symbol(s)
     return sym_tab[s]
