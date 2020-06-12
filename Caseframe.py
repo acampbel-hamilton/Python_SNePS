@@ -15,4 +15,16 @@ class Frame:
 		#     - Each list correspond to one slot
 		#     - Remember one slot might have multiple fillers
 		if len(self.fillers) != len(self.caseframe.slots):
-			raise Exception("Wrojng number of fillers")
+			raise Exception("Wrong number of fillers")
+
+		for i in range(0, len(self.fillers) - 1):
+			slot = self.caseframe.slots[i]
+
+			# Check if filler legal(given limit, adjustment rule)
+			
+
+			for filler in self.fillers[i]:
+				if not (filler.sem_type.compatible(slot.sem_type)):
+					raise Exception('Incompatible filler provided for slot:\n' \
+					+ 'Slot has type: ' + slot.sem_type + ' while Filler has type: '\
+					+ filler.type)

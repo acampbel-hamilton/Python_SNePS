@@ -103,6 +103,9 @@ class SemanticType:
     def add_child(self, child):
         self.children.append(child)
 
+    def compatible(self, other_type):
+        return other_type is self or other_type.subtype(self)
+
     def subtype(self, potential_child):
         # Determines if given node is actually a child of self
         for child in self.children:

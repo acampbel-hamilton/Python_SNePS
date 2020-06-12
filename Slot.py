@@ -10,7 +10,7 @@ class Slot:
 	def __init__(self, name, docstring="", sem_type, pos_adj=AdjRule.REDUCE, neg_adj=AdjRule.EXPAND, min=1, max=None, path=None):
 		self.name = name
         self.docstring = docstring
-		self.sem_type = type
+		self.sem_type = sem_type
 		self.pos_adj = pos_adj
 		self.neg_adj = neg_adj
 		self.min = min
