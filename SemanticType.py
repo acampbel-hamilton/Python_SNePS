@@ -7,14 +7,22 @@ class SemanticHierarchy:
         self.sem_types = {}
         self.sem_types["Entity"] = self.root_node
 
-    def add_type(self, type_name, parent_names):
+    def add_type(self, type_name, parent_names=[]):
+        # Must be unique
         assert type_name not in self.sem_types
 
+        # Crreate new type in hierarchy
         self.sem_types[type_name] = SemanticType(type_name)
 
+        # If type provides parents, connect to these nodes in tree
         for name in parent_names:
             self.sem_types[type_name].add_parent(self.sem_types[name])
             self.sem_types[name].add_child(self.sem_types[type_name])
+
+        # If no parents provided, set as child of 'Entity'
+        if parent_names == []:
+            self.sem_types[type_name].add_parent(self.root_node)
+            self.root_node.add_child(self.sem_types[type_name])
 
         return self.sem_types[type_name]
 
@@ -112,3 +120,12 @@ class SemanticType:
             if child is potential_child or child.subtype(potential_child):
                 return True
         return False
+
+if __name__ == "__main__":
+    hierarchy = SemanticHierarchy()
+    Human = hierarchy.add_type("Human")
+    Robot = hierarchy.add_type("Robot")
+    Cyborg1 = hierarchy.add_type("Cyborg1", ["Human", "Robot"])
+    Cyborg2 = hierarchy.add_type("Cyborg2", ["Human", "Robot"])
+
+    print(hierarchy.respecification('CASSIE', Human, Robot))
