@@ -46,7 +46,9 @@ tokens = (
     'AndImpl',
     'LBrace',
     'RBrace',
-    'Comma'
+    'Comma',
+    'LBracket',
+    'RBracket'
 )
 
 t_LParen  = r'\('
@@ -60,6 +62,8 @@ t_OrImpl = r'v=>'
 t_AndImpl = r'\d+=>'
 t_LBrace = r'{'
 t_RBrace = r'}'
+t_LBracket = r'\['
+t_RBracket = r'\]'
 t_Comma = r','
 
 def t_Identifier(t):
@@ -72,7 +76,7 @@ def t_Identifier(t):
         t.type = 'DoubImpl'
     elif t.value == 'andor':
         t.type = 'AndOr'
-    elif t.value == 'someof':
+    elif t.value == 'setof':
         t.type = 'SetOf'
     elif t.value in keywords:
         t.type = t.value.capitalize()

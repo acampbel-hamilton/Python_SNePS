@@ -168,24 +168,32 @@ def p_Argument(p):
     '''
     Argument :          Wft
              |          Y_None
-             |          ArgumentFunction LParen Wfts RParen
-             |          ArgumentFunction LParen RParen
+             |          ArgumentFunction
+             |          LBracket Wfts RBracket
+             |          LBracket RBracket
     '''
     if len(p) == 2:
         p[0] = p[1]
     else:
         p[0] = ParseTree(description="Argument")
-        p[0].add_children(p[1])
-        if len(p) == 5:
+        setTree = ParseTree(description="SetOf", value="setOf")
+        p[0].add_children(setTree)
+        if len(p) == 4:
             wftTree = ParseTree(description="wfts")
-            wftTree.add_children(*p[3])
-        p[0].add_children(wftTree)
+            wftTree.add_children(*p[2])
+            p[0].add_children(wftTree)
 
 def p_ArgumentFunction(p):
     '''
-    ArgumentFunction :  Y_SetOf
+    ArgumentFunction :  Y_SetOf LParen Wfts RParen
+        |               Y_SetOf LParen RParen
     '''
-    p[0] = p[1]
+    p[0] = ParseTree(description="Argument")
+    p[0].add_children(p[1])
+    if len(p) == 5:
+        wftTree = ParseTree(description="wfts")
+        wftTree.add_children(*p[3])
+        p[0].add_children(wftTree)
 
 def p_Wfts(p):
     '''
