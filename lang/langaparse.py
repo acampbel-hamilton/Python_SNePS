@@ -300,7 +300,7 @@ def p_Y_Thresh(p):
 
 def p_Y_SetOf(p):
     '''Y_SetOf :        SetOf'''
-    p[0] = ParseTree(description="String", value=p[1])
+    p[0] = ParseTree(description="SetOf", value=p[1])
 
 def p_Y_Every(p):
     '''Y_Every :        Every'''
