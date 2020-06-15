@@ -44,7 +44,7 @@ class SemanticHierarchy:
         visited = {}
         def dfs_depth_map(node, depth):
             if node not in visited:
-                v1[node] = depth
+                visited[node] = depth
                 for child in node.children:
                     dfs_depth_map(child, depth + 1)
 
@@ -120,7 +120,10 @@ if __name__ == "__main__":
     hierarchy = SemanticHierarchy()
     Human = hierarchy.add_type("Human")
     Robot = hierarchy.add_type("Robot")
-    Cyborg = hierarchy.add_type("Cyborg", ["Human", "Robot"])
+    Human2 = hierarchy.add_type("Human2", ["Human"])
+    Robot2 = hierarchy.add_type("Robot2", ["Robot"])
+    Cyborg1 = hierarchy.add_type("Cyborg1", ["Human", "Robot2"])
+    Cyborg2 = hierarchy.add_type("Cyborg2", ["Human2", "Robot"])
 
 
-    print(hierarchy.respecification('CASSIE', Human, Cyborg))
+    print(hierarchy.respecification('CASSIE', Human, Robot))
