@@ -4,8 +4,9 @@ class Node:
         self.name = name
         self.docstring = docstring
         self.up_cableset = {}
+        self.asserted_in = {}
         self.sem_type = sem_type
-        if self.type in (Node, Molecular, Atomic, Variable):
+        if self.type in (Node, Atomic, Variable):
             raise NotImplementedError("Bad syntactic type - see syntax tree in wiki")
 
     def add_up_cable(self, cable):
@@ -29,10 +30,6 @@ class Molecular(Node):
 		return other.caseframe == self.caseframe and \
 				[sorted(sl) for sl in sorted(other_fill)] == \
 				[sorted(sl) for sl in sorted(self_fill)]
-
-class Generic(Molecular):
-    # Only type of molecular node (for now)
-    pass
 
 class Atomic(Node):
     # Node that is a leaf in a graph

@@ -29,3 +29,6 @@ class Frame:
 				if not filler.sem_type.compatible(slot.sem_type):
 					raise Exception('Incompatible filler provided for slot:\n' \
 					+ 'Slot has type: ' + slot.sem_type + ', and filler has type: ' + filler.type)
+
+class Fillers:
+	def __init__(self, nodes=[]):

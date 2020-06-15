@@ -29,7 +29,7 @@ class SemanticHierarchy:
     def respecification(self, term_name, current_type, new_type):
         # Given new and old semantic type for a node, returns a computed new type
         # e.g. Cassie is a human and a robot, therefore Cassie is a cyborg
-        if current_type is new_type:
+        if current_type is new_type or current_type.subtype(new_type):
             return new_type
 
         gcd = self.greatest_common_subtype(term_name, current_type, new_type)
