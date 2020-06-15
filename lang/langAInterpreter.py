@@ -5,15 +5,15 @@ try:
 except ModuleNotFoundError:
     has_nx = False
 
-parse_tree_node_id = 0
 class ParseTree:
+    node_id_counter = 0
+
     def __init__(self, description=None, value=None):
         if description is value is None:
             raise ValueError("Parse tree initialized with no description and no value.")
 
-        global parse_tree_node_id
-        self.id = parse_tree_node_id
-        parse_tree_node_id += 1
+        self.id = ParseTree.node_id_counter
+        ParseTree.node_id_counter += 1
 
         self.description = description
         self.value = value
@@ -33,7 +33,7 @@ class ParseTree:
 
     def to_networkx(self, G=None):
         if not has_nx:
-            raise ModuleNotFoundError("Networkx and matplotlib are required to visualize a parse tree.")
+            raise ModuleNotFoundError("Networkx and matplotlib are required to display a parse tree.")
 
         if G is None:
             G = nx.Graph()
