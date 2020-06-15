@@ -1,4 +1,5 @@
 from sys import stderr
+from math import inf
 
 class SemanticHierarchy:
     # Contains tree-like structure for semantics (Entity, individual, etc.)
@@ -40,39 +41,33 @@ class SemanticHierarchy:
         return current_type
 
     def greatest_common_subtype(self, term_name, type1, type2):
-        # This is a double-rooted DFS
-        v1 = set() # Visited set from root 1
-        v2 = set() # Visited set from root 2
-        d1 = 0 # Depth for root 1
-        d2 = 0 # Depth for root 2
-        q1 = [(type1, d1)] # Queue for root 1
-        q2 = [(type2, d2)] # Queue for root 2
+        visited = {}
+        def dfs_depth_map(node, depth):
+            if node not in visited:
+                v1[node] = depth
+                for child in node.children:
+                    dfs_depth_map(child, depth + 1)
 
-        target_depth = -1
+        dfs_depth_map(type1, 0)
+        v1 = visited  # Visited set from root 1. Maps nodes to depths with respect to v1
+        visited = {}
+        dfs_depth_map(type2, 0)
+        v2 = visited
 
-        # Finds greatest common subtypes in tree-like-structure
-        gcds = []
-        while q1 or q2:
-            if q1 and (d1 <= d2 or q2 == []): # If the queue isn't empty and we haven't looked too deep (or the other search is over)
-                n1, d1 = q1.pop(0)
-                if d1 > d2 and q2 != []: # If we go too deep, just undo (this is gross nasty)
-                    q1.insert(0, (n1, d1))
-                elif n1 in v2 and (target_depth == -1 or d1 <= target_depth): # Found a common descendant
-                    gcds.append(n1)
-                    target_depth = d1
-                elif n1 not in v1 and (target_depth == -1 or d1 + 1 <= target_depth): # Found something new
-                    v1.add(n1)
-                    q1 += [(child, d1 + 1) for child in n1.children]
-            if q2 and (d2 <= d1 or q1 == []): # If the queue isn't empty and we haven't looked too deep (or the other search is over)
-                n2, d2 = q2.pop(0)
-                if d2 > d1 and q1 != []: # If we go too deep, just undo (this is gross nasty)
-                    q2.insert(0, (n2, d2))
-                elif n2 in v1 and (target_depth == -1 or d2 <= target_depth): # Found a common descendant
-                    gcds.append(n2)
-                    target_depth = d2
-                elif n2 not in v2 and (target_depth == -1 or d2 + 1 <= target_depth): # Found something new
-                    v2.add(n2)
-                    q2 += [(child, d2 + 1) for child in n2.children]
+        if type2 in v1:
+            gcds = [type2]
+        elif type1 in v2:
+            gcds = [type1]
+        else:
+            # This could be made faster by changing the second dfs to not add nodes deeper than the smallest gcd depth so far. We still need to look at them to detect direct lineages, though.
+            gcds = []
+            target_depth = inf
+            for node in set(v1) & set(v2):
+                if v1[node] + v2[node] < target_depth:
+                    gcds = [node]
+                    target_depth = v1[node] + v2[node]
+                elif v1[node] + v2[node] == target_depth:
+                    gcds.append(node)
 
         if gcds == []:
             return None
@@ -125,7 +120,7 @@ if __name__ == "__main__":
     hierarchy = SemanticHierarchy()
     Human = hierarchy.add_type("Human")
     Robot = hierarchy.add_type("Robot")
-    Cyborg1 = hierarchy.add_type("Cyborg1", ["Human", "Robot"])
-    Cyborg2 = hierarchy.add_type("Cyborg2", ["Human", "Robot"])
+    Cyborg = hierarchy.add_type("Cyborg", ["Human", "Robot"])
 
-    print(hierarchy.respecification('CASSIE', Human, Robot))
+
+    print(hierarchy.respecification('CASSIE', Human, Cyborg))
