@@ -18,6 +18,16 @@ class Network:
 
     def defineTerm(self, name, docstring="", sem_type_name="Entity"):
         # Creates base atomic node
+
+        # Respecification
+        if name in self.nodes:
+            node = self.nodes[name]
+            current_type = node.sem_type
+            new_type = self.sem_hierarchy[sem_type_name]
+            node.sem_type = self.sem_hierarchy.respecification(name, current_type, new_type)
+            return
+
+        # Creation
         sem_type = self.sem_hierarchy.get_type(sem_type_name)
         self.nodes[name] = Node.Base(name, sem_type, docstring)
 
