@@ -2,9 +2,8 @@ import WftLex
 from ply import *
 from Network import *
 
+current_network = None
 tokens = WftLex.tokens
-frames = []
-nodes = []
 
 # =====================================
 # -------------- RULES ----------------
@@ -15,9 +14,6 @@ def p_Wft(p):
     Wft :               FWft
         |               OWft
     '''
-    p[0] = p[1]
-    global top
-    top = p[0]
 
 # Function-eligible wfts (Can serve as entities)
 # e.g. wft1
@@ -28,7 +24,6 @@ def p_FWft(p):
          |              Function
          |              Param1Op
     '''
-    p[0] = p[1]
 
 # All other wfts
 # e.g. if(wft1, wft2)
@@ -43,7 +38,6 @@ def p_OWft(p):
          |              QIdenStmt
 
     '''
-    p[0] = p[1]
 
 # e.g. if(wft1, wft2)
 def p_BinaryOp(p):
@@ -350,11 +344,11 @@ def p_error(p):
 # =====================================
 
 def wft_parser(wft, network):
-    network.all_terms()
+    global current_network
+    current_network = network
     yacc.yacc()
     if wft != '':
         try:
             yacc.parse(wft)
         except Exception as e:
             print(e)
-    return top

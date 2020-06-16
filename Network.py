@@ -1,7 +1,10 @@
 from SemanticType import *
 from Context import *
+from Slot import *
+from Caseframe import Caseframe
 import Node
 from WftParse import wft_parser
+from sys import stderr
 
 class Network:
     def __init__(self):
@@ -33,21 +36,63 @@ class Network:
     def all_terms(self):
         [print(term) for term in self.nodes]
 
+    def find_term(self, name):
+        if name in self.nodes:
+            return self.nodes[name]
+        else:
+            print("Term ''" + name + "'' not defined.", file=stderr)
+
     def show_types(self):
         print(self.sem_hierarchy)
 
-    def define_caseframe(self):
+    def define_caseframe(self, name, sem_type, docstring, slots=[]):
+        # for slot_name in slots:
+        #
+        #
+        # new_frame = CaseFrame()
+        # self.caseframes[name]
+        new_caseframe = Caseframe(name)
+
+        for caseframe in self.caseframes:
+            if new_caseframe == caseframe:
+                # Override docstring?
+                print('Your caseframe "' + new_caseframe.name + '" is idential to "' + caseframe.name + '".', file=stderr)
+
+                response = input('Would you like to add an alias to "' + caseframe.name + '"? (y/N)')
+                if response == 'y':
+                    caseframe.add_alias(new_caseframe.name)
+
+                response = input('Would you like to override the docstring for "'+ caseframe.name + '"? (y/N)')
+                if response == 'y':
+                    caseframe.docstring = new_frame.docstring
+
+                return
+
+        self.caseframes[new_caseframe.name] = new_caseframe
+
+    def list_caseframes(self):
         pass
 
     def define_context(self):
         pass
 
-    def define_slot(self):
+    def list_contexts(self):
         pass
+
+    def define_slot(self, name, sem_type_str, docstring, pos_adj=AdjRule.REDUCE,
+        neg_adj=AdjRule.EXPAND, min=1, max=1, path=None):
+        if name in self.slots:
+            print("Slot " + name + " already defined. Nothing being changed.", file=stderr)
+            return
+        self.slots[name] = Slot(name, sem_type, docstring, pos_adj, neg_adj, min, max, path)
+
+    def list_slots(self):
+        for slot in self.slots:
+            print(slot)
 
     def assert_wft(self, wft_str, value="hyp"):
         if value != "hyp" and value != "true":
-            print("Invalid parameters on assertion. Must be either true or hyp.")
+            print("Invalid parameters on assertion. Must be either true or hyp.", file=stderr)
             return
 
         wft_parser(wft_str, self)
