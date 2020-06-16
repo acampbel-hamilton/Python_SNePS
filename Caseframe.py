@@ -1,5 +1,6 @@
 from Slot import *
 from SemanticType import SemanticType
+from sys import stderr
 
 class Caseframe:
 	counter = 0
@@ -32,7 +33,9 @@ class Frame:
 		self.filler_set = filler_set
 
 		if len(self.fillers) != len(self.caseframe.slots):
-			raise Exception("Wrong number of fillers")
+			print('Wrong number of fillers. "' + self.caseframe.name + '" takes' + \
+					len(self.caseframe.slots)+' fillers.', file=stderr)
+			return
 
 		verify_slots()
 
@@ -42,22 +45,25 @@ class Frame:
 			- Each Fillers instance corresponds to one slot
 			- One slot might have multiple nodes """
 
-	for i in range(len(self.filler_set)):
-		slot = self.caseframe.slots[i]
-		fillers = self.filler_set[i]
+		for i in range(len(self.filler_set)):
+			slot = self.caseframe.slots[i]
+			fillers = self.filler_set[i]
 
-		# Check if filler is legal (given limit, adjustment rule)
-		for sem_type in fillers.sem_types:
-			if not sem_type.compatible(slot.sem_type):
-				raise Exception("Incompatible filler provided for " + slot.name + ".\n" + \
-					"Slot has type: " + slot.sem_type + ", " + \
-					"and filler has type: " + sem_type
+			# Check if filler is legal (given limit, adjustment rule)
+			for sem_type in fillers.sem_types:
+				if not sem_type.compatible(slot.sem_type):
+					print("Incompatible filler provided for " + slot.name + ".\n" + \
+						"Slot has type: " + slot.sem_type + ", " + \
+						"and filler has type: " + sem_type, file=stderr)
+					return
 
-		# Ensures within min/max of slots
-		if len(fillers) < slot.min and slot.neg_adj != AdjRule.INF_REDUCE:
-			raise Exception('Fewer than minimum required slots provided for ' + slot.name)
-		if len(fillers) > slot.max and slot.neg_adj != AdjRule.INF_EXPAND:
-			raise Exception('Greater than maximum slots provided for ' + slot.name)
+			# Ensures within min/max of slots
+			if len(fillers) < slot.min and slot.neg_adj != AdjRule.INF_REDUCE:
+				print('Fewer than minimum required slots provided for ' + slot.name, file=stderr)
+				return
+			if len(fillers) > slot.max and slot.neg_adj != AdjRule.INF_EXPAND:
+				print('Greater than maximum slots provided for ' + slot.name, file=stderr)
+				return
 
 # Forms "cables"/"cablesets"
 class Fillers:

@@ -60,11 +60,11 @@ class Network:
 
                 response = input('Would you like to add an alias to "' + caseframe.name + '"? (y/N)')
                 if response == 'y':
-                    caseframe.add_alias(new_caseframe.name)
+                    caseframe.add_alias(name)
 
                 response = input('Would you like to override the docstring for "'+ caseframe.name + '"? (y/N)')
                 if response == 'y':
-                    caseframe.docstring = new_frame.docstring
+                    caseframe.docstring = docstring
 
                 return
 
@@ -79,7 +79,7 @@ class Network:
     def list_contexts(self):
         pass
 
-    def define_slot(self, name, sem_type_str, docstring, pos_adj=AdjRule.REDUCE,
+    def define_slot(self, name, sem_type_str, docstring="", pos_adj=AdjRule.REDUCE,
         neg_adj=AdjRule.EXPAND, min=1, max=1, path=None):
         if name in self.slots:
             print("Slot " + name + " already defined. Nothing being changed.", file=stderr)
