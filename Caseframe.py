@@ -24,8 +24,13 @@ class Caseframe:
 			Two caseframes are equivalent when:
 				1. They have the same type
 				2. They have the same slots (disregarding order)"""
+<<<<<<< HEAD
 		return not other is None and self.sem_type is other.sem_type and\
 		 		set(self.slots) - set(other.slots) == set([])
+=======
+		return not other is None and self.type is other.type and \
+		 		set(self.slots) - set(other.slots) == set()
+>>>>>>> 298def74460eade5693ed27835d37e0d725bf961
 
 class Frame:
 	def __init__(self, caseframe, filler_set=[]):
