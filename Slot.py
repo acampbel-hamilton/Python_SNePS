@@ -22,10 +22,10 @@ class Slot:
 
     def __str__(self):
         ret = "<{}>: {}\n".format(self.name, self.docstring)
-        ret += "\tSemantic Type: {}".format(self.sem_type)
-        ret += "\tPositive Adjust: {}".format(self.pos_adj)
-        ret += "\tNegative Adjust: {}".format(self.neg_adj)
-        ret += "\tMinimum Fillers: {}".format(self.min)
-        ret += "\tMaximum Fillers: {}".format(self.max)
-        ret += "\tPath: {}".format(self.path)
+        ret += "\tSemantic Type: {}\n".format(self.sem_type)
+        ret += "\tPositive Adjust: {}\n".format(self.pos_adj)
+        ret += "\tNegative Adjust: {}\n".format(self.neg_adj)
+        ret += "\tMinimum Fillers: {}\n".format(self.min)
+        ret += "\tMaximum Fillers: {}\n".format(self.max)
+        ret += "\tPath: {}\n".format(self.path)
         return ret
