@@ -5,8 +5,7 @@ class Context:
 		self.docstring = docstring
 		self.hyps = {} # Hypothetical beliefs
 		self.ders = {} # Derived beliefs
-		self.seerted = {} # Asserted beliefs
-
+		self.asserted = {} # Asserted beliefs
 
 	def __contains__(self, term):
 		""" overloads the 'in' operator for use on contexts.
