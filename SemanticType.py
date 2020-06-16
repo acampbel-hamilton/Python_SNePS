@@ -152,5 +152,4 @@ if __name__ == "__main__":
     Cyborg1 = hierarchy.add_type("Cyborg1", ["Human", "Robot2"])
     Cyborg2 = hierarchy.add_type("Cyborg2", ["Human2", "Robot"])
 
-
     print(hierarchy.respecify('CASSIE', Human, Robot))
