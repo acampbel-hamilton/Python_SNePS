@@ -1,9 +1,10 @@
 import WftLex
-from WftInterpreter import *
 from ply import *
+from ..Network import *
 
-tokens = langalex.tokens
-top = None
+tokens = WftLex.tokens
+frames = []
+nodes = []
 
 # =====================================
 # -------------- RULES ----------------
@@ -27,8 +28,7 @@ def p_FWft(p):
          |              Function
          |              Param1Op
     '''
-    p[0] = ParseTree(description="wft")
-    p[0].add_children(p[1])
+    p[0] = p[1]
 
 # All other wfts
 # e.g. if(wft1, wft2)
@@ -43,8 +43,7 @@ def p_OWft(p):
          |              QIdenStmt
 
     '''
-    p[0] = ParseTree(description="wft")
-    p[0].add_children(p[1])
+    p[0] = p[1]
 
 # e.g. if(wft1, wft2)
 def p_BinaryOp(p):
@@ -350,27 +349,12 @@ def p_error(p):
 # ------------ RULES END --------------
 # =====================================
 
-def wft_parser(wft):
+def wft_parser(wft, network):
+    network.all_terms()
     yacc.yacc()
     if wft != '':
         try:
             yacc.parse(wft)
         except Exception as e:
             print(e)
-
-if __name__ == '__main__':
-    from ply import *
-    yacc.yacc()
-    while True:
-        try:
-            s = input('Command: ')
-        except EOFError:
-            break
-        if s == 'exit()':
-            break
-        if s != '':
-            try:
-                yacc.parse(s)
-                top.to_networkx()
-            except Exception as e:
-                print(e)
+    return top
