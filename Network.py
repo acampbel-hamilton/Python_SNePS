@@ -1,6 +1,6 @@
 from SemanticType import *
 from Context import *
-import Node as Node
+import Node
 
 class Network:
     def __init__(self):

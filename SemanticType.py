@@ -102,9 +102,7 @@ class SemanticHierarchy:
                 parent.add_child(type)
 
     def __str__(self):
-        ret = str(", ".join(self.sem_types.keys())) + "\n"
-        ret += str(self.root_node)
-        return ret
+        return ", ".join(self.sem_types.keys()) + "\n" + str(self.root_node)
 
 class SemanticType:
     # Node in semantic hierarchy
