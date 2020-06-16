@@ -45,13 +45,7 @@ class Network:
     def define_slot(self):
         pass
 
-<<<<<<< HEAD
     def assertWft(wft, value="hyp"):
-=======
-    def assert(self, wft, value="hyp"):
->>>>>>> 6ffcf22e63adaba24a3c67951dce77fe7cad488d
         if value != "hyp" and value != "true":
             print("Invalid parameters on assertion. Must be either true or hyp.")
             return
-
-        
