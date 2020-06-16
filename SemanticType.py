@@ -87,6 +87,9 @@ class SemanticHierarchy:
 
         return gcds[0]
 
+    def get_type(self, type_name):
+        return self.sem_types[type_name]
+
 class SemanticType:
     # Node in semantic hierarchy
     def __init__(self, name):

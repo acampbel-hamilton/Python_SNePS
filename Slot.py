@@ -7,7 +7,8 @@ class AdjRule(Enum):
     INF_EXPAND = 4
 
 class Slot:
-	def __init__(self, name, docstring="", sem_type, pos_adj=AdjRule.REDUCE, neg_adj=AdjRule.EXPAND, min=1, max=None, path=None):
+	def __init__(self, name, docstring="", sem_type, pos_adj=AdjRule.REDUCE,
+    neg_adj=AdjRule.EXPAND, min=1, max=None, path=None):
 		self.name = name
         self.docstring = docstring
 		self.sem_type = sem_type

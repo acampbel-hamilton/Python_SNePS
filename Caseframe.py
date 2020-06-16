@@ -1,4 +1,5 @@
 from Slot import *
+from SemanticType import SemanticType
 
 class CaseFrame:
 	def __init__(self, name, sem_type, docstring="", slots=[]):
