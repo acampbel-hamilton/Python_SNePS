@@ -37,7 +37,10 @@ class Network:
         print(self.sem_hierarchy)
 
     def defineCaseframe():
+        pass
 
     def defineContext():
+        pass
 
     def defineSlot():
+        pass
