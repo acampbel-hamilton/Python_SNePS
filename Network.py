@@ -24,3 +24,6 @@ class Network:
     def allTerms(self):
         for term in self.nodes:
             print(term)
+
+    def allTypes(self):
+        print(self.sem_hierarchy)

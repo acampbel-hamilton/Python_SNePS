@@ -10,7 +10,9 @@ class SemanticHierarchy:
 
     def add_type(self, type_name, parent_names=[]):
         # Must be unique
-        assert type_name not in self.sem_types
+        if type_name in self.sem_types:
+            self.add_parent(type_name, parent_names)
+            return
 
         # Crreate new type in hierarchy
         self.sem_types[type_name] = SemanticType(type_name)
@@ -90,6 +92,20 @@ class SemanticHierarchy:
     def get_type(self, type_name):
         return self.sem_types[type_name]
 
+    def add_parent(self, type_name, parent_names):
+        type = self.sem_types[type_name]
+
+        for parent_name in parent_names:
+            parent = self.sem_types[parent_name]
+            if type not in parent.children:
+                type.add_parent(parent)
+                parent.add_child(type)
+
+    def __str__(self):
+        ret = str(", ".join(self.sem_types.keys())) + "\n"
+        ret += str(self.root_node)
+        return ret
+
 class SemanticType:
     # Node in semantic hierarchy
     def __init__(self, name):
@@ -118,6 +134,12 @@ class SemanticType:
             if child is potential_child or child.subtype(potential_child):
                 return True
         return False
+
+    def __str__(self, level=0):
+        ret = "\t" * level + self.name + "\n"
+        for child in self.children:
+            ret += child.__str__(level + 1)
+        return ret
 
 if __name__ == "__main__":
     hierarchy = SemanticHierarchy()
