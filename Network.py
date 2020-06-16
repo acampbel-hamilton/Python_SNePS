@@ -50,4 +50,4 @@ class Network:
             print("Invalid parameters on assertion. Must be either true or hyp.")
             return
 
-        wft.wft_parser(wft, network)
+        wft.wft_parser(wft_str, self)
