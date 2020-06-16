@@ -31,22 +31,21 @@ class Network:
             self.nodes[name] = Node.Base(name, sem_type, docstring)
 
     def all_terms(self):
-        for term in self.nodes:
-            print(term)
+        [print(term) for term in self.nodes]
 
     def show_types(self):
         print(self.sem_hierarchy)
 
-    def define_caseframe():
+    def define_caseframe(self):
         pass
 
-    def define_context():
+    def define_context(self):
         pass
 
-    def define_slot():
+    def define_slot(self):
         pass
 
-    def assert(wft, value="hyp")
+    def assert(self, wft, value="hyp"):
         if value != "hyp" and value != "true":
             print("Invalid parameters on assertion. Must be either true or hyp.")
             return
