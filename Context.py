@@ -3,8 +3,10 @@ class Context:
 		self.name = name
 		self.parent = parent
 		self.docstring = docstring
-		self.hyps = {}
-		self.ders = {}
+		self.hyps = {} # Hypothetical beliefs
+		self.ders = {} # Derived beliefs
+		self.seerted = {} # Asserted beliefs
+
 
 	def __contains__(self, term):
 		""" overloads the 'in' operator for use on contexts.

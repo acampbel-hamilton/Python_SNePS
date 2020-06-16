@@ -1,5 +1,6 @@
 import WftLex
 from WftInterpreter import *
+from ply import *
 
 tokens = langalex.tokens
 top = None
@@ -350,7 +351,6 @@ def p_error(p):
 # =====================================
 
 def wft_parser(wft):
-    from ply import *
     yacc.yacc()
     if wft != '':
         try:
