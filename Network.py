@@ -80,7 +80,8 @@ class Network:
         self.caseframes[new_caseframe.name] = new_caseframe
 
     def list_caseframes(self):
-        pass
+        for caseframe in self.caseframes:
+            print(self.caseframes[caseframe])
 
     def define_context(self):
         pass
