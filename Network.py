@@ -1,6 +1,7 @@
 from SemanticType import *
 from Context import *
 import Node as Node
+from wft import *
 
 class Network:
     def __init__(self):
@@ -44,3 +45,8 @@ class Network:
 
     def defineSlot():
         pass
+
+    def assert(wft, value="hyp")
+        if value != "hyp" and value != "true":
+            print("Invalid parameters on assertion. Must be either true or hyp.")
+            return

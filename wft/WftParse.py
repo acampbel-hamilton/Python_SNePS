@@ -1,5 +1,5 @@
-import langalex
-from langAInterpreter import *
+import WftLex
+from WftInterpreter import *
 
 tokens = langalex.tokens
 top = None
@@ -348,6 +348,15 @@ def p_error(p):
 # =====================================
 # ------------ RULES END --------------
 # =====================================
+
+def wft_parser(wft):
+    from ply import *
+    yacc.yacc()
+    if wft != '':
+        try:
+            yacc.parse(wft)
+        except Exception as e:
+            print(e)
 
 if __name__ == '__main__':
     from ply import *
