@@ -2,7 +2,7 @@ from sys import stderr
 from math import inf
 
 class SemanticHierarchy:
-    # Contains tree-like structure for semantics (Entity, individual, etc.)
+    """ Contains tree-like structure for semantics (Entity, individual, etc.) """
     def __init__(self):
         self.root_node = SemanticType("Entity")
         self.sem_types = {}
