@@ -11,9 +11,9 @@ class Slot:
     neg_adj=AdjRule.EXPAND, min=1, max=None, path=None):
 		self.name = name
         self.docstring = docstring
-		self.sem_type = sem_type
-		self.pos_adj = pos_adj
-		self.neg_adj = neg_adj
+		self.sem_type = sem_type # Semantic type
+		self.pos_adj = pos_adj # Positive adjustment
+		self.neg_adj = neg_adj # Negative adjustment
 		self.min = min
 		self.max = max
 		self.path = path
