@@ -24,7 +24,7 @@ class Caseframe:
 			Two caseframes are equivalent when:
 				1. They have the same type
 				2. They have the same slots (disregarding order)"""
-		return not other is None and self.type is other.type and\
+		return not other is None and self.sem_type is other.sem_type and\
 		 		set(self.slots) - set(other.slots) == set([])
 
 class Frame:

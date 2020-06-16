@@ -45,17 +45,26 @@ class Network:
     def show_types(self):
         print(self.sem_hierarchy)
 
-    def define_caseframe(self, name, sem_type, docstring, slots=[]):
-        # for slot_name in slots:
-        #
-        #
-        # new_frame = CaseFrame()
-        # self.caseframes[name]
-        new_caseframe = Caseframe(name)
+    def define_caseframe(self, name, sem_type, docstring="", slot_names=[]):
 
-        for caseframe in self.caseframes:
+        frame_slots = []
+
+        for slot_name in slot_names:
+            if slot_name not in self.slots:
+                print("ERROR: The slot '{}' does not exist".format(slot_name), file=stderr)
+                return
+            frame_slots.append(self.slots[slot_name])
+
+        new_caseframe = Caseframe(name, sem_type, docstring, frame_slots)
+
+        for caseframe_name in self.caseframes:
+            caseframe = self.caseframes[caseframe_name]
+
+            if caseframe.has_alias(name):
+                print("Caseframe name '{}' is already taken".format(name), file=stderr)
+                return
+
             if new_caseframe == caseframe:
-                # Override docstring?
                 print('Your caseframe "' + new_caseframe.name + '" is idential to "' + caseframe.name + '".', file=stderr)
 
                 response = input('Would you like to add an alias to "' + caseframe.name + '"? (y/N)')
@@ -84,11 +93,13 @@ class Network:
         if name in self.slots:
             print("Slot " + name + " already defined. Nothing being changed.", file=stderr)
             return
-        self.slots[name] = Slot(name, sem_type, docstring, pos_adj, neg_adj, min, max, path)
+        sem_type = self.sem_hierarchy.get_type(sem_type_str)
+        if sem_type != None:
+            self.slots[name] = Slot(name, sem_type, docstring, pos_adj, neg_adj, min, max, path)
 
     def list_slots(self):
         for slot in self.slots:
-            print(slot)
+            print(self.slots[slot])
 
     def assert_wft(self, wft_str, value="hyp"):
         if value != "hyp" and value != "true":

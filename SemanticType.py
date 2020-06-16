@@ -94,7 +94,12 @@ class SemanticHierarchy:
         return gcds[0]
 
     def get_type(self, type_name):
-        return self.sem_types[type_name]
+        if type_name in self.sem_types:
+            return self.sem_types[type_name]
+        else:
+            print("ERROR: Type '" + type_name + "' does not exist")
+            return None
+
 
     def add_parent(self, type_name, parent_names):
         type = self.sem_types[type_name]
