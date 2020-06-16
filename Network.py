@@ -1,7 +1,7 @@
 from SemanticType import *
 from Context import *
 import Node
-import wft
+from WftParse import wft_parser
 
 class Network:
     def __init__(self):
@@ -50,4 +50,4 @@ class Network:
             print("Invalid parameters on assertion. Must be either true or hyp.")
             return
 
-        wft.wft_parser(wft_str, self)
+        wft_parser(wft_str, self)

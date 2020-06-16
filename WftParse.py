@@ -1,6 +1,6 @@
 import WftLex
 from ply import *
-from ..Network import *
+from Network import *
 
 tokens = WftLex.tokens
 frames = []
