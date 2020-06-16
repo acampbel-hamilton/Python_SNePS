@@ -16,7 +16,7 @@ class Frame:
 		if len(self.fillers) != len(self.caseframe.slots):
 			raise Exception("Wrong number of fillers")
 
-		verify_lots()
+		verify_slots()
 
 	def verify_slots(self):
 		# Check fillers correspond to slots

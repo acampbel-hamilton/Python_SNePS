@@ -29,10 +29,10 @@ class SemanticHierarchy:
 
         return self.sem_types[type_name]
 
-    def respecification(self, term_name, current_type, new_type):
+    def respecify(self, term_name, current_type, new_type):
         # Given new and old semantic type for a node, returns a computed new type
         # e.g. Cassie is a human and a robot, therefore Cassie is a cyborg
-        if current_type is new_type or current_type.subtype(new_type):
+        if current_type is new_type:
             return new_type
 
         gcd = self.greatest_common_subtype(term_name, current_type, new_type)
@@ -43,6 +43,10 @@ class SemanticHierarchy:
         return current_type
 
     def greatest_common_subtype(self, term_name, type1, type2):
+        """ Finds the closest common subtype of type1 and type2. If type1 is a
+            subtype of type2, or vice versa, then that type is returned instead.
+            If this isn't the case, then this function returns the type that has
+            the minimum sum of shortest paths to type1 and type2. """
         visited = {}
         def dfs_depth_map(node, depth):
             if node not in visited:
@@ -102,9 +106,7 @@ class SemanticHierarchy:
                 parent.add_child(type)
 
     def __str__(self):
-        ret = str(", ".join(self.sem_types.keys())) + "\n"
-        ret += str(self.root_node)
-        return ret
+        return ", ".join(self.sem_types.keys()) + "\n" + str(self.root_node)
 
 class SemanticType:
     # Node in semantic hierarchy
@@ -151,4 +153,4 @@ if __name__ == "__main__":
     Cyborg2 = hierarchy.add_type("Cyborg2", ["Human2", "Robot"])
 
 
-    print(hierarchy.respecification('CASSIE', Human, Robot))
+    print(hierarchy.respecify('CASSIE', Human, Robot))
