@@ -29,11 +29,18 @@ class Caseframe:
 
     def __str__(self):
         ret = "<{}>: {}\n".format(self.name, self.docstring)
+<<<<<<< HEAD
         ret += "\tSemantic Type: {}\n".format(self.sem_type)
         ret += "\tAliases: ["
         ret += ", ".join(self.aliases)
         ret += "]"
 
+=======
+        ret += "\tSemantic Type: {}".format(self.sem_type)
+        ret += "\tAliases: ["
+        ret += ", ".join(self.aliases):
+        ret += "]"
+>>>>>>> c2e9675135ab297b4b78ab18d6cc80968d3ad2ec
         return ret
 
 class Frame:
