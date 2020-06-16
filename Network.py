@@ -23,7 +23,7 @@ class Network:
             node = self.nodes[name]
             current_type = node.sem_type
             new_type = self.sem_hierarchy[sem_type_name]
-            node.sem_type = self.sem_hierarchy.respecification(name, current_type, new_type)
+            node.sem_type = self.sem_hierarchy.respecify(name, current_type, new_type)
         else:
             # Creation
             sem_type = self.sem_hierarchy.get_type(sem_type_name)
