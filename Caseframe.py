@@ -1,5 +1,5 @@
-from Slot import *
-from SemanticType import SemanticType
+from .Slot import *
+from .SemanticType import SemanticType
 from sys import stderr
 
 class Caseframe:

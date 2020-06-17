@@ -1,9 +1,9 @@
-from SemanticType import SemanticMixIn
-from Context import ContextMixIn
-from Slot import SlotMixIn
-from Node import NodeMixIn
-from Caseframe import CaseframeMixIn
-from WftParse import wft_parser
+from .SemanticType import SemanticMixIn
+from .Context import ContextMixIn
+from .Slot import SlotMixIn
+from .Node import NodeMixIn
+from .Caseframe import CaseframeMixIn
+from .WftParse import wft_parser
 from sys import stderr
 
 class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn):
