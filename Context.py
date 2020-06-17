@@ -29,6 +29,7 @@ class ContextMixIn:
             raise NotImplementedError
 
         self.contexts = {}
+        self.default_context = Context("_default", docstring="The default context", hyps={}, ders={})
 
     def define_context(self):
         pass
