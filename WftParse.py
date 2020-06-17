@@ -36,7 +36,6 @@ def p_OWft(p):
          |              EveryStmt
          |              SomeStmt
          |              QIdenStmt
-
     '''
 
 # e.g. if(wft1, wft2)

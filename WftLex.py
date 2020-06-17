@@ -89,18 +89,16 @@ def t_error(t):
 t_ignore = ' \t\r\n\f\v'
 
 # Build the lexer
-from .ply import lex as lex
-lexer = lex.lex()
+lexer = ply.lex.lex()
 
 if __name__ == '__main__':
-    import ply.lex as lex
-    lexer = lex.lex()
+    lexer = ply.lex.lex()
     while True:
         try:
             s = input('Command: ')
         except EOFError:
             break
-        if str(s) == 'exit()':
+        if s == 'exit()':
             break
         try:
             lexer.input(s)
