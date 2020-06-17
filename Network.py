@@ -9,7 +9,7 @@ from sys import stderr
 class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn):
     def __init__(self):
         for cls in type(self).__bases__:
-            cls.__init__()
+            cls.__init__(self)
 
         # self.nodes = {} (defined in Node.py)
         # self.caseframes = {} (defined in Caseframe.py)
