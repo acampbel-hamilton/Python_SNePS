@@ -21,6 +21,9 @@ class Context:
             s += "{:<16}: {:>20}\n".format(str(k), str(v))
         return s
 
+    def __eq__(self, other):
+        return self.name == other.name
+
 class ContextMixIn:
     """ Provides functions related to contexts to network """
 
@@ -31,11 +34,18 @@ class ContextMixIn:
         self.contexts = {}
         self.default_context = Context("_default", docstring="The default context", hyps={}, ders={})
 
-    def define_context(self):
-        pass
+    def define_context(self, name, docstring="", parent="_default", hyps={}, ders={}):
+        new_context = Context(name, docstring, parent, hyps, ders)
+
+        if self == new_context:
+            print("You cannot define contexts with the same name.", file=stderr)
+            return
+
+        self.contexts[new_context.name] = new_context
+
 
     def list_contexts(self):
-        pass
+        []
 
     def build_default(self):
         Context("_default", docstring="The default context", hyps={}, ders={})
