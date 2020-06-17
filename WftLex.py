@@ -1,4 +1,4 @@
-from ply import *
+from . import ply
 from re import match
 
 keywords = (
@@ -89,7 +89,7 @@ def t_error(t):
 t_ignore = ' \t\r\n\f\v'
 
 # Build the lexer
-import ply.lex as lex
+from .ply import lex as lex
 lexer = lex.lex()
 
 if __name__ == '__main__':

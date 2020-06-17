@@ -1,6 +1,6 @@
-import WftLex
-from ply import *
-from Network import *
+from . import WftLex
+from .ply import *
+from .Network import *
 
 current_network = None
 tokens = WftLex.tokens
