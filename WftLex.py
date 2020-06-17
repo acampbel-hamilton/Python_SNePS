@@ -69,7 +69,7 @@ t_Comma = r','
 def t_Identifier(t):
     r'[A-Za-z_][A-Za-z0-9_]*'
     if match(r'wft\d+', t.value):
-    	t.type = 'WftNode'
+        t.type = 'WftNode'
     elif t.value == 'if':
         t.type = 'Impl'
     elif t.value == 'iff':

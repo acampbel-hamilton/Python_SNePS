@@ -148,8 +148,14 @@ class SemanticType:
             ret += child.__str__(level + 1)
         return ret
 
-class Semantic_Mixin:
+class SemanticMixIn:
     """ Provides functions related to semantic types to network """
+
+    def __init__(self):
+        if type(self) == SemanticMixIn:
+            raise NotImplementedError
+
+        self.sem_hierarchy = SemanticHierarchy()
 
     def define_type(self, name, parent_names=[]):
         # Adds term to hierarchy
@@ -157,6 +163,3 @@ class Semantic_Mixin:
 
     def show_types(self):
         print(self.sem_hierarchy)
-
-    def new_hierarchy(self):
-        return SemanticHierarchy()

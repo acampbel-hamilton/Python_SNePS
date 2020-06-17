@@ -21,8 +21,14 @@ class Context:
             s += "{:<16}: {:>20}\n".format(str(k), str(v))
         return s
 
-class Context_Mixin:
+class ContextMixIn:
     """ Provides functions related to contexts to network """
+
+    def __init__(self):
+        if type(self) == ContextMixIn:
+            raise NotImplementedError
+
+        self.contexts = {}
 
     def define_context(self):
         pass

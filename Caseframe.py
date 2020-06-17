@@ -86,8 +86,14 @@ class Fillers:
         return len(nodes)
 
 
-class Caseframe_Mixin:
+class CaseframeMixIn:
     """ Provides functions related to caseframes to network """
+
+    def __init__(self):
+        if type(self) == CaseframeMixIn:
+            raise NotImplementedError
+
+        self.caseframes = {}
 
     def list_caseframes(self):
         for caseframe in self.caseframes:

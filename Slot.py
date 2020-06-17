@@ -31,8 +31,13 @@ class Slot:
                "\tMaximum Fillers: {}\n".format(self.max) + \
                "\tPath: {}\n".format(self.path)
 
-class Slot_Mixin:
+class SlotMixIn:
     """ Provides functions related to slots to network """
+
+    def __init__(self):
+        if type(self) == SlotMixIn:
+            raise NotImplementedError
+        self.slots = {} # AKA Relations
 
     def define_slot(self, name, sem_type_str, docstring="", pos_adj=AdjRule.REDUCE,
                     neg_adj=AdjRule.EXPAND, min=1, max=1, path=None):

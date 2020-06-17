@@ -22,7 +22,7 @@ class Molecular(Node):
         self.down_cableset[cable.name] = cable # Corresponds to frame
 
     def __eq__(self, other):
-		# determines if two molecular terms are equivalent
+        # determines if two molecular terms are equivalent
         if not isinstance(other, Molecular):
             return False
         self_fill = self.down_cableset.values()
@@ -50,7 +50,7 @@ class Variable(Atomic):
         self.restriction_set[restriction.name] = restriction
 
 class Indefinite(Variable):
-	# an indefinite object
+    # an indefinite object
     def __init__(self, docstring=""):
         self.name = 'V' + str(super().counter)
         super().__init__(self, name, docstring)
@@ -60,17 +60,17 @@ class Indefinite(Variable):
         self.dependency_set[dependency.name] = dependency
 
 class Arbitrary(Variable):
-	# an arbitaray individual
+    # an arbitaray individual
     def __init__(self, docstring=""):
         self.name = 'V' + str(super().counter)
         super().__init__(self, name, docstring)
 
 class Param2Op(Molecular):
-	# Thresh/andor with two values
-	def __init__(self, name, docstring="", min=1, max=1):
-		super().__init__(self, name, docstring)
-		self.min = min
-		self.max = max
+    # Thresh/andor with two values
+    def __init__(self, name, docstring="", min=1, max=1):
+        super().__init__(self, name, docstring)
+        self.min = min
+        self.max = max
 
 class Param1Op(Molecular):
     # Thresh with single value
@@ -79,8 +79,13 @@ class Param1Op(Molecular):
         self.limit = limit
 
 
-class Node_Mixin:
+class NodeMixIn:
     """ Provides functions related to nodes to network """
+
+    def __init__(self):
+        if type(self) == NodeMixIn:
+            raise NotImplementedError
+        self.nodes = {}
 
     def define_term(self, name, docstring="", sem_type_name="Entity"):
         # Creates base atomic node

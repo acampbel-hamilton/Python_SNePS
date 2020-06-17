@@ -1,19 +1,23 @@
-from SemanticType import Semantic_Mixin
-from Context import Context_Mixin
-from Slot import Slot_Mixin
-from Node import Node_Mixin
-from Caseframe import Caseframe_Mixin
+from SemanticType import SemanticMixIn
+from Context import ContextMixIn
+from Slot import SlotMixIn
+from Node import NodeMixIn
+from Caseframe import CaseframeMixIn
 from WftParse import wft_parser
 from sys import stderr
 
-class Network(Slot_Mixin, Caseframe_Mixin, Semantic_Mixin, Node_Mixin, Context_Mixin):
+class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn):
     def __init__(self):
-        self.nodes = {}
-        self.caseframes = {}
-        self.slots = {} # AKA Relations
-        self.sem_hierarchy = self.new_hierarchy()
-        self.contexts = {}
-        self.default_context = self.build_default()
+        for cls in type(self).__bases__:
+            cls.__init__()
+
+        # self.nodes = {} (defined in Node.py)
+        # self.caseframes = {} (defined in Caseframe.py)
+        # self.slots = {} (defined in Slot.py)
+        # self.sem_hierarchy = SemanticHierarchy() (defined in SemanticType.py)
+        # self.contexts = {} (defined in Context.py)
+        # self.default_context = Context("_default", docstring="The default context", hyps={}, ders={}) (defined in Context.py)
+
 
     def assert_wft(self, wft_str, value="hyp"):
         if value != "hyp" and value != "true":
