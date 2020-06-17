@@ -1,4 +1,6 @@
 from enum import Enum
+from sys import stderr
+
 class AdjRule(Enum):
     NONE = 0
     REDUCE = 1
@@ -21,11 +23,28 @@ class Slot:
         return "<Slot {} id: {}>".format(self.name, hex(id(self)))
 
     def __str__(self):
-        ret = "<{}>: {}\n".format(self.name, self.docstring)
-        ret += "\tSemantic Type: {}\n".format(self.sem_type)
-        ret += "\tPositive Adjust: {}\n".format(self.pos_adj)
-        ret += "\tNegative Adjust: {}\n".format(self.neg_adj)
-        ret += "\tMinimum Fillers: {}\n".format(self.min)
-        ret += "\tMaximum Fillers: {}\n".format(self.max)
-        ret += "\tPath: {}\n".format(self.path)
-        return ret
+        return "<{}>: {}\n".format(self.name, self.docstring) + \
+               "\tSemantic Type: {}\n".format(self.sem_type) + \
+               "\tPositive Adjust: {}\n".format(self.pos_adj) + \
+               "\tNegative Adjust: {}\n".format(self.neg_adj) + \
+               "\tMinimum Fillers: {}\n".format(self.min) + \
+               "\tMaximum Fillers: {}\n".format(self.max) + \
+               "\tPath: {}\n".format(self.path)
+
+class Slot_Mixin:
+    """ Provides functions related to slots to network """
+
+    def define_slot(self, name, sem_type_str, docstring="", pos_adj=AdjRule.REDUCE,
+                    neg_adj=AdjRule.EXPAND, min=1, max=1, path=None):
+        """ Adds new slot to network """
+        if name in self.slots:
+            print("Slot " + name + " already defined. Doing nothing instead.", file=stderr)
+            return
+        sem_type = self.sem_hierarchy.get_type(sem_type_str)
+        if sem_type != None:
+            self.slots[name] = Slot(name, sem_type, docstring, pos_adj, neg_adj, min, max, path)
+
+    def list_slots(self):
+        """ Lists all slots in network """
+        for slot in self.slots:
+            print(self.slots[slot])

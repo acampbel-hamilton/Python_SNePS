@@ -77,3 +77,30 @@ class Param1Op(Molecular):
     def __init__(self, name, docstring="", limit=1):
         super().__init__(self, name, docstring)
         self.limit = limit
+
+
+class Node_Mixin:
+    """ Provides functions related to nodes to network """
+
+    def define_term(self, name, docstring="", sem_type_name="Entity"):
+        # Creates base atomic node
+
+        if name in self.nodes:
+            # Respecification
+            node = self.nodes[name]
+            current_type = node.sem_type
+            new_type = self.sem_hierarchy[sem_type_name]
+            node.sem_type = self.sem_hierarchy.respecify(name, current_type, new_type)
+        else:
+            # Creation
+            sem_type = self.sem_hierarchy.get_type(sem_type_name)
+            self.nodes[name] = Base(name, sem_type, docstring)
+
+    def all_terms(self):
+        [print(term) for term in self.nodes]
+
+    def find_term(self, name):
+        if name in self.nodes:
+            return self.nodes[name]
+        else:
+            print("Term ''" + name + "'' not defined.", file=stderr)

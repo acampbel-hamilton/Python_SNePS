@@ -20,3 +20,12 @@ class Context:
         for k,v in sorted(self.__dict__.items()):
             s += "{:<16}: {:>20}\n".format(str(k), str(v))
         return s
+
+class Context_Mixin:
+    """ Provides functions related to contexts to network """
+
+    def define_context(self):
+        pass
+
+    def list_contexts(self):
+        pass

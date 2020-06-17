@@ -148,13 +148,12 @@ class SemanticType:
             ret += child.__str__(level + 1)
         return ret
 
-if __name__ == "__main__":
-    hierarchy = SemanticHierarchy()
-    Human = hierarchy.add_type("Human")
-    Robot = hierarchy.add_type("Robot")
-    Human2 = hierarchy.add_type("Human2", ["Human"])
-    Robot2 = hierarchy.add_type("Robot2", ["Robot"])
-    Cyborg1 = hierarchy.add_type("Cyborg1", ["Human", "Robot2"])
-    Cyborg2 = hierarchy.add_type("Cyborg2", ["Human2", "Robot"])
+class Semantic_Mixin:
+    """ Provides functions related to semantic types to network """
 
-    print(hierarchy.respecify('CASSIE', Human, Robot))
+    def define_type(self, name, parent_names=[]):
+        # Adds term to hierarchy
+        self.sem_hierarchy.add_type(name, parent_names)
+
+    def show_types(self):
+        print(self.sem_hierarchy)

@@ -74,11 +74,58 @@ class Frame:
                 print('Greater than maximum slots provided for ' + slot.name, file=stderr)
                 return
 
-# Forms "cables"/"cablesets"
+
 class Fillers:
+    """ Forms 'cables'/'cablesets' """
+
     def __init__(self, nodes=[]):
         self.nodes = nodes
         self.sem_types = [node.sem_type for node in nodes]
 
     def __len__(self):
         return len(nodes)
+
+
+class Caseframe_Mixin:
+    """ Provides functions related to caseframes to network """
+
+    def list_caseframes(self):
+        for caseframe in self.caseframes:
+            print(self.caseframes[caseframe])
+
+    def define_caseframe(self, name, sem_type, docstring="", slot_names=[]):
+
+        # Checks provided slots names are valid
+        frame_slots = []
+        for slot_name in slot_names:
+            if slot_name not in self.slots:
+                print("ERROR: The slot '{}' does not exist".format(slot_name), file=stderr)
+                return
+            frame_slots.append(self.slots[slot_name])
+
+        # Builds new caseframe with given parameters
+        new_caseframe = Caseframe(name, sem_type, docstring, frame_slots)
+
+        # Checks if identical to existing caseframe
+        for caseframe_name in self.caseframes:
+            caseframe = self.caseframes[caseframe_name]
+
+            if caseframe.has_alias(name):
+                print("Caseframe name '{}' is already taken".format(name), file=stderr)
+                return
+
+            if new_caseframe == caseframe:
+                print('Your caseframe "' + new_caseframe.name + '" is idential to "' + caseframe.name + '".', file=stderr)
+
+                response = input('Would you like to add an alias to "' + caseframe.name + '"? (y/N)')
+                if response == 'y':
+                    caseframe.add_alias(name)
+
+                response = input('Would you like to override the docstring for "'+ caseframe.name + '"? (y/N)')
+                if response == 'y':
+                    caseframe.docstring = docstring
+
+                return
+
+        # If new/unique, adds to dictionary
+        self.caseframes[new_caseframe.name] = new_caseframe
