@@ -29,3 +29,6 @@ class Context_Mixin:
 
     def list_contexts(self):
         pass
+
+    def build_default(self):
+        Context("_default", docstring="The default context", hyps={}, ders={})

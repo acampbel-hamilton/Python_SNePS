@@ -157,3 +157,6 @@ class Semantic_Mixin:
 
     def show_types(self):
         print(self.sem_hierarchy)
+
+    def new_hierarchy(self):
+        return SemanticHierarchy()
