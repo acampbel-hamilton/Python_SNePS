@@ -11,9 +11,9 @@ class Network(Slot_Mixin, Caseframe_Mixin, Semantic_Mixin, Node_Mixin, Context_M
         self.nodes = {}
         self.caseframes = {}
         self.slots = {} # AKA Relations
-        self.sem_hierarchy = new_hierarchy()
+        self.sem_hierarchy = self.new_hierarchy()
         self.contexts = {}
-        self.default_context = build_default()
+        self.default_context = self.build_default()
 
     def assert_wft(self, wft_str, value="hyp"):
         if value != "hyp" and value != "true":
