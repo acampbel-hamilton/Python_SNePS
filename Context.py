@@ -8,7 +8,7 @@ class Context:
 
     def __contains__(self, term):
         """ overloads the 'in' operator for use on contexts.
-        checks if the given term object asserted in the context,
+        checks if the given term object is asserted in the context,
         i.e. that term in in either hyps or ders """
         return term in self.hyps or term in self.ders
 
