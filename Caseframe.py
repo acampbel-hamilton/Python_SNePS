@@ -7,7 +7,7 @@ class Caseframe:
     def __init__(self, name, sem_type, docstring="", slots=[]):
         self.name = name
         self.docstring = docstring
-        self.sem_type = type
+        self.sem_type = sem_type
         self.slots = slots
         self.aliases = [self.name]
 
@@ -38,6 +38,7 @@ class Caseframe:
 
 class Frame:
     def __init__(self, caseframe, filler_set=[]):
+        self.name = Caseframe.name
         self.caseframe = caseframe
         self.filler_set = filler_set
 
@@ -95,11 +96,18 @@ class CaseframeMixIn:
 
         self.caseframes = {}
 
+    def find_caseframe(self, name):
+        if name in self.caseframes:
+            return self.caseframes[name]
+        else:
+            print("Caseframe ''" + name + "'' not defined.", file=stderr)
+            return None
+
     def list_caseframes(self):
         for caseframe in self.caseframes:
             print(self.caseframes[caseframe])
 
-    def define_caseframe(self, name, sem_type, docstring="", slot_names=[]):
+    def define_caseframe(self, name, sem_type_name, docstring="", slot_names=[]):
 
         # Checks provided slots names are valid
         frame_slots = []
@@ -108,6 +116,12 @@ class CaseframeMixIn:
                 print("ERROR: The slot '{}' does not exist".format(slot_name), file=stderr)
                 return
             frame_slots.append(self.slots[slot_name])
+
+        # Checks provided type is valid
+        sem_type = self.sem_hierarchy.get_type(sem_type_name)
+        if sem_type == None:
+            print("ERROR: The semantic type '{}' does not exist".format(sem_type_name), file=stderr)
+            return
 
         # Builds new caseframe with given parameters
         new_caseframe = Caseframe(name, sem_type, docstring, frame_slots)

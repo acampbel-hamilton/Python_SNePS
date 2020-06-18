@@ -17,7 +17,11 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
         # self.sem_hierarchy = SemanticHierarchy() (defined in SemanticType.py)
         # self.contexts = {} (defined in Context.py)
         # self.default_context = Context("_default", docstring="The default context", hyps={}, ders={}) (defined in Context.py)
+        self.build_default()
 
+    def build_default(self)
+        # Builds the default context
+        self.define_caseframe("and", "Proposition", )
 
     def assert_wft(self, wft_str, value="hyp"):
         if value != "hyp" and value != "true":

@@ -1,4 +1,4 @@
-from . import ply
+from .ply import *
 from re import match
 
 keywords = (
