@@ -25,7 +25,6 @@ tokens = (
     'DoubImpl',
     'Integer',
     'QIdentifier',
-    'String',
     'Identifier',
     'AndOr',
     'SetOf',
@@ -57,7 +56,6 @@ t_Impl = r'=>'
 t_DoubImpl = r'<=>'
 t_Integer = r'\d+'
 t_QIdentifier = r'\?[A-Za-z_][A-Za-z0-9_]*'
-t_String = r'\".*\"'
 t_OrImpl = r'v=>'
 t_AndImpl = r'\d+=>'
 t_LBrace = r'{'
