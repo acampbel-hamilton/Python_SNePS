@@ -65,19 +65,12 @@ class Arbitrary(Variable):
         self.name = 'V' + str(super().counter)
         super().__init__(self, name, docstring)
 
-class Param2Op(Molecular):
+class MinMaxOp(Molecular):
     # Thresh/andor with two values
     def __init__(self, name, docstring="", min=1, max=1):
         super().__init__(self, name, docstring)
         self.min = min
         self.max = max
-
-class Param1Op(Molecular):
-    # Thresh with single value
-    def __init__(self, name, docstring="", limit=1):
-        super().__init__(self, name, docstring)
-        self.limit = limit
-
 
 class NodeMixIn:
     """ Provides functions related to nodes to network """

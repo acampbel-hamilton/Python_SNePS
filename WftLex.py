@@ -89,7 +89,8 @@ def t_error(t):
 t_ignore = ' \t\r\n\f\v'
 
 # Build the lexer
-lexer = ply.lex.lex()
+from .ply import lex
+lexer = lex.lex()
 
 if __name__ == '__main__':
     lexer = ply.lex.lex()
