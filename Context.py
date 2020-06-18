@@ -45,7 +45,9 @@ class ContextMixIn:
 
 
     def list_contexts(self):
-        []
+        """ Prints out all the contexts in the network """
+        for context_name in self.contexts:
+            print(self.contexts[context_name])
 
     def build_default(self):
         Context("_default", docstring="The default context", hyps={}, ders={})

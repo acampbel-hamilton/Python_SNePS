@@ -51,5 +51,5 @@ class SlotMixIn:
 
     def list_slots(self):
         """ Lists all slots in network """
-        for slot in self.slots:
-            print(self.slots[slot])
+        for slot_name in self.slots:
+            print(self.slots[slot_name])
