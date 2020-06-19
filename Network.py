@@ -39,20 +39,35 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
         self.define_type("Category", ["Thing"])
         self.define_type("Action", ["Thing"])
 
+        self.define_caseframe("and", "Proposition", )
+
 
         # Slots
         # =====
 
         # Propositions
-        self.define_slot("class", "Category", docstring="Points to a Category that some Entity is a member of.",
-            neg_adj=AdjRule.REDUCE)
-        self.define_slot("member", "Entity", docstring="Points to the Entity that is a member of some Category.",
-            neg_adj=AdjRule.REDUCE)
-        self.define_slot("equiv", "Entity", docstring="All fillers are coreferential.",
-            neg_adj=AdjRule.REDUCE, min=2, path=None)
-        self.define_slot("proposition", "Propositional", docstring="Points to a proposition.")
 
         # Rules
+        self.define_slot('and', 'Proposition', 'Fillers are arguemnts of a conjuction',\
+                            AdjRule.REDUCE, AdjRule.EXPAND, 2)
+
+        self.define_slot('nor', 'Proposition', 'Fillers are arguemnts of a nor',\
+                            AdjRule.REDUCE, AdjRule.EXPAND, 1)
+
+        self.define_slot('andorargs', 'Proposition', 'Fillers are arguemnts of an andor',\
+                            AdjRule.NONE, AdjRule.NONE, 2)
+        
+        self.define_slot('threshargs', 'Proposition', 'Fillers are arguemnts of a thresh',\
+                            AdjRule.NONE, AdjRule.NONE, 2)
+
+        self.define_slot('thnor', 'Proposition', 'Fillers are arguemnts of a thnor',\
+                            AdjRule.REDUCE, AdjRule.REDUCE, 1)
+
+        self.define_slot('ant', 'Proposition', 'antecedent for a set',\
+                            AdjRule.EXPAND, AdjRule.REDUCE, 1)
+
+        self.define_slot('cq', 'Proposition', 'consequent for a set',\
+                            AdjRule.REDUCE, AdjRule.EXPAND, 1)
 
         # SNeRE
 
