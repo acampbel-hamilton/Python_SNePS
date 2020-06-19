@@ -74,6 +74,7 @@ class Frame:
             if len(fillers) > slot.max and slot.neg_adj != AdjRule.INF_EXPAND:
                 print('Greater than maximum slots provided for ' + slot.name, file=stderr)
                 return
+
     def __eq__(self, other):
         return self.caseframe == other.caseframe and self.fillers == other.fillers
 

@@ -61,9 +61,9 @@ class Arbitrary(Variable):
 class Molecular(Node):
     couter = 1
     # Non-leaf nodes
-    def __init__(self):
+    def __init__(self, sem_type):
         name = "wft" + str(counter++)
-        super().__init__(self, name)
+        super().__init__(self, name, sem_type)
         self.down_cableset = {} # dictionary of frames
 
     def add_down_cables(self, frame):

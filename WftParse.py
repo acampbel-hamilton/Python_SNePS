@@ -67,7 +67,7 @@ def p_NaryOp(p):
         if node.hasFrame(frame):
             p[0] = node
             return
-    wftNode = Molecular()
+    wftNode = Molecular(current_network.sem_hierarchy.get_type("Proposition"))
     wftNode.add_down_cables(frame)
     current_network.nodes[wftNode.name] = wftNode
     p[0] = wftNode
