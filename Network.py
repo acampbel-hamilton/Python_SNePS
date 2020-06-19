@@ -55,9 +55,16 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
         # Rules
 
         # SNeRE
+        self.define_slot("action", "Action", docstring="The actions of an act.",
+            neg_adj=AdjRule.NONE, pos_adj=AdjRule.NONE, min=1, max=1)
 
         # Condition-Action Rules
-
+        # self.define_slot("condition", "Propositional", docstring="Conditions for a rule.",
+        #     neg_adj=AdjRule.REDUCE, pos_adj=AdjRule.EXPAND, min=1)
+        # self.define_slot("rulename", "Thing", docstring="The name of a rule.",
+        #     neg_adj=AdjRule.NONE, pos_adj=AdjRule.NONE, min=1, max=1)
+        # self.define_slot("subrule", "Policy", docstring="Subrules for a rule.",
+        #     neg_adj=AdjRule.REDUCE, pos_adj=AdjRule.EXPAND, min=0)
 
         # Caseframes
         # ==========
