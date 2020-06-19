@@ -53,20 +53,20 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
         self.define_slot("proposition", "Propositional", docstring="Points to a proposition.")
 
         # Rules
-        self.define_slot('and', 'Proposition', 'Fillers are arguments of a conjuction',
-                         AdjRule.REDUCE, AdjRule.EXPAND, 2)
-        self.define_slot('nor', 'Proposition', 'Fillers are arguments of a nor',
-                         AdjRule.REDUCE, AdjRule.EXPAND, 1)
-        self.define_slot('andorargs', 'Proposition', 'Fillers are arguments of an andor',
-                         AdjRule.NONE, AdjRule.NONE, 2)
-        self.define_slot('threshargs', 'Proposition', 'Fillers are arguments of a thresh',
-                         AdjRule.NONE, AdjRule.NONE, 2)
-        self.define_slot('thnor', 'Proposition', 'Fillers are arguments of a thnor',
-                         AdjRule.REDUCE, AdjRule.REDUCE, 1)
-        self.define_slot('ant', 'Proposition', 'antecedent for a set',
-                         AdjRule.EXPAND, AdjRule.REDUCE, 1)
-        self.define_slot('cq', 'Proposition', 'consequent for a set',
-                         AdjRule.REDUCE, AdjRule.EXPAND, 1)
+        self.define_slot('and', 'Proposition', docstring='Fillers are arguments of a conjuction',
+                         pos_adj=AdjRule.REDUCE, neg_adj=AdjRule.EXPAND, min=2)
+        self.define_slot('nor', 'Proposition', docstring='Fillers are arguments of a nor',
+                         pos_adj=AdjRule.REDUCE, neg_adj=AdjRule.EXPAND, min=1)
+        self.define_slot('andorargs', 'Proposition', docstring='Fillers are arguments of an andor',
+                         pos_adj=AdjRule.NONE, neg_adj=AdjRule.NONE, min=2)
+        self.define_slot('threshargs', 'Proposition', docstring='Fillers are arguments of a thresh',
+                         pos_adj=AdjRule.NONE, neg_adj=AdjRule.NONE, min=2)
+        self.define_slot('thnor', 'Proposition', docstring='Fillers are arguments of a thnor',
+                         pos_adj=AdjRule.REDUCE, neg_adj=AdjRule.REDUCE, min=1)
+        self.define_slot('ant', 'Proposition', docstring='antecedent for a set',
+                         pos_adj=AdjRule.EXPAND, neg_adj=AdjRule.REDUCE, min=1)
+        self.define_slot('cq', 'Proposition', docstring='consequent for a set',
+                         pos_adj=AdjRule.REDUCE, neg_adj=AdjRule.EXPAND, min=1)
 
         # SNeRE
         self.define_slot("action", "Action", docstring="The actions of an act.",
