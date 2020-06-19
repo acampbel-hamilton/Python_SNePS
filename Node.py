@@ -120,3 +120,4 @@ class NodeMixIn:
             return self.nodes[name]
         else:
             print('Term "' + name + '" not defined.', file=stderr)
+            return None

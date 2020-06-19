@@ -15,6 +15,7 @@ def p_Wft(p):
     Wft :               FWft
         |               OWft
     '''
+    p[0] = p[1]
 
 # Function-eligible wfts (Can serve as entities)
 # e.g. wft1
@@ -24,6 +25,7 @@ def p_FWft(p):
          |              WftNode
          |              Function
     '''
+    p[0] = p[1]
 
 # All other wfts
 # e.g. if(wft1, wft2)
@@ -37,6 +39,7 @@ def p_OWft(p):
          |              SomeStmt
          |              QIdenStmt
     '''
+    p[0] = p[1]
 
 # e.g. if(wft1, wft2)
 def p_BinaryOp(p):
@@ -61,7 +64,9 @@ def p_NaryOp(p):
            |            DoubImpl LParen Wfts RParen
     '''
     caseframe = current_network.find_caseframe(p[1])
-    fillers = p[3]
+    fillers = []
+    for node in p[3]:
+        fillers.append(Fillers([p[3]]))
     frame = Frame(caseframe, fillers)
     for node in current_network.nodes.values():
         if node.has_frame(frame):
@@ -142,7 +147,10 @@ def p_Wfts(p):
     Wfts :              Wft
          |              Wfts Comma Wft
     '''
-
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[0].append(p[3])
 
 def p_Arguments(p):
     '''
@@ -170,7 +178,8 @@ def p_AtomicName(p):
     AtomicName :        Identifier
                |        Integer
     '''
-
+    current_network.define_term(p[1], sem_type_name="Proposition")
+    p[0] = current_network.find_term(p[1])
 
 def p_error(p):
     raise Exception("Syntax error on token '" + p.type + "'")
