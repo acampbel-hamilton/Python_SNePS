@@ -3,6 +3,7 @@ from .ply import *
 from .Network import *
 from .Caseframe import Frame, Fillers
 from .Node import Base, Molecular, Indefinite, Arbitrary, MinMaxOp
+from sys import stderr
 
 current_network = None
 tokens = WftLex.tokens
@@ -185,7 +186,7 @@ def p_AtomicName(p):
 from .Node import Base, Molecular, Indefinite
 
 def p_error(p):
-    raise SNePSSyntaxError("Syntax error on token '" + p.type + "'")
+    print("Syntax error on token '" + p.type + "'", file=stderr)
 
 # =====================================
 # ------------ RULES END --------------
@@ -196,7 +197,4 @@ def wft_parser(wft, network):
     current_network = network
     yacc.yacc()
     if wft != '':
-        try:
-            yacc.parse(wft)
-        except SNePSSyntaxError as e:
-            print(e)
+        yacc.parse(wft)
