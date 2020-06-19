@@ -64,7 +64,7 @@ def p_NaryOp(p):
     fillers = p[3]
     frame = Frame(caseframe, fillers)
     for node in current_network.nodes.values():
-        if node.hasFrame(frame):
+        if node.has_frame(frame):
             p[0] = node
             return
     wftNode = Molecular()

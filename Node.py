@@ -70,7 +70,7 @@ class Molecular(Node):
     def add_down_cables(self, frame):
         self.down_cableset[frame.name] = frame # Corresponds to frame
 
-    def hasFrame(self, frame):
+    def has_frame(self, frame):
         for current_frame in self.down_cableset.values():
             if frame == current_frame:
                 return True
