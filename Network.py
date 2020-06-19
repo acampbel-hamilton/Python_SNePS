@@ -16,7 +16,7 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
         # self.slots = {} (defined in Slot.py)
         # self.sem_hierarchy = SemanticHierarchy() (defined in SemanticType.py)
         # self.contexts = {} (defined in Context.py)
-        # self.default_context = Context("_default", docstring="The default context", hyps={}, ders={}) (defined in Context.py)
+        # self.default_context = Context(docstring="The default context", hyps={}, ders={}) (defined in Context.py,_default",
         self.build_default()
 
     def build_default(self):
@@ -53,8 +53,18 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
 
         # Condition-Action Rules
 
-
         # Caseframes
+        Caseframe('Isa', 'Propositional', docstring="[member] is a [class]", slots=["member", "class"])
+        Caseframe('Equiv', 'Propositional', docstring="[equiv] are all co-referential", slots=["equiv"])
+        Caseframe('and', 'Propositional', docstring="it is the case that [and]", slots=["and"])
+        Caseframe('nor', 'Propositional', docstring="it is not the case that [nor]", slots=["nor"])
+        Caseframe('thnor', 'Propositional', docstring="I don't know that it is the case that [thnor]", slots=["thnor"])
+        Caseframe('andor', 'Propositional', slots=["andorargs"])
+        Caseframe('thresh', 'Propositional', slots=["threshargs"])
+        Caseframe('if', 'Propositional', docstring="if [ant] then [cq]", slots=["ant", "cq"])
+        Caseframe('close', 'Propositional', docstring="[proposition] is closed over [closedvar]", slots=["proposition", "closedvar"])
+        Caseframe('rule', 'Policy', docstring="for the rule [name] to fire, [condition] must be matched, then [action] may occur, and [subrule] may be matched.", slots=["rulename", "condition", "action", "subrule"])
+
         # ==========
 
     def assert_wft(self, wft_str, value="hyp"):

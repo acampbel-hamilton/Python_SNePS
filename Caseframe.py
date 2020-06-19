@@ -20,10 +20,10 @@ class Caseframe:
         return alias in self.aliases
 
     def __eq__(self, other):
-        """Returns true if both arguments are equivalent caseframes.
+        """ Returns true if both arguments are equivalent caseframes.
             Two caseframes are equivalent when:
                 1. They have the same type
-                2. They have the same slots (disregarding order)"""
+                2. They have the same slots (disregarding order) """
         return other is not None and self.sem_type is other.sem_type and \
                set(self.slots) == set(other.slots)
 
@@ -51,9 +51,9 @@ class Frame:
 
     def verify_slots(self):
         """ Check fillers correspond to slots
-        Fillers are entered as a list of type Fillers:
-            - Each Fillers instance corresponds to one slot
-            - One slot might have multiple nodes """
+            Fillers are entered as a list of type Fillers:
+                - Each Fillers instance corresponds to one slot
+                - One slot might have multiple nodes """
 
         for i in range(len(self.filler_set)):
             slot = self.caseframe.slots[i]
