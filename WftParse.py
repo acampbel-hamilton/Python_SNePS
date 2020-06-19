@@ -2,6 +2,7 @@ from . import WftLex
 from .ply import *
 from .Network import *
 from .Caseframe import Frame, Fillers
+from .Node import Base, Molecular, Indefinite, Arbitrary, MinMaxOp
 
 current_network = None
 tokens = WftLex.tokens
@@ -195,4 +196,4 @@ def wft_parser(wft, network):
             yacc.parse(wft)
         except Exception as e:
             print("Exception!!!")
-            print(e.with_traceback())
+            print(e)
