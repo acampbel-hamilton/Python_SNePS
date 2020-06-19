@@ -72,7 +72,7 @@ class Frame:
                 return
 
     def __eq__(self, other):
-        return self.caseframe == other.caseframe and self.fillers == other.fillers
+        return self.caseframe == other.caseframe and self.filler_set == other.filler_set
 
 
 class Fillers:
