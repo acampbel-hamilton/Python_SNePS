@@ -21,6 +21,24 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
 
     def build_default(self):
         """ Builds the default context """
+
+        # Types
+        # =====
+
+        # Entities
+        self.define_type("Act")
+        self.define_type("Propositional")
+        self.define_type("Thing")
+        self.define_type("Policy")
+
+        # Propositional
+        self.define_type("Proposition", ["Propositional"])
+        self.define_type("WhQuestion", ["Propositional"])
+
+        # Things
+        self.define_type("Category", ["Thing"])
+        self.define_type("Action", ["Thing"])
+
         self.define_caseframe("and", "Proposition", )
 
     def assert_wft(self, wft_str, value="hyp"):
