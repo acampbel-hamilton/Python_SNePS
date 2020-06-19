@@ -1,7 +1,7 @@
 from .Caseframe import Frame
 
 class Node:
-    # Root of syntactic hierarchy
+    """ Root of syntactic hierarchy """
     def __init__(self, name, sem_type, docstring=""):
         self.name = name
         self.docstring = docstring
@@ -21,15 +21,15 @@ class Node:
 # =====================================
 
 class Atomic(Node):
-    # Node that is a leaf in a graph
+    """ Node that is a leaf in a graph """
     pass
 
 class Base(Atomic):
-    # Constant
+    """ Constant """
     pass
 
 class Variable(Atomic):
-    # a variable term ranging over a restricted domain
+    """ a variable term ranging over a restricted domain """
     counter = 0
     def __init__(self, name, docstring=""):
         super().__init__(self, name, docstring)
@@ -39,7 +39,7 @@ class Variable(Atomic):
         self.restriction_set[restriction.name] = restriction
 
 class Indefinite(Variable):
-    # an indefinite object
+    """ an indefinite object """
     def __init__(self, docstring=""):
         self.name = 'V' + str(super().counter)
         super().__init__(self, name, docstring)
@@ -49,7 +49,7 @@ class Indefinite(Variable):
         self.dependency_set[dependency.name] = dependency
 
 class Arbitrary(Variable):
-    # an arbitaray individual
+    """ an arbitaray individual """
     def __init__(self, docstring=""):
         self.name = 'V' + str(super().counter)
         super().__init__(self, name, docstring)
@@ -59,17 +59,24 @@ class Arbitrary(Variable):
 # =====================================
 
 class Molecular(Node):
-    couter = 1
+    counter = 1
     # Non-leaf nodes
+<<<<<<< HEAD
     def __init__(self, sem_type):
         name = "wft" + str(counter++)
         super().__init__(self, name, sem_type)
+=======
+    def __init__(self):
+        name = "wft" + str(counter)
+        Molecular.counter += 1
+        super().__init__(self, name)
+>>>>>>> 0f2900c618b4f91c3701f79cda5228604ef560a0
         self.down_cableset = {} # dictionary of frames
 
     def add_down_cables(self, frame):
         self.down_cableset[frame.name] = frame # Corresponds to frame
 
-    def hasFrame(self, frame):
+    def has_frame(self, frame):
         for current_frame in self.down_cableset.values():
             if frame == current_frame:
                 return True
@@ -77,10 +84,10 @@ class Molecular(Node):
 
     def __str__(self):
         return super().__str__() + \
-        "\t{}".format("\n\t".join(self.up_cableset.keys()))
+               "\t{}".format("\n\t".join(self.up_cableset.keys()))
 
 class MinMaxOp(Molecular):
-    # Thresh/andor with two values
+    """ Thresh/andor with two values """
     def __init__(self, name, docstring="", min=1, max=1):
         super().__init__(self, name, docstring)
         self.min = min
@@ -100,7 +107,6 @@ class NodeMixIn:
 
     def define_term(self, name, docstring="", sem_type_name="Entity"):
         # Creates base atomic node
-
         if node in self.nodes.values():
             # Respecification
             current_type = node.sem_type
@@ -112,10 +118,11 @@ class NodeMixIn:
             self.nodes[name] = Base(name, sem_type, docstring)
 
     def all_terms(self):
-        [print(self.nodes[term]) for term in self.nodes]
+        for term in self.nodes:
+            print(self.nodes[term])
 
     def find_term(self, name):
         if name in self.nodes:
             return self.nodes[name]
         else:
-            print("Term ''" + name + "'' not defined.", file=stderr)
+            print('Term "' + name + '" not defined.', file=stderr)
