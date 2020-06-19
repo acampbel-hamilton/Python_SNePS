@@ -75,7 +75,7 @@ class Frame:
                 print('Greater than maximum slots provided for ' + slot.name, file=stderr)
                 return
     def __eq__(self, other):
-        return self.caseframe == other.caseframe and self.slots == other.slots
+        return self.caseframe == other.caseframe and self.fillers == other.fillers
 
 
 class Fillers:
