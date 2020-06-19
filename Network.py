@@ -39,9 +39,6 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
         self.define_type("Category", ["Thing"])
         self.define_type("Action", ["Thing"])
 
-        self.define_caseframe("and", "Proposition", )
-
-
         # Slots
         # =====
 
