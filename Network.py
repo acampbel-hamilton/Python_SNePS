@@ -103,7 +103,7 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
 
     def assert_wft(self, wft_str, value="hyp"):
         if value != "hyp" and value != "true":
-            print("Invalid parameters on assertion. Must be either true or hyp.", file=stderr)
+            print("ERROR: Invalid parameters on assertion. Must be either true or hyp.", file=stderr)
             return
 
         wft_parser(wft_str, self)

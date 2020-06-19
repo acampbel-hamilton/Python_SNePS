@@ -101,7 +101,7 @@ class NodeMixIn:
         # Creates base atomic node
         if name in self.nodes:
             node = self.nodes[name]
-            
+
             # Respecification
             current_type = node.sem_type
             new_type = self.sem_hierarchy[sem_type_name]
@@ -119,5 +119,5 @@ class NodeMixIn:
         if name in self.nodes:
             return self.nodes[name]
         else:
-            print('Term "' + name + '" not defined.', file=stderr)
+            print('ERROR: Term "' + name + '" not defined.', file=stderr)
             return None

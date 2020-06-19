@@ -38,7 +38,7 @@ class ContextMixIn:
         new_context = Context(name, docstring, parent, hyps, ders)
 
         if self == new_context: # Remember == on contexts just compares names
-            print("You cannot define contexts with the same name.", file=stderr)
+            print("ERROR: You cannot define contexts with the same name.", file=stderr)
             return
 
         self.contexts[new_context.name] = new_context

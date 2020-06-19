@@ -43,7 +43,7 @@ class SlotMixIn:
                     neg_adj=AdjRule.EXPAND, min=1, max=1, path=None):
         """ Adds new slot to network """
         if name in self.slots:
-            print("Slot " + name + " already defined. Doing nothing instead.", file=stderr)
+            print("ERROR: Slot " + name + " already defined. Doing nothing instead.", file=stderr)
             return
         sem_type = self.sem_hierarchy.get_type(sem_type_str)
         if sem_type is not None:
