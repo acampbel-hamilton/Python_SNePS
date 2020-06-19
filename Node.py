@@ -59,13 +59,15 @@ class Arbitrary(Variable):
 # =====================================
 
 class Molecular(Node):
+    couter = 1
     # Non-leaf nodes
-    def __init__(self, name, docstring=""):
-        super().__init__(self, name, docstring)
+    def __init__(self):
+        name = "wft" + str(counter++)
+        super().__init__(self, name)
         self.down_cableset = {} # dictionary of frames
 
-    def add_down_cable(self, cable):
-        self.down_cableset[cable.name] = cable # Corresponds to frame
+    def add_down_cables(self, frame):
+        self.down_cableset[frame.name] = frame # Corresponds to frame
 
     def __eq__(self, other):
         # determines if two molecular terms are equivalent
@@ -103,9 +105,8 @@ class NodeMixIn:
     def define_term(self, name, docstring="", sem_type_name="Entity"):
         # Creates base atomic node
 
-        if name in self.nodes:
+        if node in self.nodes.values():
             # Respecification
-            node = self.nodes[name]
             current_type = node.sem_type
             new_type = self.sem_hierarchy[sem_type_name]
             node.sem_type = self.sem_hierarchy.respecify(name, current_type, new_type)

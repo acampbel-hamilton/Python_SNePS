@@ -59,22 +59,16 @@ def p_NaryOp(p):
            |            Nand LParen Wfts RParen
            |            Xor LParen Wfts RParen
            |            DoubImpl LParen Wfts RParen
-           |            And LParen RParen
-           |            Or LParen RParen
-           |            Not LParen RParen
-           |            Nor LParen RParen
-           |            Thnot LParen RParen
-           |            Thnor LParen RParen
-           |            Nand LParen RParen
-           |            Xor LParen RParen
-           |            DoubImpl LParen RParen
     '''
     caseframe = current_network.find_caseframe(p[1])
-    fillers = []
-    if len(p) == 5:
-        fillers = p[3]
+    fillers = p[3]
     frame = Frame(caseframe, fillers)
-
+    wftNode = Molecular()
+    wftNode.add_down_cables(fillers)
+    for node in current_network.nodes.values():
+        if node == wftNode:
+            return
+    current_network.nodes[wftNode.name] = wftNode
 
 # e.g. thresh{1, 2}(wft1)
 def p_MinMaxOp(p):
