@@ -41,6 +41,22 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
 
         self.define_caseframe("and", "Proposition", )
 
+
+        # Slots
+        # =====
+
+        # Propositions
+
+        # Rules
+
+        # SNeRE
+
+        # Condition-Action Rules
+
+
+        # Caseframes
+        # ==========
+
     def assert_wft(self, wft_str, value="hyp"):
         if value != "hyp" and value != "true":
             print("Invalid parameters on assertion. Must be either true or hyp.", file=stderr)
