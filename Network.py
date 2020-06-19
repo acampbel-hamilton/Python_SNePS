@@ -52,6 +52,7 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
             neg_adj=AdjRule.REDUCE)
         self.define_slot("equiv", "Entity", docstring="All fillers are coreferential.",
             neg_adj=AdjRule.REDUCE, min=2, path=None)
+        self.define_slot("closedvar", "Entity", docstring="Points to a variable in a closure.")
         self.define_slot("proposition", "Propositional", docstring="Points to a proposition.")
 
         # Rules
