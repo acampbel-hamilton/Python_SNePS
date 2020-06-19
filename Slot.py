@@ -46,7 +46,7 @@ class SlotMixIn:
             print("Slot " + name + " already defined. Doing nothing instead.", file=stderr)
             return
         sem_type = self.sem_hierarchy.get_type(sem_type_str)
-        if sem_type != None:
+        if sem_type is not None:
             self.slots[name] = Slot(name, sem_type, docstring, pos_adj, neg_adj, min, max, path)
 
     def list_slots(self):
