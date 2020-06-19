@@ -54,6 +54,8 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
         # Rules
         self.define_slot('and', 'Proposition', docstring='Fillers are arguments of a conjuction',
                          pos_adj=AdjRule.REDUCE, neg_adj=AdjRule.EXPAND, min=2)
+        self.define_slot('or', 'Proposition', docstring='Fillers are arguments of a disjunction',
+                         pos_adj=AdjRule.REDUCE, neg_adj=AdjRule.EXPAND, min=2)
         self.define_slot('nor', 'Proposition', docstring='Fillers are arguments of a nor',
                          pos_adj=AdjRule.REDUCE, neg_adj=AdjRule.EXPAND, min=1)
         self.define_slot('andorargs', 'Proposition', docstring='Fillers are arguments of an andor',
