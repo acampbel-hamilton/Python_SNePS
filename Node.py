@@ -1,7 +1,7 @@
 from .Caseframe import Frame
 
 class Node:
-    # Root of syntactic hierarchy
+    """ Root of syntactic hierarchy """
     def __init__(self, name, sem_type, docstring=""):
         self.name = name
         self.docstring = docstring
@@ -21,15 +21,15 @@ class Node:
 # =====================================
 
 class Atomic(Node):
-    # Node that is a leaf in a graph
+    """ Node that is a leaf in a graph """
     pass
 
 class Base(Atomic):
-    # Constant
+    """ Constant """
     pass
 
 class Variable(Atomic):
-    # a variable term ranging over a restricted domain
+    """ a variable term ranging over a restricted domain """
     counter = 0
     def __init__(self, name, docstring=""):
         super().__init__(self, name, docstring)
@@ -39,7 +39,7 @@ class Variable(Atomic):
         self.restriction_set[restriction.name] = restriction
 
 class Indefinite(Variable):
-    # an indefinite object
+    """ an indefinite object """
     def __init__(self, docstring=""):
         self.name = 'V' + str(super().counter)
         super().__init__(self, name, docstring)
@@ -49,7 +49,7 @@ class Indefinite(Variable):
         self.dependency_set[dependency.name] = dependency
 
 class Arbitrary(Variable):
-    # an arbitaray individual
+    """ an arbitaray individual """
     def __init__(self, docstring=""):
         self.name = 'V' + str(super().counter)
         super().__init__(self, name, docstring)
@@ -59,10 +59,11 @@ class Arbitrary(Variable):
 # =====================================
 
 class Molecular(Node):
-    couter = 1
+    counter = 1
     # Non-leaf nodes
     def __init__(self):
-        name = "wft" + str(counter++)
+        name = "wft" + str(counter)
+        counter += 1
         super().__init__(self, name)
         self.down_cableset = {} # dictionary of frames
 
@@ -80,7 +81,7 @@ class Molecular(Node):
         "\t{}".format("\n\t".join(self.up_cableset.keys()))
 
 class MinMaxOp(Molecular):
-    # Thresh/andor with two values
+    """ Thresh/andor with two values """
     def __init__(self, name, docstring="", min=1, max=1):
         super().__init__(self, name, docstring)
         self.min = min
