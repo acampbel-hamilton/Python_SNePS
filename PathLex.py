@@ -24,7 +24,7 @@ t_LParen  = r'\('
 t_RParen  = r'\)'
 t_SlotName = r'[A-Za-z_][A-Za-z0-9_]*'
 t_ExPoint = r'\!'
-t_ReverseSlot = r'[A-Za-z_][A-Za-z0-9_]*\-'
+t_ReverseSlotName = r'[A-Za-z_][A-Za-z0-9_]*\-'
 t_Comma = r','
 
 def t_error(t):

@@ -24,8 +24,8 @@ class Caseframe:
             Two caseframes are equivalent when:
                 1. They have the same type
                 2. They have the same slots (disregarding order)"""
-        return not other is None and self.sem_type is other.sem_type and \
-            set(self.slots) - set(other.slots) == set([])
+        return other is not None and self.sem_type is other.sem_type and \
+               set(self.slots) == set(other.slots)
 
     def __str__(self):
         ret = "<{}>: {}\n".format(self.name, self.docstring)
@@ -44,7 +44,7 @@ class Frame:
 
         if len(self.fillers) != len(self.caseframe.slots):
             print('Wrong number of fillers. "' + self.caseframe.name + '" takes' + \
-                    len(self.caseframe.slots)+' fillers.', file=stderr)
+                  str(len(self.caseframe.slots)) + ' fillers.', file=stderr)
             return
 
         verify_slots()
@@ -121,7 +121,7 @@ class CaseframeMixIn:
 
         # Checks provided type is valid
         sem_type = self.sem_hierarchy.get_type(sem_type_name)
-        if sem_type == None:
+        if sem_type is None:
             print("ERROR: The semantic type '{}' does not exist".format(sem_type_name), file=stderr)
             return
 
