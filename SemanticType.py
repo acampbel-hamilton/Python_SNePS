@@ -141,10 +141,8 @@ class SemanticType:
         return any(child is potential_child or child.subtype(potential_child) for child in children)
 
     def __str__(self, level=0):
-        ret = "\t" * level + self.name + "\n"
-        for child in self.children:
-            ret += child.__str__(level + 1)
-        return ret
+        return "\t" * level + self.name + "\n" + \
+               "".join(child.__str__(level + 1) for child in self.children)
 
 class SemanticMixIn:
     """ Provides functions related to semantic types to network """
@@ -156,7 +154,7 @@ class SemanticMixIn:
         self.sem_hierarchy = SemanticHierarchy()
 
     def define_type(self, name, parent_names=[]):
-        # Adds term to hierarchy
+        """ Adds term to hierarchy """
         self.sem_hierarchy.add_type(name, parent_names)
 
     def show_types(self):
