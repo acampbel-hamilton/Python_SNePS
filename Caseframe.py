@@ -99,7 +99,7 @@ class CaseframeMixIn:
         if name in self.caseframes:
             return self.caseframes[name]
         else:
-            print("ERROR: Caseframe ''" + name + "'' not defined.", file=stderr)
+            print('ERROR: Caseframe "' + name + '" not defined.', file=stderr)
 
     def list_caseframes(self):
         for caseframe in self.caseframes:

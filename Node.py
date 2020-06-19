@@ -104,7 +104,7 @@ class NodeMixIn:
 
             # Respecification
             current_type = node.sem_type
-            new_type = self.sem_hierarchy[sem_type_name]
+            new_type = self.sem_hierarchy.get_type(sem_type_name)
             node.sem_type = self.sem_hierarchy.respecify(name, current_type, new_type)
         else:
             # Creation

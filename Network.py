@@ -86,6 +86,8 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
                               slot_names=["equiv"])
         self.define_caseframe('and', 'Propositional', docstring="it is the case that [and]",
                               slot_names=["and"])
+        self.define_caseframe('or', 'Propositional', docstring="it is the case that [or]",
+                              slot_names=["or"])
         self.define_caseframe('nor', 'Propositional', docstring="it is not the case that [nor]",
                               slot_names=["nor"])
         self.define_caseframe('thnor', 'Propositional', docstring="I don't know that it is the case that [thnor]",
