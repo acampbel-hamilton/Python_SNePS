@@ -81,16 +81,16 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
         #     neg_adj=AdjRule.REDUCE, pos_adj=AdjRule.EXPAND, min=0)
 
         # Caseframes
-        self.define_caseframe('Isa', 'Propositional', docstring="[member] is a [class]", slots=["member", "class"])
-        self.define_caseframe('Equiv', 'Propositional', docstring="[equiv] are all co-referential", slots=["equiv"])
-        self.define_caseframe('and', 'Propositional', docstring="it is the case that [and]", slots=["and"])
-        self.define_caseframe('nor', 'Propositional', docstring="it is not the case that [nor]", slots=["nor"])
-        self.define_caseframe('thnor', 'Propositional', docstring="I don't know that it is the case that [thnor]", slots=["thnor"])
-        self.define_caseframe('andor', 'Propositional', slots=["andorargs"])
-        self.define_caseframe('thresh', 'Propositional', slots=["threshargs"])
-        self.define_caseframe('if', 'Propositional', docstring="if [ant] then [cq]", slots=["ant", "cq"])
-        self.define_caseframe('close', 'Propositional', docstring="[proposition] is closed over [closedvar]", slots=["proposition", "closedvar"])
-        self.define_caseframe('rule', 'Policy', docstring="for the rule [name] to fire, [condition] must be matched, then [action] may occur, and [subrule] may be matched.", slots=["rulename", "condition", "action", "subrule"])
+        self.define_caseframe('Isa', 'Propositional', docstring="[member] is a [class]", slot_names=["member", "class"])
+        self.define_caseframe('Equiv', 'Propositional', docstring="[equiv] are all co-referential", slot_names=["equiv"])
+        self.define_caseframe('and', 'Propositional', docstring="it is the case that [and]", slot_names=["and"])
+        self.define_caseframe('nor', 'Propositional', docstring="it is not the case that [nor]", slot_names=["nor"])
+        self.define_caseframe('thnor', 'Propositional', docstring="I don't know that it is the case that [thnor]", slot_names=["thnor"])
+        self.define_caseframe('andor', 'Propositional', slot_names=["andorargs"])
+        self.define_caseframe('thresh', 'Propositional', slot_names=["threshargs"])
+        self.define_caseframe('if', 'Propositional', docstring="if [ant] then [cq]", slot_names=["ant", "cq"])
+        self.define_caseframe('close', 'Propositional', docstring="[proposition] is closed over [closedvar]", slot_names=["proposition", "closedvar"])
+        self.define_caseframe('rule', 'Policy', docstring="for the rule [name] to fire, [condition] must be matched, then [action] may occur, and [subrule] may be matched.", slot_names=["rulename", "condition", "action", "subrule"])
 
         # ==========
 
