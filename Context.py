@@ -37,7 +37,7 @@ class ContextMixIn:
     def define_context(self, name, docstring="", parent="_default", hyps={}, ders={}):
         new_context = Context(name, docstring, parent, hyps, ders)
 
-        if self == new_context:
+        if self == new_context: # Remember == on contexts just compares names
             print("You cannot define contexts with the same name.", file=stderr)
             return
 
@@ -48,6 +48,3 @@ class ContextMixIn:
         """ Prints out all the contexts in the network """
         for context_name in self.contexts:
             print(self.contexts[context_name])
-
-    def build_default(self):
-        Context("_default", docstring="The default context", hyps={}, ders={})
