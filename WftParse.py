@@ -194,4 +194,5 @@ def wft_parser(wft, network):
         try:
             yacc.parse(wft)
         except Exception as e:
-            print(e)
+            print("Exception!!!")
+            print(e.with_traceback())

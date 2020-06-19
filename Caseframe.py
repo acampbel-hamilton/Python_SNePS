@@ -80,10 +80,10 @@ class Fillers:
 
     def __init__(self, nodes=[]):
         self.nodes = nodes
-        self.sem_types = [node.sem_type for node in nodes]
+        self.sem_types = [node.sem_type for node in self.nodes]
 
     def __len__(self):
-        return len(nodes)
+        return len(self.nodes)
 
 
 class CaseframeMixIn:
