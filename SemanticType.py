@@ -14,7 +14,7 @@ class SemanticHierarchy:
             self.add_parent(type_name, parent_names)
             return
 
-        # Crreate new type in hierarchy
+        # Create new type in hierarchy
         self.sem_types[type_name] = SemanticType(type_name)
 
         # If type provides parents, connect to these nodes in tree
@@ -30,8 +30,8 @@ class SemanticHierarchy:
         return self.sem_types[type_name]
 
     def respecify(self, term_name, current_type, new_type):
-        # Given new and old semantic type for a node, returns a computed new type
-        # e.g. Cassie is a human and a robot, therefore Cassie is a cyborg
+        """ Given new and old semantic type for a node, returns a computed new type
+            e.g. Cassie is a human and a robot, therefore Cassie is a cyborg """
         if current_type is new_type:
             return new_type
 
@@ -58,17 +58,18 @@ class SemanticHierarchy:
         v1 = visited  # Visited set from root 1. Maps nodes to depths with respect to v1
         visited = {}
         dfs_depth_map(type2, 0)
-        v2 = visited
+        v2 = visited # Visited set from root 2. Maps nodes to depths with respect to v2
 
-        if type2 in v1:
+        if type2 in v1: # type2 is a descendant of type1
             gcds = [type2]
-        elif type1 in v2:
+        elif type1 in v2: # type1 is a descendent of type2
             gcds = [type1]
         else:
-            # This could be made faster by changing the second dfs to not add nodes deeper than the smallest gcd depth so far. We still need to look at them to detect direct lineages, though.
+            # This could be made faster by changing the second dfs to not add nodes deeper than the smallest gcd depth so far.
+            # We still need to look at them to detect direct lineages, though.
             gcds = []
             target_depth = inf
-            for node in set(v1) & set(v2):
+            for node in set(v1) & set(v2): # For each type reachable from both type1 and type2
                 if v1[node] + v2[node] < target_depth:
                     gcds = [node]
                     target_depth = v1[node] + v2[node]
