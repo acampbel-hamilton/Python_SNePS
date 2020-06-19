@@ -66,7 +66,7 @@ def p_NaryOp(p):
     caseframe = current_network.find_caseframe(p[1])
     fillers = []
     for node in p[3]:
-        fillers.append(Fillers([p[3]]))
+        fillers.append(Fillers([node]))
     frame = Frame(caseframe, fillers)
     for node in current_network.nodes.values():
         if node.has_frame(frame):
@@ -150,7 +150,7 @@ def p_Wfts(p):
     if len(p) == 2:
         p[0] = [p[1]]
     else:
-        p[0].append(p[3])
+        p[0] = p[1] + [p[3]]
 
 def p_Arguments(p):
     '''
