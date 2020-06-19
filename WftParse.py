@@ -66,7 +66,7 @@ def p_NaryOp(p):
     '''
     caseframe = current_network.find_caseframe(p[1])
     fillers = Fillers(p[3])
-    frame = Frame(caseframe, fillers)
+    frame = Frame(caseframe, [fillers])
     for node in current_network.nodes.values():
         if node.has_frame(frame):
             p[0] = node
@@ -179,6 +179,7 @@ def p_AtomicName(p):
     '''
     current_network.define_term(p[1], sem_type_name="Proposition")
     p[0] = current_network.find_term(p[1])
+from .Node import Base, Molecular, Indefinite
 
 def p_error(p):
     raise Exception("Syntax error on token '" + p.type + "'")
@@ -192,8 +193,4 @@ def wft_parser(wft, network):
     current_network = network
     yacc.yacc()
     if wft != '':
-        try:
-            yacc.parse(wft)
-        except Exception as e:
-            print("Exception!!!")
-            print(e)
+        yacc.parse(wft)

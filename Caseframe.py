@@ -43,7 +43,7 @@ class Frame:
                   str(len(self.caseframe.slots)) + ' fillers.', file=stderr)
             return
 
-        verify_slots()
+        self.verify_slots()
 
     def verify_slots(self):
         """ Check fillers correspond to slots
