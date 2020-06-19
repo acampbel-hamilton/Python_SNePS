@@ -34,7 +34,7 @@ class Caseframe:
 
 class Frame:
     def __init__(self, caseframe, filler_set=[]):
-        self.name = Caseframe.name
+        self.name = caseframe.name
         self.caseframe = caseframe
         self.filler_set = filler_set
 
