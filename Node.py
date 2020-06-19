@@ -13,6 +13,9 @@ class Node:
     def add_up_cable(self, frame):
         self.up_cableset[frame.name] = frame
 
+    def has_frame(self, frame):
+        return False
+
     def __str__(self):
         return "<{}>: {}".format(self.name, self.docstring)
 
