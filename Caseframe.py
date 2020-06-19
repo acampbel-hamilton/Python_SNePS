@@ -28,7 +28,7 @@ class Caseframe:
 
     def __str__(self):
         return "<{}>: {}\n".format(self.name, self.docstring) + \
-               "\tSemantic Type: {}\n".format(self.sem_type) + \
+               "\tSemantic Type: {}\n".format(self.sem_type.name) + \
                "\tAliases: [" + ", ".join(self.aliases) + "]"
 
 
@@ -38,7 +38,7 @@ class Frame:
         self.caseframe = caseframe
         self.filler_set = filler_set
 
-        if len(self.fillers) != len(self.caseframe.slots):
+        if len(self.filler_set) != len(self.caseframe.slots):
             print('Wrong number of fillers. "' + self.caseframe.name + '" takes' + \
                   str(len(self.caseframe.slots)) + ' fillers.', file=stderr)
             return
