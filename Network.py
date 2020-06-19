@@ -39,13 +39,18 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
         self.define_type("Category", ["Thing"])
         self.define_type("Action", ["Thing"])
 
-        self.define_caseframe("and", "Proposition", )
-
 
         # Slots
         # =====
 
         # Propositions
+        self.define_slot("class", "Category", docstring="Points to a Category that some Entity is a member of.",
+            neg_adj=AdjRule.REDUCE)
+        self.define_slot("member", "Entity", docstring="Points to the Entity that is a member of some Category.",
+            neg_adj=AdjRule.REDUCE)
+        self.define_slot("equiv", "Entity", docstring="All fillers are coreferential.",
+            neg_adj=AdjRule.REDUCE, min=2, path=None)
+        self.define_slot("proposition", "Propositional", docstring="Points to a proposition.")
 
         # Rules
 
