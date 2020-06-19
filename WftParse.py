@@ -186,7 +186,10 @@ def p_AtomicName(p):
 from .Node import Base, Molecular, Indefinite
 
 def p_error(p):
-    print("Syntax error on token '" + p.type + "'", file=stderr)
+    if p is None:
+        print("ERROR: Term reached end unexpectedly.", file=stderr)
+    else:
+        print("ERROR: Syntax error on token '" + p.type + "'", file=stderr)
 
 # =====================================
 # ------------ RULES END --------------
