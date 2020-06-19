@@ -3,7 +3,6 @@ from .SemanticType import SemanticType
 from sys import stderr
 
 class Caseframe:
-    counter = 0
     def __init__(self, name, sem_type, docstring="", slots=[]):
         self.name = name
         self.docstring = docstring
@@ -28,13 +27,10 @@ class Caseframe:
                set(self.slots) == set(other.slots)
 
     def __str__(self):
-        ret = "<{}>: {}\n".format(self.name, self.docstring)
-        ret += "\tSemantic Type: {}\n".format(self.sem_type)
-        ret += "\tAliases: ["
-        ret += ", ".join(self.aliases)
-        ret += "]"
+        return "<{}>: {}\n".format(self.name, self.docstring) + \
+               "\tSemantic Type: {}\n".format(self.sem_type) + \
+               "\tAliases: [" + ", ".join(self.aliases) + "]"
 
-        return ret
 
 class Frame:
     def __init__(self, caseframe, filler_set=[]):
