@@ -71,14 +71,12 @@ class Molecular(Node):
         self.down_cableset[frame.name] = frame # Corresponds to frame
 
     def has_frame(self, frame):
-        for current_frame in self.down_cableset.values():
-            if frame == current_frame:
-                return True
-        return False
+        return any(frame == current_frame for current_frame in self.down_cableset.values())
 
     def __str__(self):
         return super().__str__() + \
                "\t{}".format("\n\t".join(self.up_cableset.keys()))
+
 
 class MinMaxOp(Molecular):
     """ Thresh/andor with two values """
@@ -87,9 +85,6 @@ class MinMaxOp(Molecular):
         self.min = min
         self.max = max
 
-# =====================================
-# -------------- MIXIN ----------------
-# =====================================
 
 class NodeMixIn:
     """ Provides functions related to nodes to network """

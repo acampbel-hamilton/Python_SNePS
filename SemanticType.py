@@ -137,11 +137,8 @@ class SemanticType:
         return other_type is self or other_type.subtype(self)
 
     def subtype(self, potential_child):
-        # Determines if given node is actually a child of self
-        for child in self.children:
-            if child is potential_child or child.subtype(potential_child):
-                return True
-        return False
+        """ Determines if given node is a descendant of self """
+        return any(child is potential_child or child.subtype(potential_child) for child in children)
 
     def __str__(self, level=0):
         ret = "\t" * level + self.name + "\n"
