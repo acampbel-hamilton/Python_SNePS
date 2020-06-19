@@ -32,7 +32,7 @@ class Variable(Atomic):
     """ a variable term ranging over a restricted domain """
     counter = 0
     def __init__(self, name, docstring=""):
-        super().__init__(self, name, docstring)
+        super().__init__(name, docstring) # These need semantic types. This will be an error.
         self.restriction_set = {}
 
     def add_restriction(self, restriction):
@@ -42,7 +42,7 @@ class Indefinite(Variable):
     """ an indefinite object """
     def __init__(self, docstring=""):
         self.name = 'V' + str(super().counter)
-        super().__init__(self, name, docstring)
+        super().__init__(self.name, docstring) # These need semantic types. This will be an error.
         self.dependency_set = {}
 
     def add_dependency(self, dependency):
@@ -52,7 +52,7 @@ class Arbitrary(Variable):
     """ an arbitaray individual """
     def __init__(self, docstring=""):
         self.name = 'V' + str(super().counter)
-        super().__init__(self, self.name, docstring)
+        super().__init__(self.name, docstring) # These need semantic types. This will be an error.
 
 # =====================================
 # --------- MOLECULAR NODES -----------
@@ -64,7 +64,7 @@ class Molecular(Node):
     def __init__(self, sem_type):
         name = "wft" + str(counter)
         Molecular.counter += 1
-        super().__init__(self, name, sem_type)
+        super().__init__(name, sem_type)
         self.down_cableset = {} # dictionary of frames
 
     def add_down_cables(self, frame):
@@ -81,7 +81,7 @@ class Molecular(Node):
 class MinMaxOp(Molecular):
     """ Thresh/andor with two values """
     def __init__(self, name, docstring="", min=1, max=1):
-        super().__init__(self, name, docstring)
+        super().__init__(name, docstring)
         self.min = min
         self.max = max
 
