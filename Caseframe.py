@@ -39,7 +39,7 @@ class Frame:
         self.filler_set = filler_set
 
         if len(self.filler_set) != len(self.caseframe.slots):
-            print('Wrong number of fillers. "' + self.caseframe.name + '" takes ' + \
+            print('ERROR: Wrong number of fillers. "' + self.caseframe.name + '" takes ' + \
                   str(len(self.caseframe.slots)) + ' fillers.', file=stderr)
             return
 
@@ -58,17 +58,17 @@ class Frame:
             # Check if filler is legal (given limit, adjustment rule)
             for sem_type in fillers.sem_types:
                 if not sem_type.compatible(slot.sem_type):
-                    print("Incompatible filler provided for " + slot.name + ".\n" + \
+                    print("ERROR: Incompatible filler provided for " + slot.name + ".\n" + \
                         "Slot has type: " + slot.sem_type + ", " + \
                         "and filler has type: " + sem_type, file=stderr)
                     return
 
             # Ensures within min/max of slots
             if len(fillers) < slot.min and slot.neg_adj != AdjRule.INF_REDUCE:
-                print('Fewer than minimum required slots provided for ' + slot.name, file=stderr)
+                print('ERROR: Fewer than minimum required slots provided for ' + slot.name, file=stderr)
                 return
             if len(fillers) > slot.max and slot.neg_adj != AdjRule.INF_EXPAND:
-                print('Greater than maximum slots provided for ' + slot.name, file=stderr)
+                print('ERROR: Greater than maximum slots provided for ' + slot.name, file=stderr)
                 return
 
     def __eq__(self, other):
@@ -99,7 +99,7 @@ class CaseframeMixIn:
         if name in self.caseframes:
             return self.caseframes[name]
         else:
-            print("Caseframe ''" + name + "'' not defined.", file=stderr)
+            print("ERROR: Caseframe ''" + name + "'' not defined.", file=stderr)
 
     def list_caseframes(self):
         for caseframe in self.caseframes:
@@ -129,19 +129,27 @@ class CaseframeMixIn:
             caseframe = self.caseframes[caseframe_name]
 
             if caseframe.has_alias(name):
-                print("Caseframe name '{}' is already taken".format(name), file=stderr)
+                print("ERROR: Caseframe name '{}' is already taken".format(name), file=stderr)
                 return
 
             if new_caseframe == caseframe:
-                print('Your caseframe "' + new_caseframe.name + '" is idential to "' + caseframe.name + '".', file=stderr)
+                print('ERROR: Your caseframe "' + new_caseframe.name + '" is idential to "' + caseframe.name + '".', file=stderr)
 
-                response = input('Would you like to add an alias to "' + caseframe.name + '"? (y/N)')
-                if response == 'y':
-                    caseframe.add_alias(name)
+                while True:
+                    response = input('Would you like to add an alias to "' + caseframe.name + '"? (y/N)')
+                    if "YES".startswith(response.upper()):
+                        caseframe.add_alias(name)
+                        break
+                    elif "NO".startswith(response.upper()):
+                        break
 
-                response = input('Would you like to override the docstring for "'+ caseframe.name + '"? (y/N)')
-                if response == 'y':
-                    caseframe.docstring = docstring
+                while True:
+                    response = input('Would you like to override the docstring for "'+ caseframe.name + '"? (y/N)')
+                    if "YES".startswith(response.upper()):
+                        caseframe.docstring = docstring
+                        break
+                    elif "NO".startswith(response.upper()):
+                        break
 
                 return
 
