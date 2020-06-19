@@ -62,22 +62,18 @@ class Molecular(Node):
     couter = 1
     # Non-leaf nodes
     def __init__(self):
-        name = "wft" + str(counter++)
+        name = "wft" + str(counter)
         super().__init__(self, name)
         self.down_cableset = {} # dictionary of frames
 
     def add_down_cables(self, frame):
         self.down_cableset[frame.name] = frame # Corresponds to frame
 
-    def __eq__(self, other):
-        # determines if two molecular terms are equivalent
-        if not isinstance(other, Molecular):
-            return False
-        self_fill = self.down_cableset.values()
-        other_fill = other.down_cableset.values()
-        return other.caseframe == self.caseframe and \
-            [sorted(sl) for sl in sorted(other_fill)] == \
-            [sorted(sl) for sl in sorted(self_fill)]
+    def hasFrame(self, frame):
+        for current_frame in self.down_cableset.values():
+            if frame == current_frame:
+                return True
+        return False
 
     def __str__(self):
         return super().__str__() + \

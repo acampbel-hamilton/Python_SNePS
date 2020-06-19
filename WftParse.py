@@ -63,12 +63,14 @@ def p_NaryOp(p):
     caseframe = current_network.find_caseframe(p[1])
     fillers = p[3]
     frame = Frame(caseframe, fillers)
-    wftNode = Molecular()
-    wftNode.add_down_cables(fillers)
     for node in current_network.nodes.values():
-        if node == wftNode:
+        if node.hasFrame(frame):
+            p[0] = node
             return
+    wftNode = Molecular()
+    wftNode.add_down_cables(frame)
     current_network.nodes[wftNode.name] = wftNode
+    p[0] = wftNode
 
 # e.g. thresh{1, 2}(wft1)
 def p_MinMaxOp(p):
