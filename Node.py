@@ -52,7 +52,7 @@ class Arbitrary(Variable):
     """ an arbitaray individual """
     def __init__(self, docstring=""):
         self.name = 'V' + str(super().counter)
-        super().__init__(self, name, docstring)
+        super().__init__(self, self.name, docstring)
 
 # =====================================
 # --------- MOLECULAR NODES -----------
