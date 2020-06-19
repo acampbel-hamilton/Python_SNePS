@@ -110,7 +110,6 @@ class CaseframeMixIn:
             print(self.caseframes[caseframe])
 
     def define_caseframe(self, name, sem_type_name, docstring="", slot_names=[]):
-
         # Checks provided slots names are valid
         frame_slots = []
         for slot_name in slot_names:

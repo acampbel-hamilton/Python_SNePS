@@ -101,7 +101,6 @@ class NodeMixIn:
 
     def define_term(self, name, docstring="", sem_type_name="Entity"):
         # Creates base atomic node
-
         if node in self.nodes.values():
             # Respecification
             current_type = node.sem_type
@@ -113,10 +112,11 @@ class NodeMixIn:
             self.nodes[name] = Base(name, sem_type, docstring)
 
     def all_terms(self):
-        [print(self.nodes[term]) for term in self.nodes]
+        for term in self.nodes:
+            print(self.nodes[term])
 
     def find_term(self, name):
         if name in self.nodes:
             return self.nodes[name]
         else:
-            print("Term ''" + name + "'' not defined.", file=stderr)
+            print('Term "' + name + '" not defined.', file=stderr)
