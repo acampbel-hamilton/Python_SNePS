@@ -63,7 +63,7 @@ class Molecular(Node):
     # Non-leaf nodes
     def __init__(self):
         name = "wft" + str(counter)
-        counter += 1
+        Molecular.counter += 1
         super().__init__(self, name)
         self.down_cableset = {} # dictionary of frames
 
@@ -78,7 +78,7 @@ class Molecular(Node):
 
     def __str__(self):
         return super().__str__() + \
-        "\t{}".format("\n\t".join(self.up_cableset.keys()))
+               "\t{}".format("\n\t".join(self.up_cableset.keys()))
 
 class MinMaxOp(Molecular):
     """ Thresh/andor with two values """
