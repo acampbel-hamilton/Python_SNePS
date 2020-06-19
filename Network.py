@@ -17,9 +17,9 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
         # self.sem_hierarchy = SemanticHierarchy() (defined in SemanticType.py)
         # self.contexts = {} (defined in Context.py)
         # self.default_context = Context(docstring="The default context", hyps={}, ders={}) (defined in Context.py,_default",
-        self.build_default()
+        self._build_default()
 
-    def build_default(self):
+    def _build_default(self):
         """ Builds the default context """
 
         # Types
@@ -40,7 +40,6 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
         self.define_type("Action", ["Thing"])
 
         # Slots
-        # =====
 
         # Propositions
         self.define_slot("class", "Category", docstring="Points to a Category that some Entity is a member of.",
@@ -101,8 +100,6 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
                               slot_names=["proposition", "closedvar"])
         self.define_caseframe('rule', 'Policy', docstring="for the rule [name] to fire, [condition] must be matched, then [action] may occur, and [subrule] may be matched.",
                               slot_names=["rulename", "condition", "action", "subrule"])
-
-        # ==========
 
     def assert_wft(self, wft_str, value="hyp"):
         if value != "hyp" and value != "true":
