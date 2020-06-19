@@ -64,9 +64,7 @@ def p_NaryOp(p):
            |            DoubImpl LParen Wfts RParen
     '''
     caseframe = current_network.find_caseframe(p[1])
-    fillers = []
-    for node in p[3]:
-        fillers.append(Fillers([node]))
+    fillers = Fillers(p[3])
     frame = Frame(caseframe, fillers)
     for node in current_network.nodes.values():
         if node.has_frame(frame):
