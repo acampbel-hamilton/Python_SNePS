@@ -39,7 +39,7 @@ class Frame:
         self.filler_set = filler_set
 
         if len(self.filler_set) != len(self.caseframe.slots):
-            print('Wrong number of fillers. "' + self.caseframe.name + '" takes' + \
+            print('Wrong number of fillers. "' + self.caseframe.name + '" takes ' + \
                   str(len(self.caseframe.slots)) + ' fillers.', file=stderr)
             return
 

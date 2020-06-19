@@ -96,8 +96,9 @@ class NodeMixIn:
 
     def define_term(self, name, docstring="", sem_type_name="Entity"):
         # Creates base atomic node
-        node = self.nodes[name]
-        if node in self.nodes.values():
+        if name in self.nodes:
+            node = self.nodes[name]
+            
             # Respecification
             current_type = node.sem_type
             new_type = self.sem_hierarchy[sem_type_name]
