@@ -82,25 +82,25 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
 
         # Caseframes
         self.define_caseframe('Isa', 'Propositional', docstring="[member] is a [class]",
-            slot_names=["member", "class"])
+                              slot_names=["member", "class"])
         self.define_caseframe('Equiv', 'Propositional', docstring="[equiv] are all co-referential",
-            slot_names=["equiv"])
+                              slot_names=["equiv"])
         self.define_caseframe('and', 'Propositional', docstring="it is the case that [and]",
-            slot_names=["and"])
+                              slot_names=["and"])
         self.define_caseframe('nor', 'Propositional', docstring="it is not the case that [nor]",
-            slot_names=["nor"])
+                              slot_names=["nor"])
         self.define_caseframe('thnor', 'Propositional', docstring="I don't know that it is the case that [thnor]",
-            slot_names=["thnor"])
+                              slot_names=["thnor"])
         self.define_caseframe('andor', 'Propositional',
-            slot_names=["andorargs"])
+                              slot_names=["andorargs"])
         self.define_caseframe('thresh', 'Propositional',
-            slot_names=["threshargs"])
+                              slot_names=["threshargs"])
         self.define_caseframe('if', 'Propositional', docstring="if [ant] then [cq]",
-            slot_names=["ant", "cq"])
+                              slot_names=["ant", "cq"])
         self.define_caseframe('close', 'Propositional', docstring="[proposition] is closed over [closedvar]",
-            slot_names=["proposition", "closedvar"])
+                              slot_names=["proposition", "closedvar"])
         self.define_caseframe('rule', 'Policy', docstring="for the rule [name] to fire, [condition] must be matched, then [action] may occur, and [subrule] may be matched.",
-            slot_names=["rulename", "condition", "action", "subrule"])
+                              slot_names=["rulename", "condition", "action", "subrule"])
 
         # ==========
 
