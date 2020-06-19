@@ -62,7 +62,7 @@ class Molecular(Node):
     couter = 1
     # Non-leaf nodes
     def __init__(self):
-        name = "wft" + str(counter)
+        name = "wft" + str(counter++)
         super().__init__(self, name)
         self.down_cableset = {} # dictionary of frames
 
