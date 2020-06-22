@@ -103,8 +103,6 @@ class SemanticHierarchy:
             return self.sem_types[type_name]
         else:
             print("ERROR: Type '" + type_name + "' does not exist")
-            return None
-
 
     def add_parent(self, type_name, parent_names):
         type = self.sem_types[type_name]
@@ -152,7 +150,7 @@ class SemanticMixIn:
     """ Provides functions related to semantic types to network """
 
     def __init__(self):
-        if type(self) == SemanticMixIn:
+        if type(self) is SemanticMixIn:
             raise NotImplementedError("Mixins can't be instantiated.")
 
         self.sem_hierarchy = SemanticHierarchy()

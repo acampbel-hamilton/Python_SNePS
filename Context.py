@@ -33,7 +33,7 @@ class ContextMixIn:
     """ Provides functions related to contexts to network. """
 
     def __init__(self):
-        if type(self) == ContextMixIn:
+        if type(self) is ContextMixIn:
             raise NotImplementedError("Mixins can't be instantiated.")
 
         self.contexts = {}

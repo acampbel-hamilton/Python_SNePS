@@ -79,7 +79,7 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
                          pos_adj=AdjRule.REDUCE, neg_adj=AdjRule.EXPAND, min=2)
         self.define_slot('nand', 'Proposition', doctstring='not and',
                          pos_adj=AdjRule.REDUCE, neg_adj=AdjRule.EXPAND, min=2)
-        self.define_slot('doublimpl', 'Proposition', doctstring='double implication',
+        self.define_slot('iff', 'Proposition', doctstring='double implication',
                          pos_adj=AdjRule.REDUCE, neg_adj=AdjRule.EXPAND, min=2)
 
         # SNeRE
@@ -96,7 +96,6 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
             neg_adj=AdjRule.REDUCE, pos_adj=AdjRule.EXPAND, min=0)
 
         # Caseframes
-        #TODO: nand, xor, DoubImpl
         self.define_caseframe('Isa', 'Propositional', docstring="[member] is a [class]",
                               slot_names=["member", "class"])
         self.define_caseframe('Equiv', 'Propositional', docstring="[equiv] are all co-referential",
@@ -124,8 +123,8 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
                                slot_names=['nand'])
         self.define_caseframe('xor', 'Propositional', docstring='it is the case that [xor]',
                                slot_names=['xor'])
-        self.define_caseframe('doubleimpl', 'Propositional', docstring='it is the case that [doubimpl]',
-                               slot_names=['doubimpl'])
+        self.define_caseframe('iff', 'Propositional', docstring='it is the case that [doubimpl]',
+                               slot_names=['iff'])
 
         self.define_caseframe('andimpl', 'Propositional', docstring='if [ant] then [cq]',
                                slot_names=["ant", "cq"])

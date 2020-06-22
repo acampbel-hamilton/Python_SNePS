@@ -37,7 +37,7 @@ class SlotMixIn:
     """ Provides functions related to slots to Network """
 
     def __init__(self):
-        if type(self) == SlotMixIn:
+        if type(self) is SlotMixIn:
             raise NotImplementedError("Mixins can't be instantiated.")
         self.slots = {} # AKA Relations
 

@@ -38,7 +38,4 @@ def path_parser(path, network):
     current_network = network
     yacc.yacc()
     if path != '':
-        try:
-            yacc.parse(pase)
-        except Exception as e:
-            print(e)
+        yacc.parse(pase)

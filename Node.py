@@ -100,7 +100,7 @@ class NodeMixIn:
     """ Provides functions related to nodes to Network """
 
     def __init__(self):
-        if type(self) == NodeMixIn:
+        if type(self) is NodeMixIn:
             raise NotImplementedError("Mixins can't be instantiated.")
         self.nodes = {}
 
