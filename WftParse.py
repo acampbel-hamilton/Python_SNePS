@@ -3,7 +3,11 @@ from .ply import *
 from .Network import *
 from .Caseframe import Frame, Fillers
 from .Node import Base, Molecular, Indefinite, Arbitrary, MinMaxOp
+from .Error import SNePSError
 from sys import stderr
+
+class SNePSWftError(SNePSError):
+    pass
 
 current_network = None
 tokens = WftLex.tokens
@@ -11,9 +15,6 @@ tokens = WftLex.tokens
 # =====================================
 # -------------- RULES ----------------
 # =====================================
-
-class SNePSWftError(SyntaxError):
-    pass
 
 def p_Wft(p):
     '''
@@ -70,7 +71,7 @@ def p_NaryOp(p):
     '''
     caseframe = current_network.find_caseframe(p[1])
     if caseframe is None:
-        raise SNePSWftError()
+        raise SNePSError("No caseframe!!")
     fillers = Fillers(p[3])
     frame = Frame(caseframe, [fillers])
     for node in current_network.nodes.values():
@@ -186,9 +187,9 @@ def p_AtomicName(p):
 
 def p_error(p):
     if p is None:
-        print("ERROR: Term reached end unexpectedly.", file=stderr)
+        raise SNePSWftError("ERROR: Term reached end unexpectedly.")
     else:
-        print("ERROR: Syntax error on token '" + p.type + "'", file=stderr)
+        raise SNePSWftError("ERROR: Syntax error on token '" + p.type + "'")
 
 # =====================================
 # ------------ RULES END --------------
@@ -199,4 +200,6 @@ def wft_parser(wft, network):
     current_network = network
     yacc.yacc()
     if wft != '':
-        yacc.parse(wft)
+        try:
+            yacc.parse(wft)
+        except SNePSError

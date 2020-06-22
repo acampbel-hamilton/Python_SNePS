@@ -1,4 +1,8 @@
 from .Caseframe import Frame
+from .Error import SNePSError
+
+class NodeError(SNePSError):
+    pass
 
 class Node:
     """ Root of syntactic hierarchy """
@@ -121,5 +125,4 @@ class NodeMixIn:
         if name in self.nodes:
             return self.nodes[name]
         else:
-            print('ERROR: Term "' + name + '" not defined.', file=stderr)
-            return None
+            raise NodeError('ERROR: Term "' + name + '" not defined.')
