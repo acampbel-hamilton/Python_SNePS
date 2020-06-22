@@ -202,4 +202,5 @@ def wft_parser(wft, network):
     if wft != '':
         try:
             yacc.parse(wft)
-        except SNePSError
+        except SNePSError as e:
+            print(e)
