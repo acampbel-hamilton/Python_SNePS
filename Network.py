@@ -128,7 +128,7 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
 
         # Aliases
         self.caseframes["nor"].add_alias("not")
-        self.caseframe["thnor"].add_alias("thnot")
+        self.caseframes["thnor"].add_alias("thnot")
 
 
     def assert_wft(self, wft_str, value="hyp"):
