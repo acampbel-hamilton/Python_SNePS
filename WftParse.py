@@ -27,7 +27,7 @@ def p_Wft(p):
 def p_FWft(p):
     '''
     FWft :              AtomicName
-         |              WftNode
+         |              Y_WftNode
          |              Function
     '''
     p[0] = p[1]
@@ -53,6 +53,18 @@ def p_BinaryOp(p):
              |          OrImpl LParen Argument Comma Argument RParen
              |          AndImpl LParen Argument Comma Argument RParen
     '''
+    caseframe = current_network.find_caseframe(p[1])
+    if caseframe is None:
+        raise SNePSWftError()
+    filler_set = [Fillers(p[3]), Fillers(p[5])]
+    frame = Frame(caseframe, filler_set)
+    for node in current_network.nodes.values():
+        if node.has_frame(frame):
+            p[0] = node
+    wftNode = Molecular(current_network.sem_hierarchy.get_type("Proposition"))
+    wftNode.add_down_cables(frame)
+    current_network.nodes[wftNode.name] = wftNode
+    p[0] = wftNode
 
 
 # e.g. and(wft1, wft2)
@@ -127,23 +139,43 @@ def p_QIdenStmt(p):
     '''
 
 
-# e.g. setOf(wft1, wft2)
-def p_Argument(p):
+# e.g. wft1
+def p_Argument1(p):
     '''
     Argument :          Wft
-             |          None
-             |          ArgumentFunction
-             |          LBracket Wfts RBracket
-             |          LBracket RBracket
     '''
+    p[0] = Fillers([p[1]])
 
+# e.g. None
+def p_Argument2(p):
+    '''
+    Argument :          None
+    '''
+    p[0] = Fillers()
+
+# e.g. setOf(wft1, wft2)
+def p_Argument3(p):
+    '''
+    Argument :          ArgumentFunction
+             |          LBracket RBracket
+             |          LBracket Wfts RBracket
+    '''
+    if len(p) == 2:
+        p[0] = p[1]
+    elif len(p) == 3:
+        p[0] = Fillers()
+    else:
+        p[0] = Fillers(p[2])
 
 def p_ArgumentFunction(p):
     '''
-    ArgumentFunction :  SetOf LParen Wfts RParen
-        |               SetOf LParen RParen
+    ArgumentFunction :  SetOf LParen RParen
+        |               SetOf LParen Wfts RParen
     '''
-
+    if len(p) == 4:
+        p[0] = Fillers()
+    else:
+        p[0] = Fillers(p[3])
 
 def p_Wfts(p):
     '''
@@ -183,6 +215,15 @@ def p_AtomicName(p):
     '''
     current_network.define_term(p[1], sem_type_name="Proposition")
     p[0] = current_network.find_term(p[1])
+
+def p_AtomicName2(p):
+    '''
+    Y_WftNode :         WftNode
+    '''
+    if int(p[1][3:]) < Molecular.counter:
+        raise SNePSWftError('Invalid wft number. Max number: {}'.format(Molecular.counter))
+
+    p[0] = current_network.nodes[p[1]]
 
 def p_error(p):
     if p is None:
