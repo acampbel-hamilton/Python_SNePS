@@ -1,3 +1,7 @@
+"""
+A little test file.
+"""
+
 from Python_SNePS import *
 
 net = Network.Network()
