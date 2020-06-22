@@ -100,7 +100,7 @@ class CaseframeMixIn:
     """ Provides functions related to caseframes to network """
 
     def __init__(self):
-        if type(self) == CaseframeMixIn:
+        if type(self) is CaseframeMixIn:
             raise NotImplementedError("Mixins can't be instantiated.")
 
         self.caseframes = {}

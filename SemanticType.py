@@ -150,7 +150,7 @@ class SemanticMixIn:
     """ Provides functions related to semantic types to network """
 
     def __init__(self):
-        if type(self) == SemanticMixIn:
+        if type(self) is SemanticMixIn:
             raise NotImplementedError("Mixins can't be instantiated.")
 
         self.sem_hierarchy = SemanticHierarchy()
