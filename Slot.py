@@ -7,9 +7,7 @@ class AdjRule(Enum):
     EXPAND = 2
 
 class Slot:
-    def __init__(self, name, sem_type, docstring="", pos_adj=AdjRule.NONE, neg_adj=AdjRule.NONE, min=1, max=None, path=None):
-        if name == "or":
-            print(max)
+    def __init__(self, name, sem_type, docstring, pos_adj, neg_adj, min, max, path):
         self.name = name
         self.docstring = docstring
         self.sem_type = sem_type # Semantic type
@@ -29,7 +27,7 @@ class Slot:
                "\tNegative Adjust: {}\n".format(self.neg_adj) + \
                "\tMinimum Fillers: {}\n".format(self.min) + \
                "\tMaximum Fillers: {}\n".format(self.max) + \
-               "\tPath: {}\n".format(self.path)
+               "\tPath: {}".format(self.path)
 
 class SlotMixIn:
     """ Provides functions related to slots to network """
@@ -39,8 +37,8 @@ class SlotMixIn:
             raise NotImplementedError
         self.slots = {} # AKA Relations
 
-    def define_slot(self, name, sem_type_str, docstring="", pos_adj=AdjRule.REDUCE,
-                    neg_adj=AdjRule.EXPAND, min=1, max=1, path=None):
+    def define_slot(self, name, sem_type_str, docstring="", pos_adj=AdjRule.NONE,
+                    neg_adj=AdjRule.NONE, min=1, max=None, path=None):
         """ Adds new slot to network """
         if name in self.slots:
             print("ERROR: Slot " + name + " already defined. Doing nothing instead.", file=stderr)
