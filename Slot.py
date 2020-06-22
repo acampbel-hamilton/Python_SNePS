@@ -1,5 +1,9 @@
 from enum import Enum
 from sys import stderr
+from .Network import SNePSError
+
+class SlotError(SNePSError):
+    pass
 
 class AdjRule(Enum):
     NONE = 0
@@ -41,8 +45,8 @@ class SlotMixIn:
                     neg_adj=AdjRule.NONE, min=1, max=None, path=None):
         """ Adds new slot to network """
         if name in self.slots:
-            print("ERROR: Slot " + name + " already defined. Doing nothing instead.", file=stderr)
-            return
+            raise SlotError("ERROR: Slot " + name + " already defined. Doing nothing instead.")
+
         sem_type = self.sem_hierarchy.get_type(sem_type_str)
         if sem_type is not None:
             self.slots[name] = Slot(name, sem_type, docstring, pos_adj, neg_adj, min, max, path)
