@@ -12,7 +12,7 @@ tokens = WftLex.tokens
 # -------------- RULES ----------------
 # =====================================
 
-class SNePSSyntaxError(SyntaxError):
+class SNePSWftError(SyntaxError):
     pass
 
 def p_Wft(p):
@@ -69,12 +69,13 @@ def p_NaryOp(p):
            |            DoubImpl LParen Wfts RParen
     '''
     caseframe = current_network.find_caseframe(p[1])
+    if caseframe is None:
+        raise SNePSWftError()
     fillers = Fillers(p[3])
     frame = Frame(caseframe, [fillers])
     for node in current_network.nodes.values():
         if node.has_frame(frame):
             p[0] = node
-            return
     wftNode = Molecular(current_network.sem_hierarchy.get_type("Proposition"))
     wftNode.add_down_cables(frame)
     current_network.nodes[wftNode.name] = wftNode
