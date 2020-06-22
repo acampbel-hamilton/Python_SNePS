@@ -153,7 +153,7 @@ class SemanticMixIn:
 
     def __init__(self):
         if type(self) == SemanticMixIn:
-            raise NotImplementedError
+            raise NotImplementedError("Mixins can't be instantiated.")
 
         self.sem_hierarchy = SemanticHierarchy()
 

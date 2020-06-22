@@ -38,7 +38,7 @@ class SlotMixIn:
 
     def __init__(self):
         if type(self) == SlotMixIn:
-            raise NotImplementedError
+            raise NotImplementedError("Mixins can't be instantiated.")
         self.slots = {} # AKA Relations
 
     def define_slot(self, name, sem_type_str, docstring="", pos_adj=AdjRule.NONE,
