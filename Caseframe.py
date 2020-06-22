@@ -85,6 +85,12 @@ class Fillers:
     def __len__(self):
         return len(self.nodes)
 
+    def __str__(self):
+        ret = "Fillers:"
+        for node in self.nodes:
+            ret += "\n\t" + node.name
+        return ret
+
 
 class CaseframeMixIn:
     """ Provides functions related to caseframes to network """

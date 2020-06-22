@@ -71,6 +71,7 @@ def p_NaryOp(p):
     caseframe = current_network.find_caseframe(p[1])
     fillers = Fillers(p[3])
     frame = Frame(caseframe, [fillers])
+    print(fillers)
     for node in current_network.nodes.values():
         if node.has_frame(frame):
             p[0] = node
