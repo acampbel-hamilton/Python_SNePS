@@ -30,7 +30,7 @@ class Context:
         return self.name == other.name
 
 class ContextMixIn:
-    """ Provides functions related to contexts to network """
+    """ Provides functions related to contexts to network. """
 
     def __init__(self):
         if type(self) == ContextMixIn:
