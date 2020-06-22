@@ -54,7 +54,10 @@ def p_BinaryOp(p):
              |          OrImpl LParen Argument Comma Argument RParen
              |          AndImpl LParen Argument Comma Argument RParen
     '''
-    caseframe = current_network.find_caseframe(p[1])
+    if p[1] == "if" or p[1] == "orimpl":
+        caseframe = current_network.find_caseframe(p[1])
+    else:
+        caseframe = current_network.find_caseframe("andimpl")
     if caseframe is None:
         raise SNePSWftError()
     filler_set = [Fillers(p[3]), Fillers(p[5])]
@@ -62,7 +65,10 @@ def p_BinaryOp(p):
     for node in current_network.nodes.values():
         if node.has_frame(frame):
             p[0] = node
-    wftNode = Molecular(current_network.sem_hierarchy.get_type("Proposition"))
+    if p[1] == "if" or p[1] == "orimpl":
+        wftNode = Molecular(current_network.sem_hierarchy.get_type("Proposition"))
+    else:
+        wftNode = Molecular(current_network.sem_hierarchy.get_type("Proposition"))
     wftNode.add_down_cables(frame)
     current_network.nodes[wftNode.name] = wftNode
     p[0] = wftNode

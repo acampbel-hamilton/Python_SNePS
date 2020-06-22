@@ -126,11 +126,6 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
         self.define_caseframe('iff', 'Propositional', docstring='it is the case that [doubimpl]',
                                slot_names=['iff'])
 
-        self.define_caseframe('andimpl', 'Propositional', docstring='if [ant] then [cq]',
-                               slot_names=["ant", "cq"])
-        self.define_caseframe('orimpl', 'Propositional', docstring='if [ant] then [cq]',
-                               slot_names=["ant", "cq"])
-
         # Aliases
         self.caseframes["nor"].add_alias("not")
         self.caseframe["thnor"].add_alias("thnot")

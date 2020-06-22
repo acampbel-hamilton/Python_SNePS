@@ -54,13 +54,19 @@ t_LParen  = r'\('
 t_RParen  = r'\)'
 t_Integer = r'\d+'
 t_QIdentifier = r'\?[A-Za-z_][A-Za-z0-9_]*'
-t_OrImpl = r'v=>'
-t_AndImpl = r'\d+=>'
 t_LBrace = r'{'
 t_RBrace = r'}'
 t_LBracket = r'\['
 t_RBracket = r'\]'
 t_Comma = r','
+
+def t_AndImpl(t):
+    r'\d+=>'
+    t.value = t.value[:-2]
+
+def t_OrImpl(t):
+    r'v=>'
+    t.value = "orimpl"
 
 def t_Impl(t):
     r'=>'
