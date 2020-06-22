@@ -7,7 +7,7 @@ class Context:
         self.ders = {} # Derived beliefs
 
     def __contains__(self, term):
-        """ overloads the 'in' operator for use on contexts.
+        """ Overloads the 'in' operator for use on contexts.
         checks if the given term object is asserted in the context,
         i.e. that term in in either hyps or ders """
         return term in self.hyps or term in self.ders

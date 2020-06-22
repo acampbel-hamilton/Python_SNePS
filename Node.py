@@ -24,15 +24,15 @@ class Node:
 # =====================================
 
 class Atomic(Node):
-    """ Node that is a leaf in a graph """
+    """ Node that is a leaf in a graph. """
     pass
 
 class Base(Atomic):
-    """ Constant """
+    """ A constant. """
     pass
 
 class Variable(Atomic):
-    """ a variable term ranging over a restricted domain """
+    """ A variable term ranging over a restricted domain. """
     counter = 0
     def __init__(self, name, docstring=""):
         super().__init__(name, docstring) # These need semantic types. This will be an error.
@@ -42,7 +42,7 @@ class Variable(Atomic):
         self.restriction_set[restriction.name] = restriction
 
 class Indefinite(Variable):
-    """ an indefinite object """
+    """ An indefinite object """
     def __init__(self, docstring=""):
         self.name = 'V' + str(super().counter)
         super().__init__(self.name, docstring) # These need semantic types. This will be an error.
@@ -52,7 +52,7 @@ class Indefinite(Variable):
         self.dependency_set[dependency.name] = dependency
 
 class Arbitrary(Variable):
-    """ an arbitaray individual """
+    """ An arbitaray individual """
     def __init__(self, docstring=""):
         self.name = 'V' + str(super().counter)
         super().__init__(self.name, docstring) # These need semantic types. This will be an error.
