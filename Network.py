@@ -75,9 +75,17 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
         self.define_slot('cq', 'Proposition', docstring='consequent for a set',
                          pos_adj=AdjRule.REDUCE, neg_adj=AdjRule.EXPAND, min=1)
 
+        self.define_slot('xor', 'Proposition', doctstring='exclusive or',
+                         pos_adj=AdjRule.REDUCE, neg_adj=AdjRule.EXPAND, min=2)
+        self.define_slot('nand', 'Proposition', doctstring='not and',
+                         pos_adj=AdjRule.REDUCE, neg_adj=AdjRule.EXPAND, min=2)
+        self.define_slot('doublimpl', 'Proposition', doctstring='double implication',
+                         pos_adj=AdjRule.REDUCE, neg_adj=AdjRule.EXPAND, min=2)
+
         # SNeRE
         self.define_slot("action", "Action", docstring="The actions of an act.",
                          neg_adj=AdjRule.NONE, pos_adj=AdjRule.NONE, min=1, max=1)
+
 
         # Condition-Action Rules
         self.define_slot("condition", "Propositional", docstring="Conditions for a rule.",
@@ -88,6 +96,7 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
             neg_adj=AdjRule.REDUCE, pos_adj=AdjRule.EXPAND, min=0)
 
         # Caseframes
+        #TODO: nand, xor, DoubImpl
         self.define_caseframe('Isa', 'Propositional', docstring="[member] is a [class]",
                               slot_names=["member", "class"])
         self.define_caseframe('Equiv', 'Propositional', docstring="[equiv] are all co-referential",
@@ -110,9 +119,16 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
                               slot_names=["proposition", "closedvar"])
         self.define_caseframe('rule', 'Policy', docstring="for the rule [name] to fire, [condition] must be matched, then [action] may occur, and [subrule] may be matched.",
                               slot_names=["rulename", "condition", "action", "subrule"])
+        self.define_caseframe('nand', 'Propositional', docstring='it is the case that [nand]',
+                               slot_names=['nand'])
+        self.define_caseframe('xor', 'Propositional', docstring='it is the case that [xor]',
+                               slot_names=['xor'])
+        self.define_caseframe('doubleimpl', 'Propositional', docstring='it is the case that [doubimpl]',
+                               slot_names=['doubimpl'])
 
         # Aliases
         self.caseframes["nor"].add_alias("not")
+        self.caseframe["thnor"].add_alias("thnot")
 
 
     def assert_wft(self, wft_str, value="hyp"):
