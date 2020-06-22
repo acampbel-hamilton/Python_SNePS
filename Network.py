@@ -46,6 +46,7 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
         self.define_type("Action", ["Thing"])
 
         # Slots
+        # =====
 
         # Propositions
         self.define_slot("class", "Category", docstring="Points to a Category that some Entity is a member of.",
@@ -74,6 +75,10 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
                          pos_adj=AdjRule.EXPAND, neg_adj=AdjRule.REDUCE, min=1)
         self.define_slot('cq', 'Proposition', docstring='consequent for a set',
                          pos_adj=AdjRule.REDUCE, neg_adj=AdjRule.EXPAND, min=1)
+        self.define_slot('not', 'Proposition', docstring='Fillers are arguments of a not',
+                         pos_adj=AdjRule.REDUCE, neg_adj=AdjRule.EXPAND, min=1)
+        self.define_slot('thnot', 'Proposition', docstring='Fillers are arguments of a thnot',
+                         pos_adj=AdjRule.REDUCE, neg_adj=AdjRule.EXPAND, min=1)
 
         # SNeRE
         self.define_slot("action", "Action", docstring="The actions of an act.",
@@ -88,6 +93,7 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
             neg_adj=AdjRule.REDUCE, pos_adj=AdjRule.EXPAND, min=0)
 
         # Caseframes
+        #not, thnot, nand, xor, iff
         self.define_caseframe('Isa', 'Propositional', docstring="[member] is a [class]",
                               slot_names=["member", "class"])
         self.define_caseframe('Equiv', 'Propositional', docstring="[equiv] are all co-referential",
@@ -110,6 +116,8 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
                               slot_names=["proposition", "closedvar"])
         self.define_caseframe('rule', 'Policy', docstring="for the rule [name] to fire, [condition] must be matched, then [action] may occur, and [subrule] may be matched.",
                               slot_names=["rulename", "condition", "action", "subrule"])
+        self.define_caseframe('not', 'Propositional', docstring= 'not [proposition]', slot_names=['not'])
+        # self.define_caseframe('thnot', )
 
     def assert_wft(self, wft_str, value="hyp"):
         if value != "hyp" and value != "true":
