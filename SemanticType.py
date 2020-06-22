@@ -8,7 +8,11 @@ class SemanticHierarchy:
         self.sem_types = {}
         self.sem_types["Entity"] = self.root_node
 
-    def add_type(self, type_name, parent_names=[]):
+    def add_type(self, type_name, parent_names=None):
+        # see https://effbot.org/zone/default-values.htm for why this is necessary
+        if parent_names is None:
+            parent_names = []
+
         # Must be unique
         if type_name in self.sem_types:
             self.add_parent(type_name, parent_names)
@@ -153,8 +157,13 @@ class SemanticMixIn:
 
         self.sem_hierarchy = SemanticHierarchy()
 
-    def define_type(self, name, parent_names=[]):
+    def define_type(self, name, parent_names=None):
         """ Adds term to hierarchy """
+
+        # see https://effbot.org/zone/default-values.htm for why this is necessary
+        if parent_names is None:
+            parent_names = []
+
         self.sem_hierarchy.add_type(name, parent_names)
 
     def show_types(self):

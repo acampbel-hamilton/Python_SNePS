@@ -1,3 +1,8 @@
+from .Error import SNePSError
+
+class ContextError(SNePSError):
+    pass
+
 class Context:
     def __init__(self, name, docstring="", parent=None, hyps={}, ders={}):
         self.name = name
@@ -38,11 +43,9 @@ class ContextMixIn:
         new_context = Context(name, docstring, parent, hyps, ders)
 
         if self == new_context: # Remember == on contexts just compares names
-            print("ERROR: You cannot define contexts with the same name.", file=stderr)
-            return
+            raise ContextError("ERROR: You cannot define contexts with the same name.")
 
         self.contexts[new_context.name] = new_context
-
 
     def list_contexts(self):
         """ Prints out all the contexts in the network """

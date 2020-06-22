@@ -1,0 +1,2 @@
+class SNePSError(Exception):
+    pass

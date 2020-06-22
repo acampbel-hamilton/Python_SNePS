@@ -1,13 +1,17 @@
 from .Slot import *
 from .SemanticType import SemanticType
+from .Error import SNePSError
 from sys import stderr
 
+class CaseframeError(SNePSError):
+    pass
+
 class Caseframe:
-    def __init__(self, name, sem_type, docstring="", slots=[]):
+    def __init__(self, name, sem_type, docstring="", slots=None):
         self.name = name
         self.docstring = docstring
         self.sem_type = sem_type
-        self.slots = slots
+        self.slots = [] if slots is None else slots # see https://effbot.org/zone/default-values.htm for why this is necessary
         self.aliases = [self.name]
 
     def add_alias(self, alias):
@@ -33,15 +37,14 @@ class Caseframe:
 
 
 class Frame:
-    def __init__(self, caseframe, filler_set=[]):
+    def __init__(self, caseframe, filler_set=None):
         self.name = caseframe.name
         self.caseframe = caseframe
-        self.filler_set = filler_set
+        self.filler_set = [] if filler_set is None else filler_set # see https://effbot.org/zone/default-values.htm for why this is necessary
 
         if len(self.filler_set) != len(self.caseframe.slots):
-            print('ERROR: Wrong number of fillers. "' + self.caseframe.name + '" takes ' + \
-                  str(len(self.caseframe.slots)) + ' fillers.', file=stderr)
-            return
+            raise CaseframeError('ERROR: Wrong number of fillers. "' + self.caseframe.name + '" takes ' + \
+                                 str(len(self.caseframe.slots)) + ' fillers.')
 
         self.verify_slots()
 
@@ -58,19 +61,16 @@ class Frame:
             # Check if filler is legal (given limit, adjustment rule)
             for sem_type in fillers.sem_types:
                 if not sem_type.compatible(slot.sem_type):
-                    print("ERROR: Incompatible filler provided for " + slot.name + ".\n" + \
-                        "Slot has type: " + slot.sem_type + ", " + \
-                        "and filler has type: " + sem_type, file=stderr)
-                    return
+                    raise CaseframeError("ERROR: Incompatible filler provided for " + slot.name + ".\n" + \
+                                         "Slot has type: " + slot.sem_type + ", " + \
+                                         "and filler has type: " + sem_type)
 
             # Ensures within min/max of slots
             if len(fillers) < slot.min:
-                print('ERROR: Fewer than minimum required slots provided for "' + slot.name + '"', file=stderr)
-                return
+                raise CaseframeError('ERROR: Fewer than minimum required slots provided for "' + slot.name + '"')
+
             if slot.max is not None and len(fillers) > slot.max:
-                print(slot.max)
-                print('ERROR: Greater than maximum slots provided for "' + slot.name + '"', file=stderr)
-                return
+                raise CaseframeError('ERROR: Greater than maximum slots provided for "' + slot.name + '"')
 
     def __eq__(self, other):
         return self.caseframe == other.caseframe and self.filler_set == other.filler_set
@@ -85,8 +85,8 @@ class Frame:
 class Fillers:
     """ Forms 'cables'/'cablesets' """
 
-    def __init__(self, nodes=[]):
-        self.nodes = nodes
+    def __init__(self, nodes=None):
+        self.nodes = [] if nodes is None else nodes # see https://effbot.org/zone/default-values.htm for why this is necessary
         self.sem_types = [node.sem_type for node in self.nodes]
 
     def __len__(self):
@@ -109,28 +109,29 @@ class CaseframeMixIn:
         if name in self.caseframes:
             return self.caseframes[name]
         else:
-            print('ERROR: Caseframe "' + name + '" not defined.', file=stderr)
-            return None
+            raise CaseframeError('ERROR: Caseframe "' + name + '" not defined.')
 
     def list_caseframes(self):
         for caseframe in self.caseframes:
             print(self.caseframes[caseframe])
 
-    def define_caseframe(self, name, sem_type_name, docstring="", slot_names=[]):
+    def define_caseframe(self, name, sem_type_name, docstring="", slot_names=None):
         """ Defines a new caseframe. """
+        # see https://effbot.org/zone/default-values.htm for why this is necessary
+        if slot_names is None:
+            slot_names = []
+
         # Checks provided slots names are valid
         frame_slots = []
         for slot_name in slot_names:
             if slot_name not in self.slots:
-                print("ERROR: The slot '{}' does not exist".format(slot_name), file=stderr)
-                return
+                raise CaseframeError("ERROR: The slot '{}' does not exist".format(slot_name))
             frame_slots.append(self.slots[slot_name])
 
         # Checks provided type is valid
         sem_type = self.sem_hierarchy.get_type(sem_type_name)
         if sem_type is None:
-            print("ERROR: The semantic type '{}' does not exist".format(sem_type_name), file=stderr)
-            return
+            raise CaseframeError("ERROR: The semantic type '{}' does not exist".format(sem_type_name))
 
         # Builds new caseframe with given parameters
         new_caseframe = Caseframe(name, sem_type, docstring, frame_slots)
@@ -140,11 +141,10 @@ class CaseframeMixIn:
             caseframe = self.caseframes[caseframe_name]
 
             if caseframe.has_alias(name):
-                print("ERROR: Caseframe name '{}' is already taken".format(name), file=stderr)
-                return
+                raise CaseframeError("ERROR: Caseframe name '{}' is already taken".format(name))
 
             if new_caseframe == caseframe:
-                print('ERROR: Your caseframe "' + new_caseframe.name + '" is idential to "' + caseframe.name + '".', file=stderr)
+                print('Your caseframe "' + new_caseframe.name + '" is identical to "' + caseframe.name + '".')
 
                 while True:
                     response = input('Would you like to add an alias to "' + caseframe.name + '"? (y/N)')
