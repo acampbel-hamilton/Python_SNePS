@@ -64,10 +64,10 @@ class Frame:
                     return
 
             # Ensures within min/max of slots
-            if len(fillers) < slot.min and slot.neg_adj != AdjRule.INF_REDUCE:
+            if len(fillers) < slot.min:
                 print('ERROR: Fewer than minimum required slots provided for "' + slot.name + '"', file=stderr)
                 return
-            if len(fillers) > slot.max and slot.neg_adj != AdjRule.INF_EXPAND:
+            if len(fillers) > slot.max and slot.max != None:
                 print('ERROR: Greater than maximum slots provided for "' + slot.name + '"', file=stderr)
                 return
 

@@ -4,9 +4,7 @@ from sys import stderr
 class AdjRule(Enum):
     NONE = 0
     REDUCE = 1
-    INF_REDUCE = 2
-    EXPAND = 3
-    INF_EXPAND = 4
+    EXPAND = 2
 
 class Slot:
     def __init__(self, name, sem_type, docstring="", pos_adj=AdjRule.NONE, neg_adj=AdjRule.NONE, min=1, max=None, path=None):
