@@ -77,8 +77,10 @@ class Molecular(Node):
         return any(frame == current_frame for current_frame in self.down_cableset.values())
 
     def __str__(self):
-        return super().__str__() + \
-               "\t{}".format("\n\t".join(self.up_cableset.keys()))
+        ret = super().__str__()
+        for frame in self.down_cableset.values():
+            ret += "\n\t" + str(frame)
+        return ret
 
 
 class MinMaxOp(Molecular):
