@@ -88,7 +88,6 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
             neg_adj=AdjRule.REDUCE, pos_adj=AdjRule.EXPAND, min=0)
 
         # Caseframes
-        #not, thnot, nand, xor, iff
         self.define_caseframe('Isa', 'Propositional', docstring="[member] is a [class]",
                               slot_names=["member", "class"])
         self.define_caseframe('Equiv', 'Propositional', docstring="[equiv] are all co-referential",
@@ -111,6 +110,10 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
                               slot_names=["proposition", "closedvar"])
         self.define_caseframe('rule', 'Policy', docstring="for the rule [name] to fire, [condition] must be matched, then [action] may occur, and [subrule] may be matched.",
                               slot_names=["rulename", "condition", "action", "subrule"])
+
+        # Aliases
+        self.caseframes["nor"].add_alias("not")
+
 
     def assert_wft(self, wft_str, value="hyp"):
         if value != "hyp" and value != "true":

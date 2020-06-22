@@ -106,8 +106,9 @@ class CaseframeMixIn:
         self.caseframes = {}
 
     def find_caseframe(self, name):
-        if name in self.caseframes:
-            return self.caseframes[name]
+        for caseframe in self.caseframes.values():
+            if caseframe.has_alias(name):
+                return caseframe
         else:
             raise CaseframeError('ERROR: Caseframe "' + name + '" not defined.')
 
