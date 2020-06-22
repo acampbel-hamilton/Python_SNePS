@@ -182,7 +182,6 @@ def p_AtomicName(p):
     '''
     current_network.define_term(p[1], sem_type_name="Proposition")
     p[0] = current_network.find_term(p[1])
-from .Node import Base, Molecular, Indefinite
 
 def p_error(p):
     if p is None:
