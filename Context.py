@@ -34,7 +34,7 @@ class ContextMixIn:
 
     def __init__(self):
         if type(self) == ContextMixIn:
-            raise NotImplementedError
+            raise NotImplementedError("Mixins can't be instantiated.")
 
         self.contexts = {}
         self.default_context = Context("_default", docstring="The default context", hyps={}, ders={})

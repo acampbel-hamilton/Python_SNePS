@@ -40,6 +40,7 @@ class Variable(Atomic):
     def __init__(self, name, docstring=""):
         super().__init__(name, docstring) # These need semantic types. This will be an error.
         self.restriction_set = {}
+        Variable.counter += 1
 
     def add_restriction(self, restriction):
         self.restriction_set[restriction.name] = restriction
@@ -80,10 +81,7 @@ class Molecular(Node):
         return any(frame == current_frame for current_frame in self.down_cableset.values())
 
     def __str__(self):
-        ret = super().__str__()
-        for frame in self.down_cableset.values():
-            ret += "\n\t" + str(frame)
-        return ret
+        return super().__str__() + "\n\t" + "\n\t".join(str(frame) for frame in self.down_cableset.values())
 
 
 class MinMaxOp(Molecular):
@@ -94,12 +92,16 @@ class MinMaxOp(Molecular):
         self.max = max
 
 
+# =====================================
+# --------------- MIXIN ---------------
+# =====================================
+
 class NodeMixIn:
-    """ Provides functions related to nodes to network """
+    """ Provides functions related to nodes to Network """
 
     def __init__(self):
         if type(self) == NodeMixIn:
-            raise NotImplementedError
+            raise NotImplementedError("Mixins can't be instantiated.")
         self.nodes = {}
 
     def define_term(self, name, docstring="", sem_type_name="Entity"):

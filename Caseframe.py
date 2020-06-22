@@ -101,7 +101,7 @@ class CaseframeMixIn:
 
     def __init__(self):
         if type(self) == CaseframeMixIn:
-            raise NotImplementedError
+            raise NotImplementedError("Mixins can't be instantiated.")
 
         self.caseframes = {}
 
