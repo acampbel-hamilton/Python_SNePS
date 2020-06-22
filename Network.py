@@ -96,7 +96,6 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
             neg_adj=AdjRule.REDUCE, pos_adj=AdjRule.EXPAND, min=0)
 
         # Caseframes
-        #TODO: nand, xor, DoubImpl
         self.define_caseframe('Isa', 'Propositional', docstring="[member] is a [class]",
                               slot_names=["member", "class"])
         self.define_caseframe('Equiv', 'Propositional', docstring="[equiv] are all co-referential",

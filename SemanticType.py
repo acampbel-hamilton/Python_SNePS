@@ -103,8 +103,6 @@ class SemanticHierarchy:
             return self.sem_types[type_name]
         else:
             print("ERROR: Type '" + type_name + "' does not exist")
-            return None
-
 
     def add_parent(self, type_name, parent_names):
         type = self.sem_types[type_name]
