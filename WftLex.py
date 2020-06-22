@@ -52,8 +52,6 @@ tokens = (
 
 t_LParen  = r'\('
 t_RParen  = r'\)'
-t_Impl = r'=>'
-t_DoubImpl = r'<=>'
 t_Integer = r'\d+'
 t_QIdentifier = r'\?[A-Za-z_][A-Za-z0-9_]*'
 t_OrImpl = r'v=>'
@@ -63,6 +61,14 @@ t_RBrace = r'}'
 t_LBracket = r'\['
 t_RBracket = r'\]'
 t_Comma = r','
+
+def t_Impl(t):
+    r'=>'
+    t.value = "if"
+
+def t_DoubleImpl(t):
+    r'<=>'
+    t.value = "iff"
 
 def t_Identifier(t):
     r'[A-Za-z_][A-Za-z0-9_]*'

@@ -119,12 +119,18 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
                               slot_names=["proposition", "closedvar"])
         self.define_caseframe('rule', 'Policy', docstring="for the rule [name] to fire, [condition] must be matched, then [action] may occur, and [subrule] may be matched.",
                               slot_names=["rulename", "condition", "action", "subrule"])
+
         self.define_caseframe('nand', 'Propositional', docstring='it is the case that [nand]',
                                slot_names=['nand'])
         self.define_caseframe('xor', 'Propositional', docstring='it is the case that [xor]',
                                slot_names=['xor'])
         self.define_caseframe('doubleimpl', 'Propositional', docstring='it is the case that [doubimpl]',
                                slot_names=['doubimpl'])
+
+        self.define_caseframe('andimpl', 'Propositional', docstring='if [ant] then [cq]',
+                               slot_names=["ant", "cq"])
+        self.define_caseframe('orimpl', 'Propositional', docstring='if [ant] then [cq]',
+                               slot_names=["ant", "cq"])
 
         # Aliases
         self.caseframes["nor"].add_alias("not")
