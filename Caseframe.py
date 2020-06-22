@@ -88,7 +88,7 @@ class Fillers:
     def __str__(self):
         ret = "Fillers:"
         for node in self.nodes:
-            ret += "\n\t" + node.name
+            ret += "\n\t" + node.__str__()
         return ret
 
 
