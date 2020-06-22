@@ -75,11 +75,11 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
         self.define_slot('cq', 'Proposition', docstring='consequent for a set',
                          pos_adj=AdjRule.REDUCE, neg_adj=AdjRule.EXPAND, min=1)
 
-        self.define_slot('xor', 'Proposition', doctstring='exclusive or',
+        self.define_slot('xor', 'Proposition', docstring='exclusive or',
                          pos_adj=AdjRule.REDUCE, neg_adj=AdjRule.EXPAND, min=2)
-        self.define_slot('nand', 'Proposition', doctstring='not and',
+        self.define_slot('nand', 'Proposition', docstring='not and',
                          pos_adj=AdjRule.REDUCE, neg_adj=AdjRule.EXPAND, min=2)
-        self.define_slot('iff', 'Proposition', doctstring='double implication',
+        self.define_slot('iff', 'Proposition', docstring='double implication',
                          pos_adj=AdjRule.REDUCE, neg_adj=AdjRule.EXPAND, min=2)
 
         # SNeRE
