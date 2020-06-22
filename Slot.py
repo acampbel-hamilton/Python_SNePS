@@ -8,6 +8,8 @@ class AdjRule(Enum):
 
 class Slot:
     def __init__(self, name, sem_type, docstring="", pos_adj=AdjRule.NONE, neg_adj=AdjRule.NONE, min=1, max=None, path=None):
+        if name == "or":
+            print(max)
         self.name = name
         self.docstring = docstring
         self.sem_type = sem_type # Semantic type
