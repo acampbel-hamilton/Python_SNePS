@@ -7,7 +7,6 @@ from .WftParse import wft_parser
 from .Error import SNePSError
 from sys import stderr
 
-
 class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn):
     def __init__(self):
         for cls in type(self).__bases__:
