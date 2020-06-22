@@ -9,7 +9,6 @@ from .Slot import SlotMixIn, AdjRule
 from .Node import NodeMixIn
 from .Caseframe import CaseframeMixIn
 from .WftParse import wft_parser
-from .Error import SNePSError
 from sys import stderr
 
 class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn):
@@ -121,6 +120,7 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
 
     def assert_wft(self, wft_str, value="hyp"):
         if value != "hyp" and value != "true":
-            raise SNePSError("ERROR: Invalid parameters on assertion. Must be either true or hyp.")
+            print("ERROR: Invalid parameters on assertion. Must be either true or hyp.", file=stderr)
+            return
 
         wft_parser(wft_str, self)
