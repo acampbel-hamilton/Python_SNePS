@@ -75,6 +75,12 @@ class Frame:
     def __eq__(self, other):
         return self.caseframe == other.caseframe and self.filler_set == other.filler_set
 
+    def __str__(self):
+        ret = self.name
+        for fillers in self.filler_set:
+            ret += fillers.__str__()
+        return ret
+
 
 class Fillers:
     """ Forms 'cables'/'cablesets' """
@@ -87,9 +93,9 @@ class Fillers:
         return len(self.nodes)
 
     def __str__(self):
-        ret = "Fillers:"
+        ret = " ... fillers:"
         for node in self.nodes:
-            ret += "\n\t" + node.__str__()
+            ret += "\n\t\t" + node.__str__()
         return ret
 
 
