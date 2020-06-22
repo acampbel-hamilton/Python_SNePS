@@ -1,3 +1,8 @@
+"""
+This is the main file of the package. In here, we define the Network class.
+Authors: Seamus Wiseman, John Madigan, Ben Kallus
+"""
+
 from .SemanticType import SemanticMixIn
 from .Context import ContextMixIn
 from .Slot import SlotMixIn, AdjRule
