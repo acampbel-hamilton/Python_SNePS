@@ -1,4 +1,5 @@
 from . import ply
+from .ply import lex
 from re import match
 from sys import stderr
 
@@ -35,5 +36,4 @@ def t_error(t):
 t_ignore = ' \t\r\n\f\v'
 
 # Build the lexer
-from .ply import lex
 lexer = lex.lex()

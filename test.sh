@@ -2,5 +2,5 @@
 
 cp test.py ..
 cd ..
-python test.py
+python3 test.py
 rm test.py

@@ -33,11 +33,11 @@ class Slot:
                "\tMaximum Fillers: {}\n".format(self.max) + \
                "\tPath: {}".format(self.path)
 
-class SlotMixIn:
+class SlotMixin:
     """ Provides functions related to slots to Network """
 
     def __init__(self):
-        if type(self) is SlotMixIn:
+        if type(self) is SlotMixin:
             raise NotImplementedError("Mixins can't be instantiated.")
         self.slots = {} # AKA Relations
 

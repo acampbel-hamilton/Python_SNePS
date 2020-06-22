@@ -3,15 +3,15 @@ This is the main file of the package. In here, we define the Network class.
 Authors: Seamus Wiseman, John Madigan, Ben Kallus
 """
 
-from .SemanticType import SemanticMixIn
-from .Context import ContextMixIn
-from .Slot import SlotMixIn, AdjRule
-from .Node import NodeMixIn
-from .Caseframe import CaseframeMixIn
+from .SemanticType import SemanticMixin
+from .Context import ContextMixin
+from .Slot import SlotMixin, AdjRule
+from .Node import NodeMixin
+from .Caseframe import CaseframeMixin
 from .WftParse import wft_parser
 from sys import stderr
 
-class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn):
+class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin):
     def __init__(self):
         for cls in type(self).__bases__:
             cls.__init__(self)
@@ -75,11 +75,11 @@ class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn)
         self.define_slot('cq', 'Proposition', docstring='consequent for a set',
                          pos_adj=AdjRule.REDUCE, neg_adj=AdjRule.EXPAND, min=1)
 
-        self.define_slot('xor', 'Proposition', doctstring='exclusive or',
+        self.define_slot('xor', 'Proposition', docstring='exclusive or',
                          pos_adj=AdjRule.REDUCE, neg_adj=AdjRule.EXPAND, min=2)
-        self.define_slot('nand', 'Proposition', doctstring='not and',
+        self.define_slot('nand', 'Proposition', docstring='not and',
                          pos_adj=AdjRule.REDUCE, neg_adj=AdjRule.EXPAND, min=2)
-        self.define_slot('iff', 'Proposition', doctstring='double implication',
+        self.define_slot('iff', 'Proposition', docstring='double implication',
                          pos_adj=AdjRule.REDUCE, neg_adj=AdjRule.EXPAND, min=2)
 
         # SNeRE

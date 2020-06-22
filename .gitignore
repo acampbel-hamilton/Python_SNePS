@@ -4,4 +4,4 @@ parsetab.py
 parser.out
 test.py
 test.sh
-
+*.pyc
