@@ -3,15 +3,15 @@ This is the main file of the package. In here, we define the Network class.
 Authors: Seamus Wiseman, John Madigan, Ben Kallus
 """
 
-from .SemanticType import SemanticMixIn
-from .Context import ContextMixIn
-from .Slot import SlotMixIn, AdjRule
-from .Node import NodeMixIn
-from .Caseframe import CaseframeMixIn
+from .SemanticType import SemanticMixin
+from .Context import ContextMixin
+from .Slot import SlotMixin, AdjRule
+from .Node import NodeMixin
+from .Caseframe import CaseframeMixin
 from .WftParse import wft_parser
 from sys import stderr
 
-class Network(SlotMixIn, CaseframeMixIn, SemanticMixIn, NodeMixIn, ContextMixIn):
+class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin):
     def __init__(self):
         for cls in type(self).__bases__:
             cls.__init__(self)

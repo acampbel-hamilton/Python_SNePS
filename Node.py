@@ -96,11 +96,11 @@ class MinMaxOp(Molecular):
 # --------------- MIXIN ---------------
 # =====================================
 
-class NodeMixIn:
+class NodeMixin:
     """ Provides functions related to nodes to Network """
 
     def __init__(self):
-        if type(self) is NodeMixIn:
+        if type(self) is NodeMixin:
             raise NotImplementedError("Mixins can't be instantiated.")
         self.nodes = {}
 

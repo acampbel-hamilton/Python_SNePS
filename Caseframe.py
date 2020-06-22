@@ -96,11 +96,11 @@ class Fillers:
         return " fillers:" + "".join("\n\t\t" + str(node) for node in self.nodes)
 
 
-class CaseframeMixIn:
+class CaseframeMixin:
     """ Provides functions related to caseframes to network """
 
     def __init__(self):
-        if type(self) is CaseframeMixIn:
+        if type(self) is CaseframeMixin:
             raise NotImplementedError("Mixins can't be instantiated.")
 
         self.caseframes = {}

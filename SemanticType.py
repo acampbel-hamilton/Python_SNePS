@@ -146,11 +146,11 @@ class SemanticType:
         return "\t" * level + self.name + ("\n" if self.children != [] else "") + \
                "".join(child.__str__(level + 1) for child in self.children)
 
-class SemanticMixIn:
+class SemanticMixin:
     """ Provides functions related to semantic types to network """
 
     def __init__(self):
-        if type(self) is SemanticMixIn:
+        if type(self) is SemanticMixin:
             raise NotImplementedError("Mixins can't be instantiated.")
 
         self.sem_hierarchy = SemanticHierarchy()

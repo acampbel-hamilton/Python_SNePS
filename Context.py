@@ -29,11 +29,11 @@ class Context:
     def __eq__(self, other):
         return self.name == other.name
 
-class ContextMixIn:
+class ContextMixin:
     """ Provides functions related to contexts to network. """
 
     def __init__(self):
-        if type(self) is ContextMixIn:
+        if type(self) is ContextMixin:
             raise NotImplementedError("Mixins can't be instantiated.")
 
         self.contexts = {}
