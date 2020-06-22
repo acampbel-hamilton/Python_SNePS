@@ -138,9 +138,7 @@ class CaseframeMixin:
         new_caseframe = Caseframe(name, sem_type, docstring, frame_slots)
 
         # Checks if identical to existing caseframe
-        for caseframe_name in self.caseframes:
-            caseframe = self.caseframes[caseframe_name]
-
+        for caseframe in self.caseframes.values():
             if caseframe.has_alias(name):
                 raise CaseframeError("ERROR: Caseframe name '{}' is already taken".format(name))
 
