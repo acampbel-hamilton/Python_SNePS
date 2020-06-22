@@ -67,7 +67,7 @@ class Frame:
             if len(fillers) < slot.min:
                 print('ERROR: Fewer than minimum required slots provided for "' + slot.name + '"', file=stderr)
                 return
-            if len(fillers) > slot.max and slot.max != None:
+            if slot.max is not None and len(fillers) > slot.max:
                 print(slot.max)
                 print('ERROR: Greater than maximum slots provided for "' + slot.name + '"', file=stderr)
                 return
