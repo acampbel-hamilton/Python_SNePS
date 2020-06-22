@@ -1,8 +1,8 @@
 from enum import Enum
 from sys import stderr
-from .Error import SNePSError
+from .Error import SNError
 
-class SlotError(SNePSError):
+class SlotError(SNError):
     pass
 
 class AdjRule(Enum):
@@ -34,7 +34,7 @@ class Slot:
                "\tPath: {}".format(self.path)
 
 class SlotMixIn:
-    """ Provides functions related to slots to network """
+    """ Provides functions related to slots to Network """
 
     def __init__(self):
         if type(self) == SlotMixIn:

@@ -1,9 +1,9 @@
 from .Slot import *
 from .SemanticType import SemanticType
-from .Error import SNePSError
+from .Error import SNError
 from sys import stderr
 
-class CaseframeError(SNePSError):
+class CaseframeError(SNError):
     pass
 
 class Caseframe:

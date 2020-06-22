@@ -1,6 +1,6 @@
-from .Error import SNePSError
+from .Error import SNError
 
-class ContextError(SNePSError):
+class ContextError(SNError):
     pass
 
 class Context:

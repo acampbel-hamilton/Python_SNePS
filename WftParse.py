@@ -3,10 +3,10 @@ from .ply import *
 from .Network import *
 from .Caseframe import Frame, Fillers
 from .Node import Base, Molecular, Indefinite, Arbitrary, MinMaxOp
-from .Error import SNePSError
+from .Error import SNError
 from sys import stderr
 
-class SNePSWftError(SNePSError):
+class SNePSWftError(SNError):
     pass
 
 current_network = None
@@ -83,7 +83,7 @@ def p_NaryOp(p):
     '''
     caseframe = current_network.find_caseframe(p[1])
     if caseframe is None:
-        raise SNePSError("No caseframe!!")
+        raise SNError("No caseframe!!")
     fillers = Fillers(p[3])
     frame = Frame(caseframe, [fillers])
     for node in current_network.nodes.values():
@@ -243,5 +243,5 @@ def wft_parser(wft, network):
     if wft != '':
         try:
             yacc.parse(wft)
-        except SNePSError as e:
+        except SNError as e:
             print(e)

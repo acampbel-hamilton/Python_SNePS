@@ -1,7 +1,7 @@
 from .Caseframe import Frame
-from .Error import SNePSError
+from .Error import SNError
 
-class NodeError(SNePSError):
+class NodeError(SNError):
     pass
 
 class Node:
@@ -17,9 +17,6 @@ class Node:
     def add_up_cable(self, frame):
         self.up_cableset[frame.name] = frame
 
-    def has_frame(self, frame):
-        return False
-
     def __str__(self):
         return "<{}>: {}".format(self.name, self.docstring)
 
@@ -29,7 +26,9 @@ class Node:
 
 class Atomic(Node):
     """ Node that is a leaf in a graph. """
-    pass
+    def has_frame(self, frame):
+        """ Atomics don't have frames, so this always returns False. """
+        return False
 
 class Base(Atomic):
     """ A constant. """
@@ -46,7 +45,7 @@ class Variable(Atomic):
         self.restriction_set[restriction.name] = restriction
 
 class Indefinite(Variable):
-    """ An indefinite object """
+    """ An indefinite object. """
     def __init__(self, docstring=""):
         self.name = 'V' + str(super().counter)
         super().__init__(self.name, docstring) # These need semantic types. This will be an error.
@@ -56,7 +55,7 @@ class Indefinite(Variable):
         self.dependency_set[dependency.name] = dependency
 
 class Arbitrary(Variable):
-    """ An arbitaray individual """
+    """ An arbitaray individual. """
     def __init__(self, docstring=""):
         self.name = 'V' + str(super().counter)
         super().__init__(self.name, docstring) # These need semantic types. This will be an error.

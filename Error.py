@@ -1,2 +1,2 @@
-class SNePSError(Exception):
+class SNError(Exception):
     pass
