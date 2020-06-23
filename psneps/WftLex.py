@@ -103,7 +103,7 @@ from .ply import lex
 lexer = lex.lex()
 
 if __name__ == '__main__':
-    lexer = ply.lex.lex()
+    lexer = lex.lex()
     while True:
         try:
             s = input('Command: ')
