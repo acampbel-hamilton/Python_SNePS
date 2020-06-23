@@ -117,7 +117,7 @@ class SemanticHierarchy:
                 type.add_parent(parent)
                 parent.add_child(type)
 
-    def  fill_slot(self, node, slot_type):
+    def fill_slot(self, node, slot_type):
         filler_type = node.sem_type
         if filler_type is slot_type or slot_type.subtype(filler_type):
             return True
