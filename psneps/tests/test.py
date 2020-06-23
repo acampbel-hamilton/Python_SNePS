@@ -1,8 +1,7 @@
-from ..Python_SNePS import *
+from ..psneps import *
 
 net = Network.Network()
 
 net.assert_wft("or(a, b)")
 
 net.all_terms()
-
