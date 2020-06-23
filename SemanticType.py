@@ -1,5 +1,8 @@
-from sys import stderr
 from math import inf
+from .Error import SNError
+
+class SemError(SNError):
+    pass
 
 class SemanticHierarchy:
     """ Contains tree-like structure for semantics (Entity, individual, etc.) """
@@ -44,7 +47,7 @@ class SemanticHierarchy:
         if gcd is not None:
             return gcd
 
-        print('WARNING: Did not retypecast', term_name, file=stderr)
+        raise SemError('WARNING: Could not retypecast "' + term_name + '" from ' + current_type.name + " to " + new_type.name)
         return current_type
 
     def greatest_common_subtype(self, term_name, type1, type2):

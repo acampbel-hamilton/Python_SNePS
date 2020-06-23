@@ -234,9 +234,9 @@ def p_AtomicName2(p):
 
 def p_error(p):
     if p is None:
-        raise SNePSWftError("ERROR: Term reached end unexpectedly.")
+        raise SNePSWftError("PARSING FAILED: Term reached end unexpectedly.")
     else:
-        raise SNePSWftError("ERROR: Syntax error on token '" + p.type + "'")
+        raise SNePSWftError("PARSING FAILED: Syntax error on token '" + p.type + "'")
 
 # =====================================
 # ------------ RULES END --------------
@@ -250,4 +250,6 @@ def wft_parser(wft, network):
         try:
             yacc.parse(wft)
         except SNError as e:
+            if type(e) is not SNePSWftError:
+                print("PARSING FAILED:\n\t", end='')
             print(e)
