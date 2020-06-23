@@ -119,14 +119,8 @@ class SemanticHierarchy:
 
     def fill_slot(self, node, slot_type):
         filler_type = node.sem_type
-        if filler_type is slot_type or slot_type.subtype(filler_type):
-            return True
-        else:
-            try:
+        if filler_type is not slot_type and not slot_type.subtype(filler_type):
                 node.sem_type = self.respecify(node.name, filler_type, slot_type)
-                return True
-            except SemError as e:
-                return False
 
     def __str__(self):
         return ", ".join(self.sem_types.keys()) + "\n" + str(self.root_node)

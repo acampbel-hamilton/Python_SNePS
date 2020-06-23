@@ -62,10 +62,7 @@ class Frame:
             # Check if filler is legal (given limit, adjustment rule)
             for node in fillers.nodes:
                 sem_hierarchy = self.caseframe.network.sem_hierarchy
-                if not sem_hierarchy.fill_slot(node, slot.sem_type):
-                    raise CaseframeError("ERROR: Incompatible filler provided for " + slot.name + ". " + \
-                                         "Slot has type " + slot.sem_type.name + ", " + \
-                                         "and filler has type " + filler.sem_type.name)
+                sem_hierarchy.fill_slot(node, slot.sem_type)
 
             # Ensures within min/max of slots
             if len(fillers) < slot.min:
