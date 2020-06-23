@@ -47,7 +47,7 @@ class SemanticHierarchy:
         if gcd is not None:
             return gcd
 
-        raise SemError('WARNING: Did not retypecast', term_name)
+        raise SemError('WARNING: Could not retypecast "' + term_name + '" from ' + current_type.name + " to " + new_type.name)
         return current_type
 
     def greatest_common_subtype(self, term_name, type1, type2):

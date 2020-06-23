@@ -250,4 +250,6 @@ def wft_parser(wft, network):
         try:
             yacc.parse(wft)
         except SNError as e:
+            if type(e) is not SNePSWftError:
+                print("PARSING FAILED:\n\t", end='')
             print(e)
