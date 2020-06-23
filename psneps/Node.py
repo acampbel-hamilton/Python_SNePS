@@ -6,7 +6,7 @@ class NodeError(SNError):
 
 class Node:
     """ Root of syntactic hierarchy """
-    def __init__(self, name, sem_type, docstring=""):
+    def __init__(self, name, sem_type, docstring):
         self.name = name
         self.docstring = docstring
         self.up_cableset = {} # References to frames that point to this node
