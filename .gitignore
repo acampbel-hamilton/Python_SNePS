@@ -1,7 +1,5 @@
-__pycache__
-.DS_Store
+**/__pycache__
+**/.DS_Store
 parsetab.py
 parser.out
-test.py
-test.sh
 *.pyc
