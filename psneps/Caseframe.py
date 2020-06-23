@@ -77,8 +77,8 @@ class Frame:
 
     def __str__(self):
         ret = self.name
-        for fillers in self.filler_set:
-            ret += fillers.__str__()
+        for i in range(0, len(self.filler_set)):
+            ret += self.filler_set[i].__str__(self.caseframe.slots[i].name)
         return ret
 
 
@@ -92,8 +92,8 @@ class Fillers:
     def __len__(self):
         return len(self.nodes)
 
-    def __str__(self):
-        return " fillers:" + "".join("\n\t\t" + str(node) for node in self.nodes)
+    def __str__(self, slot_name):
+        return "\n\t  " + slot_name + ":" + "".join("\n\t    " + str(node) for node in self.nodes)
 
 
 class CaseframeMixin:
