@@ -36,6 +36,7 @@ class SemanticHierarchy:
     def respecify(self, term_name, current_type, new_type):
         """ Given new and old semantic type for a node, returns a computed new type
             e.g. Cassie is a human and a robot, therefore Cassie is a cyborg """
+
         if current_type is new_type:
             return new_type
 

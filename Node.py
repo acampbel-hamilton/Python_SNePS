@@ -18,27 +18,27 @@ class Node:
         self.up_cableset[frame.name] = frame
 
     def __str__(self):
-        return "<{}>: {}".format(self.name, self.docstring)
+        return "<{}>: [{}] {}".format(self.name, self.sem_type, self.docstring)
 
 # =====================================
 # ---------- ATOMIC NODES -------------
 # =====================================
 
 class Atomic(Node):
-    """ Node that is a leaf in a graph. """
+    """ Node that is a leaf in a graph. (An abstract class) """
     def has_frame(self, frame):
         """ Atomics don't have frames, so this always returns False. """
         return False
 
 class Base(Atomic):
-    """ A constant. """
+    """ A constant. (An abstract class) """
     pass
 
 class Variable(Atomic):
     """ A variable term ranging over a restricted domain. """
     counter = 0
     def __init__(self, name, docstring=""):
-        super().__init__(name, docstring) # These need semantic types. This will be an error.
+        super().__init__(name, docstring) # This needs a semantic types. This will be an error.
         self.restriction_set = {}
         Variable.counter += 1
 
@@ -104,7 +104,7 @@ class NodeMixin:
             raise NotImplementedError("Mixins can't be instantiated.")
         self.nodes = {}
 
-    def define_term(self, name, docstring="", sem_type_name="Entity"):
+    def define_term(self, name, sem_type_name="Entity", docstring=""):
         # Creates base atomic node
         if name in self.nodes:
             node = self.nodes[name]
