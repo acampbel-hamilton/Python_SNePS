@@ -40,12 +40,10 @@ class ContextMixin:
         self.default_context = Context("_default", docstring="The default context", hyps={}, ders={})
 
     def define_context(self, name, docstring="", parent="_default", hyps={}, ders={}):
-        new_context = Context(name, docstring, parent, hyps, ders)
-
-        if self == new_context: # Remember == on contexts just compares names
+        if name in self.contexts:
             raise ContextError("ERROR: You cannot define contexts with the same name.")
-
-        self.contexts[new_context.name] = new_context
+        else:
+            self.contexts[name] = new_context = Context(name, docstring, parent, hyps, ders)
 
     def list_contexts(self):
         """ Prints out all the contexts in the network """
