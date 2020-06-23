@@ -126,7 +126,6 @@ class SemanticHierarchy:
                 node.sem_type = self.respecify(node.name, filler_type, slot_type)
                 return True
             except SemError as e:
-                print(e)
                 return False
 
     def __str__(self):
