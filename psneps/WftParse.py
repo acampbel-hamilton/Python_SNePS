@@ -58,9 +58,11 @@ def p_BinaryOp(p):
         caseframe = current_network.find_caseframe(p[1])
     else:
         caseframe = current_network.find_caseframe("andimpl")
+        # thresh? value is int(p[1])
+        raise SNePSWftError("Not yet implemented!")
     if caseframe is None:
         raise SNePSWftError()
-    filler_set = [Fillers(p[3]), Fillers(p[5])]
+    filler_set = [p[3], p[5]]
     frame = Frame(caseframe, filler_set)
     for node in current_network.nodes.values():
         if node.has_frame(frame):
@@ -144,7 +146,7 @@ def p_QIdenStmt(p):
     QIdenStmt :         QIdentifier LParen Wfts RParen
               |         QIdentifier LParen RParen
     '''
-
+    raise SNePSWftError("Not yet implemented!")
 
 # e.g. wft1
 def p_Argument1(p):
