@@ -93,7 +93,7 @@ class Fillers:
         return len(self.nodes)
 
     def __str__(self, slot_name):
-        return "\n\t\t" + slot_name + ":" + "".join("\n\t\t\t" + str(node) for node in self.nodes)
+        return "\n\t  " + slot_name + ":" + "".join("\n\t    " + str(node) for node in self.nodes)
 
 
 class CaseframeMixin:
