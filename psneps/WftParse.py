@@ -59,9 +59,6 @@ def p_BinaryOp(p):
     else:
         caseframe = current_network.find_caseframe("andimpl")
         # thresh? value is int(p[1])
-        raise SNePSWftError("Not yet implemented!")
-    if caseframe is None:
-        raise SNePSWftError()
     filler_set = [p[3], p[5]]
     frame = Frame(caseframe, filler_set)
     for node in current_network.nodes.values():
@@ -90,8 +87,6 @@ def p_NaryOp(p):
            |            DoubImpl LParen Wfts RParen
     '''
     caseframe = current_network.find_caseframe(p[1])
-    if caseframe is None:
-        raise SNError("No caseframe!!")
     fillers = Fillers(p[3])
     frame = Frame(caseframe, [fillers])
     for node in current_network.nodes.values():
@@ -109,6 +104,16 @@ def p_MinMaxOp(p):
              |          Thresh LBrace Integer Comma Integer RBrace LParen Wfts RParen
              |          Thresh LBrace Integer RBrace LParen Wfts RParen
     '''
+    caseframe = current_network.find_caseframe(p[1])
+    fillers = Fillers(p[8])
+    frame = Frame(caseframe, [fillers])
+    for node in current_network.nodes.values():
+        if node.has_frame(frame) and node.has_thresh(p[3], p[5]):
+            p[0] = node
+    wftNode = MinMaxOpNode(current_network.sem_hierarchy.get_type("Proposition"), p[3], p[5])
+    wftNode.add_down_cables(frame)
+    current_network.nodes[wftNode.name] = wftNode
+    p[0] = wftNode
 
 # e.g. every{x}(Isa(x, Dog))
 def p_EveryStmt(p):

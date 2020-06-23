@@ -6,7 +6,7 @@ class NodeError(SNError):
 
 class Node:
     """ Root of syntactic hierarchy """
-    def __init__(self, name, sem_type, docstring):
+    def __init__(self, name, sem_type, docstring=""):
         self.name = name
         self.docstring = docstring
         self.up_cableset = {} # References to frames that point to this node
@@ -36,9 +36,9 @@ class Base(Atomic):
 
 class Variable(Atomic):
     """ A variable term ranging over a restricted domain. """
-    counter = 0
-    def __init__(self, name, docstring=""):
-        super().__init__(name, docstring) # This needs a semantic types. This will be an error.
+    counter = 1
+    def __init__(self, name):
+        super().__init__(name) # This needs a semantic types. This will be an error.
         self.restriction_set = {}
         Variable.counter += 1
 
@@ -47,9 +47,9 @@ class Variable(Atomic):
 
 class Indefinite(Variable):
     """ An indefinite object. """
-    def __init__(self, docstring=""):
+    def __init__(self):
         self.name = 'V' + str(super().counter)
-        super().__init__(self.name, docstring) # These need semantic types. This will be an error.
+        super().__init__(self.name) # These need semantic types. This will be an error.
         self.dependency_set = {}
 
     def add_dependency(self, dependency):
@@ -57,9 +57,9 @@ class Indefinite(Variable):
 
 class Arbitrary(Variable):
     """ An arbitaray individual. """
-    def __init__(self, docstring=""):
+    def __init__(self):
         self.name = 'V' + str(super().counter)
-        super().__init__(self.name, docstring) # These need semantic types. This will be an error.
+        super().__init__(self.name) # These need semantic types. This will be an error.
 
 # =====================================
 # --------- MOLECULAR NODES -----------
@@ -84,10 +84,10 @@ class Molecular(Node):
         return super().__str__() + "\n\t" + "\n\t".join(str(frame) for frame in self.down_cableset.values())
 
 
-class MinMaxOp(Molecular):
+class MinMaxOpNode(Molecular):
     """ Thresh/andor with two values """
-    def __init__(self, name, docstring="", min=1, max=1):
-        super().__init__(name, docstring)
+    def __init__(self, sem_type, min=1, max=1):
+        super().__init__(sem_type)
         self.min = min
         self.max = max
 
