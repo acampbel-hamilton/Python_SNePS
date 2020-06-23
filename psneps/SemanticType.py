@@ -117,6 +117,18 @@ class SemanticHierarchy:
                 type.add_parent(parent)
                 parent.add_child(type)
 
+    def  fill_slot(self, node, slot_type):
+        filler_type = node.sem_type
+        if filler_type is slot_type or slot_type.subtype(filler_type):
+            return True
+        else:
+            try:
+                node.sem_type = self.respecify(node.name, filler_type, slot_type)
+                return True
+            except SemError as e:
+                print(e)
+                return False
+
     def __str__(self):
         return ", ".join(self.sem_types.keys()) + "\n" + str(self.root_node)
 
@@ -139,12 +151,9 @@ class SemanticType:
     def add_child(self, child):
         self.children.append(child)
 
-    def compatible(self, other_type):
-        return other_type is self or other_type.subtype(self)
-
     def subtype(self, potential_child):
         """ Determines if given node is a descendant of self """
-        return any(child is potential_child or child.subtype(potential_child) for child in children)
+        return any(child is potential_child or child.subtype(potential_child) for child in self.children)
 
     def __str__(self, level=0):
         return "\t" * level + self.name + ("\n" if self.children != [] else "") + \

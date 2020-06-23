@@ -7,8 +7,9 @@ class CaseframeError(SNError):
     pass
 
 class Caseframe:
-    def __init__(self, name, sem_type, docstring="", slots=None):
+    def __init__(self, name, network, sem_type, docstring="", slots=None):
         self.name = name
+        self.network = network
         self.docstring = docstring
         self.sem_type = sem_type
         self.slots = [] if slots is None else slots # see https://effbot.org/zone/default-values.htm for why this is necessary
@@ -59,11 +60,12 @@ class Frame:
             fillers = self.filler_set[i]
 
             # Check if filler is legal (given limit, adjustment rule)
-            for sem_type in fillers.sem_types:
-                if not sem_type.compatible(slot.sem_type):
-                    raise CaseframeError("ERROR: Incompatible filler provided for " + slot.name + ".\n" + \
-                                         "Slot has type: " + slot.sem_type + ", " + \
-                                         "and filler has type: " + sem_type)
+            for node in fillers.nodes:
+                sem_hierarchy = self.caseframe.network.sem_hierarchy
+                if not sem_hierarchy.fill_slot(node, slot.sem_type):
+                    raise CaseframeError("ERROR: Incompatible filler provided for " + slot.name + ". " + \
+                                         "Slot has type " + slot.sem_type.name + ", " + \
+                                         "and filler has type " + filler.sem_type.name)
 
             # Ensures within min/max of slots
             if len(fillers) < slot.min:
@@ -87,7 +89,6 @@ class Fillers:
 
     def __init__(self, nodes=None):
         self.nodes = [] if nodes is None else nodes # see https://effbot.org/zone/default-values.htm for why this is necessary
-        self.sem_types = [node.sem_type for node in self.nodes]
 
     def __len__(self):
         return len(self.nodes)
@@ -135,7 +136,7 @@ class CaseframeMixin:
             raise CaseframeError("ERROR: The semantic type '{}' does not exist".format(sem_type_name))
 
         # Builds new caseframe with given parameters
-        new_caseframe = Caseframe(name, sem_type, docstring, frame_slots)
+        new_caseframe = Caseframe(name, self, sem_type, docstring, frame_slots)
 
         # Checks if identical to existing caseframe
         for caseframe in self.caseframes.values():

@@ -222,7 +222,7 @@ def p_AtomicName(p):
     AtomicName :        Identifier
                |        Integer
     '''
-    current_network.define_term(p[1], sem_type_name="Proposition")
+    current_network.define_term(p[1])
     p[0] = current_network.find_term(p[1])
 
 def p_AtomicName2(p):

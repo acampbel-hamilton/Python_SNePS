@@ -63,18 +63,22 @@ t_Comma = r','
 def t_AndImpl(t):
     r'\d+=>'
     t.value = t.value[:-2]
+    return t
 
 def t_OrImpl(t):
     r'v=>'
     t.value = "orimpl"
+    return t
 
 def t_Impl(t):
     r'=>'
     t.value = "if"
+    return t
 
 def t_DoubleImpl(t):
     r'<=>'
     t.value = "iff"
+    return t
 
 def t_Identifier(t):
     r'[A-Za-z_][A-Za-z0-9_]*'

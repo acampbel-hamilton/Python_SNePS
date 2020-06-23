@@ -18,7 +18,7 @@ class Node:
         self.up_cableset[frame.name] = frame
 
     def __str__(self):
-        return "<{}>: [{}] {}".format(self.name, self.sem_type, self.docstring)
+        return "<{}>: {} ({})".format(self.name, self.sem_type.name, self.docstring)
 
 # =====================================
 # ---------- ATOMIC NODES -------------
