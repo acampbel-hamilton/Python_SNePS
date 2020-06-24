@@ -142,6 +142,8 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
         import networkx as nx
         import matplotlib.pyplot as plt
 
+        label_dictionary = {}
+
         G = nx.Graph()
         for node in self.nodes.values():
             G.add_node(node.name)
@@ -151,7 +153,11 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
                     name = node.frame.caseframe.slots[i].name
                     for filler in fillers.nodes:
                         G.add_edge(node.name, filler.name)
-                        # Add edge label
+                        label_dictionary[(node.name, filler.name)] = name
+
+        pos = nx.spring_layout(G)
+        nx.draw_networkx_edge_labels(G,pos,edge_labels=label_dictionary,font_color='black')
+
 
         nx.draw_networkx(G)
         plt.show()
