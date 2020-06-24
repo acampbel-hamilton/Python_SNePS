@@ -83,9 +83,6 @@ class Molecular(Node):
     def __str__(self):
         return super().__str__() + "\n\t" + str(self.frame)
 
-    def molecular(self):
-        return True
-
 
 class MinMaxOpNode(Molecular):
     """ Thresh/andor with two values """

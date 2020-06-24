@@ -139,16 +139,19 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
         wft_parser(wft_str, self)
 
     def print_graph(self):
-        import networkx as nx
-        import matplotlib.pyplot as plt
+        try:
+            import networkx as nx
+            import matplotlib.pyplot as plt
+        except ModuleNotFoundError:
+            print("You need to pip install networkx and matplotlib in order to draw graphs.", file=stderr)
 
         label_dictionary = {}
 
         G = nx.Graph()
         for node in self.nodes.values():
             G.add_node(node.name)
-            if node.molecular():
-                for i in range(0, len(node.frame.filler_set)):
+            if isinstance(node, Molecular):
+                for i in range(len(node.frame.filler_set)):
                     fillers = node.frame.filler_set[i]
                     name = node.frame.caseframe.slots[i].name
                     for filler in fillers.nodes:
