@@ -106,14 +106,20 @@ def p_MinMaxOp(p):
              |          Thresh LBrace Integer Comma Integer RBrace LParen Wfts RParen
              |          Thresh LBrace Integer RBrace LParen Wfts RParen
     '''
+    min = p[3]
+    if len(p) == 8:
+        fillers = Fillers(p[6])
+        max = len(p[6])
+    else:
+        max = p[5]
+        fillers = Fillers(p[8])
     caseframe = current_network.find_caseframe(p[1])
-    fillers = Fillers(p[8])
     frame = Frame(caseframe, [fillers])
     for node in current_network.nodes.values():
-        if node.has_frame(frame) and node.has_min_max(p[3], p[5]):
+        if node.has_frame(frame) and node.has_min_max(min, max):
             p[0] = node
             return
-    wftNode = MinMaxOpNode(current_network.sem_hierarchy.get_type("Proposition"), p[3], p[5])
+    wftNode = MinMaxOpNode(current_network.sem_hierarchy.get_type("Proposition"), min, max)
     wftNode.add_down_cables(frame)
     current_network.nodes[wftNode.name] = wftNode
     p[0] = wftNode

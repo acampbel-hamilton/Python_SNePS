@@ -94,6 +94,9 @@ class MinMaxOpNode(Molecular):
     def has_min_max(self, min, max):
         return self.min == min and self.max == max
 
+    def __str__(self):
+        return Node.__str__(self) + " {}, {}".format(self.min, self.max) + "\n\t" + "\n\t".join(str(frame) for frame in self.down_cableset.values())
+
 
 # =====================================
 # --------------- MIXIN ---------------
