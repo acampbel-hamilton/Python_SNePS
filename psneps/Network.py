@@ -146,7 +146,7 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
         for node in self.nodes.values():
             G.add_node(node.name)
             if node.molecular():
-                for i in range(0, len(node.frame.filler_set) - 1):
+                for i in range(0, len(node.frame.filler_set)):
                     fillers = node.frame.filler_set[i]
                     name = node.frame.caseframe.slots[i].name
                     for filler in fillers.nodes:
