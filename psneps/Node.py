@@ -48,6 +48,12 @@ class Variable(Atomic):
     def add_restriction(self, restriction):
         self.restriction_set[restriction.name] = restriction
 
+class Arbitrary(Variable):
+    """ An arbitaray individual. """
+    def __init__(self):
+        self.name = 'V' + str(super().counter)
+        super().__init__(self.name) # These need semantic types. This will be an error.
+
 class Indefinite(Variable):
     """ An indefinite object. """
     def __init__(self):
@@ -57,12 +63,6 @@ class Indefinite(Variable):
 
     def add_dependency(self, dependency):
         self.dependency_set[dependency.name] = dependency
-
-class Arbitrary(Variable):
-    """ An arbitaray individual. """
-    def __init__(self):
-        self.name = 'V' + str(super().counter)
-        super().__init__(self.name) # These need semantic types. This will be an error.
 
 # =====================================
 # --------- MOLECULAR NODES -----------
