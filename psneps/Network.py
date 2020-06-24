@@ -6,7 +6,7 @@ Authors: Seamus Wiseman, John Madigan, Ben Kallus
 from .SemanticType import SemanticMixin
 from .Context import ContextMixin
 from .Slot import SlotMixin, AdjRule
-from .Node import NodeMixin
+from .Node import NodeMixin, Molecular
 from .Caseframe import CaseframeMixin
 from .WftParse import wft_parser
 from sys import stderr
