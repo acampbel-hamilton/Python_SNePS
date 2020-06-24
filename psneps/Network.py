@@ -144,6 +144,7 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
             import matplotlib.pyplot as plt
         except ModuleNotFoundError:
             print("You need to pip install networkx and matplotlib in order to draw graphs.", file=stderr)
+            return
 
         label_dictionary = {}
 
