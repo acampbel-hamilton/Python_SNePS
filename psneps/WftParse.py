@@ -151,11 +151,12 @@ def p_Function(p):
     Function :          FWft LParen Arguments RParen
     '''
     caseframe = current_network.find_caseframe(p[1])
-    fillers = Fillers(p[3])
-    frame = Frame(caseframe, [fillers])
+    filler_set = p[3]
+    frame = Frame(caseframe, filler_set)
     for node in current_network.nodes.values():
         if node.has_frame(frame):
             p[0] = node
+            return
     wftNode = Molecular(current_network.sem_hierarchy.get_type("Proposition"))
     wftNode.add_down_cables(frame)
     current_network.nodes[wftNode.name] = wftNode
@@ -223,6 +224,10 @@ def p_Arguments(p):
     Arguments :         Argument
               |         Arguments Comma Argument
     '''
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[0] = p[1] + [p[3]]
 
 
 def p_AtomicNameSet(p):
