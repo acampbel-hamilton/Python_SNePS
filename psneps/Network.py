@@ -147,7 +147,7 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
 
         label_dictionary = {}
 
-        G = nx.Graph()
+        G = nx.DiGraph()
         for node in self.nodes.values():
             G.add_node(node.name)
             if isinstance(node, Molecular):
@@ -158,7 +158,7 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
                         G.add_edge(node.name, filler.name)
                         label_dictionary[(node.name, filler.name)] = name
 
-        pos = nx.spring_layout(G)
+        pos = nx.circular_layout(G)
         nx.draw_networkx_edge_labels(G, pos, edge_labels=label_dictionary, font_color='black')
         nx.draw_networkx(G, pos)
         plt.show()
