@@ -237,8 +237,8 @@ def p_AtomicName2(p):
     '''
     Y_WftNode :         WftNode
     '''
-    if int(p[1][3:]) < Molecular.counter:
-        raise SNePSWftError('Invalid wft number. Max number: {}'.format(Molecular.counter))
+    if int(p[1][3:]) >= Molecular.counter:
+        raise SNePSWftError('Invalid wft number. Max number: {}'.format(Molecular.counter - 1))
 
     p[0] = current_network.nodes[p[1]]
 
