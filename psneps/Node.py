@@ -68,26 +68,23 @@ class Arbitrary(Variable):
 class Molecular(Node):
     counter = 1
     # Non-leaf nodes
-    def __init__(self, sem_type):
+    def __init__(self, frame):
         name = "wft" + str(Molecular.counter)
         Molecular.counter += 1
-        super().__init__(name, sem_type)
-        self.down_cableset = {} # dictionary of frames
-
-    def add_down_cables(self, frame):
-        self.down_cableset[frame.name] = frame # Corresponds to frame
+        self.frame = frame
+        super().__init__(name, frame.caseframe.sem_type)
 
     def has_frame(self, frame):
-        return any(frame == current_frame for current_frame in self.down_cableset.values())
+        return frame == self.frame
 
     def __str__(self):
-        return super().__str__() + "\n\t" + "\n\t".join(str(frame) for frame in self.down_cableset.values())
+        return super().__str__() + "\n\t" + str(self.frame)
 
 
 class MinMaxOpNode(Molecular):
     """ Thresh/andor with two values """
-    def __init__(self, sem_type, min=1, max=1):
-        super().__init__(sem_type)
+    def __init__(self, frame, min=1, max=1):
+        super().__init__(frame)
         self.min = min
         self.max = max
 
@@ -95,7 +92,7 @@ class MinMaxOpNode(Molecular):
         return self.min == min and self.max == max
 
     def __str__(self):
-        return Node.__str__(self) + " {}, {}".format(self.min, self.max) + "\n\t" + "\n\t".join(str(frame) for frame in self.down_cableset.values())
+        return Node.__str__(self) + " {}, {}".format(self.min, self.max) + "\n\t" + str(self.frame)
 
 
 # =====================================

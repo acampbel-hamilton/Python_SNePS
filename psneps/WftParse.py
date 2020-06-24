@@ -49,10 +49,10 @@ def p_BinaryOp(p):
         if node.has_frame(frame):
             p[0] = node
     if p[1] == "if" or p[1] == "orimpl":
-        wftNode = Molecular(current_network.sem_hierarchy.get_type("Proposition"))
+        wftNode = Molecular(frame)
     else:
-        wftNode = Molecular(current_network.sem_hierarchy.get_type("Proposition"))
-    wftNode.add_down_cables(frame)
+        wftNode = Molecular(frame)
+        # thresh? value is int(p[1])
     current_network.nodes[wftNode.name] = wftNode
     p[0] = wftNode
 
@@ -76,8 +76,7 @@ def p_NaryOp(p):
     for node in current_network.nodes.values():
         if node.has_frame(frame):
             p[0] = node
-    wftNode = Molecular(current_network.sem_hierarchy.get_type("Proposition"))
-    wftNode.add_down_cables(frame)
+    wftNode = Molecular(frame)
     current_network.nodes[wftNode.name] = wftNode
     p[0] = wftNode
 
@@ -101,8 +100,7 @@ def p_MinMaxOp(p):
         if node.has_frame(frame) and node.has_min_max(min, max):
             p[0] = node
             return
-    wftNode = MinMaxOpNode(current_network.sem_hierarchy.get_type("Proposition"), min, max)
-    wftNode.add_down_cables(frame)
+    wftNode = MinMaxOpNode(frame, min, max)
     current_network.nodes[wftNode.name] = wftNode
     p[0] = wftNode
 
@@ -142,11 +140,9 @@ def p_Function(p):
         if node.has_frame(frame):
             p[0] = node
             return
-    wftNode = Molecular(current_network.sem_hierarchy.get_type("Proposition"))
-    wftNode.add_down_cables(frame)
+    wftNode = Molecular(frame)
     current_network.nodes[wftNode.name] = wftNode
     p[0] = wftNode
-
 
 # e.g. ?example()
 def p_QIdenStmt(p):
