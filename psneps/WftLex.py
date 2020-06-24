@@ -1,4 +1,4 @@
-from . import ply
+from .ply import *
 from re import match
 
 keywords = (
@@ -25,7 +25,6 @@ tokens = (
     'DoubImpl',
     'Integer',
     'QIdentifier',
-    'String',
     'Identifier',
     'AndOr',
     'SetOf',
@@ -53,18 +52,33 @@ tokens = (
 
 t_LParen  = r'\('
 t_RParen  = r'\)'
-t_Impl = r'=>'
-t_DoubImpl = r'<=>'
 t_Integer = r'\d+'
 t_QIdentifier = r'\?[A-Za-z_][A-Za-z0-9_]*'
-t_String = r'\".*\"'
-t_OrImpl = r'v=>'
-t_AndImpl = r'\d+=>'
 t_LBrace = r'{'
 t_RBrace = r'}'
 t_LBracket = r'\['
 t_RBracket = r'\]'
 t_Comma = r','
+
+def t_AndImpl(t):
+    r'\d+=>'
+    t.value = t.value[:-2]
+    return t
+
+def t_OrImpl(t):
+    r'v=>'
+    t.value = "orimpl"
+    return t
+
+def t_Impl(t):
+    r'=>'
+    t.value = "if"
+    return t
+
+def t_DoubleImpl(t):
+    r'<=>'
+    t.value = "iff"
+    return t
 
 def t_Identifier(t):
     r'[A-Za-z_][A-Za-z0-9_]*'
@@ -89,10 +103,11 @@ def t_error(t):
 t_ignore = ' \t\r\n\f\v'
 
 # Build the lexer
-lexer = ply.lex.lex()
+from .ply import lex
+lexer = lex.lex()
 
 if __name__ == '__main__':
-    lexer = ply.lex.lex()
+    lexer = lex.lex()
     while True:
         try:
             s = input('Command: ')

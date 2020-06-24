@@ -1,15 +1,17 @@
 from enum import Enum
 from sys import stderr
+from .Error import SNError
+
+class SlotError(SNError):
+    pass
 
 class AdjRule(Enum):
     NONE = 0
     REDUCE = 1
-    INF_REDUCE = 2
-    EXPAND = 3
-    INF_EXPAND = 4
+    EXPAND = 2
 
 class Slot:
-    def __init__(self, name, sem_type, docstring="", pos_adj=AdjRule.REDUCE, neg_adj=AdjRule.EXPAND, min=1, max=None, path=None):
+    def __init__(self, name, sem_type, docstring, pos_adj, neg_adj, min, max, path):
         self.name = name
         self.docstring = docstring
         self.sem_type = sem_type # Semantic type
@@ -29,27 +31,27 @@ class Slot:
                "\tNegative Adjust: {}\n".format(self.neg_adj) + \
                "\tMinimum Fillers: {}\n".format(self.min) + \
                "\tMaximum Fillers: {}\n".format(self.max) + \
-               "\tPath: {}\n".format(self.path)
+               "\tPath: {}".format(self.path)
 
-class SlotMixIn:
-    """ Provides functions related to slots to network """
+class SlotMixin:
+    """ Provides functions related to slots to Network """
 
     def __init__(self):
-        if type(self) == SlotMixIn:
-            raise NotImplementedError
+        if type(self) is SlotMixin:
+            raise NotImplementedError("Mixins can't be instantiated.")
         self.slots = {} # AKA Relations
 
-    def define_slot(self, name, sem_type_str, docstring="", pos_adj=AdjRule.REDUCE,
-                    neg_adj=AdjRule.EXPAND, min=1, max=1, path=None):
+    def define_slot(self, name, sem_type_str, docstring="", pos_adj=AdjRule.NONE,
+                    neg_adj=AdjRule.NONE, min=1, max=None, path=None):
         """ Adds new slot to network """
         if name in self.slots:
-            print("Slot " + name + " already defined. Doing nothing instead.", file=stderr)
-            return
+            raise SlotError("ERROR: Slot " + name + " already defined. Doing nothing instead.")
+
         sem_type = self.sem_hierarchy.get_type(sem_type_str)
-        if sem_type != None:
+        if sem_type is not None:
             self.slots[name] = Slot(name, sem_type, docstring, pos_adj, neg_adj, min, max, path)
 
     def list_slots(self):
         """ Lists all slots in network """
-        for slot in self.slots:
-            print(self.slots[slot])
+        for slot_name in self.slots:
+            print(self.slots[slot_name])

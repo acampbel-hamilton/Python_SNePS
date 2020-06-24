@@ -1,5 +1,8 @@
-from sys import stderr
 from math import inf
+from .Error import SNError
+
+class SemError(SNError):
+    pass
 
 class SemanticHierarchy:
     """ Contains tree-like structure for semantics (Entity, individual, etc.) """
@@ -8,13 +11,17 @@ class SemanticHierarchy:
         self.sem_types = {}
         self.sem_types["Entity"] = self.root_node
 
-    def add_type(self, type_name, parent_names=[]):
+    def add_type(self, type_name, parent_names=None):
+        # see https://effbot.org/zone/default-values.htm for why this is necessary
+        if parent_names is None:
+            parent_names = []
+
         # Must be unique
         if type_name in self.sem_types:
             self.add_parent(type_name, parent_names)
             return
 
-        # Crreate new type in hierarchy
+        # Create new type in hierarchy
         self.sem_types[type_name] = SemanticType(type_name)
 
         # If type provides parents, connect to these nodes in tree
@@ -30,8 +37,9 @@ class SemanticHierarchy:
         return self.sem_types[type_name]
 
     def respecify(self, term_name, current_type, new_type):
-        # Given new and old semantic type for a node, returns a computed new type
-        # e.g. Cassie is a human and a robot, therefore Cassie is a cyborg
+        """ Given new and old semantic type for a node, returns a computed new type
+            e.g. Cassie is a human and a robot, therefore Cassie is a cyborg """
+
         if current_type is new_type:
             return new_type
 
@@ -39,7 +47,7 @@ class SemanticHierarchy:
         if gcd is not None:
             return gcd
 
-        print('WARNING: Did not retypecast', term_name, file=stderr)
+        raise SemError('WARNING: Could not retypecast "' + term_name + '" from ' + current_type.name + " to " + new_type.name)
         return current_type
 
     def greatest_common_subtype(self, term_name, type1, type2):
@@ -58,17 +66,18 @@ class SemanticHierarchy:
         v1 = visited  # Visited set from root 1. Maps nodes to depths with respect to v1
         visited = {}
         dfs_depth_map(type2, 0)
-        v2 = visited
+        v2 = visited # Visited set from root 2. Maps nodes to depths with respect to v2
 
-        if type2 in v1:
+        if type2 in v1: # type2 is a descendant of type1
             gcds = [type2]
-        elif type1 in v2:
+        elif type1 in v2: # type1 is a descendent of type2
             gcds = [type1]
         else:
-            # This could be made faster by changing the second dfs to not add nodes deeper than the smallest gcd depth so far. We still need to look at them to detect direct lineages, though.
+            # This could be made faster by changing the second dfs to not add nodes deeper than the smallest gcd depth so far.
+            # We still need to look at them to detect direct lineages, though.
             gcds = []
             target_depth = inf
-            for node in set(v1) & set(v2):
+            for node in set(v1) & set(v2): # For each type reachable from both type1 and type2
                 if v1[node] + v2[node] < target_depth:
                     gcds = [node]
                     target_depth = v1[node] + v2[node]
@@ -97,9 +106,7 @@ class SemanticHierarchy:
         if type_name in self.sem_types:
             return self.sem_types[type_name]
         else:
-            print("ERROR: Type '" + type_name + "' does not exist")
-            return None
-
+            raise SemError('ERROR: Type "' + type_name + '" does not exist')
 
     def add_parent(self, type_name, parent_names):
         type = self.sem_types[type_name]
@@ -109,6 +116,11 @@ class SemanticHierarchy:
             if type not in parent.children:
                 type.add_parent(parent)
                 parent.add_child(type)
+
+    def fill_slot(self, node, slot_type):
+        filler_type = node.sem_type
+        if filler_type is not slot_type and not slot_type.subtype(filler_type):
+                node.sem_type = self.respecify(node.name, filler_type, slot_type)
 
     def __str__(self):
         return ", ".join(self.sem_types.keys()) + "\n" + str(self.root_node)
@@ -132,33 +144,30 @@ class SemanticType:
     def add_child(self, child):
         self.children.append(child)
 
-    def compatible(self, other_type):
-        return other_type is self or other_type.subtype(self)
-
     def subtype(self, potential_child):
-        # Determines if given node is actually a child of self
-        for child in self.children:
-            if child is potential_child or child.subtype(potential_child):
-                return True
-        return False
+        """ Determines if given node is a descendant of self """
+        return any(child is potential_child or child.subtype(potential_child) for child in self.children)
 
     def __str__(self, level=0):
-        ret = "\t" * level + self.name + "\n"
-        for child in self.children:
-            ret += child.__str__(level + 1)
-        return ret
+        return "\t" * level + self.name + ("\n" if self.children != [] else "") + \
+               "".join(child.__str__(level + 1) for child in self.children)
 
-class SemanticMixIn:
+class SemanticMixin:
     """ Provides functions related to semantic types to network """
 
     def __init__(self):
-        if type(self) == SemanticMixIn:
-            raise NotImplementedError
+        if type(self) is SemanticMixin:
+            raise NotImplementedError("Mixins can't be instantiated.")
 
         self.sem_hierarchy = SemanticHierarchy()
 
-    def define_type(self, name, parent_names=[]):
-        # Adds term to hierarchy
+    def define_type(self, name, parent_names=None):
+        """ Adds term to hierarchy """
+
+        # see https://effbot.org/zone/default-values.htm for why this is necessary
+        if parent_names is None:
+            parent_names = []
+
         self.sem_hierarchy.add_type(name, parent_names)
 
     def show_types(self):

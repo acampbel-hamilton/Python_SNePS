@@ -1,3 +1,8 @@
+from .Error import SNError
+
+class ContextError(SNError):
+    pass
+
 class Context:
     def __init__(self, name, docstring="", parent=None, hyps={}, ders={}):
         self.name = name
@@ -7,8 +12,8 @@ class Context:
         self.ders = {} # Derived beliefs
 
     def __contains__(self, term):
-        """ overloads the 'in' operator for use on contexts.
-        checks if the given term object asserted in the context,
+        """ Overloads the 'in' operator for use on contexts.
+        checks if the given term object is asserted in the context,
         i.e. that term in in either hyps or ders """
         return term in self.hyps or term in self.ders
 
@@ -24,28 +29,23 @@ class Context:
     def __eq__(self, other):
         return self.name == other.name
 
-class ContextMixIn:
-    """ Provides functions related to contexts to network """
+class ContextMixin:
+    """ Provides functions related to contexts to network. """
 
     def __init__(self):
-        if type(self) == ContextMixIn:
-            raise NotImplementedError
+        if type(self) is ContextMixin:
+            raise NotImplementedError("Mixins can't be instantiated.")
 
         self.contexts = {}
         self.default_context = Context("_default", docstring="The default context", hyps={}, ders={})
 
     def define_context(self, name, docstring="", parent="_default", hyps={}, ders={}):
-        new_context = Context(name, docstring, parent, hyps, ders)
-
-        if self == new_context:
-            print("You cannot define contexts with the same name.", file=stderr)
-            return
-
-        self.contexts[new_context.name] = new_context
-
+        if name in self.contexts:
+            raise ContextError("ERROR: You cannot define contexts with the same name.")
+        else:
+            self.contexts[name] = new_context = Context(name, docstring, parent, hyps, ders)
 
     def list_contexts(self):
-        []
-
-    def build_default(self):
-        Context("_default", docstring="The default context", hyps={}, ders={})
+        """ Prints out all the contexts in the network """
+        for context_name in self.contexts:
+            print(self.contexts[context_name])

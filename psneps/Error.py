@@ -1,0 +1,2 @@
+class SNError(Exception):
+    pass
