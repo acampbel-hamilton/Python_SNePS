@@ -159,8 +159,6 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
                         label_dictionary[(node.name, filler.name)] = name
 
         pos = nx.spring_layout(G)
-        nx.draw_networkx_edge_labels(G,pos,edge_labels=label_dictionary,font_color='black')
-
-
-        nx.draw_networkx(G)
+        nx.draw_networkx_edge_labels(G, pos, edge_labels=label_dictionary, font_color='black')
+        nx.draw_networkx(G, pos)
         plt.show()
