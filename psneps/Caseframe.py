@@ -7,11 +7,11 @@ class CaseframeError(SNError):
     pass
 
 class Caseframe:
-    def __init__(self, name, network, sem_type, docstring="", slots=None):
+    def __init__(self, name, sem_type, sem_hierarchy, docstring, slots):
         self.name = name
-        self.network = network
-        self.docstring = docstring
         self.sem_type = sem_type
+        self.sem_hierarchy = sem_hierarchy
+        self.docstring = docstring
         self.slots = [] if slots is None else slots # see https://effbot.org/zone/default-values.htm for why this is necessary
         self.aliases = [self.name]
 
@@ -60,7 +60,7 @@ class Frame:
 
             # Check if filler is legal (given limit, adjustment rule)
             for node in fillers.nodes:
-                sem_hierarchy = self.caseframe.network.sem_hierarchy
+                sem_hierarchy = self.caseframe.sem_hierarchy
                 sem_hierarchy.fill_slot(node, slot.sem_type)
 
             # Ensures within min/max of slots
@@ -135,7 +135,7 @@ class CaseframeMixin:
             raise CaseframeError("ERROR: The semantic type '{}' does not exist".format(sem_type_name))
 
         # Builds new caseframe with given parameters
-        new_caseframe = Caseframe(name, self, sem_type, docstring, frame_slots)
+        new_caseframe = Caseframe(name, sem_type, self.sem_hierarchy, docstring, frame_slots)
 
         # Checks if identical to existing caseframe
         for caseframe in self.caseframes.values():
