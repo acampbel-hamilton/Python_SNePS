@@ -107,7 +107,7 @@ def p_MinMaxOp(p):
     min = p[3]
     if len(p) == 8:
         fillers = Fillers(p[6])
-        max = int(len(p[6]))
+        max = int(len(p[6])) - 1
     else:
         max = int(p[5])
         fillers = Fillers(p[8])
