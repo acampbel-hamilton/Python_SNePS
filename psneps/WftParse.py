@@ -150,7 +150,7 @@ def p_Function(p):
     '''
     Function :          FWft LParen Arguments RParen
     '''
-    caseframe = current_network.find_caseframe(p[1])
+    caseframe = current_network.find_caseframe(p[1].name)
     filler_set = p[3]
     frame = Frame(caseframe, filler_set)
     for node in current_network.nodes.values():
