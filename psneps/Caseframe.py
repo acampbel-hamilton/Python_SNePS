@@ -39,7 +39,6 @@ class Caseframe:
 
 class Frame:
     def __init__(self, caseframe, filler_set=None):
-        self.name = caseframe.name
         self.caseframe = caseframe
         self.filler_set = [] if filler_set is None else filler_set # see https://effbot.org/zone/default-values.htm for why this is necessary
 

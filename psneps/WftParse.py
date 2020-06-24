@@ -11,6 +11,7 @@ class SNePSWftError(SNError):
 
 current_network = None
 tokens = WftLex.tokens
+wftName = None
 
 # =====================================
 # -------------- RULES ----------------
@@ -30,6 +31,8 @@ def p_Wft(p):
          |              Function
     '''
     p[0] = p[1]
+    global wftName
+    wftName = "=> {}".format(p[1].name)
 
 # e.g. if(wft1, wft2)
 def p_BinaryOp(p):
@@ -237,8 +240,8 @@ def p_AtomicName2(p):
     '''
     Y_WftNode :         WftNode
     '''
-    if int(p[1][3:]) < Molecular.counter:
-        raise SNePSWftError('Invalid wft number. Max number: {}'.format(Molecular.counter))
+    if int(p[1][3:]) >= Molecular.counter:
+        raise SNePSWftError('Invalid wft number. Max number: {}'.format(Molecular.counter - 1))
 
     p[0] = current_network.nodes[p[1]]
 
@@ -259,6 +262,8 @@ def wft_parser(wft, network):
     if wft != '':
         try:
             yacc.parse(wft)
+            global wftName
+            print(wftName)
         except SNError as e:
             if type(e) is not SNePSWftError:
                 print("PARSING FAILED:\n\t", end='')

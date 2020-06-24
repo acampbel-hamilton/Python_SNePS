@@ -6,7 +6,7 @@ Authors: Seamus Wiseman, John Madigan, Ben Kallus
 from .SemanticType import SemanticMixin
 from .Context import ContextMixin
 from .Slot import SlotMixin, AdjRule
-from .Node import NodeMixin
+from .Node import NodeMixin, Molecular, MinMaxOpNode
 from .Caseframe import CaseframeMixin
 from .WftParse import wft_parser
 from sys import stderr
@@ -137,3 +137,31 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
             return
 
         wft_parser(wft_str, self)
+
+    def print_graph(self):
+        try:
+            import networkx as nx
+            import matplotlib.pyplot as plt
+        except ModuleNotFoundError:
+            print("You need to pip install networkx and matplotlib in order to draw graphs.", file=stderr)
+            return
+
+        label_dictionary = {}
+
+        G = nx.DiGraph()
+        for node in self.nodes.values():
+            G.add_node(node.name)
+            if isinstance(node, Molecular):
+                for i in range(len(node.frame.filler_set)):
+                    fillers = node.frame.filler_set[i]
+                    name = node.frame.caseframe.slots[i].name
+                    if isinstance(node, MinMaxOpNode):
+                        name += " ({}, {})".format(node.min, node.max)
+                    for filler in fillers.nodes:
+                        G.add_edge(node.name, filler.name)
+                        label_dictionary[(node.name, filler.name)] = name
+
+        pos = nx.circular_layout(G)
+        nx.draw_networkx_edge_labels(G, pos, edge_labels=label_dictionary, font_color='black')
+        nx.draw_networkx(G, pos)
+        plt.show()

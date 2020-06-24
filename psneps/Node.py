@@ -20,6 +20,9 @@ class Node:
     def __str__(self):
         return "<{}>: {} ({})".format(self.name, self.sem_type.name, self.docstring)
 
+    def molecular(self):
+        return False
+
 # =====================================
 # ---------- ATOMIC NODES -------------
 # =====================================
@@ -121,7 +124,7 @@ class NodeMixin:
             sem_type = self.sem_hierarchy.get_type(sem_type_name)
             self.nodes[name] = Base(name, sem_type, docstring)
 
-    def all_terms(self):
+    def list_terms(self):
         for term in self.nodes:
             print(self.nodes[term])
 
