@@ -107,9 +107,9 @@ def p_MinMaxOp(p):
     min = p[3]
     if len(p) == 8:
         fillers = Fillers(p[6])
-        max = len(p[6])
+        max = int(len(p[6]))
     else:
-        max = p[5]
+        max = int(p[5])
         fillers = Fillers(p[8])
     caseframe = current_network.find_caseframe(p[1])
     frame = Frame(caseframe, [fillers])
