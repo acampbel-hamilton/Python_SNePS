@@ -2,7 +2,7 @@ from . import WftLex
 from .ply import *
 from .Network import *
 from .Caseframe import Frame, Fillers
-from .Node import Base, Molecular, Indefinite, Arbitrary, MinMaxOpNode
+from .Node import Base, Molecular, Indefinite, Arbitrary, MinMaxOp
 from .Error import SNError
 from sys import stderr
 
@@ -64,7 +64,6 @@ def p_BinaryOp(p):
     for node in current_network.nodes.values():
         if node.has_frame(frame):
             p[0] = node
-            return
     if p[1] == "if" or p[1] == "orimpl":
         wftNode = Molecular(current_network.sem_hierarchy.get_type("Proposition"))
     else:
@@ -93,7 +92,6 @@ def p_NaryOp(p):
     for node in current_network.nodes.values():
         if node.has_frame(frame):
             p[0] = node
-            return
     wftNode = Molecular(current_network.sem_hierarchy.get_type("Proposition"))
     wftNode.add_down_cables(frame)
     current_network.nodes[wftNode.name] = wftNode
@@ -116,10 +114,16 @@ def p_MinMaxOp(p):
     caseframe = current_network.find_caseframe(p[1])
     frame = Frame(caseframe, [fillers])
     for node in current_network.nodes.values():
+<<<<<<< HEAD
         if node.has_frame(frame) and node.has_min_max(min, max):
             p[0] = node
             return
     wftNode = MinMaxOpNode(current_network.sem_hierarchy.get_type("Proposition"), min, max)
+=======
+        if node.has_frame(frame) and node.has_thresh(p[3], p[5]):
+            p[0] = node
+    wftNode = MinMaxOpNode(current_network.sem_hierarchy.get_type("Proposition"), p[3], p[5])
+>>>>>>> 6999888027dfff5e5ca628d76014ae4cc5db1abb
     wftNode.add_down_cables(frame)
     current_network.nodes[wftNode.name] = wftNode
     p[0] = wftNode
@@ -152,6 +156,16 @@ def p_Function(p):
     '''
     Function :          FWft LParen Arguments RParen
     '''
+    caseframe = current_network.find_caseframe(p[1])
+    fillers = Fillers(p[3])
+    frame = Frame(caseframe, [fillers])
+    for node in current_network.nodes.values():
+        if node.has_frame(frame):
+            p[0] = node
+    wftNode = Molecular(current_network.sem_hierarchy.get_type("Proposition"))
+    wftNode.add_down_cables(frame)
+    current_network.nodes[wftNode.name] = wftNode
+    p[0] = wftNode
 
 
 # e.g. ?example()
