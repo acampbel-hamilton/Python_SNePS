@@ -18,32 +18,16 @@ tokens = WftLex.tokens
 
 def p_Wft(p):
     '''
-    Wft :               FWft
-        |               OWft
-    '''
-    p[0] = p[1]
-
-# Function-eligible wfts (Can serve as entities)
-# e.g. wft1
-def p_FWft(p):
-    '''
-    FWft :              AtomicName
-         |              Y_WftNode
-         |              Function
-    '''
-    p[0] = p[1]
-
-# All other wfts
-# e.g. if(wft1, wft2)
-def p_OWft(p):
-    '''
-    OWft :              BinaryOp
+    Wft :               BinaryOp
          |              NaryOp
          |              MinMaxOp
          |              CloseStmt
          |              EveryStmt
          |              SomeStmt
          |              QIdenStmt
+         |              AtomicName
+         |              Y_WftNode
+         |              Function
     '''
     p[0] = p[1]
 
@@ -148,9 +132,10 @@ def p_CloseStmt(p):
 # e.g. brothers(Tom, Ted)
 def p_Function(p):
     '''
-    Function :          FWft LParen Arguments RParen
+    Function :          Identifier LParen Arguments RParen
+             |          Integer LParen Arguments RParen
     '''
-    caseframe = current_network.find_caseframe(p[1].name)
+    caseframe = current_network.find_caseframe(p[1])
     filler_set = p[3]
     frame = Frame(caseframe, filler_set)
     for node in current_network.nodes.values():
