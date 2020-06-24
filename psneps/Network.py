@@ -137,3 +137,20 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
             return
 
         wft_parser(wft_str, self)
+
+    def print_graph(self):
+        import networkx as nx
+        import matplotlib.pyplot as plt
+
+        G = nx.Graph()
+        for node in self.nodes.values():
+            G.add_node(node.name)
+            if node.molecular():
+                for fillers in node.frame.filler_set:
+                    for filler in fillers.nodes:
+                        G.add_edge(node.name, filler.name)
+                        # G[node.name][filler.name][node.frame.caseframe.name]
+
+
+        nx.draw_networkx(G)
+        plt.show()
