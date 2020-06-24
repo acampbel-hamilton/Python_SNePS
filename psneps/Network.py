@@ -6,7 +6,7 @@ Authors: Seamus Wiseman, John Madigan, Ben Kallus
 from .SemanticType import SemanticMixin
 from .Context import ContextMixin
 from .Slot import SlotMixin, AdjRule
-from .Node import NodeMixin, Molecular
+from .Node import NodeMixin, Molecular, MinMaxOpNode
 from .Caseframe import CaseframeMixin
 from .WftParse import wft_parser
 from sys import stderr
@@ -154,6 +154,8 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
                 for i in range(len(node.frame.filler_set)):
                     fillers = node.frame.filler_set[i]
                     name = node.frame.caseframe.slots[i].name
+                    if isinstance(node, MinMaxOpNode):
+                        name += " ({}, {})".format(node.min, node.max)
                     for filler in fillers.nodes:
                         G.add_edge(node.name, filler.name)
                         label_dictionary[(node.name, filler.name)] = name
