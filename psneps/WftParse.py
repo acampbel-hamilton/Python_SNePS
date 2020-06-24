@@ -114,16 +114,10 @@ def p_MinMaxOp(p):
     caseframe = current_network.find_caseframe(p[1])
     frame = Frame(caseframe, [fillers])
     for node in current_network.nodes.values():
-<<<<<<< HEAD
         if node.has_frame(frame) and node.has_min_max(min, max):
             p[0] = node
             return
     wftNode = MinMaxOpNode(current_network.sem_hierarchy.get_type("Proposition"), min, max)
-=======
-        if node.has_frame(frame) and node.has_thresh(p[3], p[5]):
-            p[0] = node
-    wftNode = MinMaxOpNode(current_network.sem_hierarchy.get_type("Proposition"), p[3], p[5])
->>>>>>> 6999888027dfff5e5ca628d76014ae4cc5db1abb
     wftNode.add_down_cables(frame)
     current_network.nodes[wftNode.name] = wftNode
     p[0] = wftNode
