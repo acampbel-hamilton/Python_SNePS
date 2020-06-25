@@ -157,6 +157,8 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
                     name = node.frame.caseframe.slots[i].name
                     if isinstance(node, MinMaxOpNode):
                         name += " ({}, {})".format(node.min, node.max)
+                    if name == "nor" and len(fillers) == 1:
+                        name = "not"
                     for filler in fillers.nodes:
                         G.add_edge(node.name, filler.name)
                         label_dictionary[(node.name, filler.name)] = name
