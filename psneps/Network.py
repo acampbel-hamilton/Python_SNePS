@@ -165,5 +165,5 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
 
         pos = nx.circular_layout(G)
         nx.draw_networkx_edge_labels(G, pos, edge_labels=label_dictionary, font_color='black')
-        nx.draw_networkx(G, pos)
+        nx.draw_networkx(G, pos, node_size=800, node_color='grey', alpha=0.8)
         plt.show()
