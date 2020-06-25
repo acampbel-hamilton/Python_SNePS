@@ -156,9 +156,15 @@ wft :       atomicwft                               // e.g. "Dog"
     |       'wf' ∅ i                                // e.g. "wft1"
     |       identifier '(' argument+ ')'            // e.g. "Has(Dog, Bone)"
     |       BinaryOp '(' argument ',' argument ')'  // e.g. "if(Has(Dog, Bone), Happy(Dog))"
-    |       
+    |       NaryOp '(' wft* ')'                     // e.g. "and(a, b, c)"
+    |       Param2Op '{' i ',' j '}' '(' wft+ ')'   // e.g. "thresh{1, 2}(a, b, c, d)"
+    |       'thresh' '{' i '}' '(' wft+ ')'         // e.g. "thresh{1}(a, b, c)"
+    |       'close' '(' atomicNameSet ',' wft ')'
 
 
-BinaryOp :  i ∅ '=>' | 'v=>' | '=>' | 'if'          // i.e. "v=>" is or implication and "i ∅ '=>'" is and implication (e.g. "5=>")
-NaryOp :
-  ```
+BinaryOp :  i ∅ '=>' | 'v=>' | '=>' | 'if'          // 'v=>' does or-implication and
+                                                    // "i ∅ '=>'" does and-implication (e.g. "5=>")
+
+NaryOp :    ‘and’ | ‘or’ | ‘not’ | ‘nor’            // These operators, exclusively, can take
+       |    ‘thnot’ | ‘thnor’ | ‘nand’              // any number of parameters
+       |    ‘xor’ | ‘iff’ | '<=>'
