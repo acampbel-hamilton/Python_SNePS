@@ -185,8 +185,8 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
         if has_ng:
             # This is kind of a buggy module. You have to do _ = for some reason.
             _ = ng.InteractiveGraph(G, pos, node_size=10, node_color='grey', alpha=0.8,
-                                node_labels={node.name:node.name for node in self.nodes.values()},
-                                edge_labels=edge_labels, font_color='black')
+                                    node_labels={node.name:node.name for node in self.nodes.values()},
+                                    edge_labels=edge_labels, font_color='black')
         else:
             nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_color='black')
             nx.draw_networkx(G, pos, node_size=800, node_color='grey', alpha=0.8)
