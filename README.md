@@ -2,14 +2,6 @@
 > SNePS 3 in Python
 
 ## Section 0: Preliminary Reading and Installation
-For viewing graphs run:
-```bash
-pip install networkx matplotlib
-```
-For dragging graphs run:
-```bash
-pip install netgraph
-```
 
 1. ["A Logic of Arbitrary and Indefinite Objects"](https://www.aaai.org/Papers/KR/2004/KR04-059.pdf) by Stuart Shapiro
     * This will outline the logic of SNePS. While we have transformed the grammar to be more like Python, the general concepts are necessary to understand.
@@ -168,3 +160,14 @@ BinaryOp :  i ∅ '=>' | 'v=>' | '=>' | 'if'          // 'v=>' does or-implicati
 NaryOp :    ‘and’ | ‘or’ | ‘not’ | ‘nor’            // These operators, exclusively, can take
        |    ‘thnot’ | ‘thnor’ | ‘nand’              // any number of parameters
        |    ‘xor’ | ‘iff’ | '<=>'
+
+## Viewing graphs
+
+For viewing graphs run:
+```bash
+pip install networkx matplotlib
+```
+For dragging graphs run:
+```bash
+pip install netgraph
+```
