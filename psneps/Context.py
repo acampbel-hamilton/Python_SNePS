@@ -43,7 +43,7 @@ class ContextMixin:
     def define_context(self, name, docstring="", parent="_default", hyps={}, ders={}):
 
         if self.enforce_name_syntax and not match(r'[A-Za-z_][A-Za-z0-9_]*', name):
-            raise CaseframeError("ERROR: The context name '{}' is not allowed".format(name))
+            raise ContextError("ERROR: The context name '{}' is not allowed".format(name))
 
         if name in self.contexts:
             raise ContextError("ERROR: You cannot define contexts with the same name.")
