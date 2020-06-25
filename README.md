@@ -152,8 +152,13 @@ All wft parsing is handled through ply (lex and yacc). The following yacc-like r
 * \* is used to indicate that there should be no space between two tokens
 
 ```yacc
-wft :     atomicwft
-    |     "wft" ∅ i                         // i.e. "wft1", "wft350"
-    |     identifier '(' argument+ ')'
-    |         
+wft :       atomicwft                               // e.g. "Dog"
+    |       'wf' ∅ i                                // e.g. "wft1"
+    |       identifier '(' argument+ ')'            // e.g. "Has(Dog, Bone)"
+    |       BinaryOp '(' argument ',' argument ')'  // e.g. "if(Has(Dog, Bone), Happy(Dog))"
+    |       
+
+
+BinaryOp :  i ∅ '=>' | 'v=>' | '=>' | 'if'          // i.e. "v=>" is or implication and "i ∅ '=>'" is and implication (e.g. "5=>")
+NaryOp :
   ```

@@ -30,7 +30,7 @@ class Caseframe:
                 1. They have the same type
                 2. They have the same slots (disregarding order) """
         return other is not None and self.sem_type is other.sem_type and \
-               set(self.slots) == set(other.slots)
+               self.slots == other.slots
 
     def __str__(self):
         return "<{}>: {}\n".format(self.name, self.docstring) + \
