@@ -179,7 +179,10 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
                         name = "not"
                     for filler in fillers.nodes:
                         G.add_edge(node.name, filler.name)
-                        edge_labels[(node.name, filler.name)] = name
+                        try:
+                            edge_labels[(node.name, filler.name)] += ", " + name
+                        except:
+                            edge_labels[(node.name, filler.name)] = name
 
         pos = nx.circular_layout(G)
         if has_ng:
