@@ -75,7 +75,7 @@ def t_Impl(t):
     t.value = "if"
     return t
 
-def t_DoubleImpl(t):
+def t_DoubImpl(t):
     r'<=>'
     t.value = "iff"
     return t

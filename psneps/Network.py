@@ -79,7 +79,7 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
                          pos_adj='reduce', neg_adj='expand', min=2)
         self.define_slot('nand', 'Proposition', docstring='not and',
                          pos_adj='reduce', neg_adj='expand', min=2)
-        self.define_slot('iff', 'Proposition', docstring='double implication',
+        self.define_slot('equivalence', 'Proposition', docstring='double implication',
                          pos_adj='reduce', neg_adj='expand', min=2)
 
         # SNeRE
@@ -123,7 +123,7 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
                                docstring='it is the case that [nand]')
         self.define_caseframe('xor', 'Propositional', slot_names=['xor'],
                                docstring='it is the case that [xor]')
-        self.define_caseframe('iff', 'Propositional', slot_names=['iff'],
+        self.define_caseframe('iff', 'Propositional', slot_names=['equivalence'],
                                docstring='it is the case that [doubimpl]')
 
         # Aliases
