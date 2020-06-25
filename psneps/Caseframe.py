@@ -2,6 +2,7 @@ from .Slot import *
 from .SemanticType import SemanticType
 from .Error import SNError
 from sys import stderr
+from re import match
 
 class CaseframeError(SNError):
     pass
@@ -29,7 +30,7 @@ class Caseframe:
                 1. They have the same type
                 2. They have the same slots (disregarding order) """
         return other is not None and self.sem_type is other.sem_type and \
-               set(self.slots) == set(other.slots)
+               self.slots == other.slots
 
     def __str__(self):
         return "<{}>: {}\n".format(self.name, self.docstring) + \
@@ -74,7 +75,7 @@ class Frame:
         return self.caseframe == other.caseframe and self.filler_set == other.filler_set
 
     def __str__(self):
-        ret = self.name
+        ret = self.caseframe.name
         for i in range(0, len(self.filler_set)):
             ret += self.filler_set[i].__str__(self.caseframe.slots[i].name)
         return ret
@@ -118,6 +119,9 @@ class CaseframeMixin:
 
     def define_caseframe(self, name, sem_type_name, slot_names, docstring=""):
         """ Defines a new caseframe. """
+
+        if self.enforce_name_syntax and not match(r'[A-Za-z_][A-Za-z0-9_]*', name):
+            raise CaseframeError("ERROR: The casframe name '{}' is not allowed".format(name))
 
         # Checks provided slots names are valid
         frame_slots = []

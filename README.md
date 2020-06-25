@@ -1,7 +1,16 @@
 # Python_SNePS
 > SNePS 3 in Python
 
-## Section 0: Preliminary Reading
+## Section 0: Preliminary Reading and Installation
+For viewing graphs run:
+```bash
+pip install networkx matplotlib
+```
+For dragging graphs run:
+```bash
+pip install netgraph
+```
+
 1. ["A Logic of Arbitrary and Indefinite Objects"](https://www.aaai.org/Papers/KR/2004/KR04-059.pdf) by Stuart Shapiro
     * This will outline the logic of SNePS. While we have transformed the grammar to be more like Python, the general concepts are necessary to understand.
 
@@ -82,7 +91,7 @@ Because certain slots require certain types of entities, semantic types ensure o
 
 ### Paths
 
-## Section 2: Using Python SNePS
+## Section 2: Using Python SNePS's Functions
 
 Create a network object:
 
@@ -134,4 +143,28 @@ net.assert_wft("Isa(Dog, Pet)", value="hyp")
 net.print_graph()
 ```
 
-## Section 3: Understanding a Python SNePS wft
+## Section 3: Using Python SNePS's Well Formed Terms (wfts)
+
+All wft parsing is handled through ply (lex and yacc). The following yacc-like reduction rules should give an idea of how a wft is parsed.
+
+* ∅ is used to indicate that there should be no space between two tokens  
+* \+ is used to indicate that there can be one or more of a given token  
+* \* is used to indicate that there should be no space between two tokens
+
+```yacc
+wft :       atomicwft                               // e.g. "Dog"
+    |       'wf' ∅ i                                // e.g. "wft1"
+    |       identifier '(' argument+ ')'            // e.g. "Has(Dog, Bone)"
+    |       BinaryOp '(' argument ',' argument ')'  // e.g. "if(Has(Dog, Bone), Happy(Dog))"
+    |       NaryOp '(' wft* ')'                     // e.g. "and(a, b, c)"
+    |       Param2Op '{' i ',' j '}' '(' wft+ ')'   // e.g. "thresh{1, 2}(a, b, c, d)"
+    |       'thresh' '{' i '}' '(' wft+ ')'         // e.g. "thresh{1}(a, b, c)"
+    |       'close' '(' atomicNameSet ',' wft ')'
+
+
+BinaryOp :  i ∅ '=>' | 'v=>' | '=>' | 'if'          // 'v=>' does or-implication and
+                                                    // "i ∅ '=>'" does and-implication (e.g. "5=>")
+
+NaryOp :    ‘and’ | ‘or’ | ‘not’ | ‘nor’            // These operators, exclusively, can take
+       |    ‘thnot’ | ‘thnor’ | ‘nand’              // any number of parameters
+       |    ‘xor’ | ‘iff’ | '<=>'

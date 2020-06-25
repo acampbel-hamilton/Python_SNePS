@@ -10,9 +10,26 @@ from .Node import NodeMixin, Molecular, MinMaxOpNode
 from .Caseframe import CaseframeMixin
 from .wft.WftParse import wft_parser
 from sys import stderr
+from re import match
+try:
+    import networkx as nx
+    has_nx = True
+except ModuleNotFoundError:
+    has_nx = False
+try:
+    import matplotlib.pyplot as plt
+    has_mpl = True
+except ModuleNotFoundError:
+    has_mpl = False
+try:
+    import netgraph as ng
+    has_ng = True
+except ModuleNotFoundError:
+    has_ng = False
 
 class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin):
     def __init__(self):
+        self.enforce_name_syntax = False
         for cls in type(self).__bases__:
             cls.__init__(self)
 
@@ -130,6 +147,10 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
         self.caseframes["nor"].add_alias("not")
         self.caseframes["thnor"].add_alias("thnot")
 
+        # Turn off enforcing name syntax
+        # ==============================
+        self.enforce_name_syntax = True
+
 
     def assert_wft(self, wft_str, value="hyp"):
         if value != "hyp" and value != "true":
@@ -139,16 +160,13 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
         wft_parser(wft_str, self)
 
     def print_graph(self):
-        try:
-            import networkx as nx
-            import matplotlib.pyplot as plt
-        except ModuleNotFoundError:
-            print("You need to pip install networkx and matplotlib in order to draw graphs.", file=stderr)
-            return
-
-        label_dictionary = {}
+        if not has_nx:
+            print("In order to use this function, you must pip install networkx")
+        if not has_mpl:
+            print("In order to use this function, you must pip install matplotlib")
 
         G = nx.DiGraph()
+        edge_labels = {}
         for node in self.nodes.values():
             G.add_node(node.name)
             if isinstance(node, Molecular):
@@ -161,9 +179,19 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
                         name = "not"
                     for filler in fillers.nodes:
                         G.add_edge(node.name, filler.name)
-                        label_dictionary[(node.name, filler.name)] = name
+                        try:
+                            edge_labels[(node.name, filler.name)] += ", " + name
+                        except:
+                            edge_labels[(node.name, filler.name)] = name
 
         pos = nx.circular_layout(G)
-        nx.draw_networkx_edge_labels(G, pos, edge_labels=label_dictionary, font_color='black')
-        nx.draw_networkx(G, pos, node_size=800, node_color='grey', alpha=0.8)
+        if has_ng:
+            # This is kind of a buggy module. You have to do _ = for some reason.
+            _ = ng.InteractiveGraph(G, pos, node_size=10, node_label_font_size=12.0, node_color='grey', alpha=0.8,
+                                    node_labels={node.name:node.name for node in self.nodes.values()},
+                                    edge_labels=edge_labels, font_color='black')
+        else:
+            nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_color='black')
+            nx.draw_networkx(G, pos, node_size=800, node_color='grey', alpha=0.8)
+        plt.subplots_adjust(left=0.0, right=1.0, top=1.0, bottom=0.0)
         plt.show()

@@ -1,6 +1,7 @@
 from enum import Enum
 from sys import stderr
 from .Error import SNError
+from re import match
 
 class SlotError(SNError):
     pass
@@ -47,6 +48,10 @@ class SlotMixin:
     def define_slot(self, name, sem_type_str, docstring="", pos_adj="NONE",
                     neg_adj="NONE", min=1, max=0, path=None):
         """ Adds new slot to network """
+
+        if self.enforce_name_syntax and not match(r'[A-Za-z_][A-Za-z0-9_]*', name):
+            raise SlotError("ERROR: The slot name '{}' is not allowed".format(name))
+
         if name in self.slots:
             raise SlotError("ERROR: Slot " + name + " already defined.")
 
