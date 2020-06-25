@@ -22,7 +22,7 @@
 
 ### Nodes
 
-A node is a unique syntactic object, consisting of the following tuple:
+A node is a unique syntactic object, consisting of the following:
 1. Name
 2. Semantic Type
 3. Up Cableset (An array of frames)
@@ -53,7 +53,7 @@ A filler is a non-unique object that contains an array of nodes.
 
 ### Caseframes
 
-A caseframe is a unique object, consisting of the following tuple:
+A caseframe is a unique object, consisting of the following:
 1. Name
 2. Semantic Type
 3. Semantic Hierarchy (Of the parent network)
@@ -63,7 +63,7 @@ A caseframe is a unique object, consisting of the following tuple:
 
 ### Slots
 
-Slots are "relations". A slot is a unique object, consisting of the following tuple:
+Slots are "relations". A slot is a unique object, consisting of the following:
 1. Name
 2. Docstring
 3. Semantic Type
@@ -96,7 +96,7 @@ The following methods are defined:
 
 ```python
 # Defines a term with a name, optional semantic type, and docstring
-net.("Ben", sem_type_name="Agent", docstring="Ben is a human being.")
+net.define_term("Ben", sem_type_name="Agent", docstring="Ben is a human being.")
 
 # List all terms or find a specific term
 net.list_terms()
@@ -145,7 +145,7 @@ All wft parsing is handled through ply (lex and yacc). The following yacc-like r
 
 ```yacc
 wft :       atomicwft                               // e.g. "Dog"
-    |       'wf' ∅ i                                // e.g. "wft1"
+    |       'wft' ∅ i                                // e.g. "wft1"
     |       identifier '(' argument+ ')'            // e.g. "Has(Dog, Bone)"
     |       BinaryOp '(' argument ',' argument ')'  // e.g. "if(Has(Dog, Bone), Happy(Dog))"
     |       NaryOp '(' wft* ')'                     // e.g. "and(a, b, c)"
@@ -164,11 +164,11 @@ NaryOp :    ‘and’ | ‘or’ | ‘not’ | ‘nor’            // These ope
 
 ## Viewing graphs
 
-For viewing graphs run:
+Viewing graphs requires some extra Python modules. If you want to visualize small graphs, run:
 ```bash
 pip install networkx matplotlib
 ```
-For dragging graphs run:
+If you need draggable graphs, then also run:
 ```bash
 pip install netgraph
 ```
