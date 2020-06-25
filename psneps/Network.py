@@ -10,6 +10,7 @@ from .Node import NodeMixin, Molecular, MinMaxOpNode
 from .Caseframe import CaseframeMixin
 from .wft.WftParse import wft_parser
 from sys import stderr
+from re import match
 
 class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin):
     def __init__(self):

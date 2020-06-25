@@ -1,6 +1,7 @@
 from enum import Enum
 from sys import stderr
 from .Error import SNError
+from re import match
 
 class SlotError(SNError):
     pass

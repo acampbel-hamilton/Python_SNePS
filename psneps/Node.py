@@ -1,5 +1,6 @@
 from .Caseframe import Frame
 from .Error import SNError
+from re import match
 
 class NodeError(SNError):
     pass
