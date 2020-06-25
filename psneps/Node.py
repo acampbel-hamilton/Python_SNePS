@@ -1,5 +1,6 @@
 from .Caseframe import Frame
 from .Error import SNError
+from re import match
 
 class NodeError(SNError):
     pass
@@ -112,6 +113,10 @@ class NodeMixin:
 
     def define_term(self, name, sem_type_name="Entity", docstring=""):
         # Creates base atomic node
+
+        if self.enforce_name_syntax and not match(r'[A-Za-z_][A-Za-z0-9_]*', name):
+            raise NodeError("ERROR: The term name '{}' is not allowed".format(name))
+
         if name in self.nodes:
             node = self.nodes[name]
 

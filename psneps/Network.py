@@ -10,6 +10,7 @@ from .Node import NodeMixin, Molecular, MinMaxOpNode
 from .Caseframe import CaseframeMixin
 from .wft.WftParse import wft_parser
 from sys import stderr
+from re import match
 try:
     import networkx as nx
     has_nx = True
@@ -148,7 +149,7 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
 
         # Turn off enforcing name syntax
         # ==============================
-        self.enforce_name_syntax = False
+        self.enforce_name_syntax = True
 
 
     def assert_wft(self, wft_str, value="hyp"):
