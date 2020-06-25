@@ -184,11 +184,11 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
         pos = nx.circular_layout(G)
         if has_ng:
             # This is kind of a buggy module. You have to do _ = for some reason.
-            _ = ng.InteractiveGraph(G, pos, node_size=10, node_color='grey', alpha=0.8,
+            _ = ng.InteractiveGraph(G, pos, node_size=10, node_label_font_size=12.0, node_color='grey', alpha=0.8,
                                     node_labels={node.name:node.name for node in self.nodes.values()},
                                     edge_labels=edge_labels, font_color='black')
         else:
             nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_color='black')
-            nx.draw_networkx(G, pos, node_size=800, node_color='grey', alpha=0.8, font_size=18.0)
+            nx.draw_networkx(G, pos, node_size=800, node_color='grey', alpha=0.8)
         plt.subplots_adjust(left=0.0, right=1.0, top=1.0, bottom=0.0)
         plt.show()
