@@ -160,6 +160,7 @@ BinaryOp :  i ∅ '=>' | 'v=>' | '=>' | 'if'          // 'v=>' does or-implicati
 NaryOp :    ‘and’ | ‘or’ | ‘not’ | ‘nor’            // These operators, exclusively, can take
        |    ‘thnot’ | ‘thnor’ | ‘nand’              // any number of parameters
        |    ‘xor’ | ‘iff’ | '<=>'
+```
 
 ## Viewing graphs
 
