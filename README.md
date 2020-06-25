@@ -94,13 +94,6 @@ net = Network.Network()
 The following methods are defined:
 
 ```python
-# Prints out a visual representation of the knowledge base
-net.print_graph()
-
-# Passes wft followed by optional parameter asserting
-# "hyp" for hypothetical or "true" for true
-net.assert_wft("Isa(Dog, Pet)", value="hyp")
-
 # Defines a term with a name, optional semantic type, and docstring
 net.("Ben", sem_type_name="Agent", docstring="Ben is a human being.")
 
@@ -123,7 +116,20 @@ net.define_slot("class", "Category", docstring="Points to a Category that some E
 # Lists all slots
 net.list_slots()
 
-# Defines a new caseframe with a name, semantic type, docstring, and list of slots
-define_caseframe(self, name, sem_type_name, docstring="")
+# Defines a new caseframe with a name, semantic type, list of slots,
+# and optional docstring
+net.define_caseframe("Isa", "Propositional", ["member", "class"], docstring="Epistemic relationship for class membership")
+
+# Lists all caseframes or find a specific caseframe
+net.list_caseframes()
+net.find_caseframe("Isa")
+
+# Passes wft followed by optional parameter asserting
+# "hyp" for hypothetical or "true" for true
+net.assert_wft("Isa(Dog, Pet)", value="hyp")
+
+# Prints out a visual representation of the knowledge base
+net.print_graph()
 ```
 
+## Section 3: Understanding a Python SNePS wft
