@@ -82,7 +82,7 @@ Because certain slots require certain types of entities, semantic types ensure o
 
 ### Paths
 
-## Section 2: Using Python SNePS
+## Section 2: Using Python SNePS's Functions
 
 Create a network object:
 
@@ -134,4 +134,17 @@ net.assert_wft("Isa(Dog, Pet)", value="hyp")
 net.print_graph()
 ```
 
-## Section 3: Understanding a Python SNePS wft
+## Section 3: Using Python SNePS's Well Formed Terms (wfts)
+
+All wft parsing is handled through ply (lex and yacc). The following yacc-like reduction rules should give an idea of how a wft is parsed.
+
+* ∅ is used to indicate that there should be no space between two tokens  
+* \+ is used to indicate that there can be one or more of a given token  
+* \* is used to indicate that there should be no space between two tokens
+
+```yacc
+wft :     atomicwft
+    |     "wft" ∅ i                         // i.e. "wft1", "wft350"
+    |     identifier '(' argument+ ')'
+    |         
+  ```
