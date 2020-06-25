@@ -35,6 +35,8 @@ Nodes are typecast to syntactic types. Syntactic types are represented by classe
 
 ![Syntactic Types](https://raw.githubusercontent.com/acampbel-hamilton/Python_SNePS/master/assets/syntactic.svg)
 
+MinMaxOpNodes are created by thresh and andor
+
 ### Frames
 
 A frame is a unique object, consisting of the following tuple:
@@ -80,5 +82,48 @@ Because certain slots require certain types of entities, semantic types ensure o
 
 ### Paths
 
-## Section 2: Using SNePS
+## Section 2: Using Python SNePS
+
+Create a network object:
+
+```python
+from psneps import *
+net = Network.Network()
+```
+
+The following methods are defined:
+
+```python
+# Prints out a visual representation of the knowledge base
+net.print_graph()
+
+# Passes wft followed by optional parameter asserting
+# "hyp" for hypothetical or "true" for true
+net.assert_wft("Isa(Dog, Pet)", value="hyp")
+
+# Defines a term with a name, optional semantic type, and docstring
+net.("Ben", sem_type_name="Agent", docstring="Ben is a human being.")
+
+# List all terms or find a specific term
+net.list_terms()
+net.find_term("Ben")
+
+# Defines a semantic type, with a given name, followed by an
+# optional array of parent types
+net.define_type("Action", ["Thing"])
+
+# List all types
+net.list_types()
+
+# Defines a slot corresponding to a type
+# Name, followed by semantic type, with optional
+# docstring, adjustment rules, min, max, and path
+net.define_slot("class", "Category", docstring="Points to a Category that some Entity is a member of.", pos_adj="none", neg_adj="reduce", min=1, max=0, path=None)
+
+# Lists all slots
+net.list_slots()
+
+# Defines a new caseframe with a name, semantic type, docstring, and list of slots
+define_caseframe(self, name, sem_type_name, docstring="")
+```
 
