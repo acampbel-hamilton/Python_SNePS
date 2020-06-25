@@ -1,6 +1,6 @@
-from . import PathLex
-from .ply import *
-from .Network import *
+from .. import PathLex
+from ..ply import *
+from ..Network import *
 
 current_network = None
 tokens = PathLex.tokens

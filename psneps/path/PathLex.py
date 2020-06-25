@@ -1,7 +1,5 @@
-from . import ply
-from .ply import lex
+from ..ply import *
 from re import match
-from sys import stderr
 
 keywords = (
     'converse',
@@ -30,7 +28,7 @@ t_ReverseSlotName = r'[A-Za-z_][A-Za-z0-9_]*\-'
 t_Comma = r','
 
 def t_error(t):
-    print("Invalid syntax: ", t.value, file=stderr)
+    print("Invalid syntax: ", t.value)
     t.lexer.skip(1)
 
 t_ignore = ' \t\r\n\f\v'
