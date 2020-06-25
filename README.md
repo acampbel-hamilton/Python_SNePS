@@ -145,7 +145,7 @@ All wft parsing is handled through ply (lex and yacc). The following yacc-like r
 
 ```yacc
 wft :       atomicwft                               // e.g. "Dog"
-    |       'wft' ∅ i                                // e.g. "wft1"
+    |       'wft' ∅ i                               // e.g. "wft1"
     |       identifier '(' argument+ ')'            // e.g. "Has(Dog, Bone)"
     |       BinaryOp '(' argument ',' argument ')'  // e.g. "if(Has(Dog, Bone), Happy(Dog))"
     |       NaryOp '(' wft* ')'                     // e.g. "and(a, b, c)"
