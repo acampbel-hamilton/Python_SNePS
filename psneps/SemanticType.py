@@ -164,6 +164,9 @@ class SemanticMixin:
     def define_type(self, name, parent_names=None):
         """ Adds term to hierarchy """
 
+        if self.enforce_name_syntax and not match(r'[A-Za-z_][A-Za-z0-9_]*', name):
+            raise CaseframeError("ERROR: The semantic type name '{}' is not allowed".format(name))
+
         # see https://effbot.org/zone/default-values.htm for why this is necessary
         if parent_names is None:
             parent_names = []

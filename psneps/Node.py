@@ -112,6 +112,10 @@ class NodeMixin:
 
     def define_term(self, name, sem_type_name="Entity", docstring=""):
         # Creates base atomic node
+
+        if self.enforce_name_syntax and not match(r'[A-Za-z_][A-Za-z0-9_]*', name):
+            raise CaseframeError("ERROR: The term name '{}' is not allowed".format(name))
+
         if name in self.nodes:
             node = self.nodes[name]
 

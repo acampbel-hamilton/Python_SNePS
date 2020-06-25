@@ -121,7 +121,7 @@ class CaseframeMixin:
         """ Defines a new caseframe. """
 
         if self.enforce_name_syntax and not match(r'[A-Za-z_][A-Za-z0-9_]*', name):
-            raise CaseframeError("ERROR: The name casframe name '{}' is not allowed".format(name))
+            raise CaseframeError("ERROR: The casframe name '{}' is not allowed".format(name))
 
         # Checks provided slots names are valid
         frame_slots = []
