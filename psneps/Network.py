@@ -8,7 +8,7 @@ from .Context import ContextMixin
 from .Slot import SlotMixin, AdjRule
 from .Node import NodeMixin, Molecular, MinMaxOpNode
 from .Caseframe import CaseframeMixin
-from .wft import wft_parser
+from .wft.WftParse import wft_parser
 from sys import stderr
 
 class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin):
