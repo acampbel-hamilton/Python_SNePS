@@ -17,7 +17,9 @@
 5. ["Types in SNePS 3"](https://cse.buffalo.edu/~shapiro/Talks/TypesInSneps3.pdf) by Stuart Shapiro
     * Clearly explains the relationship between caseframes and slots (called relations in the paper)
 
-## Section 1: Nodes
+## Section 1: Structure
+
+### Nodes
 
 A node is a unique syntactic object, consisting of the following tuple:
 1. Name
@@ -25,7 +27,7 @@ A node is a unique syntactic object, consisting of the following tuple:
 3. Up Cableset (An array of frames)
 4. Docstring
 
-and sometime:
+and sometimes:
 
 5. Frame
 
@@ -33,7 +35,7 @@ Nodes are typecast to syntactic types. Syntactic types are represented by classe
 
 ![Syntactic Types](https://raw.githubusercontent.com/acampbel-hamilton/Python_SNePS/master/assets/syntactic.svg)
 
-## Section 2: Frames
+### Frames
 
 A frame is a unique object, consisting of the following tuple:
 1. Caseframe
@@ -42,11 +44,11 @@ A frame is a unique object, consisting of the following tuple:
 Each Fillers instance must correspond to a slot in the caseframe (i.e. their semantic types must be compatible)
 Each molecular node has a single frame.
 
-## Section 3: Fillers
+### Fillers
 
 A filler is a non-unique object that contains an array of nodes.
 
-## Section 4: Caseframes
+### Caseframes
 
 A caseframe is a unique object, consisting of the following tuple:
 1. Name
@@ -56,7 +58,7 @@ A caseframe is a unique object, consisting of the following tuple:
 5. Slots (An ordered list of slots)
 6. Aliases (An array of strings also referring to this frame)
 
-## Section 5: Slots
+### Slots
 
 Slots are "relations". A slot is a unique object, consisting of the following tuple:
 1. Name
@@ -68,7 +70,7 @@ Slots are "relations". A slot is a unique object, consisting of the following tu
 7. Maximum number of fillers
 8. Path
 
-## Section 6: Semantic Types
+### Semantic Types
 
 Semantic types tell a user the type of ontological entity a node represents (e.g. agent, action).
 
@@ -76,4 +78,7 @@ Because certain slots require certain types of entities, semantic types ensure o
 
 ![Semantic Types](https://raw.githubusercontent.com/acampbel-hamilton/Python_SNePS/master/assets/semantic.svg)
 
-## Section 7: Paths
+### Paths
+
+## Section 2: Using SNePS
+
