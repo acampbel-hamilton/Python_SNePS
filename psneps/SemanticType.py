@@ -1,5 +1,6 @@
 from math import inf
 from .Error import SNError
+from re import match
 
 class SemError(SNError):
     pass

@@ -1,4 +1,5 @@
 from .Error import SNError
+from re import match
 
 class ContextError(SNError):
     pass
@@ -40,7 +41,7 @@ class ContextMixin:
         self.default_context = Context("_default", docstring="The default context", hyps={}, ders={})
 
     def define_context(self, name, docstring="", parent="_default", hyps={}, ders={}):
-        
+
         if self.enforce_name_syntax and not match(r'[A-Za-z_][A-Za-z0-9_]*', name):
             raise CaseframeError("ERROR: The context name '{}' is not allowed".format(name))
 
