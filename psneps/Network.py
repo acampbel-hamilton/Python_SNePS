@@ -190,5 +190,4 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
         else:
             nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_color='black')
             nx.draw_networkx(G, pos, node_size=800, node_color='grey', alpha=0.8)
-        plt.tight_layout()
         plt.show()
