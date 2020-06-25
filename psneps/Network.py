@@ -13,6 +13,7 @@ from sys import stderr
 
 class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin):
     def __init__(self):
+        self.enforce_name_syntax = False
         for cls in type(self).__bases__:
             cls.__init__(self)
 
@@ -129,6 +130,10 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
         # Aliases
         self.caseframes["nor"].add_alias("not")
         self.caseframes["thnor"].add_alias("thnot")
+
+        # Turn off enforcing name syntax
+        # ==============================
+        self.enforce_name_syntax = False
 
 
     def assert_wft(self, wft_str, value="hyp"):
