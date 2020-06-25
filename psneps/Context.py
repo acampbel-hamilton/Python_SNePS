@@ -43,7 +43,7 @@ class ContextMixin:
         if name in self.contexts:
             raise ContextError("ERROR: You cannot define contexts with the same name.")
         else:
-            self.contexts[name] = new_context = Context(name, docstring, parent, hyps, ders)
+            self.contexts[name] = Context(name, docstring, parent, hyps, ders)
 
     def list_contexts(self):
         """ Prints out all the contexts in the network """

@@ -1,9 +1,9 @@
 from . import WftLex
-from .ply import *
-from .Network import *
-from .Caseframe import Frame, Fillers
-from .Node import Base, Molecular, Indefinite, Arbitrary, MinMaxOpNode
-from .Error import SNError
+from ..ply import *
+from ..Network import *
+from ..Caseframe import Frame, Fillers
+from ..Node import Base, Molecular, Indefinite, Arbitrary, MinMaxOpNode
+from ..Error import SNError
 from sys import stderr
 
 class SNePSWftError(SNError):

@@ -17,7 +17,9 @@
 5. ["Types in SNePS 3"](https://cse.buffalo.edu/~shapiro/Talks/TypesInSneps3.pdf) by Stuart Shapiro
     * Clearly explains the relationship between caseframes and slots (called relations in the paper)
 
-## Section 1: Nodes
+## Section 1: Structure
+
+### Nodes
 
 A node is a unique syntactic object, consisting of the following tuple:
 1. Name
@@ -25,7 +27,7 @@ A node is a unique syntactic object, consisting of the following tuple:
 3. Up Cableset (An array of frames)
 4. Docstring
 
-and sometime:
+and sometimes:
 
 5. Frame
 
@@ -33,7 +35,9 @@ Nodes are typecast to syntactic types. Syntactic types are represented by classe
 
 ![Syntactic Types](https://raw.githubusercontent.com/acampbel-hamilton/Python_SNePS/master/assets/syntactic.svg)
 
-## Section 2: Frames
+MinMaxOpNodes are created by thresh and andor
+
+### Frames
 
 A frame is a unique object, consisting of the following tuple:
 1. Caseframe
@@ -42,11 +46,11 @@ A frame is a unique object, consisting of the following tuple:
 Each Fillers instance must correspond to a slot in the caseframe (i.e. their semantic types must be compatible)
 Each molecular node has a single frame.
 
-## Section 3: Fillers
+### Fillers
 
 A filler is a non-unique object that contains an array of nodes.
 
-## Section 4: Caseframes
+### Caseframes
 
 A caseframe is a unique object, consisting of the following tuple:
 1. Name
@@ -56,7 +60,7 @@ A caseframe is a unique object, consisting of the following tuple:
 5. Slots (An ordered list of slots)
 6. Aliases (An array of strings also referring to this frame)
 
-## Section 5: Slots
+### Slots
 
 Slots are "relations". A slot is a unique object, consisting of the following tuple:
 1. Name
@@ -68,7 +72,7 @@ Slots are "relations". A slot is a unique object, consisting of the following tu
 7. Maximum number of fillers
 8. Path
 
-## Section 6: Semantic Types
+### Semantic Types
 
 Semantic types tell a user the type of ontological entity a node represents (e.g. agent, action).
 
@@ -76,4 +80,58 @@ Because certain slots require certain types of entities, semantic types ensure o
 
 ![Semantic Types](https://raw.githubusercontent.com/acampbel-hamilton/Python_SNePS/master/assets/semantic.svg)
 
-## Section 7: Paths
+### Paths
+
+## Section 2: Using Python SNePS
+
+Create a network object:
+
+```python
+from psneps import *
+net = Network.Network()
+```
+
+The following methods are defined:
+
+```python
+# Defines a term with a name, optional semantic type, and docstring
+net.("Ben", sem_type_name="Agent", docstring="Ben is a human being.")
+
+# List all terms or find a specific term
+net.list_terms()
+net.find_term("Ben")
+
+# Defines a semantic type, with a given name, followed by an
+# optional array of parent types
+net.define_type("Action", ["Thing"])
+
+# List all types
+net.list_types()
+
+# Defines a slot corresponding to a type
+# Name, followed by semantic type, with optional
+# docstring, adjustment rules, min, max, and path
+net.define_slot("class", "Category", docstring="Points to a Category that some Entity \
+    is a member of.", pos_adj="none", neg_adj="reduce", min=1, max=0, path=None)
+
+# Lists all slots
+net.list_slots()
+
+# Defines a new caseframe with a name, semantic type, list of slots,
+# and optional docstring
+net.define_caseframe("Isa", "Propositional", ["member", "class"],
+    docstring="Epistemic relationship for class membership")
+
+# Lists all caseframes or find a specific caseframe
+net.list_caseframes()
+net.find_caseframe("Isa")
+
+# Passes wft followed by optional parameter asserting
+# "hyp" for hypothetical or "true" for true
+net.assert_wft("Isa(Dog, Pet)", value="hyp")
+
+# Prints out a visual representation of the knowledge base
+net.print_graph()
+```
+
+## Section 3: Understanding a Python SNePS wft

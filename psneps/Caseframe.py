@@ -67,7 +67,7 @@ class Frame:
             if len(fillers) < slot.min:
                 raise CaseframeError('ERROR: Fewer than minimum required slots provided for "' + slot.name + '"')
 
-            if slot.max is not None and len(fillers) > slot.max:
+            if slot.max > 0 and len(fillers) > slot.max:
                 raise CaseframeError('ERROR: Greater than maximum slots provided for "' + slot.name + '"')
 
     def __eq__(self, other):
@@ -116,11 +116,8 @@ class CaseframeMixin:
         for caseframe in self.caseframes:
             print(self.caseframes[caseframe])
 
-    def define_caseframe(self, name, sem_type_name, docstring="", slot_names=None):
+    def define_caseframe(self, name, sem_type_name, slot_names, docstring=""):
         """ Defines a new caseframe. """
-        # see https://effbot.org/zone/default-values.htm for why this is necessary
-        if slot_names is None:
-            slot_names = []
 
         # Checks provided slots names are valid
         frame_slots = []

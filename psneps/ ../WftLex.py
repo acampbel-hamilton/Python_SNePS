@@ -1,4 +1,4 @@
-from .ply import *
+from ..ply import *
 from re import match
 
 keywords = (
@@ -75,7 +75,7 @@ def t_Impl(t):
     t.value = "if"
     return t
 
-def t_DoubleImpl(t):
+def t_DoubImpl(t):
     r'<=>'
     t.value = "iff"
     return t
@@ -103,7 +103,7 @@ def t_error(t):
 t_ignore = ' \t\r\n\f\v'
 
 # Build the lexer
-from .ply import lex
+from ..ply import lex
 lexer = lex.lex()
 
 if __name__ == '__main__':

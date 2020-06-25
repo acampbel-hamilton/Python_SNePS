@@ -15,8 +15,11 @@ class Slot:
         self.name = name
         self.docstring = docstring
         self.sem_type = sem_type # Semantic type
-        self.pos_adj = pos_adj # Positive adjustment
-        self.neg_adj = neg_adj # Negative adjustment
+        try:
+            self.pos_adj = AdjRule.__dict__[pos_adj.upper()] # Positive adjustment rule (i.e. "NONE")
+            self.neg_adj = AdjRule.__dict__[neg_adj.upper()] # Negative adjustment
+        except KeyError:
+            raise SlotError("Invalid adjustment rule string provided. Valid options are \"NONE\", \"REDUCE\", and \"EXPAND\"")
         self.min = min
         self.max = max
         self.path = path
@@ -41,15 +44,15 @@ class SlotMixin:
             raise NotImplementedError("Mixins can't be instantiated.")
         self.slots = {} # AKA Relations
 
-    def define_slot(self, name, sem_type_str, docstring="", pos_adj=AdjRule.NONE,
-                    neg_adj=AdjRule.NONE, min=1, max=None, path=None):
+    def define_slot(self, name, sem_type_str, docstring="", pos_adj="NONE",
+                    neg_adj="NONE", min=1, max=0, path=None):
         """ Adds new slot to network """
         if name in self.slots:
-            raise SlotError("ERROR: Slot " + name + " already defined. Doing nothing instead.")
+            raise SlotError("ERROR: Slot " + name + " already defined.")
 
         sem_type = self.sem_hierarchy.get_type(sem_type_str)
-        if sem_type is not None:
-            self.slots[name] = Slot(name, sem_type, docstring, pos_adj, neg_adj, min, max, path)
+
+        self.slots[name] = Slot(name, sem_type, docstring, pos_adj, neg_adj, min, max, path)
 
     def list_slots(self):
         """ Lists all slots in network """

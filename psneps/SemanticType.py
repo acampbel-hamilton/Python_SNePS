@@ -170,5 +170,5 @@ class SemanticMixin:
 
         self.sem_hierarchy.add_type(name, parent_names)
 
-    def show_types(self):
+    def list_types(self):
         print(self.sem_hierarchy)
