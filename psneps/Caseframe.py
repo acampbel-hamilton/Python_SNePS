@@ -2,6 +2,7 @@ from .Slot import *
 from .SemanticType import SemanticType
 from .Error import SNError
 from sys import stderr
+from re import match
 
 class CaseframeError(SNError):
     pass
@@ -118,6 +119,9 @@ class CaseframeMixin:
 
     def define_caseframe(self, name, sem_type_name, slot_names, docstring=""):
         """ Defines a new caseframe. """
+
+        if self.enforce_name_syntax and not match(r'[A-Za-z_][A-Za-z0-9_]*', name):
+            raise CaseframeError("ERROR: The name casframe name '{}' is not allowed".format(name))
 
         # Checks provided slots names are valid
         frame_slots = []

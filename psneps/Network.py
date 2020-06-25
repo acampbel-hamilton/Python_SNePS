@@ -133,7 +133,7 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
 
         # Turn off enforcing name syntax
         # ==============================
-        self.enforce_name_syntax = False
+        self.enforce_name_syntax = True
 
 
     def assert_wft(self, wft_str, value="hyp"):
