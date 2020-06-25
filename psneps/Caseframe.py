@@ -75,7 +75,7 @@ class Frame:
         return self.caseframe == other.caseframe and self.filler_set == other.filler_set
 
     def __str__(self):
-        ret = self.name
+        ret = self.caseframe.name
         for i in range(0, len(self.filler_set)):
             ret += self.filler_set[i].__str__(self.caseframe.slots[i].name)
         return ret
