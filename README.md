@@ -4,25 +4,25 @@
 ## Section 0: Preliminary Reading and Installation
 
 1. ["A Logic of Arbitrary and Indefinite Objects"](https://www.aaai.org/Papers/KR/2004/KR04-059.pdf) by Stuart Shapiro
-    * This will outline the logic of SNePS. While we have transformed the grammar to be more like Python, the general concepts are necessary to understand.
+    * This paper outlines the logic of SNePS. We have transformed SNePS's grammar to be more Pythonic in our project, but the general concepts from this paper are important.
 
 2. ["An Introduction to SNePS 3"](https://cse.buffalo.edu/~shapiro/Papers/sneps3intro.pdf) by Stuart Shapiro
-    * This will explain the different semantic and syntactic types as well as the different inference methods (not written yet).
+    * This paper explains the different semantic and syntactic types as well as the different inference methods (not written yet).
 
 3. ["Visually Interacting with a Knowledge Base Using Frames, Logic, and Propositional Graphs"](https://cse.buffalo.edu/~shapiro/Papers/schsha2011b.pdf) by Daniel R. Schlegel and Stuart C. Shapiro
-    * This paper gives the best working definitions for the various terms used in SNePS3.
+    * This paper gives great working definitions for the various terms used in SNePS3.
 
 4. ["SNePS 3 USER’S MANUAL"](https://cse.buffalo.edu/sneps/Projects/sneps3manual.pdf) by Stuart Shapiro
-    * Only use this for understanding the user commands. The pseudo-yacc file is defunct in Python_SNePS.
+    * Reference this paper to understand the user commands. The pseudo-yacc file is defunct in Python_SNePS.
 
 5. ["Types in SNePS 3"](https://cse.buffalo.edu/~shapiro/Talks/TypesInSneps3.pdf) by Stuart Shapiro
-    * Clearly explains the relationship between caseframes and slots (called relations in the paper)
+    * This paper clearly explains the relationship between caseframes and slots. Note that slots are called relations in the paper.
 
 ## Section 1: Structure
 
 ### Nodes
 
-A node is a unique syntactic object, consisting of the following tuple:
+A node is a unique syntactic object, consisting of the following:
 1. Name
 2. Semantic Type
 3. Up Cableset (An array of frames)
@@ -36,7 +36,7 @@ Nodes are typecast to syntactic types. Syntactic types are represented by classe
 
 ![Syntactic Types](https://raw.githubusercontent.com/acampbel-hamilton/Python_SNePS/master/assets/syntactic.svg)
 
-MinMaxOpNodes are created by thresh and andor
+MinMaxOpNodes are created by thresh and andor.
 
 ### Frames
 
@@ -53,7 +53,7 @@ A filler is a non-unique object that contains an array of nodes.
 
 ### Caseframes
 
-A caseframe is a unique object, consisting of the following tuple:
+A caseframe is a unique object, consisting of the following:
 1. Name
 2. Semantic Type
 3. Semantic Hierarchy (Of the parent network)
@@ -63,7 +63,7 @@ A caseframe is a unique object, consisting of the following tuple:
 
 ### Slots
 
-Slots are "relations". A slot is a unique object, consisting of the following tuple:
+Slots are "relations". A slot is a unique object, consisting of the following:
 1. Name
 2. Docstring
 3. Semantic Type
@@ -96,7 +96,7 @@ The following methods are defined:
 
 ```python
 # Defines a term with a name, optional semantic type, and docstring
-net.("Ben", sem_type_name="Agent", docstring="Ben is a human being.")
+net.define_term("Ben", sem_type_name="Agent", docstring="Ben is a human being.")
 
 # List all terms or find a specific term
 net.list_terms()
@@ -145,7 +145,7 @@ All wft parsing is handled through ply (lex and yacc). The following yacc-like r
 
 ```yacc
 wft :       atomicwft                               // e.g. "Dog"
-    |       'wf' ∅ i                                // e.g. "wft1"
+    |       'wft' ∅ i                               // e.g. "wft1"
     |       identifier '(' argument+ ')'            // e.g. "Has(Dog, Bone)"
     |       BinaryOp '(' argument ',' argument ')'  // e.g. "if(Has(Dog, Bone), Happy(Dog))"
     |       NaryOp '(' wft* ')'                     // e.g. "and(a, b, c)"
@@ -165,11 +165,11 @@ NaryOp :    ‘and’ | ‘or’ | ‘not’ | ‘nor’            // These ope
 
 ## Viewing graphs
 
-For viewing graphs run:
+Viewing graphs requires some extra Python modules. If you want to visualize small graphs, run:
 ```bash
 pip install networkx matplotlib
 ```
-For dragging graphs run:
+If you need draggable graphs, then also run:
 ```bash
 pip install netgraph
 ```
