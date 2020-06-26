@@ -27,7 +27,7 @@ class Context:
             s += "{:<16}: {:>20}\n".format(str(k), str(v))
         return s
 
-    def __eq__(self, other: Context) -> bool:
+    def __eq__(self, other) -> bool:
         return self.name == other.name
 
 class ContextMixin:

@@ -1,5 +1,6 @@
 from .Caseframe import Frame
 from .Error import SNError
+from .SemanticType import SemanticType
 from re import match
 
 class NodeError(SNError):

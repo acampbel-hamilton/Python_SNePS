@@ -1,6 +1,3 @@
-from functools import reduce
-from operator import concat
-
 class ComposedPaths:
     """ A composed list of path objects, following one after another """
     def __init__(self, paths):
@@ -8,24 +5,35 @@ class ComposedPaths:
 
     def derivable(self, start_node):
         # Gets list of all nodes derived by following this path
-        derived = [start_node]
+        derived = set([start_node])
 
         # Follow paths consecutively
         for path in self.paths:
-            temp_derived = []
+            temp_derived = set()
             for node in derived:
                 # Store all nodes derived by following the next path
-                temp_derived += path.derivable(node)
+                temp_derived.update(path.derivable(node))
             derived = temp_derived
         return derived
 
-class AndPaths:
-    def __init__(self, paths):
-        pass
+class AndPaths(ComposedPaths):
+    def derivable(self, start_node):
+        # Gets list of all nodes that can be derived from all of these paths
+        derived = set()
+        for path in self.paths:
+            temp_derived = set()
+            temp_derived = path.derivable(start_node)
+            derived = derived.intersection(temp_derived)
+        return derived
 
-class OrPaths:
-    def __init__(self, paths):
-        pass
+class OrPaths(ComposedPaths):
+    def derivable(self, start_node):
+        derived = set()
+        for path in self.paths:
+            temp_derived = set()
+            temp_derived = path.derivable(start_node)
+            derived.update(temp_derived)
+        return derived
 
 class KPlusPaths():
     """ Follows one or more instances of the given path """
@@ -38,15 +46,14 @@ class KPlusPaths():
         next = [start_node]
         while next != []:
             # Get new nodes from traversing the path another time
-            next = reduce(concat, [self.path.derivable(node) for node in next])
-            for node in next:
-                derived.add(node)
-        return list(derived)
+            next = [self.path.derivable(node) for node in next]
+            derived.update(set(next))
+        return derived
 
 class KStarPaths(KPlusPaths):
     """ Follows zero or more instances of the given path """
     def derivable(self, start_node):
-        return [start_node] + super().derivable(start_node)
+        return super().derivable(start_node).update([start_node])
 
 class BasePath:
     """ Atomic path existing on a single non-repeated slot """
@@ -56,4 +63,4 @@ class BasePath:
         self.asserted = asserted
 
     def derivable(self, start_node):
-        pass
+        return start_node.frame

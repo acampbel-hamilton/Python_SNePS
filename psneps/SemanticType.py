@@ -5,6 +5,33 @@ from re import match
 class SemError(SNError):
     pass
 
+class SemanticType:
+    # Node in semantic hierarchy
+    def __init__(self, name):
+        self.name = name
+        self.parents = []
+        self.children = []
+
+    def __hash__(self):
+        return hash(self.name)
+
+    def __str__(self):
+        return self.name
+
+    def add_parent(self, parent):
+        self.parents.append(parent)
+
+    def add_child(self, child):
+        self.children.append(child)
+
+    def subtype(self, potential_child):
+        """ Determines if given node is a descendant of self """
+        return any(child is potential_child or child.subtype(potential_child) for child in self.children)
+
+    def __str__(self, level=0):
+        return "\t" * level + self.name + ("\n" if self.children != [] else "") + \
+               "".join(child.__str__(level + 1) for child in self.children)
+
 class SemanticHierarchy:
     """ Contains tree-like structure for semantics (Entity, individual, etc.) """
     def __init__(self) -> None:
@@ -125,33 +152,6 @@ class SemanticHierarchy:
 
     def __str__(self):
         return ", ".join(self.sem_types.keys()) + "\n" + str(self.root_node)
-
-class SemanticType:
-    # Node in semantic hierarchy
-    def __init__(self, name):
-        self.name = name
-        self.parents = []
-        self.children = []
-
-    def __hash__(self):
-        return hash(self.name)
-
-    def __str__(self):
-        return self.name
-
-    def add_parent(self, parent):
-        self.parents.append(parent)
-
-    def add_child(self, child):
-        self.children.append(child)
-
-    def subtype(self, potential_child):
-        """ Determines if given node is a descendant of self """
-        return any(child is potential_child or child.subtype(potential_child) for child in self.children)
-
-    def __str__(self, level=0):
-        return "\t" * level + self.name + ("\n" if self.children != [] else "") + \
-               "".join(child.__str__(level + 1) for child in self.children)
 
 class SemanticMixin:
     """ Provides functions related to semantic types to network """

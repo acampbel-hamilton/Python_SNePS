@@ -1,5 +1,5 @@
 from .Slot import *
-from .SemanticType import SemanticType
+from .SemanticType import SemanticType, SemanticHierarchy
 from .Error import SNError
 from sys import stderr
 from re import match
@@ -26,7 +26,7 @@ class Caseframe:
         # Checks if string in aliases
         return alias in self.aliases
 
-    def __eq__(self, other: Caseframe) -> bool:
+    def __eq__(self, other) -> bool:
         """ Returns true if both arguments are equivalent caseframes.
             Two caseframes are equivalent when:
                 1. They have the same type
@@ -73,7 +73,15 @@ class Frame:
             if slot.max > 0 and len(fillers) > slot.max:
                 raise CaseframeError('ERROR: Greater than maximum slots provided for "' + slot.name + '"')
 
-    def __eq__(self, other: Frame) -> bool:
+    def filler_set(self, slot_name):
+        # Returns a set of all fillers that are used with slots of the given name
+        fillers = set()
+        for i in range(0, self.caseframe.slots):
+            if self.caseframe.slots[i].name == slot_name:
+                fillers.update(self.filler_set[i].nodes)
+
+
+    def __eq__(self, other) -> bool:
         return self.caseframe == other.caseframe and self.filler_set == other.filler_set
 
     def __str__(self) -> str:
@@ -87,7 +95,7 @@ class Fillers:
     """ Forms 'cables'/'cablesets' """
 
     def __init__(self, nodes=None) -> None:
-        self.nodes = [] if nodes is None else nodes # see https://effbot.org/zone/default-values.htm for why this is necessary
+        self.nodes = set() if nodes is None else set(nodes) # see https://effbot.org/zone/default-values.htm for why this is necessary
 
     def __len__(self) -> int:
         return len(self.nodes)
