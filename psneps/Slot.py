@@ -12,7 +12,9 @@ class AdjRule(Enum):
     EXPAND = 2
 
 class Slot:
-    def __init__(self, name, sem_type, docstring, pos_adj, neg_adj, min, max, path):
+    def __init__(self, name: str, sem_type: SemanticType,
+                 docstring: str, pos_adj: AdjRule, neg_adj: AdjRule,
+                 min: int, max: int, path) -> None:
         self.name = name
         self.docstring = docstring
         self.sem_type = sem_type # Semantic type
@@ -40,16 +42,16 @@ class Slot:
 class SlotMixin:
     """ Provides functions related to slots to Network """
 
-    def __init__(self):
+    def __init__(self) -> None:
         if type(self) is SlotMixin:
             raise NotImplementedError("Mixins can't be instantiated.")
         self.slots = {} # AKA Relations
 
-    def define_slot(self, name, sem_type_str, docstring="", pos_adj="NONE",
-                    neg_adj="NONE", min=1, max=0, path=None):
+    def define_slot(self, name: str, sem_type_str: str, docstring="", pos_adj="NONE",
+                    neg_adj="NONE", min=1, max=0, path=None) -> None:
         """ Adds new slot to network """
 
-        if self.enforce_name_syntax and not match(r'[A-Za-z_][A-Za-z0-9_]*', name):
+        if self.enforce_name_syntax and not match(r'^[A-Za-z_][A-Za-z0-9_]*$', name):
             raise SlotError("ERROR: The slot name '{}' is not allowed".format(name))
 
         if name in self.slots:
@@ -59,7 +61,7 @@ class SlotMixin:
 
         self.slots[name] = Slot(name, sem_type, docstring, pos_adj, neg_adj, min, max, path)
 
-    def list_slots(self):
+    def list_slots(self) -> None:
         """ Lists all slots in network """
         for slot_name in self.slots:
             print(self.slots[slot_name])

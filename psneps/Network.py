@@ -28,7 +28,7 @@ except ModuleNotFoundError:
     has_ng = False
 
 class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin):
-    def __init__(self):
+    def __init__(self) -> None:
         self.enforce_name_syntax = False
         for cls in type(self).__bases__:
             cls.__init__(self)
@@ -41,7 +41,7 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
         # self.default_context = Context(docstring="The default context", hyps={}, ders={}) (defined in Context.py,_default",
         self._build_default()
 
-    def _build_default(self):
+    def _build_default(self) -> None:
         """ Builds the default context """
 
         # Types
@@ -152,14 +152,14 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
         self.enforce_name_syntax = True
 
 
-    def assert_wft(self, wft_str, value="hyp"):
+    def assert_wft(self, wft: str, value="hyp") -> None:
         if value != "hyp" and value != "true":
             print("ERROR: Invalid parameters on assertion. Must be either true or hyp.", file=stderr)
             return
 
-        wft_parser(wft_str, self)
+        wft_parser(wft, self)
 
-    def print_graph(self):
+    def print_graph(self) -> None:
         if not has_nx:
             print("In order to use this function, you must pip install networkx")
         if not has_mpl:

@@ -8,23 +8,25 @@ class CaseframeError(SNError):
     pass
 
 class Caseframe:
-    def __init__(self, name, sem_type, sem_hierarchy, docstring, slots):
+    def __init__(self, name: str, sem_type: SemanticType,
+                 sem_hierarchy: SemanticHierarchy,
+                 docstring: str, slots: list) -> None:
         self.name = name
         self.sem_type = sem_type
         self.sem_hierarchy = sem_hierarchy
         self.docstring = docstring
-        self.slots = [] if slots is None else slots # see https://effbot.org/zone/default-values.htm for why this is necessary
+        self.slots = slots
         self.aliases = [self.name]
 
-    def add_alias(self, alias):
+    def add_alias(self, alias: str) -> None:
         # Adds new alias to array
         self.aliases.append(alias)
 
-    def has_alias(self, alias):
+    def has_alias(self, alias: str) -> bool:
         # Checks if string in aliases
         return alias in self.aliases
 
-    def __eq__(self, other):
+    def __eq__(self, other: Caseframe) -> bool:
         """ Returns true if both arguments are equivalent caseframes.
             Two caseframes are equivalent when:
                 1. They have the same type
@@ -32,14 +34,14 @@ class Caseframe:
         return other is not None and self.sem_type is other.sem_type and \
                self.slots == other.slots
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "<{}>: {}\n".format(self.name, self.docstring) + \
                "\tSemantic Type: {}\n".format(self.sem_type.name) + \
                "\tAliases: [" + ", ".join(self.aliases) + "]"
 
 
 class Frame:
-    def __init__(self, caseframe, filler_set=None):
+    def __init__(self, caseframe: Caseframe, filler_set=None) -> None:
         self.caseframe = caseframe
         self.filler_set = [] if filler_set is None else filler_set # see https://effbot.org/zone/default-values.htm for why this is necessary
 
@@ -49,7 +51,7 @@ class Frame:
 
         self.verify_slots()
 
-    def verify_slots(self):
+    def verify_slots(self) -> None:
         """ Check fillers correspond to slots
             Fillers are entered as a list of type Fillers:
                 - Each Fillers instance corresponds to one slot
@@ -71,56 +73,56 @@ class Frame:
             if slot.max > 0 and len(fillers) > slot.max:
                 raise CaseframeError('ERROR: Greater than maximum slots provided for "' + slot.name + '"')
 
-    def __eq__(self, other):
+    def __eq__(self, other: Frame) -> bool:
         return self.caseframe == other.caseframe and self.filler_set == other.filler_set
 
-    def __str__(self):
+    def __str__(self) -> str:
         ret = self.caseframe.name
         for i in range(0, len(self.filler_set)):
-            ret += self.filler_set[i].__str__(self.caseframe.slots[i].name)
+            ret += self.filler_set[i].to_string(self.caseframe.slots[i].name)
         return ret
 
 
 class Fillers:
     """ Forms 'cables'/'cablesets' """
 
-    def __init__(self, nodes=None):
+    def __init__(self, nodes=None) -> None:
         self.nodes = [] if nodes is None else nodes # see https://effbot.org/zone/default-values.htm for why this is necessary
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.nodes)
 
-    def __str__(self, slot_name):
+    def to_string(self, slot_name: str) -> str:
         return "\n\t  " + slot_name + ":" + "".join("\n\t    " + str(node) for node in self.nodes)
 
-    def __eq__(self, other):
+    def __eq__(self, other: Frame) -> bool:
         return self.nodes == other.nodes
 
 
 class CaseframeMixin:
     """ Provides functions related to caseframes to network """
 
-    def __init__(self):
+    def __init__(self) -> None:
         if type(self) is CaseframeMixin:
             raise NotImplementedError("Mixins can't be instantiated.")
 
         self.caseframes = {}
 
-    def find_caseframe(self, name):
+    def find_caseframe(self, name: str) -> Caseframe:
         for caseframe in self.caseframes.values():
             if caseframe.has_alias(name):
                 return caseframe
         else:
             raise CaseframeError('ERROR: Caseframe "' + name + '" not defined.')
 
-    def list_caseframes(self):
+    def list_caseframes(self) -> None:
         for caseframe in self.caseframes:
             print(self.caseframes[caseframe])
 
-    def define_caseframe(self, name, sem_type_name, slot_names, docstring=""):
+    def define_caseframe(self, name: str, sem_type_name: str, slot_names: list, docstring="") -> None:
         """ Defines a new caseframe. """
 
-        if self.enforce_name_syntax and not match(r'[A-Za-z_][A-Za-z0-9_]*', name):
+        if self.enforce_name_syntax and not match(r'^[A-Za-z_][A-Za-z0-9_]*$', name):
             raise CaseframeError("ERROR: The casframe name '{}' is not allowed".format(name))
 
         # Checks provided slots names are valid
@@ -144,7 +146,7 @@ class CaseframeMixin:
                 raise CaseframeError("ERROR: Caseframe name '{}' is already taken".format(name))
 
             if new_caseframe == caseframe:
-                print('Your caseframe "' + new_caseframe.name + '" is identical to "' + caseframe.name + '".')
+                print('Your caseframe "' + new_caseframe.name + '" has the same name as "' + caseframe.name + '".')
 
                 while True:
                     response = input('Would you like to add an alias to "' + caseframe.name + '"? (y/N)')
