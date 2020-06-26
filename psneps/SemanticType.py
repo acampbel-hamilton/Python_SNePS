@@ -7,12 +7,12 @@ class SemError(SNError):
 
 class SemanticHierarchy:
     """ Contains tree-like structure for semantics (Entity, individual, etc.) """
-    def __init__(self):
+    def __init__(self) -> None:
         self.root_node = SemanticType("Entity")
         self.sem_types = {}
         self.sem_types["Entity"] = self.root_node
 
-    def add_type(self, type_name, parent_names=None):
+    def add_type(self, type_name: str, parent_names=None) -> None:
         # see https://effbot.org/zone/default-values.htm for why this is necessary
         if parent_names is None:
             parent_names = []
@@ -37,7 +37,7 @@ class SemanticHierarchy:
 
         return self.sem_types[type_name]
 
-    def respecify(self, term_name, current_type, new_type):
+    def respecify(self, term_name: str, current_type: SemanticType, new_type: SemanticType) -> SemanticType:
         """ Given new and old semantic type for a node, returns a computed new type
             e.g. Cassie is a human and a robot, therefore Cassie is a cyborg """
 
@@ -51,7 +51,7 @@ class SemanticHierarchy:
         raise SemError('WARNING: Could not retypecast "' + term_name + '" from ' + current_type.name + " to " + new_type.name)
         return current_type
 
-    def greatest_common_subtype(self, term_name, type1, type2):
+    def greatest_common_subtype(self, term_name: str, type1: SemanticType, type2: SemanticType):
         """ Finds the closest common subtype of type1 and type2. If type1 is a
             subtype of type2, or vice versa, then that type is returned instead.
             If this isn't the case, then this function returns the type that has
@@ -165,7 +165,7 @@ class SemanticMixin:
     def define_type(self, name, parent_names=None):
         """ Adds term to hierarchy """
 
-        if self.enforce_name_syntax and not match(r'[A-Za-z_][A-Za-z0-9_]*', name):
+        if self.enforce_name_syntax and not match(r'^[A-Za-z_][A-Za-z0-9_]*$', name):
             raise NodeError("ERROR: The semantic type name '{}' is not allowed".format(name))
 
         # see https://effbot.org/zone/default-values.htm for why this is necessary

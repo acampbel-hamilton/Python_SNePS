@@ -61,8 +61,14 @@ class KPlusPaths:
 
 class BasePath:
     """ Atomic path existing on a single non-repeated slot """
-    def __init__(self, slot, self.backward=False, self.asserted=False):
+    def __init__(self, slot, backward=False, asserted=False):
+        self.slot = slot
         self.backward = backward
+        self.asserted = asserted
 
+<<<<<<< HEAD
     def derivable(self, start_node):
+=======
+    def followable(self, start_node, finish_node):
+>>>>>>> c4018ea510bb1c468bf8aad9b6293891d0d0f2b6
         pass
