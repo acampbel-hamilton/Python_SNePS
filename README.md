@@ -152,6 +152,7 @@ wft :       atomicwft                               // e.g. "Dog"
     |       Param2Op '{' i ',' j '}' '(' wft+ ')'   // e.g. "thresh{1, 2}(a, b, c, d)"
     |       'thresh' '{' i '}' '(' wft+ ')'         // e.g. "thresh{1}(a, b, c)"
     |       'close' '(' atomicNameSet ',' wft ')'
+    |       'every'
 
 
 BinaryOp :  i ∅ '=>' | 'v=>' | '=>' | 'if'          // 'v=>' does or-implication and

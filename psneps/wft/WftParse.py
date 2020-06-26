@@ -110,18 +110,14 @@ def p_MinMaxOp(p):
 # e.g. every{x}(Isa(x, Dog))
 def p_EveryStmt(p):
     '''
-    EveryStmt :         Every LBrace AtomicName RBrace LParen Wfts RParen
-              |         Every LBrace AtomicName RBrace LParen RParen
+    EveryStmt :         Every LParen AtomicName Comma Argument RParen
     '''
-
 
 # e.g. some{x(y)}(Isa(x, y))
 def p_SomeStmt(p):
     '''
-    SomeStmt :          Some LBrace AtomicName LParen AtomicName RParen RBrace LParen Wfts RParen
-             |          Some LBrace AtomicName LParen AtomicName RParen RBrace LParen RParen
+    SomeStmt :          Some LParen AtomicName LParen AtomicName RParen Comma Argument RParen
     '''
-
 
 # e.g. close(Dog, wft1)
 def p_CloseStmt(p):
