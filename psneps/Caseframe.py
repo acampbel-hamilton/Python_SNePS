@@ -73,13 +73,13 @@ class Frame:
             if slot.max > 0 and len(fillers) > slot.max:
                 raise CaseframeError('ERROR: Greater than maximum slots provided for "' + slot.name + '"')
 
-    def filler_set(self, slot_name):
-        # Returns a set of all fillers that are used with slots of the given name
-        fillers = set()
+    def filler_set(self, slot):
+        # Returns a set of all fillers that are used with given slot
+        slot_fillers = set()
         for i in range(0, self.caseframe.slots):
-            if self.caseframe.slots[i].name == slot_name:
-                fillers.update(self.filler_set[i].nodes)
-
+            if self.caseframe.slots[i].name is slot:
+                slot_fillers.update(self.filler_set[i].nodes)
+        return slot_fillers
 
     def __eq__(self, other) -> bool:
         return self.caseframe == other.caseframe and self.filler_set == other.filler_set

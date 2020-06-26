@@ -63,4 +63,9 @@ class BasePath:
         self.asserted = asserted
 
     def derivable(self, start_node):
-        return start_node.frame
+        if !self.backward
+            derived = start_node.filler_set(slot)
+        else:
+            derived = set() # TODO: follow up cables instead of down cables
+
+        # if self.asserted filter the set for only nodes asserted in current context
