@@ -156,7 +156,7 @@ wft :        atomicName                              // e.g. "Dog"
     |        'close' '(' atomicNameSet ',' wft ')'
     |        'every' '(' atomicName ',' argument ')'
     |        'some' '(' atomicName '(' atomicName ')' ',' argument ')'
-    |        '?' ∅ atomicName '(' wft* ')'
+    |        '?' ∅ atomicName '(' wft* ')'           // e.g. "?John"
 
 
 BinaryOp :   i ∅ '=>' | 'v=>' | '=>' | 'if'          // 'v=>' does or-implication and
@@ -174,13 +174,13 @@ atomicName : identifier | i                          // Identifier matches r'[A-
                                                      // i (Integer) matches r'\d+'
 
 argument :   wft
-         |   'None'
-         |   'setof' '(' wfts* ')'
-         |   '[' wfts* ']'
+         |   'None'                                  // Equivalent to an empty set
+         |   'setof' '(' wfts* ')'                   // Creates a set of filler nodes for a single slot
+         |   '[' wfts* ']'                           // Equivalent to 'setof(wfts*)'
 
 ```
 
-## Section 4: Viewing graphs
+## Section 4: Viewing Graphs
 
 Viewing graphs requires some extra Python modules. If you want to visualize small graphs, run:
 ```bash
