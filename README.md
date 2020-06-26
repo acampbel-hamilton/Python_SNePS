@@ -63,7 +63,7 @@ A caseframe is a unique object, consisting of the following:
 
 ### Slots
 
-Slots are "relations". A slot is a unique object, consisting of the following:
+Slots are &ldquo;relations&rdquo;. A slot is a unique object, consisting of the following:
 1. Name
 2. Docstring
 3. Semantic Type
