@@ -228,6 +228,7 @@ def build_molecular(caseframe_name, filler_set):
     current_network.nodes[wftNode.name] = wftNode
     return wftNode
 
+
 def build_minmax (caseframe_name, filler_set, min, max):
     """ Builds and returns (or simply returns) a MinMaxOp node from given parameters """
     caseframe = current_network.find_caseframe(caseframe_name)
@@ -238,6 +239,7 @@ def build_minmax (caseframe_name, filler_set, min, max):
     wftNode = MinMaxOpNode(frame, min, max)
     current_network.nodes[wftNode.name] = wftNode
     return wftNode
+
 
 def wft_parser(wft, network):
     global current_network
