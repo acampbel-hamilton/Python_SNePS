@@ -1,3 +1,6 @@
+from functools import reduce
+from operator import concat
+
 class ComposedPaths:
     """ A composed list of path objects, following one after another """
     def __init__(self, paths):
@@ -24,40 +27,26 @@ class OrPaths:
     def __init__(self, paths):
         pass
 
-class KStarPaths:
-    """ Follows zero or more instances of the given path """
-    def __init__(self, path):
-        self.path = path
-
-class KPlusPaths:
+class KPlusPaths():
     """ Follows one or more instances of the given path """
-
     def __init__(self, path):
         self.path = path
 
     def derivable(self, start_node):
-        # Gets list of all nodes derived by following this path
-        derived = []
-        temp_derived = [start_node]
-
-        # Follow path until reaching an end or a loop
-        while len(derived) < len(temp_derived):
-            derived += temp_derived
-            for node in derived:
-                derived_nodes = self.path.derivable(node)
-                for derived_node in derived_nodes:
-                    if derived_node not in temp_derived:
-                        temp_derived.append(derived_nodes)
-
-        # nextNodes += [n for n in next if n not in nextNodes]
-        derived = []
+        # Gets list of all nodes derived by following this path any number of times
+        derived = set()
         next = [start_node]
         while next != []:
-            # get nodes from traversing the path another time
-            next = self.path.derivable(next, path, context)
-            # add those nodes to nextNodes
-            derived += [n for n in next if n not in derived]
-        return derived
+            # Get new nodes from traversing the path another time
+            next = reduce(concat, [self.path.derivable(node) for node in next])
+            for node in next:
+                derived.add(node)
+        return list(derived)
+
+class KStarPaths(KPlusPaths):
+    """ Follows zero or more instances of the given path """
+    def derivable(self, start_node):
+        return [start_node] + super().derivable(start_node)
 
 class BasePath:
     """ Atomic path existing on a single non-repeated slot """
@@ -66,9 +55,5 @@ class BasePath:
         self.backward = backward
         self.asserted = asserted
 
-<<<<<<< HEAD
     def derivable(self, start_node):
-=======
-    def followable(self, start_node, finish_node):
->>>>>>> c4018ea510bb1c468bf8aad9b6293891d0d0f2b6
         pass
