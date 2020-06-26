@@ -1,7 +1,7 @@
 # Python_SNePS
 > SNePS 3 in Python
 
-## Section 0: Preliminary Reading and Installation
+## Section 0: Preliminary Reading
 
 1. ["A Logic of Arbitrary and Indefinite Objects"](https://www.aaai.org/Papers/KR/2004/KR04-059.pdf) by Stuart Shapiro
     * This paper outlines the logic of SNePS. We have transformed SNePS's grammar to be more Pythonic in our project, but the general concepts from this paper are important.
@@ -12,8 +12,8 @@
 3. ["Visually Interacting with a Knowledge Base Using Frames, Logic, and Propositional Graphs"](https://cse.buffalo.edu/~shapiro/Papers/schsha2011b.pdf) by Daniel R. Schlegel and Stuart C. Shapiro
     * This paper gives great working definitions for the various terms used in SNePS3.
 
-4. ["SNePS 3 USER’S MANUAL"](https://cse.buffalo.edu/sneps/Projects/sneps3manual.pdf) by Stuart Shapiro
-    * Reference this paper to understand the user commands. The pseudo-yacc file is defunct in Python_SNePS.
+4. ["SNePS 3 USER'S MANUAL"](https://cse.buffalo.edu/sneps/Projects/sneps3manual.pdf) by Stuart Shapiro
+    * Reference this paper to understand the user commands. The pseudo-yacc rules are defunct in Python_SNePS.
 
 5. ["Types in SNePS 3"](https://cse.buffalo.edu/~shapiro/Talks/TypesInSneps3.pdf) by Stuart Shapiro
     * This paper clearly explains the relationship between caseframes and slots. Note that slots are called relations in the paper.
@@ -95,7 +95,8 @@ net = Network.Network()
 The following methods are defined:
 
 ```python
-# Defines a term with a name, optional semantic type, and docstring
+# Defines a term with a name, optional semantic type, and docstring.
+# The default semantic type is Entity.
 net.define_term("Ben", sem_type_name="Agent", docstring="Ben is a human being.")
 
 # List all terms or find a specific term
@@ -112,8 +113,9 @@ net.list_types()
 # Defines a slot corresponding to a type
 # Name, followed by semantic type, with optional
 # docstring, adjustment rules, min, max, and path
-net.define_slot("class", "Category", docstring="Points to a Category that some Entity \
-    is a member of.", pos_adj="none", neg_adj="reduce", min=1, max=0, path=None)
+net.define_slot("class", "Category",
+                docstring="Points to a Category that some Entity is a member of.",
+                pos_adj="none", neg_adj="reduce", min=1, max=0, path=None)
 
 # Lists all slots
 net.list_slots()
@@ -121,7 +123,7 @@ net.list_slots()
 # Defines a new caseframe with a name, semantic type, list of slots,
 # and optional docstring
 net.define_caseframe("Isa", "Propositional", ["member", "class"],
-    docstring="Epistemic relationship for class membership")
+                     docstring="Epistemic relationship for class membership")
 
 # Lists all caseframes or find a specific caseframe
 net.list_caseframes()
@@ -137,39 +139,54 @@ net.print_graph()
 
 ## Section 3: Using Python SNePS's Well Formed Terms (wfts)
 
-All wft parsing is handled through ply (lex and yacc). The following yacc-like reduction rules should give an idea of how a wft is parsed.
+All wft parsing is handled through ply, a Python module that implements lex and yacc. The following yacc-like reduction rules should give an idea of how a wft is parsed.
 
 * ∅ is used to indicate that there should be no space between two tokens  
 * \+ is used to indicate that there can be one or more of a given token  
-* \* is used to indicate that there should be no space between two tokens
+* \* is used to indicate that there can be zero or more of a given token
 
 ```yacc
-wft :       atomicwft                               // e.g. "Dog"
-    |       'wft' ∅ i                               // e.g. "wft1"
-    |       identifier '(' argument+ ')'            // e.g. "Has(Dog, Bone)"
-    |       BinaryOp '(' argument ',' argument ')'  // e.g. "if(Has(Dog, Bone), Happy(Dog))"
-    |       NaryOp '(' wft* ')'                     // e.g. "and(a, b, c)"
-    |       Param2Op '{' i ',' j '}' '(' wft+ ')'   // e.g. "thresh{1, 2}(a, b, c, d)"
-    |       'thresh' '{' i '}' '(' wft+ ')'         // e.g. "thresh{1}(a, b, c)"
-    |       'close' '(' atomicNameSet ',' wft ')'
-    |       'every'
+wft :        atomicName                              // e.g. "Dog"
+    |        'wft' ∅ i                               // e.g. "wft1"
+    |        identifier '(' argument+ ')'            // A function (e.g. "Has(Dog, Bone)")
+    |        BinaryOp '(' argument ',' argument ')'  // e.g. "if(Has(Dog, Bone), Happy(Dog))"
+    |        NaryOp '(' wft* ')'                     // e.g. "and(a, b, c)"
+    |        Param2Op '{' i ',' j '}' '(' wft+ ')'   // e.g. "thresh{1, 2}(a, b, c, d)"
+    |        'thresh' '{' i '}' '(' wft+ ')'         // e.g. "thresh{1}(a, b, c)"
+    |        'close' '(' atomicNameSet ',' wft ')'
+    |        'every' '(' atomicName ',' argument ')'
+    |        'some' '(' atomicName '(' atomicName ')' ',' argument ')'
+    |        '?' ∅ atomicName '(' wft* ')'
 
 
-BinaryOp :  i ∅ '=>' | 'v=>' | '=>' | 'if'          // 'v=>' does or-implication and
-                                                    // "i ∅ '=>'" does and-implication (e.g. "5=>")
+BinaryOp :   i ∅ '=>' | 'v=>' | '=>' | 'if'          // 'v=>' does or-implication and
+                                                     // "i ∅ '=>'" does and-implication (e.g. "5=>")
 
-NaryOp :    ‘and’ | ‘or’ | ‘not’ | ‘nor’            // These operators, exclusively, can take
-       |    ‘thnot’ | ‘thnor’ | ‘nand’              // any number of parameters
-       |    ‘xor’ | ‘iff’ | '<=>'
+NaryOp :     'and' | 'or' | 'not' | 'nor'            // These operators, exclusively, can take
+       |     'thnot' | 'thnor' | 'nand'              // any number of parameters
+       |     'xor' | 'iff' | '<=>'
+
+
+Param2Op :   'andor' | 'thresh'
+
+
+atomicName : identifier | i                          // Identifier matches r'[A-Za-z_][A-Za-z0-9_]*'
+                                                     // i (Integer) matches r'\d+'
+
+argument :   wft
+         |   'None'
+         |   'setof' '(' wfts* ')'
+         |   '[' wfts* ']'
+
 ```
 
-## Viewing graphs
+## Section 4: Viewing graphs
 
 Viewing graphs requires some extra Python modules. If you want to visualize small graphs, run:
 ```bash
 pip install networkx matplotlib
 ```
-If you need draggable graphs, then also run:
+If you want draggable graphs, then also run:
 ```bash
 pip install netgraph
 ```
