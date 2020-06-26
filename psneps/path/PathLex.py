@@ -1,5 +1,4 @@
 from ..ply import *
-from re import match
 
 keywords = (
     'converse',
@@ -17,15 +16,27 @@ tokens = (
     'SlotName',
     'ExPoint',
     'ReverseSlotName',
-    'Comma'
+    'Comma',
+    'Converse',
+    'KPlus',
+    'KStar',
+    'Compose',
+    'Or',
+    'And',
+    'Irreflexive-Restrict'
 )
 
 t_LParen  = r'\('
 t_RParen  = r'\)'
-t_SlotName = r'[A-Za-z_][A-Za-z0-9_]*'
 t_ExPoint = r'\!'
 t_ReverseSlotName = r'[A-Za-z_][A-Za-z0-9_]*\-'
 t_Comma = r','
+
+def SlotName(t):
+    r'[A-Za-z_][A-Za-z0-9_]*'
+    if t.value in keywords:
+        t.type = t.value.capitalize()
+    return t
 
 def t_error(t):
     print("Invalid syntax: ", t.value)

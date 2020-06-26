@@ -1,6 +1,10 @@
-from .. import PathLex
+from . import PathLex
 from ..ply import *
 from ..Network import *
+from ..Error import SNError
+
+class SNePSPathError(SNError):
+    pass
 
 current_network = None
 tokens = PathLex.tokens
@@ -13,19 +17,20 @@ def p_Path(p):
     '''
     Path :              SlotName
          |              ReverseSlotName
-         |              converse LParen Path RParen
-         |              kplus LParen Path RParen
-         |              kstar LParen Path RParen
-         |              compose LParen Paths RParen
-         |              or LParen Paths RParen
-         |              and LParen Paths RParen
-         |              irreflexive-restrict LParen Path RParen
+         |              ExPoint
+         |              Converse LParen Path RParen
+         |              KPlus LParen Path RParen
+         |              KStar LParen Path RParen
+         |              Compose LParen Paths RParen
+         |              Or LParen Paths RParen
+         |              And LParen Paths RParen
+         |              Irreflexive-Restrict LParen Path RParen
     '''
+    
 
 def p_Path(p):
     '''
-    Paths :
-          |             Path
+    Paths :             Path
           |             Path Comma Paths
     '''
 

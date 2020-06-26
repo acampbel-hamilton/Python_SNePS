@@ -4,7 +4,6 @@ from ..Network import *
 from ..Caseframe import Frame, Fillers
 from ..Node import Base, Molecular, Indefinite, Arbitrary, MinMaxOpNode
 from ..Error import SNError
-from sys import stderr
 
 class SNePSWftError(SNError):
     pass
