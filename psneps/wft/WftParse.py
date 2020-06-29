@@ -210,7 +210,7 @@ def p_error(p):
     if p is None:
         raise SNePSWftError("PARSING FAILED: Term reached end unexpectedly.")
     else:
-        raise SNePSWftError("PARSING FAILED: Syntax error on token '" + p.type + "'")
+        raise SNePSWftError("PARSING FAILED: Syntax error on token '" + p.value + "'")
 
 # =====================================
 # ------------ RULES END --------------
