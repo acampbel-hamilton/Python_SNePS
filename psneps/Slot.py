@@ -48,6 +48,13 @@ class SlotMixin:
             raise NotImplementedError("Mixins can't be instantiated.")
         self.slots = {} # AKA Relations
 
+    def find_slot(self, name):
+        """ Locates a slot in the nework """
+        if name in self.slots:
+            return self.slots[name]
+        else:
+            raise SlotError("ERROR: The slot name '{}' does not exist".format(name))
+
     def define_slot(self, name: str, sem_type_str: str, docstring="", pos_adj="NONE",
                     neg_adj="NONE", min=1, max=0, path=None) -> None:
         """ Adds new slot to network """

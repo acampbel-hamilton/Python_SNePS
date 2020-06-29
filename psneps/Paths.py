@@ -1,7 +1,8 @@
 class ComposedPaths:
     """ A composed list of path objects, following one after another """
-    def __init__(self, paths):
+    def __init__(self, paths, asserted=False):
         self.paths = paths
+        self.asserted = asserted
 
     def derivable(self, start_node):
         # Gets list of all nodes derived by following this path
@@ -37,8 +38,9 @@ class OrPaths(ComposedPaths):
 
 class KPlusPaths():
     """ Follows one or more instances of the given path """
-    def __init__(self, path):
+    def __init__(self, path, asserted=False):
         self.path = path
+        self.asserted = asserted
 
     def derivable(self, start_node):
         # Gets list of all nodes derived by following this path any number of times
