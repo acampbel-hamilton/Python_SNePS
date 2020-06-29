@@ -1,8 +1,8 @@
 class ComposedPaths:
     """ A composed list of path objects, following one after another """
-    def __init__(self, paths, asserted=False):
+    def __init__(self, paths):
         self.paths = paths
-        self.asserted = asserted
+        self.asserted = False
 
     def derivable(self, start_node):
         # Gets list of all nodes derived by following this path
@@ -38,9 +38,9 @@ class OrPaths(ComposedPaths):
 
 class KPlusPaths():
     """ Follows one or more instances of the given path """
-    def __init__(self, path, asserted=False):
+    def __init__(self, path):
         self.path = path
-        self.asserted = asserted
+        self.asserted = False
 
     def derivable(self, start_node):
         # Gets list of all nodes derived by following this path any number of times
@@ -59,10 +59,10 @@ class KStarPaths(KPlusPaths):
 
 class BasePath:
     """ Atomic path existing on a single non-repeated slot """
-    def __init__(self, slot, backward=False, asserted=False):
+    def __init__(self, slot, backward=False):
         self.slot = slot
         self.backward = backward
-        self.asserted = asserted
+        self.asserted = False
 
     def derivable(self, start_node):
         if !self.backward

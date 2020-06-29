@@ -20,39 +20,61 @@ def p_Path1(p):
     Path :              SlotName
     '''
     p[0] = BasePath(current_network.find_slot(p[1]))
-    global producedPath = p[0]
+    global producedPath
+    producedPath = p[0]
 
 def p_Path2(p):
     '''
     Path :              ReverseSlotName
-         |
-         |
     '''
-    global producedPath
+    p[0] = BasePath(current_network.find_slot(p[1][1:]), backward=True)
+    global producedPaths
+    producedPath = p[0]
 
 def p_Path3(p):
     '''
-    Path :              Path Comma ExPoint
+    Path :              AssertedPath
+         |              ConversePath
+         |              KPath
+         |              MultiPath
+         |              IRPath
     '''
+    p[0] = p[1]
     global producedPath
+    producedPath = p[0]
 
-def p_Path4(p):
+def p_AssertedPath(p):
     '''
-    Path :              Converse LParen Path RParen
+    AssertedPath :       Path Comma ExPoint
     '''
-    global producedPath
+    p[1].asserted = True
+    p[0] = p[1]
 
-def p_Path5(p):
+def p_ConversePath(p):
     '''
-    Path :              KPlus LParen Path RParen
-         |              KStar LParen Path RParen
-         |              Compose LParen Paths RParen
+    ConversePath :      Converse LParen Path RParen
+    '''
+
+def p_KPath1(p):
+    '''
+    KPath :             KPlus LParen Path RParen
+    '''
+    p[0] = KPlusPaths(p[3])
+
+def p_KPath2(p):
+    '''
+    KPath :             KStar LParen Path RParen
+    '''
+    p[0] = KStarPaths(p[3])
+
+def p_MultiPath(p):
+    '''
+    MultiPath :         Compose LParen Paths RParen
          |              Or LParen Paths RParen
          |              And LParen Paths RParen
     '''
-    global producedPath
 
-def p_Path6(p):
+def p_Path7(p):
     '''
     Path :              Irreflexive-Restrict LParen Path RParen
     '''
