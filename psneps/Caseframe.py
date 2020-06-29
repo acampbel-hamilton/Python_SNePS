@@ -51,6 +51,7 @@ class Frame:
 
         self.verify_slots()
 
+
     def verify_slots(self) -> None:
         """ Check fillers correspond to slots
             Fillers are entered as a list of type Fillers:

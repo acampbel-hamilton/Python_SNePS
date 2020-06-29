@@ -119,7 +119,6 @@ class AssertedPath:
     def derivable(self, start_node, converse=False):
 
          if self.current_network.current_context.is_asserted(start_node):
-             # TODO: Define this method (or similar method) on network
              return set([start_node])
          else:
             return set()
@@ -137,7 +136,6 @@ class AssertedPath:
 
     def derivable(self, start_node, converse=False):
          if AssertedPath.instance.current_network.current_context.is_asserted(start_node):
-             # TODO: Define this method (or similar method) on network
              return set([start_node])
          else:
             return set()

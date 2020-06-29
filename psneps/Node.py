@@ -1,4 +1,5 @@
 from .Caseframe import Frame
+from .Slot import Slot
 from .Error import SNError
 from .SemanticType import SemanticType
 from re import match
@@ -11,13 +12,20 @@ class Node:
     def __init__(self, name: str, sem_type: SemanticType, docstring="") -> None:
         self.name = name
         self.docstring = docstring
-        self.up_cableset = {} # References to frames that point to this node
+        self.up_cableset = sem() # References to frames that point to this node
         self.sem_type = sem_type
         if type(self) in (Node, Atomic, Variable):
             raise NotImplementedError("Bad syntactic type - see syntax tree in wiki")
 
-    def add_up_cable(self, frame: Frame) -> None:
-        self.up_cableset[frame.caseframe.name] = frame
+    def add_up_cable(self, node, slot: Slot) -> None:
+        self.up_cableset.add(UpCable(node, slot))
+
+    def has_upcable(self, name):
+        for up_cable in self.up_cableset:
+            if up_cable.name == name:
+                return True
+
+        return False
 
     def __str__(self) -> str:
         return "<{}>: {} ({})".format(self.name, self.sem_type.name, self.docstring)
@@ -76,6 +84,12 @@ class Molecular(Node):
         self.frame = frame
         super().__init__(name, frame.caseframe.sem_type)
 
+        for i in range(0, len(self.frame.filler_set)):
+            slot = self.frame.caseframe.slots[i]
+            fillers = self.frame.filler_set[i]
+            for node in fillers.nodes:
+                node.add_up_cable(self, slot)
+
     def has_frame(self, frame: Frame) -> bool:
         return frame == self.frame
 
@@ -96,6 +110,16 @@ class MinMaxOpNode(Molecular):
     def __str__(self) -> str:
         return Node.__str__(self) + " {}, {}".format(self.min, self.max) + "\n\t" + str(self.frame)
 
+# =====================================
+# -------------- UP CABLE -------------
+# =====================================
+
+class UpCable:
+    """ Tuple containing node and slot """
+    def __init__(self, node: Node, slot: Slot):
+        self.node = node
+        self.slot = slot
+        self.name = slot.name
 
 # =====================================
 # --------------- MIXIN ---------------
