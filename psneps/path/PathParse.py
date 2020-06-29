@@ -126,3 +126,5 @@ def path_parser(path, network):
             if type(e) is not SNePSPathError:
                 print("PARSING FAILED:\n\t", end='')
             print(e)
+    else:
+        return None

@@ -5,7 +5,7 @@ class ContextError(SNError):
     pass
 
 class Context:
-    def __init__(self, name: str, docstring="", parent=None, hyps={}, ders={}) -> None:
+    def __init__(self, name: str, docstring="", parent=None) -> None:
         self.name = name
         self.parent = parent # Another context object
         self.docstring = docstring
@@ -30,6 +30,12 @@ class Context:
     def __eq__(self, other) -> bool:
         return self.name == other.name
 
+    def add_hypothesis(self, node):
+        self.hyps[node.name] = node
+
+    def is_asserted(self, node):
+        return node.name in self.hyps or node.name in self.ders
+
 class ContextMixin:
     """ Provides functions related to contexts to network. """
 
@@ -39,6 +45,7 @@ class ContextMixin:
 
         self.contexts = {}
         self.default_context = Context("_default", docstring="The default context", hyps={}, ders={})
+        self.current_context = self.default_context
 
     def define_context(self, name: str, docstring="", parent="_default", hyps={}, ders={}) -> None:
         if self.enforce_name_syntax and not match(r'^[A-Za-z_][A-Za-z0-9_]*$', name):

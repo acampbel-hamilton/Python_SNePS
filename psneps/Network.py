@@ -39,6 +39,7 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
         # self.sem_hierarchy = SemanticHierarchy() (defined in SemanticType.py)
         # self.contexts = {} (defined in Context.py)
         # self.default_context = Context(docstring="The default context", hyps={}, ders={}) (defined in Context.py,_default",
+        # self.default_context = self.default_context
         self._build_default()
 
     def _build_default(self) -> None:
@@ -152,12 +153,10 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
         self.enforce_name_syntax = True
 
 
-    def assert_wft(self, wft: str, value="hyp") -> None:
-        if value != "hyp" and value != "true":
-            print("ERROR: Invalid parameters on assertion. Must be either true or hyp.", file=stderr)
-            return
-
-        wft_parser(wft, self)
+    def assert_wft(self, wft_str: str, hyp: bool = False) -> None:
+        wft = wft_parser(wft_str, self)
+        if hyp:
+            self.current_context.add_hypothesis(wft)
 
     def print_graph(self) -> None:
         if not has_nx:

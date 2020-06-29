@@ -115,7 +115,7 @@ net.list_types()
 # docstring, adjustment rules, min, max, and path
 net.define_slot("class", "Category",
                 docstring="Points to a Category that some Entity is a member of.",
-                pos_adj="none", neg_adj="reduce", min=1, max=0, path=None)
+                pos_adj="none", neg_adj="reduce", min=1, max=0, path='')
 
 # Lists all slots
 net.list_slots()
@@ -129,9 +129,9 @@ net.define_caseframe("Isa", "Propositional", ["member", "class"],
 net.list_caseframes()
 net.find_caseframe("Isa")
 
-# Passes wft followed by optional parameter asserting
-# "hyp" for hypothetical or "true" for true
-net.assert_wft("Isa(Dog, Pet)", value="hyp")
+# Passes wft followed by optional parameter "hyp" for
+# determining whether the given wft is asserted in the current context
+net.assert_wft("Isa(Dog, Pet)", hyp=False)
 
 # Prints out a visual representation of the knowledge base
 net.print_graph()

@@ -3,6 +3,7 @@ from sys import stderr
 from .Error import SNError
 from .SemanticType import SemanticType
 from re import match
+from .path.PathParse import path_parser
 
 class SlotError(SNError):
     pass
@@ -48,7 +49,7 @@ class SlotMixin:
             raise NotImplementedError("Mixins can't be instantiated.")
         self.slots = {} # AKA Relations
 
-    def find_slot(self, name):
+    def find_slot(self, name: str):
         """ Locates a slot in the nework """
         if name in self.slots:
             return self.slots[name]
@@ -56,7 +57,7 @@ class SlotMixin:
             raise SlotError("ERROR: The slot name '{}' does not exist".format(name))
 
     def define_slot(self, name: str, sem_type_str: str, docstring="", pos_adj="NONE",
-                    neg_adj="NONE", min=1, max=0, path=None) -> None:
+                    neg_adj="NONE", min=1, max=0, path='') -> None:
         """ Adds new slot to network """
 
         if self.enforce_name_syntax and not match(r'^[A-Za-z_][A-Za-z0-9_]*$', name):
@@ -67,7 +68,9 @@ class SlotMixin:
 
         sem_type = self.sem_hierarchy.get_type(sem_type_str)
 
-        self.slots[name] = Slot(name, sem_type, docstring, pos_adj, neg_adj, min, max, path)
+        path_obj = path_parser(path)
+
+        self.slots[name] = Slot(name, sem_type, docstring, pos_adj, neg_adj, min, max, path_obj)
 
     def list_slots(self) -> None:
         """ Lists all slots in network """
