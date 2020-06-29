@@ -33,7 +33,7 @@ def p_Path2(p):
 
 def p_Path3(p):
     '''
-    Path :              AssertedPath
+    Path :              AssertedNode
          |              ConversePath
          |              KPath
          |              MultiPath
@@ -45,15 +45,15 @@ def p_Path3(p):
 
 def p_AssertedPath(p):
     '''
-    AssertedPath :       Path Comma ExPoint
+    AssertedNode :      ExPoint
     '''
-    p[1].asserted = True
-    p[0] = p[1]
+    p[0] = AssertedPath()
 
 def p_ConversePath(p):
     '''
     ConversePath :      Converse LParen Path RParen
     '''
+
 
 def p_KPath1(p):
     '''
@@ -119,6 +119,7 @@ def path_parser(path, network):
         try:
             yacc.parse(path)
             global producedPath
+            producedPath.str_representation = path
             return producedPath
         except SNError as e:
             if type(e) is not SNePSPathError:
