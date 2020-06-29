@@ -150,7 +150,7 @@ class SemanticHierarchy:
                 node.sem_type = self.respecify(node.name, filler_type, slot_type)
 
     def __str__(self):
-        return ", ".join(self.sem_types.keys()) + "\n" + str(self.root_node)
+        return ", ".join(self.sem_types.keys())
 
 class SemanticMixin:
     """ Provides functions related to semantic types to network """
