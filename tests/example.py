@@ -2,7 +2,7 @@ from psneps import *
 net = Network.Network()
 net.define_slot("agent", "Entity")
 net.define_slot("has", "Entity")
-net.define_slot("happy", "Entity", path="converse(has)")
+net.define_slot("happy", "Entity", path="converse(converse(and(has, compose(member, class))))")
 
 net.define_caseframe("Has", "Propositional", ["agent", "has"])
 net.define_caseframe("Happy", "Propositional", ["happy"])

@@ -39,7 +39,7 @@ class Slot:
                "\tNegative Adjust: {}\n".format(self.neg_adj) + \
                "\tMinimum Fillers: {}\n".format(self.min) + \
                "\tMaximum Fillers: {}\n".format(self.max) + \
-               "\tPath: {}".format(self.path)
+               "\tPath: {}".format(str(self.path))
 
 class SlotMixin:
     """ Provides functions related to slots to Network """
