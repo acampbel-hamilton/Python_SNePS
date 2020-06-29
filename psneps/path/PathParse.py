@@ -67,12 +67,23 @@ def p_KPath2(p):
     '''
     p[0] = KStarPaths(p[3])
 
-def p_MultiPath(p):
+def p_MultiPath1(p):
     '''
     MultiPath :         Compose LParen Paths RParen
-         |              Or LParen Paths RParen
-         |              And LParen Paths RParen
     '''
+    p[0] = ComposedPaths(p[3])
+
+def p_MultiPath2(p):
+    '''
+    MultiPath :         Or LParen Paths RParen
+    '''
+    p[0] = OrPaths(p[3])
+
+def p_MultiPath3(p):
+    '''
+    MultiPath :         And LParen Paths RParen
+    '''
+    p[0] = AndPaths(p[3])
 
 def p_Path7(p):
     '''
