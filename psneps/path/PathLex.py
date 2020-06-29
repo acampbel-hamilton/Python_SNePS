@@ -1,4 +1,5 @@
 from ..ply import *
+from re import match
 
 keywords = (
     'converse',
@@ -29,18 +30,18 @@ t_ExPoint = r'\!'
 t_ReverseSlotName = r'[A-Za-z_][A-Za-z0-9_]*\-'
 t_Comma = r','
 
-def IrreflexiveRestrict(t):
+def t_IrreflexiveRestrict(t):
     r'irreflexive-restrict'
     return t
 
-def SlotName(t):
+def t_SlotName(t):
     r'[A-Za-z_][A-Za-z0-9_]*'
     if t.value in keywords:
         t.type = t.value.capitalize()
     elif t.value == 'kplus':
-        t.type == 'KPlus'
+        t.type = 'KPlus'
     elif t.value == 'kstar':
-        t.type == 'KStar'
+        t.type = 'KStar'
     return t
 
 def t_error(t):
@@ -50,6 +51,7 @@ def t_error(t):
 t_ignore = ' \t\r\n\f\v'
 
 # Build the lexer
+from ..ply import lex
 lexer = lex.lex()
 
 if __name__ == '__main__':
