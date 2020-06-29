@@ -106,7 +106,7 @@ def p_error(p):
     if p is None:
         raise SNePSPathError("PARSING FAILED: Term reached end unexpectedly.")
     else:
-        raise SNePSPathError("PARSING FAILED: Syntax error on token '" + p.value + "'")
+        raise SNePSPathError("PARSING FAILED: Syntax error on token '" + p.type + "'")
 
 # =====================================
 # ------------ RULES END --------------

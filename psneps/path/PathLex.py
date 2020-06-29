@@ -5,7 +5,7 @@ keywords = (
     'converse',
     'compose',
     'or',
-    'and',
+    'and'
 )
 
 tokens = (
@@ -36,12 +36,12 @@ def t_IrreflexiveRestrict(t):
 
 def t_SlotName(t):
     r'[A-Za-z_][A-Za-z0-9_]*'
-    if t.value in keywords:
-        t.type = t.value.capitalize()
-    elif t.value == 'kplus':
+    if t.value == 'kplus':
         t.type = 'KPlus'
     elif t.value == 'kstar':
         t.type = 'KStar'
+    elif t.value in keywords:
+        t.type = t.value.capitalize()
     return t
 
 def t_error(t):
