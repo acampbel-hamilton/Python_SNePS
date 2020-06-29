@@ -2,12 +2,9 @@ from ..ply import *
 
 keywords = (
     'converse',
-    'kplus',
-    'kstar',
     'compose',
     'or',
     'and',
-    'irreflexive-restrict'
 )
 
 tokens = (
@@ -23,7 +20,7 @@ tokens = (
     'Compose',
     'Or',
     'And',
-    'Irreflexive-Restrict'
+    'IrreflexiveRestrict'
 )
 
 t_LParen  = r'\('
@@ -32,10 +29,18 @@ t_ExPoint = r'\!'
 t_ReverseSlotName = r'[A-Za-z_][A-Za-z0-9_]*\-'
 t_Comma = r','
 
+def IrreflexiveRestrict(t):
+    r'irreflexive-restrict'
+    return t
+
 def SlotName(t):
     r'[A-Za-z_][A-Za-z0-9_]*'
     if t.value in keywords:
         t.type = t.value.capitalize()
+    elif t.value == 'kplus':
+        t.type == 'KPlus'
+    elif t.value == 'kstar':
+        t.type == 'KStar'
     return t
 
 def t_error(t):

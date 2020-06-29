@@ -38,7 +38,7 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
         # self.slots = {} (defined in Slot.py)
         # self.sem_hierarchy = SemanticHierarchy() (defined in SemanticType.py)
         # self.contexts = {} (defined in Context.py)
-        # self.default_context = Context(docstring="The default context", hyps={}, ders={}) (defined in Context.py,_default",
+        # self.default_context = Context(docstring="The default context") (defined in Context.py,_default",
         # self.default_context = self.default_context
         self._build_default()
 
@@ -71,7 +71,7 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
         self.define_slot("member", "Entity", docstring="Points to the Entity that is a member of some Category.",
                          neg_adj='reduce')
         self.define_slot("equiv", "Entity", docstring="All fillers are coreferential.",
-                         neg_adj='reduce', min=2, path=None)
+                         neg_adj='reduce', min=2)
         self.define_slot("closedvar", "Entity", docstring="Points to a variable in a closure.")
         self.define_slot("proposition", "Propositional", docstring="Points to a proposition.")
 

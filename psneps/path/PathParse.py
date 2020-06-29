@@ -2,7 +2,7 @@ from . import PathLex
 from ..ply import *
 from ..Network import *
 from ..Error import SNError
-from .. Paths import *
+from .. Path import *
 
 class SNePSPathError(SNError):
     pass
@@ -86,9 +86,9 @@ def p_MultiPath3(p):
     '''
     p[0] = AndPaths(p[3])
 
-def p_Path7(p):
+def p_IRPath(p):
     '''
-    Path :              Irreflexive-Restrict LParen Path RParen
+    IRPath :            IrreflexiveRestrict LParen Path RParen
     '''
     raise SNePSPathError("Not yet implemented!")
 

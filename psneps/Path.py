@@ -20,7 +20,7 @@ class ComposedPaths(Path):
     def derivable(self, start_node, parent_converse=False):
 
         # Exclusive or for whether to use converse
-        converse = self.converse =! parent_converse
+        converse = self.converse != parent_converse
 
         # Backward if in converse
         paths = self.paths
@@ -41,7 +41,7 @@ class AndPaths(ComposedPaths):
     def derivable(self, start_node, parent_converse=False):
 
         # Exclusive or for whether to use converse
-        converse = self.converse =! parent_converse
+        converse = self.converse != parent_converse
 
         # Follow paths consecutively
         derived = set()
@@ -55,7 +55,7 @@ class OrPaths(ComposedPaths):
     def derivable(self, start_node, parent_converse=False):
 
         # Exclusive or for whether to use converse
-        converse = self.converse =! parent_converse
+        converse = self.converse != parent_converse
 
         # Follow paths consecutively
         derived = set()
@@ -74,7 +74,7 @@ class KPlusPaths(Path):
     def derivable(self, start_node, parent_converse=False):
 
         # Exclusive or for whether to use converse
-        converse = self.converse =! parent_converse
+        converse = self.converse != parent_converse
 
         derived = set()
         next = [start_node]
@@ -89,7 +89,7 @@ class KStarPaths(KPlusPaths):
     def derivable(self, start_node, parent_converse=False):
 
         # Exclusive or for whether to use converse
-        converse = self.converse =! parent_converse
+        converse = self.converse != parent_converse
 
         return super().derivable(start_node, converse).update([start_node])
 
@@ -103,7 +103,7 @@ class BasePath(Path):
     def derivable(self, start_node, parent_converse=False):
 
         # Exclusive or for whether to use converse
-        converse = self.converse =! parent_converse
+        converse = self.converse != parent_converse
 
         if converse == self.backward:
             derived = start_node.filler_set(slot)

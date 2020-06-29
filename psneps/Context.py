@@ -44,10 +44,10 @@ class ContextMixin:
             raise NotImplementedError("Mixins can't be instantiated.")
 
         self.contexts = {}
-        self.default_context = Context("_default", docstring="The default context", hyps={}, ders={})
+        self.default_context = Context("_default", docstring="The default context")
         self.current_context = self.default_context
 
-    def define_context(self, name: str, docstring="", parent="_default", hyps={}, ders={}) -> None:
+    def define_context(self, name: str, docstring="", parent="_default") -> None:
         if self.enforce_name_syntax and not match(r'^[A-Za-z_][A-Za-z0-9_]*$', name):
             raise ContextError("ERROR: The context name '{}' is not allowed".format(name))
 

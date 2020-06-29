@@ -68,7 +68,7 @@ class SlotMixin:
 
         sem_type = self.sem_hierarchy.get_type(sem_type_str)
 
-        path_obj = path_parser(path)
+        path_obj = path_parser(path, self)
 
         self.slots[name] = Slot(name, sem_type, docstring, pos_adj, neg_adj, min, max, path_obj)
 
