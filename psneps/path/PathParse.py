@@ -1,5 +1,5 @@
 from . import PathLex
-from ..ply import *
+from .ply import *
 from ..Network import *
 from ..Error import SNError
 from .. Path import *
