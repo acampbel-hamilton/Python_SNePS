@@ -99,6 +99,7 @@ class BasePath(Path):
         self.slot = slot
         self.current_network = current_network
         self.backward = backward
+        super().__init__()
 
     def derivable(self, start_node, parent_converse=False):
 
