@@ -3,7 +3,7 @@ from sys import stderr
 from .Error import SNError
 from .SemanticType import SemanticType
 from re import match
-from .path.PathParse import path_parser
+from .path.PathParse import path_parser, SNePSPathError
 
 class SlotError(SNError):
     pass
@@ -68,9 +68,11 @@ class SlotMixin:
 
         sem_type = self.sem_hierarchy.get_type(sem_type_str)
 
-        path_obj = path_parser(path, self)
-
-        self.slots[name] = Slot(name, sem_type, docstring, pos_adj, neg_adj, min, max, path_obj)
+        try:
+            path_obj = path_parser(path, self)
+            self.slots[name] = Slot(name, sem_type, docstring, pos_adj, neg_adj, min, max, path_obj)
+        except SNePSPathError as e:
+            print(e)
 
     def list_slots(self) -> None:
         """ Lists all slots in network """

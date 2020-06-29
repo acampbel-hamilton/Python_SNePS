@@ -125,6 +125,6 @@ def path_parser(path, network):
         except SNError as e:
             if type(e) is not SNePSPathError:
                 print("PARSING FAILED:\n\t", end='')
-            print(e)
+            raise SNePSPathError(e)
     else:
         return None
