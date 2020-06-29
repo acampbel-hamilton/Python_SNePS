@@ -5,7 +5,7 @@ class Path:
         self.str_representation = ""
 
     def reverse(self):
-        self.converse = True
+        self.converse = not self.converse
 
     def __str__(self):
         # Prints original path string entered by user
@@ -112,11 +112,30 @@ class BasePath(Path):
 
 class AssertedPath:
     def __init__(self):
+        current_network
         pass
 
     def derivable(self, start_node, converse=False):
 
          if self.current_network.is_asserted(start_node):
+             # TODO: Define this method (or similar method) on network
+             return set([start_node])
+         else:
+            return set()
+
+# Asserted Path singelton
+class AssertedPath:
+    class __AssertedPath:
+        def __init__(self, current_network):
+            self.current_network = current_network
+
+    instance = None
+    def __init__(self, current_network):
+        if not AssertedPath.instance:
+            AssertedPath.instance = AssertedPath.__AssertedPath(current_network)
+
+    def derivable(self, start_node, converse=False):
+         if AssertedPath.instance.current_network.is_asserted(start_node):
              # TODO: Define this method (or similar method) on network
              return set([start_node])
          else:

@@ -19,7 +19,7 @@ def p_Path1(p):
     '''
     Path :              SlotName
     '''
-    p[0] = BasePath(current_network.find_slot(p[1]))
+    p[0] = BasePath(current_network.find_slot(p[1]), current_network)
     global producedPath
     producedPath = p[0]
 
@@ -27,7 +27,7 @@ def p_Path2(p):
     '''
     Path :              ReverseSlotName
     '''
-    p[0] = BasePath(current_network.find_slot(p[1][1:]), backward=True)
+    p[0] = BasePath(current_network.find_slot(p[1][1:]), current_network, backward=True)
     global producedPaths
     producedPath = p[0]
 
@@ -47,13 +47,14 @@ def p_AssertedPath(p):
     '''
     AssertedNode :      ExPoint
     '''
-    p[0] = AssertedPath()
+    p[0] = AssertedPath(current_network)
 
 def p_ConversePath(p):
     '''
     ConversePath :      Converse LParen Path RParen
     '''
-
+    p[3].reverse()
+    p[0] = p[3]
 
 def p_KPath1(p):
     '''
