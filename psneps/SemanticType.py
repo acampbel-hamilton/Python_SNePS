@@ -29,8 +29,7 @@ class SemanticType:
         return any(child is potential_child or child.subtype(potential_child) for child in self.children)
 
     def __str__(self, level=0):
-        return "\t" * level + self.name + ("\n" if self.children != [] else "") + \
-               "".join(child.__str__(level + 1) for child in self.children)
+        return self.name
 
 class SemanticHierarchy:
     """ Contains tree-like structure for semantics (Entity, individual, etc.) """
