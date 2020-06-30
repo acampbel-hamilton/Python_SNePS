@@ -30,10 +30,11 @@ class Node:
     def follow_down_cable(self, slot):
         return set()
 
-    follow_up_cable(self, slot):
+    def follow_up_cable(self, slot):
+        up_nodes = set()
         for up_cable in self.up_cableset:
             if up_cable.slot is slot:
-                set.add(up_cable.node)
+                up_nodes.add(up_cable.node)
 
     def __str__(self) -> str:
         return "<{}>: {} ({})".format(self.name, self.sem_type.name, self.docstring)
