@@ -9,4 +9,6 @@ net.define_caseframe("Happy", "Propositional", ["happy"])
 net.assert_wft("if(Has(Dog, Bone), Happy(Dog))")
 net.assert_wft("if(not(Has(Dog, Bone)), not(Happy(Dog)))")
 net.assert_wft("iff(Has(Dog, Bone), Happy(Dog))")
-net.assert_wft("Equiv([wft7, and(wft6, wft3)])")
+net.assert_wft("Equiv([wft7, and(wft6, wft3)])", True)
+
+net.print_graph()

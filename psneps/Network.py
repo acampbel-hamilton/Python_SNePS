@@ -155,8 +155,12 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
 
     def assert_wft(self, wft_str: str, hyp: bool = False) -> None:
         wft = wft_parser(wft_str, self)
+        print("=> {}".format(wft.name), end='')
         if hyp:
+            print('!')
             self.current_context.add_hypothesis(wft)
+        else:
+            print()
 
     def print_graph(self) -> None:
         if not has_nx:
@@ -167,7 +171,10 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
         G = nx.DiGraph()
         edge_labels = {}
         for node in self.nodes.values():
-            G.add_node(node.name)
+            node_name = node.name
+            if self.current_context.has_hypothesis(node_name):
+                node_name += '!'
+            G.add_node(node_name)
             if isinstance(node, Molecular):
                 for i in range(len(node.frame.filler_set)):
                     fillers = node.frame.filler_set[i]
@@ -177,11 +184,11 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
                     if name == "nor" and len(fillers) == 1:
                         name = "not"
                     for filler in fillers.nodes:
-                        G.add_edge(node.name, filler.name)
+                        G.add_edge(node_name, filler.name)
                         try:
-                            edge_labels[(node.name, filler.name)] += ", " + name
+                            edge_labels[(node_name, filler.name)] += ", " + name
                         except:
-                            edge_labels[(node.name, filler.name)] = name
+                            edge_labels[(node_name, filler.name)] = name
 
         pos = nx.circular_layout(G)
         if has_ng:

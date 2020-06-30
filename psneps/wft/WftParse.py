@@ -248,7 +248,6 @@ def wft_parser(wft, network):
         try:
             yacc.parse(wft)
             global producedWft
-            print("=> {}".format(producedWft.name))
             return producedWft
         except SNError as e:
             if type(e) is not SNePSWftError:
