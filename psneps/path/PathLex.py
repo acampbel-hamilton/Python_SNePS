@@ -70,5 +70,5 @@ if __name__ == '__main__':
                 if not token:
                     break
                 print(token)
-        except:
+        except: # We probably shouldn't catch **all** errors here.
             print("Syntax error")

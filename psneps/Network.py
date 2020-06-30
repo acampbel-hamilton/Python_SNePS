@@ -160,7 +160,7 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
             print('!')
             self.current_context.add_hypothesis(wft)
         else:
-            print() # Why do we do this?
+            print()
 
     def print_graph(self) -> None:
         if not has_nx:
@@ -188,9 +188,9 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
                         name = "not"
                     for filler in fillers.nodes:
                         G.add_edge(node_name, filler.name)
-                        try:
+                        if (node_name, filler.name) in edge_labels:
                             edge_labels[(node_name, filler.name)] += ", " + name
-                        except:
+                        else:
                             edge_labels[(node_name, filler.name)] = name
 
         pos = nx.circular_layout(G)
