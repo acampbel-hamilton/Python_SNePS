@@ -47,6 +47,38 @@ class Caseframe:
     def add_adj_from(self, other) -> None:
         self.adj_from.add(other)
 
+    def adjustable(self, other):
+        return self.can_pos_adj(other) or \
+               self.can_neg_adj(other) or \
+               self.pseudo_adjustable(other)
+
+    def can_pos_adj(self, other):
+        """ Returns true if self is a caseframe that is pos_adj to the caseframe
+            other. Self caseframe is pos_adj to other caseframe if:
+                1. self.type is the same, or a subtype of other.type
+                2. Every slot in self.slots - other.slots is pos_adj reducible and min = 0
+                3. Every slot in other.slots - self.slots is pos_adj expandable and min = 0 """
+        if self.sem_type is other.sem_type or other.sem_type.subtype(self.sem_type):
+            if all(slot.pos_adj is AdjRule.REDUCE and slot.min == 0 for slot in set(self.slots) - set(other.slots)) and \
+               all(slot.pos_adj is AdjRule.EXPAND and slot.min == 0 for slot in set(other.slots) - set(self.slots)):
+                return True
+        return False
+
+    def can_neg_adj(self, other):
+        """ Returns true if self is a caseframe that is neg_adj to the caseframe
+            other. Self caseframe  is neg_adj to other caseframe if:
+                1. self is the same, or a subtype of other
+                2. Every slot in self.slots - other.slots is neg_adj reducible and min = 0
+                3. Every slot in other.slots - self.slots is neg_adj expandable and min = 0 """
+        if self.sem_type is other.sem_type or other.sem_type.subtype(self.sem_type):
+            if all(slot.neg_adj is AdjRule.REDUCE and slot.min == 0 for slot in set(self.slots) - set(other.slots)) and \
+               all(slot.neg_adj is AdjRule.EXPAND and slot.min == 0 for slot in set(other.slots) - set(self.slots)):
+                return True
+        return False
+
+    def pseudo_adjustable(self, other):
+        return self.name == "Nor" and other.name == "AndOr"
+
 class Frame:
     def __init__(self, caseframe: Caseframe, filler_set=None) -> None:
         self.caseframe = caseframe
@@ -103,7 +135,8 @@ class Fillers:
     """ Forms 'cables'/'cablesets' """
 
     def __init__(self, nodes=None) -> None:
-        self.nodes = set() if nodes is None else set(nodes) # see https://effbot.org/zone/default-values.htm for why this is necessary
+        self.nodes = set() if nodes is None else set(nodes)
+        # See https://effbot.org/zone/default-values.htm for why this is necessary
 
     def __len__(self) -> int:
         return len(self.nodes)
@@ -184,19 +217,12 @@ class CaseframeMixin:
 
         # Add adjustments
         for case in self.caseframes.values():
-            if self._adjustable(new_caseframe, case):
+            if new_caseframe.adjustable(case):
                 newCF.add_adj_to(case)
                 case.add_adj_from(new_caseframe)
-            if self._adjustable(case, new_caseframe):
+            if case.adjustable(new_caseframe):
                 case.add_adj_to(new_caseframe)
                 newCF.add_adj_from(case)
 
         # If new/unique, adds to dictionary
         self.caseframes[new_caseframe.name] = new_caseframe
-
-    def adjustable(self, srcframe, tgtframe):
-        return  self.pos_adj(srcframe, tgtframe) or\
-                self.neg_adj(srcframe, tgtframe) or\
-                self.pseudo_adjustable(srcframe, tgtframe)
-
-    
