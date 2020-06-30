@@ -33,7 +33,7 @@ class Context:
     def add_hypothesis(self, node):
         self.hyps[node.name] = node
 
-    def has_hypothesis(self, node_name):
+    def is_hypothesis(self, node_name):
         return node_name in self.hyps
 
     def is_asserted(self, node):
