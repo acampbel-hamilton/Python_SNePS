@@ -109,19 +109,19 @@ class BasePath(Path):
         else:
             derived = start_node.follow_up_cable(self.slot)
 
-# Asserted Path singelton
+# Asserted Path singleton
 class AssertedPath:
-    class __AssertedPath:
+    class _AssertedPath:
         def __init__(self, current_network):
             self.current_network = current_network
 
     instance = None
     def __init__(self, current_network):
-        if not AssertedPath.instance:
-            AssertedPath.instance = AssertedPath.__AssertedPath(current_network)
+        if AssertedPath.instance is None:
+            AssertedPath.instance = AssertedPath._AssertedPath(current_network)
 
     def derivable(self, start_node, converse=False):
-         if AssertedPath.instance.current_network.current_context.is_asserted(start_node):
-             return set([start_node])
-         else:
+        if AssertedPath.instance.current_network.current_context.is_asserted(start_node):
+            return set([start_node])
+        else:
             return set()
