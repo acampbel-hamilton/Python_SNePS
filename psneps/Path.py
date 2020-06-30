@@ -89,7 +89,7 @@ class KStarPaths(KPlusPaths):
         # Exclusive or for whether to use converse
         converse = self.converse != parent_converse
 
-        return super().derivable(start_node, converse).update([start_node])
+        return super().derivable(start_node, converse).add(start_node)
 
 class BasePath(Path):
     """ Atomic path existing on a single non-repeated slot """
@@ -105,20 +105,9 @@ class BasePath(Path):
         converse = self.converse != parent_converse
 
         if converse == self.backward:
-            derived = start_node.filler_set(slot)
+            derived = start_node.follow_down_cable(self.slot)
         else:
-            derived = set() # TODO: follow up cables instead of down cables
-
-class AssertedPath:
-    def __init__(self):
-        current_network
-        pass
-
-    def derivable(self, start_node, converse=False):
-         if self.current_network.current_context.is_asserted(start_node):
-             return set([start_node])
-         else:
-             return set()
+            derived = start_node.follow_up_cable(self.slot)
 
 # Asserted Path singleton
 class AssertedPath:
