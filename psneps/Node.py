@@ -27,6 +27,14 @@ class Node:
 
         return False
 
+    def follow_down_cable(self, slot):
+        return set()
+
+    follow_up_cable(self, slot):
+        for up_cable in self.up_cableset:
+            if up_cable.slot is slot:
+                set.add(up_cable.node)
+
     def __str__(self) -> str:
         return "<{}>: {} ({})".format(self.name, self.sem_type.name, self.docstring)
 
@@ -95,6 +103,9 @@ class Molecular(Node):
 
     def __str__(self) -> str:
         return super().__str__() + "\n\t" + str(self.frame)
+
+    def follow_down_cable(self, slot):
+        return self.frame.get_filler_set(slot)
 
 
 class MinMaxOpNode(Molecular):
