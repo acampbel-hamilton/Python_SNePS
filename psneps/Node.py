@@ -21,21 +21,13 @@ class Node:
         self.up_cableset.add(UpCable(node, slot))
 
     def has_upcable(self, name):
-        for up_cable in self.up_cableset:
-            if up_cable.name == name:
-                return True
-
-        return False
+        return any(up_cable.name == name for up_cable in self.up_cableset)
 
     def follow_down_cable(self, slot):
         return set()
 
     def follow_up_cable(self, slot):
-        up_nodes = set()
-        for up_cable in self.up_cableset:
-            if up_cable.slot is slot:
-                up_nodes.add(up_cable.node)
-        return up_nodes
+        return set(up_cable.node for up_cable in self.up_cableset if up_cable.slot is slot)
 
     def __str__(self) -> str:
         return "<{}>: {} ({})".format(self.name, self.sem_type.name, self.docstring)
