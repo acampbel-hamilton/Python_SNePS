@@ -12,7 +12,7 @@ class Node:
     def __init__(self, name: str, sem_type: SemanticType, docstring="") -> None:
         self.name = name
         self.docstring = docstring
-        self.up_cableset = sem() # References to frames that point to this node
+        self.up_cableset = set() # References to frames that point to this node
         self.sem_type = sem_type
         if type(self) in (Node, Atomic, Variable):
             raise NotImplementedError("Bad syntactic type - see syntax tree in wiki")
