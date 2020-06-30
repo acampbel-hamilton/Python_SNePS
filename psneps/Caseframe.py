@@ -33,8 +33,7 @@ class Caseframe:
             Two caseframes are equivalent when:
                 1. They have the same type
                 2. They have the same slots (disregarding order) """
-        return other is not None and self.sem_type is other.sem_type and \
-               self.slots == other.slots
+        return other is not None and self.sem_type is other.sem_type and self.slots == other.slots
 
     def __hash__(self):
         """ This is only because Caseframes are unique. """
