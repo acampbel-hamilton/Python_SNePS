@@ -44,8 +44,7 @@ class AndPaths(ComposedPaths):
         # Follow paths consecutively
         derived = set()
         for path in paths:
-            temp_derived = path.derivable(start_node, converse)
-            derived.intersection_update(temp_derived)
+            derived.intersection_update(path.derivable(start_node, converse))
         return derived
 
 class OrPaths(ComposedPaths):
@@ -57,8 +56,7 @@ class OrPaths(ComposedPaths):
         # Follow paths consecutively
         derived = set()
         for path in paths:
-            temp_derived = path.derivable(start_node, converse)
-            derived.update(temp_derived)
+            derived.update(path.derivable(start_node, converse))
         return derived
 
 class KPlusPaths(Path):
