@@ -195,7 +195,7 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
 
         pos = nx.circular_layout(G)
         if has_ng:
-            # This is kind of a buggy module.
+            # This is a buggy module.
             # If you want adjustable graphs, you have to do an assignment for some reason
             _ = ng.InteractiveGraph(G, pos, node_size=10, node_label_font_size=12.0, node_color='grey', alpha=0.8,
                                     node_labels=node_labels, edge_labels=edge_labels, font_color='black')
