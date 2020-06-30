@@ -35,6 +35,7 @@ class Node:
         for up_cable in self.up_cableset:
             if up_cable.slot is slot:
                 up_nodes.add(up_cable.node)
+        return up_nodes
 
     def __str__(self) -> str:
         return "<{}>: {} ({})".format(self.name, self.sem_type.name, self.docstring)
