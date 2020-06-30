@@ -3,19 +3,19 @@
 
 ## Section 0: Preliminary Reading
 
-1. ["A Logic of Arbitrary and Indefinite Objects"](https://www.aaai.org/Papers/KR/2004/KR04-059.pdf) by Stuart Shapiro
+1. [&ldquo;A Logic of Arbitrary and Indefinite Objects&rdquo;](https://www.aaai.org/Papers/KR/2004/KR04-059.pdf) by Stuart Shapiro
     * This paper outlines the logic of SNePS. We have transformed SNePS's grammar to be more Pythonic in our project, but the general concepts from this paper are important.
 
-2. ["An Introduction to SNePS 3"](https://cse.buffalo.edu/~shapiro/Papers/sneps3intro.pdf) by Stuart Shapiro
+2. [&ldquo;An Introduction to SNePS 3&rdquo;](https://cse.buffalo.edu/~shapiro/Papers/sneps3intro.pdf) by Stuart Shapiro
     * This paper explains the different semantic and syntactic types as well as the different inference methods (not written yet).
 
-3. ["Visually Interacting with a Knowledge Base Using Frames, Logic, and Propositional Graphs"](https://cse.buffalo.edu/~shapiro/Papers/schsha2011b.pdf) by Daniel R. Schlegel and Stuart C. Shapiro
+3. [&ldquo;Visually Interacting with a Knowledge Base Using Frames, Logic, and Propositional Graphs&rdquo;](https://cse.buffalo.edu/~shapiro/Papers/schsha2011b.pdf) by Daniel R. Schlegel and Stuart C. Shapiro
     * This paper gives great working definitions for the various terms used in SNePS3.
 
-4. ["SNePS 3 USER'S MANUAL"](https://cse.buffalo.edu/sneps/Projects/sneps3manual.pdf) by Stuart Shapiro
+4. [&ldquo;SNePS 3 User&rsquo;s Manual&rdquo;](https://cse.buffalo.edu/sneps/Projects/sneps3manual.pdf) by Stuart Shapiro
     * Reference this paper to understand the user commands. The pseudo-yacc rules are defunct in Python_SNePS.
 
-5. ["Types in SNePS 3"](https://cse.buffalo.edu/~shapiro/Talks/TypesInSneps3.pdf) by Stuart Shapiro
+5. [&ldquo;Types in SNePS 3&rdquo;](https://cse.buffalo.edu/~shapiro/Talks/TypesInSneps3.pdf) by Stuart Shapiro
     * This paper clearly explains the relationship between caseframes and slots. Note that slots are called relations in the paper.
 
 ## Section 1: Structure
@@ -63,7 +63,7 @@ A caseframe is a unique object, consisting of the following:
 
 ### Slots
 
-Slots are "relations". A slot is a unique object, consisting of the following:
+Slots are &ldquo;relations.&rdquo; A slot is a unique object, consisting of the following:
 1. Name
 2. Docstring
 3. Semantic Type
@@ -115,7 +115,7 @@ net.list_types()
 # docstring, adjustment rules, min, max, and path
 net.define_slot("class", "Category",
                 docstring="Points to a Category that some Entity is a member of.",
-                pos_adj="none", neg_adj="reduce", min=1, max=0, path=None)
+                pos_adj="none", neg_adj="reduce", min=1, max=0, path='')
 
 # Lists all slots
 net.list_slots()
@@ -129,9 +129,9 @@ net.define_caseframe("Isa", "Propositional", ["member", "class"],
 net.list_caseframes()
 net.find_caseframe("Isa")
 
-# Passes wft followed by optional parameter asserting
-# "hyp" for hypothetical or "true" for true
-net.assert_wft("Isa(Dog, Pet)", value="hyp")
+# Passes wft followed by optional parameter "hyp" for
+# determining whether the given wft is asserted in the current context
+net.assert_wft("Isa(Dog, Pet)", hyp=False)
 
 # Prints out a visual representation of the knowledge base
 net.print_graph()
@@ -156,7 +156,7 @@ wft :        atomicName                              // e.g. "Dog"
     |        'close' '(' atomicNameSet ',' wft ')'
     |        'every' '(' atomicName ',' argument ')'
     |        'some' '(' atomicName '(' atomicName ')' ',' argument ')'
-    |        '?' ∅ atomicName '(' wft* ')'
+    |        '?' ∅ atomicName '(' wft* ')'           // e.g. "?John"
 
 
 BinaryOp :   i ∅ '=>' | 'v=>' | '=>' | 'if'          // 'v=>' does or-implication and
@@ -174,13 +174,13 @@ atomicName : identifier | i                          // Identifier matches r'[A-
                                                      // i (Integer) matches r'\d+'
 
 argument :   wft
-         |   'None'
-         |   'setof' '(' wfts* ')'
-         |   '[' wfts* ']'
+         |   'None'                                  // Equivalent to an empty set
+         |   'setof' '(' wfts* ')'                   // Creates a set of filler nodes for a single slot
+         |   '[' wfts* ']'                           // Equivalent to 'setof(wfts*)'
 
 ```
 
-## Section 4: Viewing graphs
+## Section 4: Viewing Graphs
 
 Viewing graphs requires some extra Python modules. If you want to visualize small graphs, run:
 ```bash

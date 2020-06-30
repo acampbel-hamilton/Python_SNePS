@@ -1,5 +1,7 @@
 from .Caseframe import Frame
+from .Slot import Slot
 from .Error import SNError
+from .SemanticType import SemanticType
 from re import match
 
 class NodeError(SNError):
@@ -7,22 +9,36 @@ class NodeError(SNError):
 
 class Node:
     """ Root of syntactic hierarchy """
-    def __init__(self, name, sem_type, docstring=""):
+    def __init__(self, name: str, sem_type: SemanticType, docstring="") -> None:
         self.name = name
         self.docstring = docstring
-        self.up_cableset = {} # References to frames that point to this node
+        self.up_cableset = set() # References to frames that point to this node
         self.sem_type = sem_type
         if type(self) in (Node, Atomic, Variable):
             raise NotImplementedError("Bad syntactic type - see syntax tree in wiki")
 
-    def add_up_cable(self, frame):
-        self.up_cableset[frame.name] = frame
+    def add_up_cable(self, node, slot: Slot) -> None:
+        self.up_cableset.add(UpCable(node, slot))
 
-    def __str__(self):
-        return "<{}>: {} ({})".format(self.name, self.sem_type.name, self.docstring)
+    def has_upcable(self, name):
+        for up_cable in self.up_cableset:
+            if up_cable.name == name:
+                return True
 
-    def molecular(self):
         return False
+
+    def follow_down_cable(self, slot):
+        return set()
+
+    def follow_up_cable(self, slot):
+        up_nodes = set()
+        for up_cable in self.up_cableset:
+            if up_cable.slot is slot:
+                up_nodes.add(up_cable.node)
+        return up_nodes
+
+    def __str__(self) -> str:
+        return "<{}>: {} ({})".format(self.name, self.sem_type.name, self.docstring)
 
 # =====================================
 # ---------- ATOMIC NODES -------------
@@ -30,7 +46,7 @@ class Node:
 
 class Atomic(Node):
     """ Node that is a leaf in a graph. (An abstract class) """
-    def has_frame(self, frame):
+    def has_frame(self, frame: Frame) -> bool:
         """ Atomics don't have frames, so this always returns False. """
         return False
 
@@ -41,28 +57,28 @@ class Base(Atomic):
 class Variable(Atomic):
     """ A variable term ranging over a restricted domain. """
     counter = 1
-    def __init__(self, name):
+    def __init__(self, name: str) -> None:
         super().__init__(name) # This needs a semantic types. This will be an error.
         self.restriction_set = {}
         Variable.counter += 1
 
-    def add_restriction(self, restriction):
+    def add_restriction(self, restriction) -> None: # These need type definitions, since we don't know what restrictions/dependencies are.
         self.restriction_set[restriction.name] = restriction
 
 class Arbitrary(Variable):
     """ An arbitaray individual. """
-    def __init__(self):
+    def __init__(self) -> None:
         self.name = 'V' + str(super().counter)
         super().__init__(self.name) # These need semantic types. This will be an error.
 
 class Indefinite(Variable):
     """ An indefinite object. """
-    def __init__(self):
+    def __init__(self) -> None:
         self.name = 'V' + str(super().counter)
         super().__init__(self.name) # These need semantic types. This will be an error.
         self.dependency_set = {}
 
-    def add_dependency(self, dependency):
+    def add_dependency(self, dependency) -> None: # These need type definitions, since we don't know what restrictions/dependencies are.
         self.dependency_set[dependency.name] = dependency
 
 # =====================================
@@ -72,32 +88,51 @@ class Indefinite(Variable):
 class Molecular(Node):
     counter = 1
     # Non-leaf nodes
-    def __init__(self, frame):
+    def __init__(self, frame: Frame) -> None:
         name = "wft" + str(Molecular.counter)
         Molecular.counter += 1
         self.frame = frame
         super().__init__(name, frame.caseframe.sem_type)
 
-    def has_frame(self, frame):
+        for i in range(0, len(self.frame.filler_set)):
+            slot = self.frame.caseframe.slots[i]
+            fillers = self.frame.filler_set[i]
+            for node in fillers.nodes:
+                node.add_up_cable(self, slot)
+
+    def has_frame(self, frame: Frame) -> bool:
         return frame == self.frame
 
-    def __str__(self):
+    def __str__(self) -> str:
         return super().__str__() + "\n\t" + str(self.frame)
+
+    def follow_down_cable(self, slot):
+        return self.frame.get_filler_set(slot)
 
 
 class MinMaxOpNode(Molecular):
     """ Thresh/andor with two values """
-    def __init__(self, frame, min=1, max=1):
+    def __init__(self, frame, min=1, max=1) -> None:
         super().__init__(frame)
         self.min = min
         self.max = max
 
-    def has_min_max(self, min, max):
+    def has_min_max(self, min: int, max: int) -> bool:
         return self.min == min and self.max == max
 
-    def __str__(self):
+    def __str__(self) -> str:
         return Node.__str__(self) + " {}, {}".format(self.min, self.max) + "\n\t" + str(self.frame)
 
+# =====================================
+# -------------- UP CABLE -------------
+# =====================================
+
+class UpCable:
+    """ Tuple containing node and slot """
+    def __init__(self, node: Node, slot: Slot):
+        self.node = node
+        self.slot = slot
+        self.name = slot.name
 
 # =====================================
 # --------------- MIXIN ---------------
@@ -106,15 +141,15 @@ class MinMaxOpNode(Molecular):
 class NodeMixin:
     """ Provides functions related to nodes to Network """
 
-    def __init__(self):
+    def __init__(self) -> None:
         if type(self) is NodeMixin:
             raise NotImplementedError("Mixins can't be instantiated.")
         self.nodes = {}
 
-    def define_term(self, name, sem_type_name="Entity", docstring=""):
+    def define_term(self, name, sem_type_name="Entity", docstring="") -> None:
         # Creates base atomic node
 
-        if self.enforce_name_syntax and not match(r'[A-Za-z_][A-Za-z0-9_]*', name):
+        if self.enforce_name_syntax and not match(r'^[A-Za-z_][A-Za-z0-9_]*$', name):
             raise NodeError("ERROR: The term name '{}' is not allowed".format(name))
 
         if name in self.nodes:
@@ -129,11 +164,11 @@ class NodeMixin:
             sem_type = self.sem_hierarchy.get_type(sem_type_name)
             self.nodes[name] = Base(name, sem_type, docstring)
 
-    def list_terms(self):
+    def list_terms(self) -> None:
         for term in self.nodes:
             print(self.nodes[term])
 
-    def find_term(self, name):
+    def find_term(self, name: str) -> Node:
         if name in self.nodes:
             return self.nodes[name]
         else:

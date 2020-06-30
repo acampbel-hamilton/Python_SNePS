@@ -1,4 +1,4 @@
-from ..ply import *
+from .ply import *
 from re import match
 
 keywords = (
@@ -82,7 +82,7 @@ def t_DoubImpl(t):
 
 def t_Identifier(t):
     r'[A-Za-z_][A-Za-z0-9_]*'
-    if match(r'wft\d+', t.value):
+    if match(r'^wft\d+$', t.value):
         t.type = 'WftNode'
     elif t.value == 'if':
         t.type = 'Impl'
@@ -103,7 +103,7 @@ def t_error(t):
 t_ignore = ' \t\r\n\f\v'
 
 # Build the lexer
-from ..ply import lex
+from .ply import lex
 lexer = lex.lex()
 
 if __name__ == '__main__':

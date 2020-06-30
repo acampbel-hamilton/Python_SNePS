@@ -1,6 +1,5 @@
 **/__pycache__
 **/.DS_Store
-parsetab.py
-parser.out
+**/parsetab.py
+**/parser.out
 *.pyc
-test_sneps.py

@@ -28,7 +28,7 @@ except ModuleNotFoundError:
     has_ng = False
 
 class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin):
-    def __init__(self):
+    def __init__(self) -> None:
         self.enforce_name_syntax = False
         for cls in type(self).__bases__:
             cls.__init__(self)
@@ -38,10 +38,11 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
         # self.slots = {} (defined in Slot.py)
         # self.sem_hierarchy = SemanticHierarchy() (defined in SemanticType.py)
         # self.contexts = {} (defined in Context.py)
-        # self.default_context = Context(docstring="The default context", hyps={}, ders={}) (defined in Context.py,_default",
+        # self.default_context = Context(docstring="The default context") (defined in Context.py,_default",
+        # self.default_context = self.default_context
         self._build_default()
 
-    def _build_default(self):
+    def _build_default(self) -> None:
         """ Builds the default context """
 
         # Types
@@ -70,7 +71,7 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
         self.define_slot("member", "Entity", docstring="Points to the Entity that is a member of some Category.",
                          neg_adj='reduce')
         self.define_slot("equiv", "Entity", docstring="All fillers are coreferential.",
-                         neg_adj='reduce', min=2, path=None)
+                         neg_adj='reduce', min=2)
         self.define_slot("closedvar", "Entity", docstring="Points to a variable in a closure.")
         self.define_slot("proposition", "Propositional", docstring="Points to a proposition.")
 
@@ -152,23 +153,31 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
         self.enforce_name_syntax = True
 
 
-    def assert_wft(self, wft_str, value="hyp"):
-        if value != "hyp" and value != "true":
-            print("ERROR: Invalid parameters on assertion. Must be either true or hyp.", file=stderr)
-            return
+    def assert_wft(self, wft_str: str, hyp: bool = False) -> None:
+        wft = wft_parser(wft_str, self)
+        print("=> {}".format(wft.name), end='')
+        if hyp:
+            print('!')
+            self.current_context.add_hypothesis(wft)
+        else:
+            print() # Why do we do this?
 
-        wft_parser(wft_str, self)
-
-    def print_graph(self):
+    def print_graph(self) -> None:
         if not has_nx:
             print("In order to use this function, you must pip install networkx")
         if not has_mpl:
             print("In order to use this function, you must pip install matplotlib")
 
+        node_labels={}
+
         G = nx.DiGraph()
         edge_labels = {}
         for node in self.nodes.values():
-            G.add_node(node.name)
+            node_name = node.name
+            if self.current_context.has_hypothesis(node_name):
+                node_name += '!'
+            node_labels[node_name] = node_name
+            G.add_node(node_name)
             if isinstance(node, Molecular):
                 for i in range(len(node.frame.filler_set)):
                     fillers = node.frame.filler_set[i]
@@ -178,18 +187,18 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
                     if name == "nor" and len(fillers) == 1:
                         name = "not"
                     for filler in fillers.nodes:
-                        G.add_edge(node.name, filler.name)
+                        G.add_edge(node_name, filler.name)
                         try:
-                            edge_labels[(node.name, filler.name)] += ", " + name
+                            edge_labels[(node_name, filler.name)] += ", " + name
                         except:
-                            edge_labels[(node.name, filler.name)] = name
+                            edge_labels[(node_name, filler.name)] = name
 
         pos = nx.circular_layout(G)
         if has_ng:
-            # This is kind of a buggy module. You have to do _ = for some reason.
+            # This is kind of a buggy module.
+            # If you want adjustable graphs, you have to do an assignment for some reason
             _ = ng.InteractiveGraph(G, pos, node_size=10, node_label_font_size=12.0, node_color='grey', alpha=0.8,
-                                    node_labels={node.name:node.name for node in self.nodes.values()},
-                                    edge_labels=edge_labels, font_color='black')
+                                    node_labels=node_labels, edge_labels=edge_labels, font_color='black')
         else:
             nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_color='black')
             nx.draw_networkx(G, pos, node_size=800, node_color='grey', alpha=0.8)

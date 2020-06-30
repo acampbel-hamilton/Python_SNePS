@@ -1,17 +1,16 @@
 from . import WftLex
-from ..ply import *
+from .ply import *
 from ..Network import *
 from ..Caseframe import Frame, Fillers
 from ..Node import Base, Molecular, Indefinite, Arbitrary, MinMaxOpNode
 from ..Error import SNError
-from sys import stderr
 
 class SNePSWftError(SNError):
     pass
 
 current_network = None
 tokens = WftLex.tokens
-wftName = None
+producedWft = None
 
 # =====================================
 # -------------- RULES ----------------
@@ -31,8 +30,8 @@ def p_Wft(p):
          |              Function
     '''
     p[0] = p[1]
-    global wftName
-    wftName = "=> {}".format(p[1].name)
+    global producedWft
+    producedWft = p[1]
 
 # e.g. if(wft1, wft2)
 def p_BinaryOp(p):
@@ -42,22 +41,11 @@ def p_BinaryOp(p):
              |          AndImpl LParen Argument Comma Argument RParen
     '''
     if p[1] == "if" or p[1] == "orimpl":
-        caseframe = current_network.find_caseframe(p[1])
+        caseframe_name = p[1]
     else:
-        caseframe = current_network.find_caseframe("andimpl")
-        # thresh? value is int(p[1])
+        caseframe_name = "andimpl"
     filler_set = [p[3], p[5]]
-    frame = Frame(caseframe, filler_set)
-    for node in current_network.nodes.values():
-        if node.has_frame(frame):
-            p[0] = node
-    if p[1] == "if" or p[1] == "orimpl":
-        wftNode = Molecular(frame)
-    else:
-        wftNode = Molecular(frame)
-        # thresh? value is int(p[1])
-    current_network.nodes[wftNode.name] = wftNode
-    p[0] = wftNode
+    p[0] = build_molecular(caseframe_name, filler_set)
 
 
 # e.g. and(wft1, wft2)
@@ -73,15 +61,8 @@ def p_NaryOp(p):
            |            Xor LParen Wfts RParen
            |            DoubImpl LParen Wfts RParen
     '''
-    caseframe = current_network.find_caseframe(p[1])
-    fillers = Fillers(p[3])
-    frame = Frame(caseframe, [fillers])
-    for node in current_network.nodes.values():
-        if node.has_frame(frame):
-            p[0] = node
-    wftNode = Molecular(frame)
-    current_network.nodes[wftNode.name] = wftNode
-    p[0] = wftNode
+    filler_set = [Fillers(p[3])]
+    p[0] = build_molecular(p[1], filler_set)
 
 # e.g. thresh{1, 2}(wft1)
 def p_MinMaxOp(p):
@@ -92,20 +73,12 @@ def p_MinMaxOp(p):
     '''
     min = p[3]
     if len(p) == 8:
-        fillers = Fillers(p[6])
+        filler_set = [Fillers(p[6])]
         max = int(len(p[6])) - 1
     else:
         max = int(p[5])
-        fillers = Fillers(p[8])
-    caseframe = current_network.find_caseframe(p[1])
-    frame = Frame(caseframe, [fillers])
-    for node in current_network.nodes.values():
-        if node.has_frame(frame) and node.has_min_max(min, max):
-            p[0] = node
-            return
-    wftNode = MinMaxOpNode(frame, min, max)
-    current_network.nodes[wftNode.name] = wftNode
-    p[0] = wftNode
+        filler_set = [Fillers(p[8])]
+    p[0] = build_minmax(p[1], filler_set, min, max)
 
 # e.g. every{x}(Isa(x, Dog))
 def p_EveryStmt(p):
@@ -132,16 +105,8 @@ def p_Function(p):
     Function :          Identifier LParen Arguments RParen
              |          Integer LParen Arguments RParen
     '''
-    caseframe = current_network.find_caseframe(p[1])
     filler_set = p[3]
-    frame = Frame(caseframe, filler_set)
-    for node in current_network.nodes.values():
-        if node.has_frame(frame):
-            p[0] = node
-            return
-    wftNode = Molecular(frame)
-    current_network.nodes[wftNode.name] = wftNode
-    p[0] = wftNode
+    p[0] = build_molecular(p[1], filler_set)
 
 # e.g. ?example()
 def p_QIdenStmt(p):
@@ -251,6 +216,30 @@ def p_error(p):
 # ------------ RULES END --------------
 # =====================================
 
+def build_molecular(caseframe_name, filler_set):
+    """ Builds and returns (or simply returns) a Molecular node from given parameters """
+    caseframe = current_network.find_caseframe(caseframe_name)
+    frame = Frame(caseframe, filler_set)
+    for node in current_network.nodes.values():
+        if node.has_frame(frame):
+            return node
+    wftNode = Molecular(frame)
+    current_network.nodes[wftNode.name] = wftNode
+    return wftNode
+
+
+def build_minmax (caseframe_name, filler_set, min, max):
+    """ Builds and returns (or simply returns) a MinMaxOp node from given parameters """
+    caseframe = current_network.find_caseframe(caseframe_name)
+    frame = Frame(caseframe, filler_set)
+    for node in current_network.nodes.values():
+        if node.has_frame(frame) and node.has_min_max(min, max):
+            return node
+    wftNode = MinMaxOpNode(frame, min, max)
+    current_network.nodes[wftNode.name] = wftNode
+    return wftNode
+
+
 def wft_parser(wft, network):
     global current_network
     current_network = network
@@ -258,8 +247,8 @@ def wft_parser(wft, network):
     if wft != '':
         try:
             yacc.parse(wft)
-            global wftName
-            print(wftName)
+            global producedWft
+            return producedWft
         except SNError as e:
             if type(e) is not SNePSWftError:
                 print("PARSING FAILED:\n\t", end='')
