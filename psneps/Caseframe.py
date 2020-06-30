@@ -17,6 +17,8 @@ class Caseframe:
         self.docstring = docstring
         self.slots = slots
         self.aliases = [self.name]
+        self.adj_to = set()
+        self.adj_from = set()
 
     def add_alias(self, alias: str) -> None:
         # Adds new alias to array
@@ -39,6 +41,11 @@ class Caseframe:
                "\tSemantic Type: {}\n".format(self.sem_type.name) + \
                "\tAliases: [" + ", ".join(self.aliases) + "]"
 
+    def add_adj_to(self, other) -> None:
+        self.adj_to.add(other)
+
+    def add_adj_from(self, other) -> None:
+        self.adj_from.add(other)
 
 class Frame:
     def __init__(self, caseframe: Caseframe, filler_set=None) -> None:
@@ -175,5 +182,21 @@ class CaseframeMixin:
 
                 return
 
+        # Add adjustments
+        for case in self.caseframes.values():
+            if self._adjustable(new_caseframe, case):
+                newCF.add_adj_to(case)
+                case.add_adj_from(new_caseframe)
+            if self._adjustable(case, new_caseframe):
+                case.add_adj_to(new_caseframe)
+                newCF.add_adj_from(case)
+
         # If new/unique, adds to dictionary
         self.caseframes[new_caseframe.name] = new_caseframe
+
+    def adjustable(self, srcframe, tgtframe):
+        return  self.pos_adj(srcframe, tgtframe) or\
+                self.neg_adj(srcframe, tgtframe) or\
+                self.pseudo_adjustable(srcframe, tgtframe)
+
+    
