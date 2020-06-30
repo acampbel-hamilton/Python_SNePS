@@ -36,6 +36,10 @@ class Caseframe:
         return other is not None and self.sem_type is other.sem_type and \
                self.slots == other.slots
 
+    def __hash__(self):
+        """ This is only because Caseframes are unique. """
+        return id(self)
+
     def __str__(self) -> str:
         return "<{}>: {}\n".format(self.name, self.docstring) + \
                "\tSemantic Type: {}\n".format(self.sem_type.name) + \
@@ -43,9 +47,11 @@ class Caseframe:
 
     def add_adj_to(self, other) -> None:
         self.adj_to.add(other)
+        print(1)
 
     def add_adj_from(self, other) -> None:
         self.adj_from.add(other)
+        print(2)
 
     def adjustable(self, other):
         return self.can_pos_adj(other) or \
@@ -218,11 +224,11 @@ class CaseframeMixin:
         # Add adjustments
         for case in self.caseframes.values():
             if new_caseframe.adjustable(case):
-                newCF.add_adj_to(case)
+                new_caseframe.add_adj_to(case)
                 case.add_adj_from(new_caseframe)
             if case.adjustable(new_caseframe):
                 case.add_adj_to(new_caseframe)
-                newCF.add_adj_from(case)
+                new_caseframe.add_adj_from(case)
 
         # If new/unique, adds to dictionary
         self.caseframes[new_caseframe.name] = new_caseframe
