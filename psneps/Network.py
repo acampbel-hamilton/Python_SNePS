@@ -168,12 +168,15 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
         if not has_mpl:
             print("In order to use this function, you must pip install matplotlib")
 
+        node_labels={}
+
         G = nx.DiGraph()
         edge_labels = {}
         for node in self.nodes.values():
             node_name = node.name
             if self.current_context.has_hypothesis(node_name):
                 node_name += '!'
+            node_labels[node_name] = node_name
             G.add_node(node_name)
             if isinstance(node, Molecular):
                 for i in range(len(node.frame.filler_set)):
@@ -195,8 +198,7 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
             # This is kind of a buggy module.
             # If you want adjustable graphs, you have to do an assignment for some reason
             _ = ng.InteractiveGraph(G, pos, node_size=10, node_label_font_size=12.0, node_color='grey', alpha=0.8,
-                                    node_labels={node.name:node.name for node in self.nodes.values()},
-                                    edge_labels=edge_labels, font_color='black')
+                                    node_labels=node_labels, edge_labels=edge_labels, font_color='black')
         else:
             nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_color='black')
             nx.draw_networkx(G, pos, node_size=800, node_color='grey', alpha=0.8)
