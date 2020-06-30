@@ -34,7 +34,7 @@ class Context:
         self.hyps[node.name] = node
 
     def has_hypothesis(self, node_name):
-        return node_name in self.hyps:
+        return node_name in self.hyps
 
     def is_asserted(self, node):
         return node.name in self.hyps or node.name in self.ders
