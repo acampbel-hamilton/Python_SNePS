@@ -58,7 +58,6 @@ class OrPaths(ComposedPaths):
         # Follow paths consecutively
         derived = set()
         for path in paths:
-            temp_derived = set()
             temp_derived = path.derivable(start_node, converse)
             derived.update(temp_derived)
         return derived
