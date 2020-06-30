@@ -46,11 +46,9 @@ class Caseframe:
 
     def add_adj_to(self, other) -> None:
         self.adj_to.add(other)
-        print(1)
 
     def add_adj_from(self, other) -> None:
         self.adj_from.add(other)
-        print(2)
 
     def adjustable(self, other):
         return self.can_pos_adj(other) or \
@@ -71,7 +69,7 @@ class Caseframe:
 
     def can_neg_adj(self, other):
         """ Returns true if self is a caseframe that is neg_adj to the caseframe
-            other. Self caseframe  is neg_adj to other caseframe if:
+            other. Self caseframe is neg_adj to other caseframe if:
                 1. self is the same, or a subtype of other
                 2. Every slot in self.slots - other.slots is neg_adj reducible and min = 0
                 3. Every slot in other.slots - self.slots is neg_adj expandable and min = 0 """
@@ -82,6 +80,7 @@ class Caseframe:
         return False
 
     def pseudo_adjustable(self, other):
+        # This is a special case for adjustments
         return self.name == "Nor" and other.name == "AndOr"
 
 class Frame:

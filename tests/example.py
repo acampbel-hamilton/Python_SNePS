@@ -15,5 +15,4 @@ net.define_slot("happy_thing", "Thing", path="", min=0, pos_adj="expand", neg_ad
 net.define_caseframe("Happy_Thing", "Propositional", ["happy_thing"])
 
 
-
-net.print_graph()
+snips = Snips(net)
