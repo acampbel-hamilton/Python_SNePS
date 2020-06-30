@@ -23,9 +23,7 @@ class ComposedPaths(Path):
         converse = self.converse != parent_converse
 
         # Backward if in converse
-        paths = self.paths
-        if converse:
-            paths = reverse(paths)
+        paths = reversed(self.paths) if converse else self.paths
 
         # Follow paths consecutively
         derived = set([start_node])
