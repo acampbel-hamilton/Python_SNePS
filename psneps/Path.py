@@ -92,11 +92,10 @@ class BasePath(Path):
         super().__init__()
 
     def derivable(self, start_node, parent_converse=False):
-
         if (self.converse != parent_converse) == self.backward:
-            derived = start_node.follow_down_cable(self.slot)
+            return start_node.follow_down_cable(self.slot)
         else:
-            derived = start_node.follow_up_cable(self.slot)
+            return start_node.follow_up_cable(self.slot)
 
 # Asserted Path singleton
 class AssertedPath:
