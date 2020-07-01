@@ -81,11 +81,7 @@ class KPlusPaths(Path):
 class KStarPaths(KPlusPaths):
     """ Follows zero or more instances of the given path """
     def derivable(self, start_node, parent_converse=False):
-
-        # Exclusive or for whether to use converse
-        converse = self.converse != parent_converse
-
-        return super().derivable(start_node, converse).add(start_node)
+        return super().derivable(start_node, self.converse != parent_converse).add(start_node)
 
 class BasePath(Path):
     """ Atomic path existing on a single non-repeated slot """
@@ -97,10 +93,7 @@ class BasePath(Path):
 
     def derivable(self, start_node, parent_converse=False):
 
-        # Exclusive or for whether to use converse
-        converse = self.converse != parent_converse
-
-        if converse == self.backward:
+        if (self.converse != parent_converse) == self.backward:
             derived = start_node.follow_down_cable(self.slot)
         else:
             derived = start_node.follow_up_cable(self.slot)
