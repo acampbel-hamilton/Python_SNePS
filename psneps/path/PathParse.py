@@ -71,8 +71,12 @@ def p_KPath2(p):
 def p_MultiPath1(p):
     '''
     MultiPath :         Compose LParen Paths RParen
+              |         LBracket Paths RBracket
     '''
-    p[0] = ComposedPaths(p[3])
+    if len(p) == 4:
+        p[0] = ComposedPaths(p[2])
+    else:
+        p[0] = ComposedPaths(p[3])
 
 def p_MultiPath2(p):
     '''

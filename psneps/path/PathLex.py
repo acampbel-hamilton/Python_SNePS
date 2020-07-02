@@ -11,6 +11,8 @@ keywords = (
 tokens = (
     'LParen',
     'RParen',
+    'LBracket',
+    'RBracket',
     'SlotName',
     'ExPoint',
     'ReverseSlotName',
@@ -27,6 +29,8 @@ tokens = (
 t_LParen  = r'\('
 t_RParen  = r'\)'
 t_ExPoint = r'\!'
+t_LBracket = r'\['
+t_RBracket = r'\]'
 t_ReverseSlotName = r'[A-Za-z_][A-Za-z0-9_]*\-'
 t_Comma = r','
 
