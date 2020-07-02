@@ -1,6 +1,6 @@
 """
-This is the main file of the package. In here, we define the Network class.
-Authors: Seamus Wiseman, John Madigan, Ben Kallus
+This is the main file of the SNePS package. In here, we define the Network class.
+Authors: Ben Kallus, John Madigan, and Seamus Wiseman
 """
 
 from .SemanticType import SemanticMixin
