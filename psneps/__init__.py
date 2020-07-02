@@ -1,3 +1,4 @@
 # Python_SNePS
-
-__all__ = ['Network']
+from .snips import *
+from .Network import Network as Network
+from .snips.Inference import Inference as Inference

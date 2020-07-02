@@ -89,7 +89,7 @@ Create a network object:
 
 ```python
 from psneps import *
-net = Network.Network()
+net = Network()
 ```
 
 The following methods are defined:

@@ -1,5 +1,5 @@
 from psneps import *
-net = Network.Network()
+net = Network()
 net.define_slot("agent", "Entity")
 net.define_slot("has", "Entity")
 net.define_slot("happy", "Entity", path="converse(converse(and(agent, compose(member, class))))", min=0, pos_adj="reduce", neg_adj="expand")
@@ -15,4 +15,4 @@ net.define_slot("happy_thing", "Thing", path="", min=0, pos_adj="expand", neg_ad
 net.define_caseframe("Happy_Thing", "Propositional", ["happy_thing"])
 
 
-snips = Snips(net)
+snips = Inference(net)
