@@ -54,30 +54,31 @@ class Base(Atomic):
 
 class Variable(Atomic):
     """ A variable term ranging over a restricted domain. """
-    counter = 1
-    def __init__(self, name: str) -> None:
-        super().__init__(name) # This needs a semantic types. This will be an error.
-        self.restriction_set = {}
-        Variable.counter += 1
+    def __init__(self, name: str, sem_type: SemanticType) -> None:
+        super().__init__(name, sem_type) # This needs a semantic types. This will be an error.
+        self.restriction_set = set()
 
     def add_restriction(self, restriction) -> None: # These need type definitions, since we don't know what restrictions/dependencies are.
-        self.restriction_set[restriction.name] = restriction
+        self.restriction_set.add(restriction)
 
 class Arbitrary(Variable):
     """ An arbitaray individual. """
-    def __init__(self) -> None:
-        self.name = 'V' + str(super().counter)
-        super().__init__(self.name) # These need semantic types. This will be an error.
+    counter = 1
+    def __init__(self, sem_type: SemanticType) -> None:
+        self.name = 'arb' + str(self.counter)
+        self.counter += 1
+        super().__init__(self.name, sem_type) # These need semantic types. This will be an error.
 
 class Indefinite(Variable):
     """ An indefinite object. """
-    def __init__(self) -> None:
-        self.name = 'V' + str(super().counter)
-        super().__init__(self.name) # These need semantic types. This will be an error.
-        self.dependency_set = {}
+    def __init__(self, sem_type: SemanticType) -> None:
+        self.name = 'ind' + str(self.counter)
+        self.counter += 1
+        self.dependency_set = set()
+        super().__init__(self.name, sem_type) # These need semantic types. This will be an error.
 
     def add_dependency(self, dependency) -> None: # These need type definitions, since we don't know what restrictions/dependencies are.
-        self.dependency_set[dependency.name] = dependency
+        self.dependency_set.add(dependency)
 
 # =====================================
 # --------- MOLECULAR NODES -----------

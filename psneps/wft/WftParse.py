@@ -10,8 +10,10 @@ class SNePSWftError(SNError):
 
 current_network = None
 tokens = WftLex.tokens
+
 topWft = None
 assertedWfts = set()
+variables = {}
 
 # =====================================
 # -------------- RULES ----------------
@@ -84,14 +86,42 @@ def p_MinMaxOp(p):
 # e.g. every{x}(Isa(x, Dog))
 def p_EveryStmt(p):
     '''
-    EveryStmt :         Every LParen AtomicName Comma Argument RParen
+    EveryStmt :         Every LParen Identifier Comma Argument RParen
+              |         Every LParen Integer Comma Argument RParen
     '''
+    if p[3] not in variables:
+        variables[p[3]] = Arbitrary(current_network.sem_hierarchy.get_type("Entity"))
+    arb = variables[p[3]]
+    if type(arb) != Arbitrary:
+        raise SNePSWftError("Variable \"{}\" cannot be reassigned".format(p[3]))
+
+    for node in p[5].nodes:
+        arb.add_restriction(node)
+
+    p[0] = arb
 
 # e.g. some{x(y)}(Isa(x, y))
 def p_SomeStmt(p):
     '''
-    SomeStmt :          Some LParen AtomicName LParen AtomicName RParen Comma Argument RParen
+    SomeStmt :          Some LParen Identifier LParen AtomicNameSet RParen Comma Argument RParen
+             |          Some LParen Integer LParen AtomicNameSet RParen Comma Argument RParen
     '''
+    if p[3] not in variables:
+        variables[p[3]] = Indefinite(current_network.sem_hierarchy.get_type("Entity"))
+    ind = variables[p[3]]
+    if type(ind) != Indefinite:
+        raise SNePSWftError("Variable \"{}\" cannot be reassigned".format(p[3]))
+
+    for var_name in p[5]:
+        var = variables[var_name]
+        if not isSubClass(var.__class__, Variable):
+            raise SNePSWftError("Variable \"{}\" does not exist".format(var_name))
+        ind.add_dependency(var)
+
+    for node in p[8].nodes:
+        ind.add_restriction(node)
+
+    p[0] = ind
 
 # e.g. close(Dog, wft1)
 def p_CloseStmt(p):
@@ -178,10 +208,14 @@ def p_Arguments(p):
 
 def p_AtomicNameSet(p):
     '''
-    AtomicNameSet :     AtomicName
+    AtomicNameSet :     Identifier
+                  |     Integer
                   |     LParen AtomicNames RParen
     '''
-
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[0] = p[1] + [p[3]]
 
 def p_AtomicNames(p):
     '''

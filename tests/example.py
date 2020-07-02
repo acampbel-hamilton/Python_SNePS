@@ -9,11 +9,9 @@ net.define_caseframe("Happy", "Propositional", ["happy"])
 net.assert_wft("if(Has(Dog, Bone), Happy(Dog))")
 net.assert_wft("if(not(Has(Dog, Bone)), not(Happy(Dog)))")
 net.assert_wft("iff(Has(Dog, Bone), Happy(Dog))")
-net.assert_wft("Equiv([wft7, and(wft6, wft3)])", True)
+net.assert_wft("Equiv([wft7, and(wft6, wft3)])")
 
-net.define_slot("happy_thing", "Thing", path="", min=0, pos_adj="expand", neg_adj="reduce")
-net.define_caseframe("Happy_Thing", "Propositional", ["happy_thing"])
-
+net.assert_wft("every(x, Dog)")
 
 snips = Inference(net)
 snips.ask("iff(Has(Dog, Bone), Happy(Dog))")
