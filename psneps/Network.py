@@ -154,12 +154,8 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
 
 
     def assert_wft(self, wft_str: str, inf: bool = False) -> None:
-        wft = wft_parser(wft_str, self)
-        print("=> {}".format(wft.name), end='')
-        print('!')
-        self.current_context.add_hypothesis(wft)
-        if inf:
-            print()
+        wfts = wft_parser(wft_str, self)
+        self.current_context.add_hypothesese(wfts)
 
     def print_graph(self) -> None:
         if not has_nx:

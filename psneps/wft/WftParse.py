@@ -10,7 +10,8 @@ class SNePSWftError(SNError):
 
 current_network = None
 tokens = WftLex.tokens
-producedWft = None
+topWft = None
+allWfts = set()
 
 # =====================================
 # -------------- RULES ----------------
@@ -30,8 +31,10 @@ def p_Wft(p):
          |              Function
     '''
     p[0] = p[1]
-    global producedWft
-    producedWft = p[1]
+    global topWft
+    topWft = p[1]
+    global allWfts
+    allWfts.add(p[0])
 
 # e.g. if(wft1, wft2)
 def p_BinaryOp(p):
@@ -247,8 +250,11 @@ def wft_parser(wft, network):
     if wft != '':
         try:
             yacc.parse(wft)
-            global producedWft
-            return producedWft
+            global topWft
+            print("=> {}! : ".format(topWft.name), end='')
+            print(wft)
+            global allWfts
+            return allWfts
         except SNError as e:
             if type(e) is not SNePSWftError:
                 print("PARSING FAILED:\n\t", end='')
