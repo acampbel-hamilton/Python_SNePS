@@ -71,6 +71,7 @@ class Arbitrary(Variable):
 
 class Indefinite(Variable):
     """ An indefinite object. """
+    counter = 1
     def __init__(self, sem_type: SemanticType) -> None:
         self.name = 'ind' + str(self.counter)
         self.counter += 1

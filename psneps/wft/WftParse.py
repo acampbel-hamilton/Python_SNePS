@@ -113,10 +113,9 @@ def p_SomeStmt(p):
         raise SNePSWftError("Variable \"{}\" cannot be reassigned".format(p[3]))
 
     for var_name in p[5]:
-        var = variables[var_name]
-        if not isSubClass(var.__class__, Variable):
+        if var_name not in variables:
             raise SNePSWftError("Variable \"{}\" does not exist".format(var_name))
-        ind.add_dependency(var)
+        ind.add_dependency(variables[var_name])
 
     for node in p[8].nodes:
         ind.add_restriction(node)
