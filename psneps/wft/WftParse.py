@@ -11,6 +11,7 @@ class SNePSWftError(SNError):
 current_network = None
 tokens = WftLex.tokens
 topWft = None
+assertedWfts = set()
 
 # =====================================
 # -------------- RULES ----------------
@@ -225,7 +226,7 @@ def build_molecular(caseframe_name, filler_set):
             return node
     wftNode = Molecular(frame)
     current_network.nodes[wftNode.name] = wftNode
-    current_network.current_context.add_hypothesis(wftNode)
+    assertedWfts.add(wftNode)
     return wftNode
 
 
@@ -238,7 +239,7 @@ def build_minmax (caseframe_name, filler_set, min, max):
             return node
     wftNode = MinMaxOpNode(frame, min, max)
     current_network.nodes[wftNode.name] = wftNode
-    current_network.current_context.add_hypothesis(wftNode)
+    assertedWfts.add(wftNode)
     return wftNode
 
 
@@ -250,8 +251,9 @@ def wft_parser(wft, network):
         try:
             yacc.parse(wft)
             global topWft
-            print("=> {}! : ".format(topWft.name), end='')
-            print(wft)
+            print("=> {}! : {}".format(topWft.name, wft))
+            global assertedWfts
+            return assertedWfts
         except SNError as e:
             if type(e) is not SNePSWftError:
                 print("PARSING FAILED:\n\t", end='')
