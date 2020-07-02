@@ -10,5 +10,4 @@ class Inference:
         self.net = net
 
     def ask(self, wft_str: str):
-        asserted = self.net.current_context.all_asserted()
-        
+        wft = wft_parser(wft_str, self.net)

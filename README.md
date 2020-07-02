@@ -129,9 +129,9 @@ net.define_caseframe("Isa", "Propositional", ["member", "class"],
 net.list_caseframes()
 net.find_caseframe("Isa")
 
-# Passes wft followed by optional parameter "hyp" for
-# determining whether the given wft is asserted in the current context
-net.assert_wft("Isa(Dog, Pet)", hyp=False)
+# Passes wft followed by optional parameter "inf" for
+# triggering forward inference
+net.assert_wft("Isa(Dog, Pet)", inf=False)
 
 # Prints out a visual representation of the knowledge base
 net.print_graph()

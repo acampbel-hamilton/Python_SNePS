@@ -153,13 +153,12 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
         self.enforce_name_syntax = True
 
 
-    def assert_wft(self, wft_str: str, hyp: bool = False) -> None:
+    def assert_wft(self, wft_str: str, inf: bool = False) -> None:
         wft = wft_parser(wft_str, self)
         print("=> {}".format(wft.name), end='')
-        if hyp:
-            print('!')
-            self.current_context.add_hypothesis(wft)
-        else:
+        print('!')
+        self.current_context.add_hypothesis(wft)
+        if inf:
             print()
 
     def print_graph(self) -> None:
