@@ -11,7 +11,6 @@ class SNePSWftError(SNError):
 current_network = None
 tokens = WftLex.tokens
 topWft = None
-allWfts = set()
 
 # =====================================
 # -------------- RULES ----------------
@@ -33,8 +32,6 @@ def p_Wft(p):
     p[0] = p[1]
     global topWft
     topWft = p[1]
-    global allWfts
-    allWfts.add(p[0])
 
 # e.g. if(wft1, wft2)
 def p_BinaryOp(p):
@@ -228,6 +225,7 @@ def build_molecular(caseframe_name, filler_set):
             return node
     wftNode = Molecular(frame)
     current_network.nodes[wftNode.name] = wftNode
+    current_network.current_context.add_hypothesis(wftNode)
     return wftNode
 
 
@@ -240,6 +238,7 @@ def build_minmax (caseframe_name, filler_set, min, max):
             return node
     wftNode = MinMaxOpNode(frame, min, max)
     current_network.nodes[wftNode.name] = wftNode
+    current_network.current_context.add_hypothesis(wftNode)
     return wftNode
 
 
@@ -253,8 +252,6 @@ def wft_parser(wft, network):
             global topWft
             print("=> {}! : ".format(topWft.name), end='')
             print(wft)
-            global allWfts
-            return allWfts
         except SNError as e:
             if type(e) is not SNePSWftError:
                 print("PARSING FAILED:\n\t", end='')
