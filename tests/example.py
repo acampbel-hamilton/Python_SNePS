@@ -11,7 +11,7 @@ net.assert_wft("if(not(Has(Dog, Bone)), not(Happy(Dog)))")
 net.assert_wft("iff(Has(Dog, Bone), Happy(Dog))")
 net.assert_wft("Equiv([wft7, and(wft6, wft3)])")
 
-net.assert_wft("some(x(y), Dog)")
+net.assert_wft("if( every(x, Isa(x, Dog)) , some(y(x), Dog) )")
 
 snips = Inference(net)
 snips.ask("iff(Has(Dog, Bone), Happy(Dog))")
