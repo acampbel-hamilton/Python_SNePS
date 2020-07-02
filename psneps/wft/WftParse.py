@@ -251,9 +251,8 @@ def wft_parser(wft, network):
         try:
             yacc.parse(wft)
             global topWft
-            print("=> {}! : {}".format(topWft.name, wft))
             global assertedWfts
-            return assertedWfts
+            return (topWft, assertedWfts)
         except SNError as e:
             if type(e) is not SNePSWftError:
                 print("PARSING FAILED:\n\t", end='')

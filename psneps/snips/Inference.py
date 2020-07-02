@@ -10,4 +10,5 @@ class Inference:
         self.net = net
 
     def ask(self, wft_str: str):
-        wft = wft_parser(wft_str, self.net)
+        wft = wft_parser(wft_str, self.net)[0]
+        not_wft = wft_parser('not({})'.format(wft.name), self.net)[0]

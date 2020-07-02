@@ -13,6 +13,9 @@ net.assert_wft("Equiv([wft7, and(wft6, wft3)])", True)
 
 net.define_slot("happy_thing", "Thing", path="", min=0, pos_adj="expand", neg_adj="reduce")
 net.define_caseframe("Happy_Thing", "Propositional", ["happy_thing"])
-net.print_graph()
+
 
 snips = Inference(net)
+snips.ask("iff(Has(Dog, Bone), Happy(Dog))")
+
+net.print_graph()
