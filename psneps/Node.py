@@ -46,6 +46,9 @@ class Base(Atomic):
     """ A constant. (An abstract class) """
     pass
 
+    def __eq__(self, other):
+        return self.name == other.name
+
 class Variable(Atomic):
     """ A variable term ranging over a restricted domain. """
     counter = 1
@@ -95,6 +98,9 @@ class Molecular(Node):
     def has_frame(self, frame: Frame) -> bool:
         return frame == self.frame
 
+    def __eq__(self, other):
+        return self.has_frame(other.frame)
+
     def __str__(self) -> str:
         return super().__str__() + "\n\t" + str(self.frame)
 
@@ -111,6 +117,10 @@ class MinMaxOpNode(Molecular):
 
     def has_min_max(self, min: int, max: int) -> bool:
         return self.min == min and self.max == max
+
+    def __eq__(self, other):
+        return super.__eq__(other) and \
+            self.min == other.min and self.max == other.max
 
     def __str__(self) -> str:
         return Node.__str__(self) + " {}, {}".format(self.min, self.max) + "\n\t" + str(self.frame)

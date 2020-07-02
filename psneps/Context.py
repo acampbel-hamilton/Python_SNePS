@@ -9,8 +9,8 @@ class Context:
         self.name = name
         self.parent = parent # Another context object
         self.docstring = docstring
-        self.hyps = {} # Hypothetical beliefs
-        self.ders = {} # Derived beliefs
+        self.hyps = set() # Hypothetical beliefs
+        self.ders = set() # Derived beliefs
 
     def __contains__(self, term: str) -> bool:
         """ Overloads the 'in' operator for use on contexts.
@@ -31,13 +31,16 @@ class Context:
         return self.name == other.name
 
     def add_hypothesis(self, node):
-        self.hyps[node.name] = node
+        self.hyps.add(node)
 
-    def is_hypothesis(self, node_name):
-        return node_name in self.hyps
+    def is_hypothesis(self, node):
+        return node in self.hyps
 
     def is_asserted(self, node):
-        return node.name in self.hyps or node.name in self.ders
+        return node in self.hyps or node in self.ders
+
+    def all_asserted(self):
+        return self.hyps | self.ders
 
 class ContextMixin:
     """ Provides functions related to contexts to network. """

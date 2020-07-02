@@ -174,7 +174,7 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
         edge_labels = {}
         for node in self.nodes.values():
             node_name = node.name
-            if self.current_context.is_hypothesis(node_name):
+            if self.current_context.is_hypothesis(node):
                 node_name += '!'
             node_labels[node_name] = node_name
             G.add_node(node_name)
