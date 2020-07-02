@@ -49,6 +49,9 @@ class Base(Atomic):
     def __eq__(self, other):
         return self.name == other.name
 
+    def __hash__(self):
+        return id(self)
+
 class Variable(Atomic):
     """ A variable term ranging over a restricted domain. """
     counter = 1
@@ -104,6 +107,9 @@ class Molecular(Node):
     def __str__(self) -> str:
         return super().__str__() + "\n\t" + str(self.frame)
 
+    def __hash__(self):
+        return id(self)
+
     def follow_down_cable(self, slot):
         return self.frame.get_filler_set(slot)
 
@@ -121,6 +127,9 @@ class MinMaxOpNode(Molecular):
     def __eq__(self, other):
         return super.__eq__(other) and \
             self.min == other.min and self.max == other.max
+
+    def __hash__(self):
+        return id(self)
 
     def __str__(self) -> str:
         return Node.__str__(self) + " {}, {}".format(self.min, self.max) + "\n\t" + str(self.frame)
