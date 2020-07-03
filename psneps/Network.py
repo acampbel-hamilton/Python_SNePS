@@ -6,7 +6,7 @@ Authors: Ben Kallus, John Madigan, and Seamus Wiseman
 from .SemanticType import SemanticMixin
 from .Context import ContextMixin
 from .Slot import SlotMixin, AdjRule
-from .Node import NodeMixin, Molecular, MinMaxOpNode
+from .Node import NodeMixin, Molecular, MinMaxOpNode, Variable, Indefinite
 from .Caseframe import CaseframeMixin
 from .wft.WftParse import wft_parser
 from sys import stderr
@@ -187,11 +187,31 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
                         filler_name = filler.name
                         if self.current_context.is_hypothesis(filler):
                             filler_name += '!'
-                        G.add_edge(node_name, filler_name)
                         if (node_name, filler_name) in edge_labels:
                             edge_labels[(node_name, filler_name)] += ", " + name
                         else:
+                            G.add_edge(node_name, filler_name)
                             edge_labels[(node_name, filler_name)] = name
+            if isinstance(node, Variable):
+                for restriction_node in node.restriction_set:
+                    restriction_name = restriction_node.name
+                    if self.current_context.is_hypothesis(restriction_node):
+                        restriction_name += '!'
+                    if (node_name, restriction_name) in edge_labels:
+                        edge_labels[(node_name, restriction_name)] += ", restriction"
+                    else:
+                        G.add_edge(node_name, restriction_name)
+                        edge_labels[(node_name, restriction_name)] = "restriction"
+                if isinstance(node, Indefinite):
+                    for dependency_node in node.dependency_set:
+                        dependency_name = dependency_node.name
+                        if self.current_context.is_hypothesis(dependency_node):
+                            dependency_name += '!'
+                        if (node_name, dependency_name) in edge_labels:
+                            edge_labels[(node_name, dependency_name)] += ", dependency"
+                        else:
+                            G.add_edge(node_name, dependency_name)
+                            edge_labels[(node_name, dependency_name)] = "dependency"
 
         pos = nx.circular_layout(G)
         if has_ng:
