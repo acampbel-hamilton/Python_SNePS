@@ -1,5 +1,4 @@
 from enum import Enum
-from sys import stderr
 from .Error import SNError
 from .SemanticType import SemanticType
 from re import match
