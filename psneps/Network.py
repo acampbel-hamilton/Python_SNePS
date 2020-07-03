@@ -80,6 +80,8 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin,
         self.define_slot("subrule", "Policy", neg_adj='reduce', pos_adj='expand', min=0)
 
         # Caseframes
+        # ==========
+
         self.define_caseframe('Isa', 'Propositional', slot_names=["member", "class"])
         self.define_caseframe('Equiv', 'Propositional', slot_names=["equiv"])
         self.define_caseframe('and', 'Propositional', slot_names=["and"])
