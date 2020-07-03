@@ -55,7 +55,19 @@ class ContextMixin:
 
     def define_context(self, name: str, docstring="", parent="_default") -> None:
         """ Defines a new context. """
-        if self.enforce_name_syntax and not match(r'^[A-Za-z_][A-Za-z0-9_]*$', name):
+        if self.enforce_name_syntax and not match(r'^[A-Za-z][A-Za-z0-9_]*:
+            raise ContextError("ERROR: The context name '{}' is not allowed".format(name))
+
+        if name in self.contexts:
+            raise ContextError("ERROR: You cannot define contexts with the same name.")
+        else:
+            self.contexts[name] = Context(name, docstring, self.contexts[parent], hyps, ders)
+
+    def list_contexts(self) -> None:
+        """ Prints out all the contexts in the network """
+        for context_name in self.contexts:
+            print(self.contexts[context_name])
+, name):
             raise ContextError("ERROR: The context name '{}' is not allowed".format(name))
 
         if name in self.contexts:
