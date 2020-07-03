@@ -5,7 +5,7 @@ net.define_slot("has", "Entity")
 net.define_slot("happy", "Entity", path="irreflexive-restrict(converse(and(agent, compose(member, class))))", min=0, pos_adj="reduce", neg_adj="expand")
 
 net.define_caseframe("Has", "Propositional", ["agent", "has"])
-# net.define_caseframe("Happy", "Propositional", ["happy"])
+net.define_caseframe("Happy", "Propositional", ["happy"])
 # net.assert_wft("if(Has(Dog, Bone), Happy(Dog))")
 # net.assert_wft("if(not(Has(Dog, Bone)), not(Happy(Dog)))")
 net.assert_wft("=>([Has(Food, Dog), Has(Dog, Bone), Has(Philosophy, Dog)], Happy(Dog))")

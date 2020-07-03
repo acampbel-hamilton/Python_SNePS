@@ -10,11 +10,9 @@ class SNePSWftError(SNError):
 
 current_network = None
 tokens = WftLex.tokens
-variables = WftLex.variables
 
+variables = {}
 top_wft = None
-asserted_wfts = set()
-
 
 # =====================================
 # -------------- RULES ----------------
@@ -321,9 +319,7 @@ def build_molecular(caseframe_name, filler_set):
             return node
     wftNode = Molecular(frame)
     current_network.nodes[wftNode.name] = wftNode
-    asserted_wfts.add(wftNode)
     return wftNode
-
 
 def build_thresh (caseframe_name, filler_set, min, max):
     """ Builds and returns (or simply returns) a thresh node from given parameters """
@@ -334,7 +330,6 @@ def build_thresh (caseframe_name, filler_set, min, max):
             return node
     wftNode = ThreshNode(frame, min, max)
     current_network.nodes[wftNode.name] = wftNode
-    asserted_wfts.add(wftNode)
     return wftNode
 
 def build_andor (caseframe_name, filler_set, min, max):
@@ -346,7 +341,6 @@ def build_andor (caseframe_name, filler_set, min, max):
             return node
     wftNode = AndOrNode(frame, min, max)
     current_network.nodes[wftNode.name] = wftNode
-    asserted_wfts.add(wftNode)
     return wftNode
 
 def build_impl(filler_set, bound):
@@ -358,7 +352,6 @@ def build_impl(filler_set, bound):
             return node
     wftNode = ImplNode(frame, bound)
     current_network.nodes[wftNode.name] = wftNode
-    asserted_wfts.add(wftNode)
     return wftNode
 
 # =====================================
@@ -373,17 +366,14 @@ def wft_parser(wft, network):
         try:
             yacc.parse(wft)
             global top_wft
-            global asserted_wfts
             global variables
 
             ret_top_wft = top_wft
-            ret_asserted_wfts = asserted_wfts
 
             top_wft = None
-            asserted_wfts = set()
             variables = {}
 
-            return (ret_top_wft, ret_asserted_wfts)
+            return (ret_top_wft)
         except SNError as e:
             if type(e) is not SNePSWftError:
                 print("PARSING FAILED:\n\t", end='')
