@@ -98,6 +98,7 @@ def p_EveryStmt(p):
     for node in p[5].nodes:
         arb.add_restriction(node)
 
+    current_network.nodes[arb.name] = arb
     p[0] = arb
 
 # e.g. some{x(y)}(Isa(x, y))
@@ -120,6 +121,7 @@ def p_SomeStmt(p):
     for node in p[8].nodes:
         ind.add_restriction(node)
 
+    current_network.nodes[ind.name] = ind
     p[0] = ind
 
 # e.g. close(Dog, wft1)
