@@ -31,7 +31,7 @@ t_RParen  = r'\)'
 t_ExPoint = r'\!'
 t_LBracket = r'\['
 t_RBracket = r'\]'
-t_ReverseSlotName = r'[A-Za-z_][A-Za-z0-9_]*\-'
+t_ReverseSlotName = r'[A-Za-z][A-Za-z0-9_]*\-'
 t_Comma = r','
 
 def t_IrreflexiveRestrict(t):
@@ -39,7 +39,7 @@ def t_IrreflexiveRestrict(t):
     return t
 
 def t_SlotName(t):
-    r'[A-Za-z_][A-Za-z0-9_]*'
+    r'[A-Za-z][A-Za-z0-9_]*'
     if t.value == 'kplus':
         t.type = 'KPlus'
     elif t.value == 'kstar':

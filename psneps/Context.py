@@ -55,7 +55,7 @@ class ContextMixin:
 
     def define_context(self, name: str, docstring="", parent="_default") -> None:
         """ Defines a new context. """
-        if self.enforce_name_syntax and not match(r'^[A-Za-z_][A-Za-z0-9_]*$', name):
+        if self.enforce_name_syntax and not match(r'^[A-Za-z][A-Za-z0-9_]*$', name):
             raise ContextError("ERROR: The context name '{}' is not allowed".format(name))
 
         if name in self.contexts:

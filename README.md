@@ -170,7 +170,7 @@ NaryOp :     'and' | 'or' | 'not' | 'nor'            // These operators, exclusi
 Param2Op :   'andor' | 'thresh'
 
 
-atomicName : identifier | i                          // Identifier matches r'[A-Za-z_][A-Za-z0-9_]*'
+atomicName : identifier | i                          // Identifier matches r'[A-Za-z][A-Za-z0-9_]*'
                                                      // i (Integer) matches r'\d+'
 
 argument :   wft
