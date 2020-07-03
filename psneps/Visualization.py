@@ -49,7 +49,7 @@ class VisualizationMixin:
                 for i in range(len(node.frame.filler_set)):
                     fillers = node.frame.filler_set[i]
                     name = node.frame.caseframe.slots[i].name
-                    if isinstance(node, MinMaxOpNode):
+                    if isinstance(node, MinMaxOpNode) and name in ["threshargs", "andorargs"]:
                         name += " ({}, {})".format(node.min, node.max)
                     if name == "nor" and len(fillers) == 1:
                         name = "not"
@@ -116,7 +116,7 @@ class VisualizationMixin:
                 for i in range(len(node.frame.filler_set)):
                     fillers = node.frame.filler_set[i]
                     name = node.frame.caseframe.slots[i].name
-                    if isinstance(node, MinMaxOpNode):
+                    if isinstance(node, MinMaxOpNode) and name in ["threshargs", "andorargs"]:
                         name += " ({}, {})".format(node.min, node.max)
                     if name == "nor" and len(fillers) == 1:
                         name = "not"

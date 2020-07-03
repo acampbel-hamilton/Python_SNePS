@@ -14,7 +14,7 @@ class Node:
         self.docstring = docstring
         self.up_cableset = set() # References to frames that point to this node
         self.sem_type = sem_type
-        if type(self) in (Node, Atomic, Variable):
+        if type(self) in (Node, Atomic, Variable, MinMaxOpNode):
             raise NotImplementedError("Bad syntactic type - see syntax tree in wiki")
 
     def add_up_cable(self, node, slot: Slot) -> None:
@@ -118,7 +118,7 @@ class Molecular(Node):
 
 class MinMaxOpNode(Molecular):
     """ Thresh/andor with two values """
-    def __init__(self, frame, min=1, max=1) -> None:
+    def __init__(self, frame, min, max) -> None:
         super().__init__(frame)
         self.min = min
         self.max = max
@@ -144,6 +144,11 @@ class ThreshNode(MinMaxOpNode):
 class AndOrNode(MinMaxOpNode):
     """ AndOr with two values """
     pass
+
+class ImplNode(Molecular):
+    def __init__(self, frame, num) -> None:
+        super().__init__(frame)
+        self.num = num
 
 # =====================================
 # -------------- UP CABLE -------------

@@ -43,13 +43,10 @@ def p_BinaryOp(p):
     BinaryOp :          Impl LParen Argument Comma Argument RParen
              |          OrImpl LParen Argument Comma Argument RParen
              |          AndImpl LParen Argument Comma Argument RParen
+             |          SingImpl LParen Argument Comma Argument RParen
     '''
-    if p[1] == "if" or p[1] == "orimpl":
-        caseframe_name = p[1]
-    else:
-        caseframe_name = "andimpl"
     filler_set = [p[3], p[5]]
-    p[0] = build_molecular(caseframe_name, filler_set)
+    p[0] = build_molecular(p[1], filler_set)
 
 
 # e.g. and(wft1, wft2)

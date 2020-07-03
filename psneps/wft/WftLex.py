@@ -48,6 +48,7 @@ tokens = (
     'Iff',
     'OrImpl',
     'AndImpl',
+    'SingImpl',
     'LBrace',
     'RBrace',
     'Comma',
@@ -65,21 +66,10 @@ t_LBracket = r'\['
 t_RBracket = r'\]'
 t_Comma = r','
 t_DoubImpl = r'<=>'
-
-def t_AndImpl(t):
-    r'\d+=>'
-    t.value = t.value[:-2]
-    return t
-
-def t_OrImpl(t):
-    r'v=>'
-    t.value = "orimpl"
-    return t
-
-def t_Impl(t):
-    r'=>'
-    t.value = "if"
-    return t
+t_Impl = r'\d+=>'
+t_AndImpl = r'&=>'
+t_OrImpl = r'v=>'
+t_SingImpl = r'=>'
 
 def t_Identifier(t):
     r'[A-Za-z][A-Za-z0-9_]*'
