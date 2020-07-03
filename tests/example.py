@@ -18,4 +18,4 @@ net = Network()
 
 net.assert_wft("Isa( every(x, Isa(x, Dog)) , some(y(x), Isa(y, Dog)) )")
 
-net.print_graph()
+net.export_graph()

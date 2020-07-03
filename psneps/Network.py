@@ -17,6 +17,11 @@ try:
 except ModuleNotFoundError:
     has_nx = False
 try:
+    import pydot as pyd
+    has_pydot = True
+except ModuleNotFoundError:
+    has_pydot = False
+try:
     import matplotlib.pyplot as plt
     has_mpl = True
 except ModuleNotFoundError:
@@ -162,8 +167,10 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
     def print_graph(self) -> None:
         if not has_nx:
             print("In order to use this function, you must pip install networkx")
+            return
         if not has_mpl:
             print("In order to use this function, you must pip install matplotlib")
+            return
 
         node_labels={}
 
@@ -224,3 +231,48 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin)
             nx.draw_networkx(G, pos, node_size=800, node_color='grey', alpha=0.8)
         plt.subplots_adjust(left=0.0, right=1.0, top=1.0, bottom=0.0)
         plt.show()
+
+
+    def export_graph(self) -> None:
+        if not has_nx:
+            print("In order to use this function, you must pip install networkx")
+            return
+        if not has_pydot:
+            print("In order to use this function, you must pip install pydot")
+
+        node_labels={}
+
+        G = nx.MultiDiGraph()
+        for node in self.nodes.values():
+            node_name = node.name
+            if self.current_context.is_hypothesis(node):
+                node_name += '!'
+            node_labels[node_name] = node_name
+            G.add_node(node_name)
+            if isinstance(node, Molecular):
+                for i in range(len(node.frame.filler_set)):
+                    fillers = node.frame.filler_set[i]
+                    name = node.frame.caseframe.slots[i].name
+                    if isinstance(node, MinMaxOpNode):
+                        name += " ({}, {})".format(node.min, node.max)
+                    if name == "nor" and len(fillers) == 1:
+                        name = "not"
+                    for filler in fillers.nodes:
+                        filler_name = filler.name
+                        if self.current_context.is_hypothesis(filler):
+                            filler_name += '!'
+                        G.add_edge(node_name, filler_name, label=name)
+            if isinstance(node, Variable):
+                for restriction_node in node.restriction_set:
+                    restriction_name = restriction_node.name
+                    if self.current_context.is_hypothesis(restriction_node):
+                        restriction_name += '!'
+                    G.add_edge(node_name, restriction_name, label="restriction")
+                if isinstance(node, Indefinite):
+                    for dependency_node in node.dependency_set:
+                        dependency_name = dependency_node.name
+                        if self.current_context.is_hypothesis(dependency_node):
+                            dependency_name += '!'
+                        G.add_edge(node_name, dependency_name, label="dependency")
+
+        nx.nx_pydot.write_dot(G, 'graph.dot')
