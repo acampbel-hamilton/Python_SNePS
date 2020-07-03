@@ -175,7 +175,7 @@ class CaseframeMixin:
     def define_caseframe(self, name: str, sem_type_name: str, slot_names: list, docstring="") -> None:
         """ Defines a new caseframe. """
 
-        if self.enforce_name_syntax and not match(r'^[A-Za-z_][A-Za-z0-9_]*$', name):
+        if self.enforce_name_syntax and not match(r'^[A-Za-z][A-Za-z0-9_]*$', name):
             raise CaseframeError("ERROR: The casframe name '{}' is not allowed".format(name))
 
         # Checks provided slots names are valid
