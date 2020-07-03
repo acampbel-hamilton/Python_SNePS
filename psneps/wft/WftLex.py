@@ -84,7 +84,7 @@ def t_DoubImpl(t):
     return t
 
 def t_Identifier(t):
-    r'[A-Za-z][A-Za-z0-9_]*'
+    r'[A-Za-z_][A-Za-z0-9_]*'
     if match(r'^wft\d+$', t.value):
         t.type = 'WftNode'
     elif t.value == 'if':
