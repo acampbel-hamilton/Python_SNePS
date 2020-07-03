@@ -1,5 +1,8 @@
 from .ply import *
 from re import match
+from ..Node import Indefinite, Arbitrary
+
+variables = {}
 
 keywords = (
     'xor',

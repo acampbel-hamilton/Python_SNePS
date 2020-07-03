@@ -10,10 +10,11 @@ class SNePSWftError(SNError):
 
 current_network = None
 tokens = WftLex.tokens
+variables = WftLex.variables
 
 top_wft = None
 asserted_wfts = set()
-variables = {}
+
 
 # =====================================
 # -------------- RULES ----------------
@@ -86,14 +87,9 @@ def p_MinMaxOp(p):
 # e.g. every{x}(Isa(x, Dog))
 def p_EveryStmt(p):
     '''
-    EveryStmt :         Every LParen Identifier Comma Argument RParen
-              |         Every LParen Integer Comma Argument RParen
+    EveryStmt :         Every LParen ArbVar Comma Argument RParen
     '''
-    if p[3] not in variables:
-        variables[p[3]] = Arbitrary(current_network.sem_hierarchy.get_type("Entity"))
-    arb = variables[p[3]]
-    if not isinstance(arb, Arbitrary):
-        raise SNePSWftError("Variable \"{}\" cannot be reassigned".format(p[3]))
+    arb = p[3]
 
     for node in p[5].nodes:
         arb.add_restriction(node)
@@ -104,14 +100,9 @@ def p_EveryStmt(p):
 # e.g. some{x(y)}(Isa(x, y))
 def p_SomeStmt(p):
     '''
-    SomeStmt :          Some LParen Identifier LParen AtomicNameSet RParen Comma Argument RParen
-             |          Some LParen Integer LParen AtomicNameSet RParen Comma Argument RParen
+    SomeStmt :          Some LParen IndVar LParen AtomicNameSet RParen Comma Argument RParen
     '''
-    if p[3] not in variables:
-        variables[p[3]] = Indefinite(current_network.sem_hierarchy.get_type("Entity"))
-    ind = variables[p[3]]
-    if not isinstance(ind, Indefinite):
-        raise SNePSWftError("Variable \"{}\" cannot be reassigned".format(p[3]))
+    ind = p[3]
 
     for var_name in p[5]:
         if var_name not in variables:
@@ -123,6 +114,30 @@ def p_SomeStmt(p):
 
     current_network.nodes[ind.name] = ind
     p[0] = ind
+
+def p_ArbVar(p):
+    '''
+    ArbVar :            Identifier
+           |            Integer
+    '''
+    if p[1] not in variables:
+        variables[p[1]] = Arbitrary(current_network.sem_hierarchy.get_type("Entity"))
+    p[0] = variables[p[1]]
+
+    if not isinstance(ind, Arbitrary):
+        raise SNePSWftError("Variable \"{}\" cannot be reassigned".format(p[3]))
+
+def p_IndVar(p):
+    '''
+    IndVar :            Identifier
+           |            Integer
+    '''
+    if p[1] not in variables:
+        variables[p[1]] = Indefinite(current_network.sem_hierarchy.get_type("Entity"))
+    p[0] = variables[p[1]]
+
+    if not isinstance(ind, Indefinite):
+        raise SNePSWftError("Variable \"{}\" cannot be reassigned".format(p[3]))
 
 # e.g. close(Dog, wft1)
 def p_CloseStmt(p):
