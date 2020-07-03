@@ -15,6 +15,16 @@ class Inference:
 
     def ask_if(self, wft_str: str):
         wft = wft_parser(wft_str, self.net)[0]
+        if self.net.current_context.is_asserted(wft):
+            print("{}! [{}] is asserted".format(wft.name, wft_str))
+            return True
+        return False
 
     def ask_if_not(self, wft_str: str):
         wft = wft_parser('not({})'.format(wft_str), self.net)[0]
+        if self.net.current_context.is_asserted(wft):
+            print("{}! [not({})] is asserted".format(wft.name, wft_str))
+            return True
+        return False
+
+    # def _path_based_inference(self, wft: str):
