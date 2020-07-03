@@ -1,7 +1,6 @@
 from .Slot import *
 from .SemanticType import SemanticType, SemanticHierarchy
 from .Error import SNError
-from sys import stderr
 from re import match
 
 class CaseframeError(SNError):
