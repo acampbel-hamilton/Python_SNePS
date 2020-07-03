@@ -141,5 +141,5 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin,
     def assert_wft(self, wft_str: str, inf: bool = False) -> None:
         parsed_wft = wft_parser(wft_str, self)
         if parsed_wft != None:
-            print("=> {}! : {}".format(parsed_wft[0].name, wft_str))
-            self.current_context.add_hypotheses(parsed_wft[1])
+            print(">> {}! : {}".format(parsed_wft[0].name, wft_str))
+            self.current_context.add_hypothesis(parsed_wft[0])

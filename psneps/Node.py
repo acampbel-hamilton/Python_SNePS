@@ -136,6 +136,15 @@ class MinMaxOpNode(Molecular):
     def __str__(self) -> str:
         return Node.__str__(self) + " {}, {}".format(self.min, self.max) + "\n\t" + str(self.frame)
 
+
+class ThreshNode(MinMaxOpNode):
+    """ Thresh with two values """
+    pass
+
+class AndOrNode(MinMaxOpNode):
+    """ AndOr with two values """
+    pass
+
 # =====================================
 # -------------- UP CABLE -------------
 # =====================================

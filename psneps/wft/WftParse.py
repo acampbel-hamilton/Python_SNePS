@@ -2,7 +2,7 @@ from . import WftLex
 from .ply import *
 from ..Network import *
 from ..Caseframe import Frame, Fillers
-from ..Node import Base, Molecular, Indefinite, Arbitrary, MinMaxOpNode
+from ..Node import Base, Molecular, Indefinite, Arbitrary, ThreshNode, AndOrNode
 from ..Error import SNError
 
 class SNePSWftError(SNError):
@@ -58,43 +58,39 @@ def p_NaryOp1(p):
     NaryOp :            And LParen Wfts RParen
     '''
     filler_set = [Fillers(p[3])]
-    p[0] = build_minmax(p[1], filler_set, len(p[3]), len(p[3]))
+    p[0] = build_andor(p[1], filler_set, len(p[3]), len(p[3]))
 def p_NaryOp2(p):
     '''
     NaryOp :            Or LParen Wfts RParen
     '''
     filler_set = [Fillers(p[3])]
-    p[0] = build_minmax(p[1], filler_set, 1, len(p[3]))
+    p[0] = build_andor(p[1], filler_set, 1, len(p[3]))
 def p_NaryOp3(p):
     '''
     NaryOp :            Not LParen Wfts RParen
            |            Nor LParen Wfts RParen
     '''
     filler_set = [Fillers(p[3])]
-    p[0] = build_minmax(p[1], filler_set, 0, 0)
+    p[0] = build_andor(p[1], filler_set, 0, 0)
 def p_NaryOp4(p):
     '''
     NaryOp :            Nand LParen Wfts RParen
     '''
     filler_set = [Fillers(p[3])]
-    p[0] = build_minmax(p[1], filler_set, 0, len(p[3]) - 1)
+    p[0] = build_andor(p[1], filler_set, 0, len(p[3]) - 1)
 def p_NaryOp5(p):
     '''
     NaryOp :            Xor LParen Wfts RParen
     '''
     filler_set = [Fillers(p[3])]
-    p[0] = build_minmax(p[1], filler_set, 1, 1)
+    p[0] = build_andor(p[1], filler_set, 1, 1)
 def p_NaryOp6(p):
     '''
     NaryOp :            Iff LParen Wfts RParen
-           |            y_DoubImpl
+           |            DoubImpl LParen Wfts RParen
     '''
-    if len(p) == 5:
-        filler_set = [Fillers(p[3])]
-        p[0] = build_minmax(p[1], filler_set, 1, len(p[3]) - 1)
-    else:
-        filler_set = [Fillers(p[1])]
-        p[0] = build_minmax("iff", filler_set, 1, len(p[1]) - 1)
+    filler_set = [Fillers(p[3])]
+    p[0] = build_thresh("iff", filler_set, 1, len(p[3]) - 1)
 
 # |            Thnot LParen Wfts RParen
 # |            Thnor LParen Wfts RParen
@@ -113,7 +109,10 @@ def p_MinMaxOp(p):
     else:
         max = int(p[5])
         filler_set = [Fillers(p[8])]
-    p[0] = build_minmax(p[1], filler_set, min, max)
+    if p[1] == "thresh":
+        p[0] = build_thresh(p[1], filler_set, min, max)
+    else:
+        p[0] = build_andor(p[1], filler_set, min, max)
 
 # e.g. every{x}(Isa(x, Dog))
 def p_EveryStmt(p):
@@ -294,17 +293,6 @@ def p_Y_WftNode(p):
 
     p[0] = current_network.nodes[p[1]]
 
-def p_y_DoubImpl1(p):
-    '''
-    y_DoubImpl :        Wft DoubImpl Wft
-    '''
-    p[0] = [p[1]] + [p[3]]
-def p_y_DoubImpl2(p):
-    '''
-    y_DoubImpl :        y_DoubImpl DoubImpl Wft
-    '''
-    p[0] = p[1] + [p[3]]
-
 def p_error(p):
     if p is None:
         raise SNePSWftError("PARSING FAILED: Term reached end unexpectedly.")
@@ -312,7 +300,7 @@ def p_error(p):
         raise SNePSWftError("PARSING FAILED: Syntax error on token '" + p.type + "'")
 
 # =====================================
-# ------------ RULES END --------------
+# ------------ BUILD FNS --------------
 # =====================================
 
 def build_molecular(caseframe_name, filler_set):
@@ -328,18 +316,33 @@ def build_molecular(caseframe_name, filler_set):
     return wftNode
 
 
-def build_minmax (caseframe_name, filler_set, min, max):
-    """ Builds and returns (or simply returns) a MinMaxOp node from given parameters """
+def build_thresh (caseframe_name, filler_set, min, max):
+    """ Builds and returns (or simply returns) a thresh node from given parameters """
     caseframe = current_network.find_caseframe(caseframe_name)
     frame = Frame(caseframe, filler_set)
     for node in current_network.nodes.values():
         if node.has_frame(frame) and node.has_min_max(min, max):
             return node
-    wftNode = MinMaxOpNode(frame, min, max)
+    wftNode = ThreshNode(frame, min, max)
     current_network.nodes[wftNode.name] = wftNode
     asserted_wfts.add(wftNode)
     return wftNode
 
+def build_andor (caseframe_name, filler_set, min, max):
+    """ Builds and returns (or simply returns) an andor node from given parameters """
+    caseframe = current_network.find_caseframe(caseframe_name)
+    frame = Frame(caseframe, filler_set)
+    for node in current_network.nodes.values():
+        if node.has_frame(frame) and node.has_min_max(min, max):
+            return node
+    wftNode = AndOrNode(frame, min, max)
+    current_network.nodes[wftNode.name] = wftNode
+    asserted_wfts.add(wftNode)
+    return wftNode
+
+# =====================================
+# ------------ PARSER FN --------------
+# =====================================
 
 def wft_parser(wft, network):
     global current_network

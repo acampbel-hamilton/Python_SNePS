@@ -33,6 +33,9 @@ class Context:
     def add_hypotheses(self, nodes):
         self.hyps.update(nodes)
 
+    def add_hypothesis(self, node):
+        self.hyps.add(node)
+
     def is_hypothesis(self, node):
         return node in self.hyps
 
