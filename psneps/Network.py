@@ -17,6 +17,7 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin,
         for cls in type(self).__bases__:
             cls.__init__(self)
 
+        # THE FOLLOWING INSTANCE VARIABLES ARE DEFINED IN MIXINS
         # self.nodes = {} (defined in Node.py)
         # self.caseframes = {} (defined in Caseframe.py)
         # self.slots = {} (defined in Slot.py)
