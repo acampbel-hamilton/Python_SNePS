@@ -94,7 +94,7 @@ def p_IRPath(p):
     '''
     IRPath :            IrreflexiveRestrict LParen Path RParen
     '''
-    raise SNePSPathError("Not yet implemented!")
+    p[0] = IRPath(p[3])
 
 def p_Paths(p):
     '''

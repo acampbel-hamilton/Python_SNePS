@@ -59,11 +59,15 @@ class OrPaths(ComposedPaths):
             derived.update(path.derivable(start_node, converse))
         return derived
 
-class KPlusPaths(Path):
-    """ Follows one or more instances of the given path """
+class ModPath(Path):
+    """ Performs some modification on a single path """
+
     def __init__(self, path):
         self.path = path
         super().__init__()
+
+class KPlusPaths(ModPath):
+    """ Follows one or more instances of the given path """
 
     def derivable(self, start_node, parent_converse=False):
 
@@ -82,6 +86,18 @@ class KStarPaths(KPlusPaths):
     """ Follows zero or more instances of the given path """
     def derivable(self, start_node, parent_converse=False):
         return super().derivable(start_node, self.converse != parent_converse).add(start_node)
+
+class IRPath(ModPath):
+    """ Follows paths provided end node is not start node """
+
+    def derivable(self, start_node, parent_converse=False):
+
+        # Exclusive or for whether to use converse
+        converse = self.converse != parent_converse
+
+        derived = self.path.derivable(next_node, converse)
+        derived.discard(start_node)
+        return derived
 
 class BasePath(Path):
     """ Atomic path existing on a single non-repeated slot """
