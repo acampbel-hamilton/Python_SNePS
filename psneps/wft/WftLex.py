@@ -17,7 +17,8 @@ keywords = (
     'nor',
     'None',
     'not',
-    'close'
+    'close',
+    'iff'
 )
 
 tokens = (
@@ -44,6 +45,7 @@ tokens = (
     'None',
     'Not',
     'Close',
+    'Iff',
     'OrImpl',
     'AndImpl',
     'LBrace',
@@ -62,6 +64,7 @@ t_RBrace = r'}'
 t_LBracket = r'\['
 t_RBracket = r'\]'
 t_Comma = r','
+t_DoubImpl = r'<=>'
 
 def t_AndImpl(t):
     r'\d+=>'
@@ -78,19 +81,12 @@ def t_Impl(t):
     t.value = "if"
     return t
 
-def t_DoubImpl(t):
-    r'<=>'
-    t.value = "iff"
-    return t
-
 def t_Identifier(t):
     r'[A-Za-z][A-Za-z0-9_]*'
     if match(r'^wft\d+$', t.value):
         t.type = 'WftNode'
     elif t.value == 'if':
         t.type = 'Impl'
-    elif t.value == 'iff':
-        t.type = 'DoubImpl'
     elif t.value == 'andor':
         t.type = 'AndOr'
     elif t.value == 'setof':

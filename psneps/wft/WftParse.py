@@ -53,20 +53,51 @@ def p_BinaryOp(p):
 
 
 # e.g. and(wft1, wft2)
-def p_NaryOp(p):
+def p_NaryOp1(p):
     '''
     NaryOp :            And LParen Wfts RParen
-           |            Or LParen Wfts RParen
-           |            Not LParen Wfts RParen
-           |            Nor LParen Wfts RParen
-           |            Thnot LParen Wfts RParen
-           |            Thnor LParen Wfts RParen
-           |            Nand LParen Wfts RParen
-           |            Xor LParen Wfts RParen
-           |            DoubImpl LParen Wfts RParen
     '''
     filler_set = [Fillers(p[3])]
-    p[0] = build_molecular(p[1], filler_set)
+    p[0] = build_minmax(p[1], filler_set, len(p[3]), len(p[3]))
+def p_NaryOp2(p):
+    '''
+    NaryOp :            Or LParen Wfts RParen
+    '''
+    filler_set = [Fillers(p[3])]
+    p[0] = build_minmax(p[1], filler_set, 1, len(p[3]))
+def p_NaryOp3(p):
+    '''
+    NaryOp :            Not LParen Wfts RParen
+           |            Nor LParen Wfts RParen
+    '''
+    filler_set = [Fillers(p[3])]
+    p[0] = build_minmax(p[1], filler_set, 0, 0)
+def p_NaryOp4(p):
+    '''
+    NaryOp :            Nand LParen Wfts RParen
+    '''
+    filler_set = [Fillers(p[3])]
+    p[0] = build_minmax(p[1], filler_set, 0, len(p[3]) - 1)
+def p_NaryOp5(p):
+    '''
+    NaryOp :            Xor LParen Wfts RParen
+    '''
+    filler_set = [Fillers(p[3])]
+    p[0] = build_minmax(p[1], filler_set, 1, 1)
+def p_NaryOp6(p):
+    '''
+    NaryOp :            Iff LParen Wfts RParen
+           |            y_DoubImpl
+    '''
+    if len(p) == 5:
+        filler_set = [Fillers(p[3])]
+        p[0] = build_minmax(p[1], filler_set, 1, len(p[3]) - 1)
+    else:
+        filler_set = [Fillers(p[1])]
+        p[0] = build_minmax("iff", filler_set, 1, len(p[1]) - 1)
+
+# |            Thnot LParen Wfts RParen
+# |            Thnor LParen Wfts RParen
 
 # e.g. thresh{1, 2}(wft1)
 def p_MinMaxOp(p):
@@ -78,7 +109,7 @@ def p_MinMaxOp(p):
     min = p[3]
     if len(p) == 8:
         filler_set = [Fillers(p[6])]
-        max = int(len(p[6])) - 1
+        max = len(p[6]) - 1
     else:
         max = int(p[5])
         filler_set = [Fillers(p[8])]
@@ -262,6 +293,17 @@ def p_Y_WftNode(p):
         raise SNePSWftError('Invalid wft number. Max number: {}'.format(Molecular.counter - 1))
 
     p[0] = current_network.nodes[p[1]]
+
+def p_y_DoubImpl1(p):
+    '''
+    y_DoubImpl :        Wft DoubImpl Wft
+    '''
+    p[0] = [p[1]] + [p[3]]
+def p_y_DoubImpl2(p):
+    '''
+    y_DoubImpl :        y_DoubImpl DoubImpl Wft
+    '''
+    p[0] = p[1] + [p[3]]
 
 def p_error(p):
     if p is None:
