@@ -51,12 +51,9 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin,
         # =====
 
         # Propositions
-        self.define_slot("class", "Category",
-                         neg_adj='reduce')
-        self.define_slot("member", "Entity",
-                         neg_adj='reduce')
-        self.define_slot("equiv", "Entity",
-                         neg_adj='reduce', min=2)
+        self.define_slot("class", "Category", eg_adj='reduce')
+        self.define_slot("member", "Entity", neg_adj='reduce')
+        self.define_slot("equiv", "Entity", neg_adj='reduce', min=2)
         self.define_slot("closedvar", "Entity")
         self.define_slot("proposition", "Propositional")
 
