@@ -63,8 +63,8 @@ class ModPath(Path):
     """ Performs some modification on a single path """
 
     def __init__(self, path):
-        self.path = path
         super().__init__()
+        self.path = path
 
 class KPlusPaths(ModPath):
     """ Follows one or more instances of the given path """
@@ -91,11 +91,7 @@ class IRPath(ModPath):
     """ Follows paths provided end node is not start node """
 
     def derivable(self, start_node, parent_converse=False):
-
-        # Exclusive or for whether to use converse
-        converse = self.converse != parent_converse
-
-        derived = self.path.derivable(next_node, converse)
+        derived = self.path.derivable(next_node, self.converse != parent_converse)
         derived.discard(start_node)
         return derived
 
