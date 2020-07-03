@@ -124,7 +124,7 @@ def p_ArbVar(p):
         variables[p[1]] = Arbitrary(current_network.sem_hierarchy.get_type("Entity"))
     p[0] = variables[p[1]]
 
-    if not isinstance(ind, Arbitrary):
+    if not isinstance(p[0], Arbitrary):
         raise SNePSWftError("Variable \"{}\" cannot be reassigned".format(p[3]))
 
 def p_IndVar(p):
@@ -136,7 +136,7 @@ def p_IndVar(p):
         variables[p[1]] = Indefinite(current_network.sem_hierarchy.get_type("Entity"))
     p[0] = variables[p[1]]
 
-    if not isinstance(ind, Indefinite):
+    if not isinstance(p[0], Indefinite):
         raise SNePSWftError("Variable \"{}\" cannot be reassigned".format(p[3]))
 
 # e.g. close(Dog, wft1)
@@ -231,24 +231,30 @@ def p_AtomicNameSet(p):
     if len(p) == 2:
         p[0] = [p[1]]
     else:
-        p[0] = p[1] + [p[3]]
+        p[0] = p[2]
 
 def p_AtomicNames(p):
     '''
     AtomicNames :       AtomicName
                 |       AtomicNames Comma AtomicName
     '''
-
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[0] = p[1] + [p[3]]
 
 def p_AtomicName(p):
     '''
     AtomicName :        Identifier
                |        Integer
     '''
-    current_network.define_term(p[1])
-    p[0] = current_network.find_term(p[1])
+    if p[1] in variables:
+        p[0] = variables[p[1]]
+    else:
+        current_network.define_term(p[1])
+        p[0] = current_network.find_term(p[1])
 
-def p_AtomicName2(p):
+def p_Y_WftNode(p):
     '''
     Y_WftNode :         WftNode
     '''
