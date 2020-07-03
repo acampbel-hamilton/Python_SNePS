@@ -11,8 +11,8 @@ class SNePSWftError(SNError):
 current_network = None
 tokens = WftLex.tokens
 
-topWft = None
-assertedWfts = set()
+top_wft = None
+asserted_wfts = set()
 variables = {}
 
 # =====================================
@@ -33,8 +33,8 @@ def p_Wft(p):
          |              Function
     '''
     p[0] = p[1]
-    global topWft
-    topWft = p[1]
+    global top_wft
+    top_wft = p[1]
 
 # e.g. if(wft1, wft2)
 def p_BinaryOp(p):
@@ -92,7 +92,7 @@ def p_EveryStmt(p):
     if p[3] not in variables:
         variables[p[3]] = Arbitrary(current_network.sem_hierarchy.get_type("Entity"))
     arb = variables[p[3]]
-    if type(arb) != Arbitrary:
+    if not isinstance(arb, Arbitrary):
         raise SNePSWftError("Variable \"{}\" cannot be reassigned".format(p[3]))
 
     for node in p[5].nodes:
@@ -109,7 +109,7 @@ def p_SomeStmt(p):
     if p[3] not in variables:
         variables[p[3]] = Indefinite(current_network.sem_hierarchy.get_type("Entity"))
     ind = variables[p[3]]
-    if type(ind) != Indefinite:
+    if not isinstance(ind, Indefinite):
         raise SNePSWftError("Variable \"{}\" cannot be reassigned".format(p[3]))
 
     for var_name in p[5]:
@@ -259,7 +259,7 @@ def build_molecular(caseframe_name, filler_set):
             return node
     wftNode = Molecular(frame)
     current_network.nodes[wftNode.name] = wftNode
-    assertedWfts.add(wftNode)
+    asserted_wfts.add(wftNode)
     return wftNode
 
 
@@ -272,7 +272,7 @@ def build_minmax (caseframe_name, filler_set, min, max):
             return node
     wftNode = MinMaxOpNode(frame, min, max)
     current_network.nodes[wftNode.name] = wftNode
-    assertedWfts.add(wftNode)
+    asserted_wfts.add(wftNode)
     return wftNode
 
 
@@ -283,17 +283,18 @@ def wft_parser(wft, network):
     if wft != '':
         try:
             yacc.parse(wft)
-            global topWft
-            global assertedWfts
+            global top_wft
+            global asserted_wfts
+            global variables
 
-            ret_topWft = topWft
-            ret_assertedWfts = assertedWfts
+            ret_top_wft = top_wft
+            ret_asserted_wfts = asserted_wfts
 
-            topWft = None
-            assertedWfts = set()
+            top_wft = None
+            asserted_wfts = set()
             variables = {}
 
-            return (ret_topWft, ret_assertedWfts)
+            return (ret_top_wft, ret_asserted_wfts)
         except SNError as e:
             if type(e) is not SNePSWftError:
                 print("PARSING FAILED:\n\t", end='')
