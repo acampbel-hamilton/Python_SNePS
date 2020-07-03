@@ -60,25 +60,7 @@ class SlotMixin:
                     neg_adj="NONE", min=1, max=0, path='') -> None:
         """ Adds new slot to network """
 
-        if self.enforce_name_syntax and not match(r'^[A-Za-z][A-Za-z0-9_]*:
-            raise SlotError("ERROR: The slot name '{}' is not allowed".format(name))
-
-        if name in self.slots:
-            raise SlotError("ERROR: Slot " + name + " already defined.")
-
-        sem_type = self.sem_hierarchy.get_type(sem_type_str)
-
-        try:
-            path_obj = path_parser(path, self)
-            self.slots[name] = Slot(name, sem_type, docstring, pos_adj, neg_adj, min, max, path_obj)
-        except SNePSPathError as e:
-            print(e)
-
-    def list_slots(self) -> None:
-        """ Lists all slots in network """
-        for slot_name in self.slots:
-            print(self.slots[slot_name])
-, name):
+        if self.enforce_name_syntax and not match(r'^[A-Za-z_][A-Za-z0-9_]*$', name):
             raise SlotError("ERROR: The slot name '{}' is not allowed".format(name))
 
         if name in self.slots:
