@@ -2,7 +2,7 @@ from . import WftLex
 from .ply import *
 from ..Network import *
 from ..Caseframe import Frame, Fillers
-from ..Node import Base, Molecular, Indefinite, Arbitrary, ThreshNode, AndOrNode
+from ..Node import Base, Molecular, Indefinite, Arbitrary, ThreshNode, AndOrNode, ImplNode
 from ..Error import SNError
 
 class SNePSWftError(SNError):
@@ -38,15 +38,24 @@ def p_Wft(p):
     top_wft = p[1]
 
 # e.g. if(wft1, wft2)
-def p_BinaryOp(p):
+def p_BinaryOp1(p):
     '''
     BinaryOp :          Impl LParen Argument Comma Argument RParen
-             |          OrImpl LParen Argument Comma Argument RParen
-             |          AndImpl LParen Argument Comma Argument RParen
-             |          SingImpl LParen Argument Comma Argument RParen
     '''
     filler_set = [p[3], p[5]]
-    p[0] = build_molecular(p[1], filler_set)
+    p[0] = build_impl(filler_set, int(p[1][:1]))
+def p_BinaryOp2(p):
+    '''
+    BinaryOp :          AndImpl LParen Argument Comma Argument RParen
+    '''
+    filler_set = [p[3], p[5]]
+    p[0] = build_impl(filler_set, len(p[3].nodes))
+def p_BinaryOp3(p):
+    '''
+    BinaryOp :          SingImpl LParen Argument Comma Argument RParen
+    '''
+    filler_set = [p[3], p[5]]
+    p[0] = build_impl(filler_set, 1)
 
 
 # e.g. and(wft1, wft2)
@@ -88,9 +97,12 @@ def p_NaryOp6(p):
     '''
     filler_set = [Fillers(p[3])]
     p[0] = build_thresh("iff", filler_set, 1, len(p[3]) - 1)
-
-# |            Thnot LParen Wfts RParen
-# |            Thnor LParen Wfts RParen
+def p_NaryOp7(p):
+    '''
+    NaryOp :            Thnot LParen Wfts RParen
+           |            Thnor LParen Wfts RParen
+    '''
+    raise SNePSWftError("Not yet implemented!")
 
 # e.g. thresh{1, 2}(wft1)
 def p_MinMaxOp(p):
@@ -333,6 +345,18 @@ def build_andor (caseframe_name, filler_set, min, max):
         if node.has_frame(frame) and node.has_min_max(min, max):
             return node
     wftNode = AndOrNode(frame, min, max)
+    current_network.nodes[wftNode.name] = wftNode
+    asserted_wfts.add(wftNode)
+    return wftNode
+
+def build_impl(filler_set, bound):
+    """ Builds and returns (or simply returns) an impl node from given parameters """
+    caseframe = current_network.find_caseframe("if")
+    frame = Frame(caseframe, filler_set)
+    for node in current_network.nodes.values():
+        if node.has_frame(frame) and node.has_bound(bound):
+            return node
+    wftNode = ImplNode(frame, bound)
     current_network.nodes[wftNode.name] = wftNode
     asserted_wfts.add(wftNode)
     return wftNode

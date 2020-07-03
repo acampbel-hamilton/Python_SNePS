@@ -46,7 +46,6 @@ tokens = (
     'Not',
     'Close',
     'Iff',
-    'OrImpl',
     'AndImpl',
     'SingImpl',
     'LBrace',
@@ -68,15 +67,14 @@ t_Comma = r','
 t_DoubImpl = r'<=>'
 t_Impl = r'\d+=>'
 t_AndImpl = r'&=>'
-t_OrImpl = r'v=>'
-t_SingImpl = r'=>'
+t_SingImpl = r'(v)?=>'
 
 def t_Identifier(t):
     r'[A-Za-z][A-Za-z0-9_]*'
     if match(r'^wft\d+$', t.value):
         t.type = 'WftNode'
     elif t.value == 'if':
-        t.type = 'Impl'
+        t.type = 'SingImpl'
     elif t.value == 'andor':
         t.type = 'AndOr'
     elif t.value == 'setof':

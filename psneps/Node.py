@@ -146,9 +146,22 @@ class AndOrNode(MinMaxOpNode):
     pass
 
 class ImplNode(Molecular):
-    def __init__(self, frame, num) -> None:
+    def __init__(self, frame, bound) -> None:
         super().__init__(frame)
-        self.num = num
+        self.bound = bound
+
+    def has_bound(self, bound: int) -> bool:
+        return self.bound == bound
+
+    def __eq__(self, other):
+        return super.__eq__(other) and \
+            self.bound == other.bound
+
+    def __hash__(self):
+        return id(self)
+
+    def __str__(self) -> str:
+        return Node.__str__(self) + " {}".format(self.bound) + "\n\t" + str(self.frame)
 
 # =====================================
 # -------------- UP CABLE -------------
