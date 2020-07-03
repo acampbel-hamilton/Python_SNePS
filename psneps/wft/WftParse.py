@@ -129,7 +129,7 @@ def p_CloseStmt(p):
     '''
     CloseStmt :         Close LParen AtomicNameSet Comma Wft RParen
     '''
-
+    raise SNePSWftError("Not yet implemented!")
 
 # e.g. brothers(Tom, Ted)
 def p_Function(p):
