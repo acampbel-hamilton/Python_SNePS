@@ -125,7 +125,7 @@ class Frame:
         return slot_fillers
 
     def __eq__(self, other) -> bool:
-        return self.caseframe == other.caseframe and self.filler_set == other.filler_set
+        return self.caseframe is other.caseframe and self.filler_set == other.filler_set
 
     def __str__(self) -> str:
         ret = self.caseframe.name
