@@ -163,6 +163,12 @@ class ImplNode(Molecular):
     def has_bound(self, bound: int) -> bool:
         return self.bound == bound
 
+    def antecedents(self):
+        return self.follow_down_cable(self.frame.caseframe.slots[0])
+
+    def consequents(self):
+        return self.follow_down_cable(self.frame.caseframe.slots[1])
+
     def __eq__(self, other):
         return super.__eq__(other) and \
             self.bound == other.bound

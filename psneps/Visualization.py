@@ -84,7 +84,7 @@ class VisualizationMixin:
                             edge_labels[(node_name, dependency_name)] = "dependency"
 
         pos = nx.circular_layout(G)
-        if has_ng:
+        if has_ng and self.nodes != {}:
             # This is a buggy module.
             # If you want adjustable graphs, you have to do an assignment for some reason
             _ = ng.InteractiveGraph(G, pos, node_size=10, node_label_font_size=12.0, node_color='grey', alpha=0.8,
