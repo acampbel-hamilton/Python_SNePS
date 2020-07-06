@@ -67,22 +67,28 @@ class Variable(Atomic):
 class Arbitrary(Variable):
     """ An arbitaray individual. """
     counter = 1
-    def __init__(self, sem_type: SemanticType) -> None:
+    def __init__(self, name, sem_type: SemanticType) -> None:
+        self.name = name
+        super().__init__(self.name, sem_type) # These need semantic types. This will be an error.
+
+    def store(self):
         self.name = 'arb' + str(self.counter)
         Arbitrary.counter += 1
-        super().__init__(self.name, sem_type) # These need semantic types. This will be an error.
 
 class Indefinite(Variable):
     """ An indefinite object. """
     counter = 1
-    def __init__(self, sem_type: SemanticType) -> None:
-        self.name = 'ind' + str(self.counter)
-        Indefinite.counter += 1
+    def __init__(self, name, sem_type: SemanticType) -> None:
+        self.name = name
         self.dependency_set = set()
         super().__init__(self.name, sem_type) # These need semantic types. This will be an error.
 
     def add_dependency(self, dependency) -> None: # These need type definitions, since we don't know what restrictions/dependencies are.
         self.dependency_set.add(dependency)
+
+    def store(self):
+        self.name = 'ind' + str(self.counter)
+        Indefinite.counter += 1
 
 # =====================================
 # --------- MOLECULAR NODES -----------

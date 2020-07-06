@@ -29,6 +29,7 @@ def p_Wft(p):
          |              QIdenStmt
          |              AtomicName
          |              Y_WftNode
+         |              VarNode
          |              Function
     '''
     p[0] = p[1]
@@ -131,6 +132,15 @@ def p_EveryStmt(p):
     for node in p[5].nodes:
         new_restriction(arb, node)
 
+    # Ensures the variable created is new, and, if so, increments the counter
+    # if not, recursively replaces references to this variable
+    for node in current_network.nodes:
+        if isinstance(node, Arbitrary) and node == arb:
+            for node in p[5].nodes:
+                node.recursive_var_replace(arb, node)
+            arb = node
+            break
+
     current_network.nodes[arb.name] = arb
     p[0] = arb
 
@@ -150,6 +160,15 @@ def p_SomeStmt(p):
 
     for node in p[8].nodes:
         new_restriction(ind, node)
+
+    # Ensures the variable created is new, and, if so, increments the counter
+    # if not, recursively replaces references to this variable
+    for node in current_network.nodes:
+        if isinstance(node, Arbitrary) and node == ind:
+            for node in p[8].nodes:
+                node.recursive_var_replace(ind, node)
+            ind = node
+            break
 
     current_network.nodes[ind.name] = ind
     p[0] = ind
@@ -260,7 +279,6 @@ def p_Arguments(p):
     else:
         p[0] = p[1] + [p[3]]
 
-
 def p_AtomicNameSet(p):
     '''
     AtomicNameSet :
@@ -305,11 +323,24 @@ def p_Y_WftNode(p):
 
     p[0] = current_network.nodes[p[1]]
 
+def p_VarNode1(p):
+    '''
+    VarNode :           IndNode
+    '''
+    if int(p[1][3:]) >= Indefinite.counter:
+        raise SNePSWftError('Invalid ind number. Max number: {}'.format(Indefinite.counter - 1))
+    p[0] = current_network.nodes[p[1]]
+def p_VarNode2(p):
+    '''
+    VarNode :           ArbNode
+    '''
+    if int(p[1][3:]) >= Arbitrary.counter:
+        raise SNePSWftError('Invalid arb number. Max number: {}'.format(Arbitrary.counter - 1))
+    p[0] = current_network.nodes[p[1]]
+
 def p_error(p):
     if p is None:
         raise SNePSWftError("Term reached end unexpectedly.")
-    elif p.type == 'VarName':
-        raise SNePSWftError("Variables cannot be named ind# or arb#")
     else:
         raise SNePSWftError("Syntax error on token '" + p.type + "'")
 
