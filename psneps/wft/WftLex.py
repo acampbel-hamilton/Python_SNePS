@@ -66,14 +66,10 @@ t_Comma = r','
 t_DoubImpl = r'<=>'
 t_Impl = r'\d+=>'
 t_AndImpl = r'&=>'
-<<<<<<< HEAD
 
 def t_SingImpl(t):
     r'v?=>'
     return t
-=======
-t_SingImpl = r'v?=>'
->>>>>>> a66e311e4045a59027ef93e677ba1179ec33d028
 
 def t_Identifier(t):
     r'[A-Za-z][A-Za-z0-9_]*'
