@@ -2,7 +2,7 @@ from . import WftLex
 from .ply import *
 from ..Network import *
 from ..Caseframe import Frame, Fillers
-from ..Node import Base, Molecular, Indefinite, Arbitrary, MinMaxOpNode
+from ..Node import Base, Molecular, Indefinite, Arbitrary, ThreshNode, AndOrNode, ImplNode
 from ..Error import SNError
 
 class SNePSWftError(SNError):
@@ -10,7 +10,9 @@ class SNePSWftError(SNError):
 
 current_network = None
 tokens = WftLex.tokens
-producedWft = None
+
+variables = {}
+top_wft = None
 
 # =====================================
 # -------------- RULES ----------------
@@ -30,39 +32,75 @@ def p_Wft(p):
          |              Function
     '''
     p[0] = p[1]
-    global producedWft
-    producedWft = p[1]
+    global top_wft
+    top_wft = p[1]
 
 # e.g. if(wft1, wft2)
-def p_BinaryOp(p):
+def p_BinaryOp1(p):
     '''
     BinaryOp :          Impl LParen Argument Comma Argument RParen
-             |          OrImpl LParen Argument Comma Argument RParen
-             |          AndImpl LParen Argument Comma Argument RParen
     '''
-    if p[1] == "if" or p[1] == "orimpl":
-        caseframe_name = p[1]
-    else:
-        caseframe_name = "andimpl"
     filler_set = [p[3], p[5]]
-    p[0] = build_molecular(caseframe_name, filler_set)
+    p[0] = build_impl(filler_set, int(p[1][:1]))
+def p_BinaryOp2(p):
+    '''
+    BinaryOp :          AndImpl LParen Argument Comma Argument RParen
+    '''
+    filler_set = [p[3], p[5]]
+    p[0] = build_impl(filler_set, len(p[3].nodes))
+def p_BinaryOp3(p):
+    '''
+    BinaryOp :          SingImpl LParen Argument Comma Argument RParen
+    '''
+    filler_set = [p[3], p[5]]
+    p[0] = build_impl(filler_set, 1)
 
 
 # e.g. and(wft1, wft2)
-def p_NaryOp(p):
+def p_NaryOp1(p):
     '''
     NaryOp :            And LParen Wfts RParen
-           |            Or LParen Wfts RParen
-           |            Not LParen Wfts RParen
+    '''
+    filler_set = [Fillers(p[3])]
+    p[0] = build_andor(p[1], filler_set, len(p[3]), len(p[3]))
+def p_NaryOp2(p):
+    '''
+    NaryOp :            Or LParen Wfts RParen
+    '''
+    filler_set = [Fillers(p[3])]
+    p[0] = build_andor(p[1], filler_set, 1, len(p[3]))
+def p_NaryOp3(p):
+    '''
+    NaryOp :            Not LParen Wfts RParen
            |            Nor LParen Wfts RParen
-           |            Thnot LParen Wfts RParen
-           |            Thnor LParen Wfts RParen
-           |            Nand LParen Wfts RParen
-           |            Xor LParen Wfts RParen
+    '''
+    filler_set = [Fillers(p[3])]
+    p[0] = build_andor(p[1], filler_set, 0, 0)
+def p_NaryOp4(p):
+    '''
+    NaryOp :            Nand LParen Wfts RParen
+    '''
+    filler_set = [Fillers(p[3])]
+    p[0] = build_andor(p[1], filler_set, 0, len(p[3]) - 1)
+def p_NaryOp5(p):
+    '''
+    NaryOp :            Xor LParen Wfts RParen
+    '''
+    filler_set = [Fillers(p[3])]
+    p[0] = build_andor(p[1], filler_set, 1, 1)
+def p_NaryOp6(p):
+    '''
+    NaryOp :            Iff LParen Wfts RParen
            |            DoubImpl LParen Wfts RParen
     '''
     filler_set = [Fillers(p[3])]
-    p[0] = build_molecular(p[1], filler_set)
+    p[0] = build_thresh("iff", filler_set, 1, len(p[3]) - 1)
+def p_NaryOp7(p):
+    '''
+    NaryOp :            Thnot LParen Wfts RParen
+           |            Thnor LParen Wfts RParen
+    '''
+    raise SNePSWftError("Not yet implemented!")
 
 # e.g. thresh{1, 2}(wft1)
 def p_MinMaxOp(p):
@@ -74,30 +112,76 @@ def p_MinMaxOp(p):
     min = p[3]
     if len(p) == 8:
         filler_set = [Fillers(p[6])]
-        max = int(len(p[6])) - 1
+        max = len(p[6]) - 1
     else:
         max = int(p[5])
         filler_set = [Fillers(p[8])]
-    p[0] = build_minmax(p[1], filler_set, min, max)
+    if p[1] == "thresh":
+        p[0] = build_thresh(p[1], filler_set, min, max)
+    else:
+        p[0] = build_andor(p[1], filler_set, min, max)
 
 # e.g. every{x}(Isa(x, Dog))
 def p_EveryStmt(p):
     '''
-    EveryStmt :         Every LParen AtomicName Comma Argument RParen
+    EveryStmt :         Every LParen ArbVar Comma Argument RParen
     '''
+    arb = p[3]
+
+    for node in p[5].nodes:
+        arb.add_restriction(node)
+
+    current_network.nodes[arb.name] = arb
+    p[0] = arb
 
 # e.g. some{x(y)}(Isa(x, y))
 def p_SomeStmt(p):
     '''
-    SomeStmt :          Some LParen AtomicName LParen AtomicName RParen Comma Argument RParen
+    SomeStmt :          Some LParen IndVar LParen AtomicNameSet RParen Comma Argument RParen
     '''
+    ind = p[3]
+
+    for var_name in p[5]:
+        if var_name not in variables:
+            raise SNePSWftError("Variable \"{}\" does not exist".format(var_name))
+        ind.add_dependency(variables[var_name])
+
+    for node in p[8].nodes:
+        ind.add_restriction(node)
+
+    current_network.nodes[ind.name] = ind
+    p[0] = ind
+
+def p_ArbVar(p):
+    '''
+    ArbVar :            Identifier
+           |            Integer
+    '''
+    if p[1] not in variables:
+        variables[p[1]] = Arbitrary(current_network.sem_hierarchy.get_type("Entity"))
+    p[0] = variables[p[1]]
+
+    if not isinstance(p[0], Arbitrary):
+        raise SNePSWftError("Variable \"{}\" cannot be reassigned".format(p[3]))
+
+def p_IndVar(p):
+    '''
+    IndVar :            Identifier
+           |            Integer
+    '''
+    if p[1] not in variables:
+        variables[p[1]] = Indefinite(current_network.sem_hierarchy.get_type("Entity"))
+    p[0] = variables[p[1]]
+
+    if not isinstance(p[0], Indefinite):
+        raise SNePSWftError("Variable \"{}\" cannot be reassigned".format(p[3]))
 
 # e.g. close(Dog, wft1)
 def p_CloseStmt(p):
     '''
     CloseStmt :         Close LParen AtomicNameSet Comma Wft RParen
     '''
-
+    raise SNePSWftError("Not yet implemented!")
 
 # e.g. brothers(Tom, Ted)
 def p_Function(p):
@@ -177,27 +261,40 @@ def p_Arguments(p):
 
 def p_AtomicNameSet(p):
     '''
-    AtomicNameSet :     AtomicName
+    AtomicNameSet :
+                  |     Identifier
+                  |     Integer
                   |     LParen AtomicNames RParen
     '''
-
+    if len(p) == 1:
+        p[0] = []
+    elif len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[0] = p[2]
 
 def p_AtomicNames(p):
     '''
     AtomicNames :       AtomicName
                 |       AtomicNames Comma AtomicName
     '''
-
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[0] = p[1] + [p[3]]
 
 def p_AtomicName(p):
     '''
     AtomicName :        Identifier
                |        Integer
     '''
-    current_network.define_term(p[1])
-    p[0] = current_network.find_term(p[1])
+    if p[1] in variables:
+        p[0] = variables[p[1]]
+    else:
+        current_network.define_term(p[1])
+        p[0] = current_network.find_term(p[1])
 
-def p_AtomicName2(p):
+def p_Y_WftNode(p):
     '''
     Y_WftNode :         WftNode
     '''
@@ -213,7 +310,7 @@ def p_error(p):
         raise SNePSWftError("PARSING FAILED: Syntax error on token '" + p.type + "'")
 
 # =====================================
-# ------------ RULES END --------------
+# ------------ BUILD FNS --------------
 # =====================================
 
 def build_molecular(caseframe_name, filler_set):
@@ -227,18 +324,42 @@ def build_molecular(caseframe_name, filler_set):
     current_network.nodes[wftNode.name] = wftNode
     return wftNode
 
-
-def build_minmax (caseframe_name, filler_set, min, max):
-    """ Builds and returns (or simply returns) a MinMaxOp node from given parameters """
+def build_thresh (caseframe_name, filler_set, min, max):
+    """ Builds and returns (or simply returns) a thresh node from given parameters """
     caseframe = current_network.find_caseframe(caseframe_name)
     frame = Frame(caseframe, filler_set)
     for node in current_network.nodes.values():
         if node.has_frame(frame) and node.has_min_max(min, max):
             return node
-    wftNode = MinMaxOpNode(frame, min, max)
+    wftNode = ThreshNode(frame, min, max)
     current_network.nodes[wftNode.name] = wftNode
     return wftNode
 
+def build_andor (caseframe_name, filler_set, min, max):
+    """ Builds and returns (or simply returns) an andor node from given parameters """
+    caseframe = current_network.find_caseframe(caseframe_name)
+    frame = Frame(caseframe, filler_set)
+    for node in current_network.nodes.values():
+        if node.has_frame(frame) and node.has_min_max(min, max):
+            return node
+    wftNode = AndOrNode(frame, min, max)
+    current_network.nodes[wftNode.name] = wftNode
+    return wftNode
+
+def build_impl(filler_set, bound):
+    """ Builds and returns (or simply returns) an impl node from given parameters """
+    caseframe = current_network.find_caseframe("if")
+    frame = Frame(caseframe, filler_set)
+    for node in current_network.nodes.values():
+        if node.has_frame(frame) and node.has_bound(bound):
+            return node
+    wftNode = ImplNode(frame, bound)
+    current_network.nodes[wftNode.name] = wftNode
+    return wftNode
+
+# =====================================
+# ------------ PARSER FN --------------
+# =====================================
 
 def wft_parser(wft, network):
     global current_network
@@ -247,8 +368,15 @@ def wft_parser(wft, network):
     if wft != '':
         try:
             yacc.parse(wft)
-            global producedWft
-            return producedWft
+            global top_wft
+            global variables
+
+            ret_top_wft = top_wft
+
+            top_wft = None
+            variables = {}
+
+            return (ret_top_wft)
         except SNError as e:
             if type(e) is not SNePSWftError:
                 print("PARSING FAILED:\n\t", end='')

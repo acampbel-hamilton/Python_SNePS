@@ -89,7 +89,7 @@ Create a network object:
 
 ```python
 from psneps import *
-net = Network.Network()
+net = Network()
 ```
 
 The following methods are defined:
@@ -129,9 +129,9 @@ net.define_caseframe("Isa", "Propositional", ["member", "class"],
 net.list_caseframes()
 net.find_caseframe("Isa")
 
-# Passes wft followed by optional parameter "hyp" for
-# determining whether the given wft is asserted in the current context
-net.assert_wft("Isa(Dog, Pet)", hyp=False)
+# Passes wft followed by optional parameter "inf" for
+# triggering forward inference
+net.assert_wft("Isa(Dog, Pet)", inf=False)
 
 # Prints out a visual representation of the knowledge base
 net.print_graph()
@@ -170,7 +170,7 @@ NaryOp :     'and' | 'or' | 'not' | 'nor'            // These operators, exclusi
 Param2Op :   'andor' | 'thresh'
 
 
-atomicName : identifier | i                          // Identifier matches r'[A-Za-z_][A-Za-z0-9_]*'
+atomicName : identifier | i                          // Identifier matches r'[A-Za-z][A-Za-z0-9_]*'
                                                      // i (Integer) matches r'\d+'
 
 argument :   wft

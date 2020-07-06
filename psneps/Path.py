@@ -59,11 +59,15 @@ class OrPaths(ComposedPaths):
             derived.update(path.derivable(start_node, converse))
         return derived
 
-class KPlusPaths(Path):
-    """ Follows one or more instances of the given path """
+class ModPath(Path):
+    """ Performs some modification on a single path """
+
     def __init__(self, path):
-        self.path = path
         super().__init__()
+        self.path = path
+
+class KPlusPaths(ModPath):
+    """ Follows one or more instances of the given path """
 
     def derivable(self, start_node, parent_converse=False):
 
@@ -81,11 +85,15 @@ class KPlusPaths(Path):
 class KStarPaths(KPlusPaths):
     """ Follows zero or more instances of the given path """
     def derivable(self, start_node, parent_converse=False):
+        return super().derivable(start_node, self.converse != parent_converse).add(start_node)
 
-        # Exclusive or for whether to use converse
-        converse = self.converse != parent_converse
+class IRPath(ModPath):
+    """ Follows paths provided end node is not start node """
 
-        return super().derivable(start_node, converse).add(start_node)
+    def derivable(self, start_node, parent_converse=False):
+        derived = self.path.derivable(next_node, self.converse != parent_converse)
+        derived.discard(start_node)
+        return derived
 
 class BasePath(Path):
     """ Atomic path existing on a single non-repeated slot """
@@ -96,14 +104,10 @@ class BasePath(Path):
         super().__init__()
 
     def derivable(self, start_node, parent_converse=False):
-
-        # Exclusive or for whether to use converse
-        converse = self.converse != parent_converse
-
-        if converse == self.backward:
-            derived = start_node.follow_down_cable(self.slot)
+        if (self.converse != parent_converse) == self.backward:
+            return start_node.follow_down_cable(self.slot)
         else:
-            derived = start_node.follow_up_cable(self.slot)
+            return start_node.follow_up_cable(self.slot)
 
 # Asserted Path singleton
 class AssertedPath:

@@ -14,28 +14,20 @@ class Node:
         self.docstring = docstring
         self.up_cableset = set() # References to frames that point to this node
         self.sem_type = sem_type
-        if type(self) in (Node, Atomic, Variable):
+        if type(self) in (Node, Atomic, Variable, MinMaxOpNode):
             raise NotImplementedError("Bad syntactic type - see syntax tree in wiki")
 
     def add_up_cable(self, node, slot: Slot) -> None:
         self.up_cableset.add(UpCable(node, slot))
 
     def has_upcable(self, name):
-        for up_cable in self.up_cableset:
-            if up_cable.name == name:
-                return True
-
-        return False
+        return any(up_cable.name == name for up_cable in self.up_cableset)
 
     def follow_down_cable(self, slot):
         return set()
 
     def follow_up_cable(self, slot):
-        up_nodes = set()
-        for up_cable in self.up_cableset:
-            if up_cable.slot is slot:
-                up_nodes.add(up_cable.node)
-        return up_nodes
+        return set(up_cable.node for up_cable in self.up_cableset if up_cable.slot is slot)
 
     def __str__(self) -> str:
         return "<{}>: {} ({})".format(self.name, self.sem_type.name, self.docstring)
@@ -54,32 +46,40 @@ class Base(Atomic):
     """ A constant. (An abstract class) """
     pass
 
+    def __eq__(self, other):
+        return self.name == other.name
+
+    def __hash__(self):
+        return id(self)
+
 class Variable(Atomic):
     """ A variable term ranging over a restricted domain. """
-    counter = 1
-    def __init__(self, name: str) -> None:
-        super().__init__(name) # This needs a semantic types. This will be an error.
-        self.restriction_set = {}
-        Variable.counter += 1
+    def __init__(self, name: str, sem_type: SemanticType) -> None:
+        super().__init__(name, sem_type) # This needs a semantic types. This will be an error.
+        self.restriction_set = set()
 
     def add_restriction(self, restriction) -> None: # These need type definitions, since we don't know what restrictions/dependencies are.
-        self.restriction_set[restriction.name] = restriction
+        self.restriction_set.add(restriction)
 
 class Arbitrary(Variable):
     """ An arbitaray individual. """
-    def __init__(self) -> None:
-        self.name = 'V' + str(super().counter)
-        super().__init__(self.name) # These need semantic types. This will be an error.
+    counter = 1
+    def __init__(self, sem_type: SemanticType) -> None:
+        self.name = 'arb' + str(self.counter)
+        self.counter += 1
+        super().__init__(self.name, sem_type) # These need semantic types. This will be an error.
 
 class Indefinite(Variable):
     """ An indefinite object. """
-    def __init__(self) -> None:
-        self.name = 'V' + str(super().counter)
-        super().__init__(self.name) # These need semantic types. This will be an error.
-        self.dependency_set = {}
+    counter = 1
+    def __init__(self, sem_type: SemanticType) -> None:
+        self.name = 'ind' + str(self.counter)
+        self.counter += 1
+        self.dependency_set = set()
+        super().__init__(self.name, sem_type) # These need semantic types. This will be an error.
 
     def add_dependency(self, dependency) -> None: # These need type definitions, since we don't know what restrictions/dependencies are.
-        self.dependency_set[dependency.name] = dependency
+        self.dependency_set.add(dependency)
 
 # =====================================
 # --------- MOLECULAR NODES -----------
@@ -103,8 +103,14 @@ class Molecular(Node):
     def has_frame(self, frame: Frame) -> bool:
         return frame == self.frame
 
+    def __eq__(self, other):
+        return self.has_frame(other.frame)
+
     def __str__(self) -> str:
         return super().__str__() + "\n\t" + str(self.frame)
+
+    def __hash__(self):
+        return id(self)
 
     def follow_down_cable(self, slot):
         return self.frame.get_filler_set(slot)
@@ -112,7 +118,7 @@ class Molecular(Node):
 
 class MinMaxOpNode(Molecular):
     """ Thresh/andor with two values """
-    def __init__(self, frame, min=1, max=1) -> None:
+    def __init__(self, frame, min, max) -> None:
         super().__init__(frame)
         self.min = min
         self.max = max
@@ -120,8 +126,42 @@ class MinMaxOpNode(Molecular):
     def has_min_max(self, min: int, max: int) -> bool:
         return self.min == min and self.max == max
 
+    def __eq__(self, other):
+        return super.__eq__(other) and \
+            self.min == other.min and self.max == other.max
+
+    def __hash__(self):
+        return id(self)
+
     def __str__(self) -> str:
         return Node.__str__(self) + " {}, {}".format(self.min, self.max) + "\n\t" + str(self.frame)
+
+
+class ThreshNode(MinMaxOpNode):
+    """ Thresh with two values """
+    pass
+
+class AndOrNode(MinMaxOpNode):
+    """ AndOr with two values """
+    pass
+
+class ImplNode(Molecular):
+    def __init__(self, frame, bound) -> None:
+        super().__init__(frame)
+        self.bound = bound
+
+    def has_bound(self, bound: int) -> bool:
+        return self.bound == bound
+
+    def __eq__(self, other):
+        return super.__eq__(other) and \
+            self.bound == other.bound
+
+    def __hash__(self):
+        return id(self)
+
+    def __str__(self) -> str:
+        return Node.__str__(self) + " {}".format(self.bound) + "\n\t" + str(self.frame)
 
 # =====================================
 # -------------- UP CABLE -------------
@@ -149,7 +189,7 @@ class NodeMixin:
     def define_term(self, name, sem_type_name="Entity", docstring="") -> None:
         # Creates base atomic node
 
-        if self.enforce_name_syntax and not match(r'^[A-Za-z_][A-Za-z0-9_]*$', name):
+        if self.enforce_name_syntax and not match(r'^[A-Za-z][A-Za-z0-9_]*$', name):
             raise NodeError("ERROR: The term name '{}' is not allowed".format(name))
 
         if name in self.nodes:

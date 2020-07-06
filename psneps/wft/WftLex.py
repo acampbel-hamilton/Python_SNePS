@@ -1,5 +1,6 @@
 from .ply import *
 from re import match
+from ..Node import Indefinite, Arbitrary
 
 keywords = (
     'xor',
@@ -14,7 +15,8 @@ keywords = (
     'nor',
     'None',
     'not',
-    'close'
+    'close',
+    'iff'
 )
 
 tokens = (
@@ -41,8 +43,9 @@ tokens = (
     'None',
     'Not',
     'Close',
-    'OrImpl',
+    'Iff',
     'AndImpl',
+    'SingImpl',
     'LBrace',
     'RBrace',
     'Comma',
@@ -53,41 +56,23 @@ tokens = (
 t_LParen  = r'\('
 t_RParen  = r'\)'
 t_Integer = r'\d+'
-t_QIdentifier = r'\?[A-Za-z_][A-Za-z0-9_]*'
+t_QIdentifier = r'\?[A-Za-z][A-Za-z0-9_]*'
 t_LBrace = r'{'
 t_RBrace = r'}'
 t_LBracket = r'\['
 t_RBracket = r'\]'
 t_Comma = r','
-
-def t_AndImpl(t):
-    r'\d+=>'
-    t.value = t.value[:-2]
-    return t
-
-def t_OrImpl(t):
-    r'v=>'
-    t.value = "orimpl"
-    return t
-
-def t_Impl(t):
-    r'=>'
-    t.value = "if"
-    return t
-
-def t_DoubImpl(t):
-    r'<=>'
-    t.value = "iff"
-    return t
+t_DoubImpl = r'<=>'
+t_Impl = r'\d+=>'
+t_AndImpl = r'&=>'
+t_SingImpl = r'(v)?=>'
 
 def t_Identifier(t):
-    r'[A-Za-z_][A-Za-z0-9_]*'
+    r'[A-Za-z][A-Za-z0-9_]*'
     if match(r'^wft\d+$', t.value):
         t.type = 'WftNode'
     elif t.value == 'if':
-        t.type = 'Impl'
-    elif t.value == 'iff':
-        t.type = 'DoubImpl'
+        t.type = 'SingImpl'
     elif t.value == 'andor':
         t.type = 'AndOr'
     elif t.value == 'setof':
@@ -122,5 +107,5 @@ if __name__ == '__main__':
                 if not token:
                     break
                 print(token)
-        except:
+        except: # This is probably not a good idea...
             print("Syntax error")

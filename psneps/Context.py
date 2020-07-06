@@ -9,8 +9,8 @@ class Context:
         self.name = name
         self.parent = parent # Another context object
         self.docstring = docstring
-        self.hyps = {} # Hypothetical beliefs
-        self.ders = {} # Derived beliefs
+        self.hyps = set() # Hypothetical beliefs
+        self.ders = set() # Derived beliefs
 
     def __contains__(self, term: str) -> bool:
         """ Overloads the 'in' operator for use on contexts.
@@ -30,14 +30,20 @@ class Context:
     def __eq__(self, other) -> bool:
         return self.name == other.name
 
-    def add_hypothesis(self, node):
-        self.hyps[node.name] = node
+    def add_hypotheses(self, nodes):
+        self.hyps.update(nodes)
 
-    def has_hypothesis(self, node_name):
-        return node_name in self.hyps
+    def add_hypothesis(self, node):
+        self.hyps.add(node)
+
+    def is_hypothesis(self, node):
+        return node in self.hyps
 
     def is_asserted(self, node):
-        return node.name in self.hyps or node.name in self.ders
+        return node in self.hyps or node in self.ders
+
+    def all_asserted(self):
+        return self.hyps | self.ders
 
 class ContextMixin:
     """ Provides functions related to contexts to network. """
@@ -51,7 +57,8 @@ class ContextMixin:
         self.current_context = self.default_context
 
     def define_context(self, name: str, docstring="", parent="_default") -> None:
-        if self.enforce_name_syntax and not match(r'^[A-Za-z_][A-Za-z0-9_]*$', name):
+        """ Defines a new context. """
+        if self.enforce_name_syntax and not match(r'^[A-Za-z][A-Za-z0-9_]*$', name):
             raise ContextError("ERROR: The context name '{}' is not allowed".format(name))
 
         if name in self.contexts:
