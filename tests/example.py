@@ -8,11 +8,11 @@ net.define_caseframe("Has", "Propositional", ["agent", "has"])
 net.define_caseframe("Happy", "Propositional", ["happy_thing"])
 
 
-net.assert_wft("1=>([Has(John, Food), Has(John, Bone), Has(John, Philosophy)], Happy(John))")
-net.assert_wft("Has(John, Food)")
+net.assert_wft("1=>([Has(every(x, Isa(x, Dog)), Food), Has(x, Bone), Has(x, Philosophy)], Happy(x))")
+net.assert_wft("Has(every(x, Isa(x, Dog)), Food)")
 
 snips = Inference(net)
-test = snips.ask_if("Happy(John)")
+test = snips.ask_if("Happy(every(x, Isa(x, Dog)))")
 print(test)
 
 net.export_graph()
