@@ -129,10 +129,7 @@ def p_EveryStmt(p):
     arb = p[3]
 
     for node in p[5].nodes:
-        if not node.has_constituent(arb):
-            raise SNePSWftError("PARSING FAILED: {} used as a restriction, but does not reference variable".format(node.name))
-        arb.add_restriction(node)
-        current_network.current_context.add_hypothesis(node)
+        new_restriction(arb, node)
 
     current_network.nodes[arb.name] = arb
     p[0] = arb
@@ -147,13 +144,12 @@ def p_SomeStmt(p):
     for var_name in p[5]:
         if var_name not in variables:
             raise SNePSWftError("Variable \"{}\" does not exist".format(var_name))
+        if variables[var_name] is ind:
+            raise SNePSWftError("Variables cannot depend on themselves".format(var_name))
         ind.add_dependency(variables[var_name])
 
     for node in p[8].nodes:
-        if not node.has_constituent(ind):
-            raise SNePSWftError("PARSING FAILED: {} used as a restriction, but does not reference variable".format(node.name))
-        ind.add_restriction(node)
-        current_network.current_context.add_hypothesis(node)
+        new_restriction(ind, node)
 
     current_network.nodes[ind.name] = ind
     p[0] = ind
@@ -311,9 +307,9 @@ def p_Y_WftNode(p):
 
 def p_error(p):
     if p is None:
-        raise SNePSWftError("PARSING FAILED: Term reached end unexpectedly.")
+        raise SNePSWftError("Term reached end unexpectedly.")
     else:
-        raise SNePSWftError("PARSING FAILED: Syntax error on token '" + p.type + "'")
+        raise SNePSWftError("Syntax error on token '" + p.type + "'")
 
 # =====================================
 # ------------ BUILD FNS --------------
@@ -363,6 +359,15 @@ def build_impl(filler_set, bound):
     current_network.nodes[wftNode.name] = wftNode
     return wftNode
 
+def new_restriction(variable, restriction):
+    """ Adds a restriction to a variable if it is valid """
+    if restriction is variable:
+        raise SNePSWftError("Variables cannot be restricted on themselves")
+    if not restriction.has_constituent(variable):
+        raise SNePSWftError("{} used as a restriction, but does not reference variable".format(node.name))
+    variable.add_restriction(restriction)
+    current_network.current_context.add_hypothesis(restriction)
+
 # =====================================
 # ------------ PARSER FN --------------
 # =====================================
@@ -386,4 +391,4 @@ def wft_parser(wft, network):
         except SNError as e:
             if type(e) is not SNePSWftError:
                 print("PARSING FAILED:\n\t", end='')
-            print(e)
+            print("PARSING FAILED: " + e)
