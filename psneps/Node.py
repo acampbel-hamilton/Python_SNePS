@@ -32,7 +32,7 @@ class Node:
     def __str__(self) -> str:
         return "<{}>: {} ({})".format(self.name, self.sem_type.name, self.docstring)
 
-    def find_constituent(self, constituent):
+    def has_constituent(self, constituent):
         return self is constituent
 
 # =====================================
@@ -118,10 +118,10 @@ class Molecular(Node):
     def follow_down_cable(self, slot):
         return self.frame.get_filler_set(slot)
 
-    def find_constituent(self, constituent):
+    def has_constituent(self, constituent):
         for filler in self.frame.filler_set:
             for node in filler.nodes:
-                if node.find_constituent(constituent):
+                if node.has_constituent(constituent):
                     return True
         return False
 
