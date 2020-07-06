@@ -8,7 +8,7 @@ net.define_caseframe("Has", "Propositional", ["agent", "has"])
 net.define_caseframe("Happy", "Propositional", ["happy_thing"])
 # net.assert_wft("if(Has(Dog, Bone), Happy(Dog))")
 # net.assert_wft("if(not(Has(Dog, Bone)), not(Happy(Dog)))")
-net.assert_wft("=>([Has(every(x, Isa(x, Dog)), Food), Has(x, Bone), Has(x, Philosophy)], Happy(x))")
+net.assert_wft("v=>([Has(every(x, Isa(x, Dog)), Food), Has(x, Bone), Has(x, Philosophy)], Happy(x))")
 net.assert_wft("not(Philosophy)")
 # net.assert_wft("Equiv([wft7, and(wft6, wft3)])")
 #
