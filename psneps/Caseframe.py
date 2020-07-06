@@ -148,12 +148,6 @@ class Fillers:
         return "\n\t  " + slot_name + ":" + "".join("\n\t    " + str(node) for node in self.nodes)
 
     def __eq__(self, other: Frame) -> bool:
-        print("Self:")
-        for node in self.nodes:
-            print("\t{}".format(id(node)))
-        print("Other:")
-        for node in other.nodes:
-            print("\t{}".format(id(node)))
         return self.nodes == other.nodes
 
 

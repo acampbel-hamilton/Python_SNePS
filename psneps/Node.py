@@ -35,6 +35,9 @@ class Node:
     def has_constituent(self, constituent):
         return self is constituent
 
+    def recursive_replace_var(self, old, new, visited=[]):
+        return
+
 # =====================================
 # ---------- ATOMIC NODES -------------
 # =====================================
@@ -64,6 +67,21 @@ class Variable(Atomic):
     def add_restriction(self, restriction) -> None: # These need type definitions, since we don't know what restrictions/dependencies are.
         self.restriction_set.add(restriction)
 
+    def recursive_replace_var(self, old, new, visited=[]):
+        visited.append(self)
+        for restriction in self.restriction_set:
+            if restriction is old:
+                self.restriction_set.discard(old)
+                self.restriction_set.add(new)
+            elif restriction not in visited:
+                restriction.recursive_replace_var(old, new, visited)
+
+    def __eq__(self, other):
+        return self.restriction_set == other.restriction_set
+
+    def __hash__(self):
+        return id(self)
+
 class Arbitrary(Variable):
     """ An arbitaray individual. """
     counter = 1
@@ -71,9 +89,10 @@ class Arbitrary(Variable):
         self.name = name
         super().__init__(self.name, sem_type) # These need semantic types. This will be an error.
 
-    def store(self):
+    def store_in(self, current_network):
         self.name = 'arb' + str(self.counter)
         Arbitrary.counter += 1
+        current_network.nodes[self.name] = self
 
 class Indefinite(Variable):
     """ An indefinite object. """
@@ -86,9 +105,25 @@ class Indefinite(Variable):
     def add_dependency(self, dependency) -> None: # These need type definitions, since we don't know what restrictions/dependencies are.
         self.dependency_set.add(dependency)
 
-    def store(self):
+    def store_in(self, current_network):
         self.name = 'ind' + str(self.counter)
         Indefinite.counter += 1
+        current_network.nodes[self.name] = self
+
+    def recursive_replace_var(self, old, new, visited=[]):
+        super().recursive_replace_var(old, new, visited=[])
+        for dependency in self.dependency_set:
+            if dependency is old:
+                self.dependency_set.discard(old)
+                self.dependency_set.add(new)
+            elif dependency not in visited:
+                dependency.recursive_replace_var(old, new, visited)
+
+    def __eq__(self, other):
+        return super.__eq__(other) and self.dependency_set == other.dependency_set
+
+    def __hash__(self):
+        return id(self)
 
 # =====================================
 # --------- MOLECULAR NODES -----------
@@ -130,6 +165,16 @@ class Molecular(Node):
                 if node.has_constituent(constituent):
                     return True
         return False
+
+    def recursive_replace_var(self, old, new, visited=[]):
+        visited.append(self)
+        for fillers in self.filler_set:
+            for node in fillers.nodes:
+                if node is old:
+                    fillers.nodes.discard(old)
+                    fillers.nodes.add(new)
+                elif node not in visited:
+                    node.recursive_replace_var(old, new, visited)
 
 
 class MinMaxOpNode(Molecular):

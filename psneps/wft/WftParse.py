@@ -12,6 +12,7 @@ current_network = None
 tokens = WftLex.tokens
 
 variables = {}
+replace = {}
 top_wft = None
 
 # =====================================
@@ -134,14 +135,15 @@ def p_EveryStmt(p):
 
     # Ensures the variable created is new, and, if so, increments the counter
     # if not, recursively replaces references to this variable
+    new = True
     for node in current_network.nodes:
         if isinstance(node, Arbitrary) and node == arb:
-            for node in p[5].nodes:
-                node.recursive_var_replace(arb, node)
+            replace[arb] = node
             arb = node
+            new = False
             break
-
-    current_network.nodes[arb.name] = arb
+    if new:
+        arb.store_in(current_network)
     p[0] = arb
 
 # e.g. some{x(y)}(Isa(x, y))
@@ -163,14 +165,15 @@ def p_SomeStmt(p):
 
     # Ensures the variable created is new, and, if so, increments the counter
     # if not, recursively replaces references to this variable
+    new = True
     for node in current_network.nodes:
         if isinstance(node, Arbitrary) and node == ind:
-            for node in p[8].nodes:
-                node.recursive_var_replace(ind, node)
+            replace[ind] = node
             ind = node
+            new = False
             break
-
-    current_network.nodes[ind.name] = ind
+    if new:
+        ind.store_in(current_network)
     p[0] = ind
 
 def p_ArbVar(p):
@@ -179,7 +182,7 @@ def p_ArbVar(p):
            |            Integer
     '''
     if p[1] not in variables:
-        variables[p[1]] = Arbitrary(current_network.sem_hierarchy.get_type("Entity"))
+        variables[p[1]] = Arbitrary(p[1], current_network.sem_hierarchy.get_type("Entity"))
     p[0] = variables[p[1]]
 
     if not isinstance(p[0], Arbitrary):
@@ -191,7 +194,7 @@ def p_IndVar(p):
            |            Integer
     '''
     if p[1] not in variables:
-        variables[p[1]] = Indefinite(current_network.sem_hierarchy.get_type("Entity"))
+        variables[p[1]] = Indefinite(p[1], current_network.sem_hierarchy.get_type("Entity"))
     p[0] = variables[p[1]]
 
     if not isinstance(p[0], Indefinite):
@@ -414,11 +417,15 @@ def wft_parser(wft, network):
             yacc.parse(wft)
             global top_wft
             global variables
+            global replace
 
+            for temp_node in replace:
+                top_wft.recursive_replace_var(temp_node, replace[temp_node])
             ret_top_wft = top_wft
 
             top_wft = None
             variables = {}
+            replace = {}
 
             return (ret_top_wft)
         except SNError as e:
