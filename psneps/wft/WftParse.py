@@ -308,6 +308,8 @@ def p_Y_WftNode(p):
 def p_error(p):
     if p is None:
         raise SNePSWftError("Term reached end unexpectedly.")
+    elif p.type == 'VarName':
+        raise SNePSWftError("Variables cannot be named ind# or arb#")
     else:
         raise SNePSWftError("Syntax error on token '" + p.type + "'")
 
@@ -391,4 +393,6 @@ def wft_parser(wft, network):
         except SNError as e:
             if type(e) is not SNePSWftError:
                 print("PARSING FAILED:\n\t", end='')
-            print("PARSING FAILED: " + e)
+            else:
+                print("PARSING FAILED: ", end='')
+            print(e)
