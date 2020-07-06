@@ -261,11 +261,14 @@ def p_Arguments(p):
 
 def p_AtomicNameSet(p):
     '''
-    AtomicNameSet :     Identifier
+    AtomicNameSet :
+                  |     Identifier
                   |     Integer
                   |     LParen AtomicNames RParen
     '''
-    if len(p) == 2:
+    if len(p) == 1:
+        p[0] = []
+    elif len(p) == 2:
         p[0] = [p[1]]
     else:
         p[0] = p[2]
