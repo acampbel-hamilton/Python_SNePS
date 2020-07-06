@@ -130,6 +130,7 @@ def p_EveryStmt(p):
 
     for node in p[5].nodes:
         arb.add_restriction(node)
+        current_network.current_context.add_hypothesis(node)
 
     current_network.nodes[arb.name] = arb
     p[0] = arb
@@ -148,6 +149,7 @@ def p_SomeStmt(p):
 
     for node in p[8].nodes:
         ind.add_restriction(node)
+        current_network.current_context.add_hypothesis(node)
 
     current_network.nodes[ind.name] = ind
     p[0] = ind
