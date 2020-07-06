@@ -33,7 +33,7 @@ class Node:
         return "<{}>: {} ({})".format(self.name, self.sem_type.name, self.docstring)
 
     def find_constituent(self, constituent):
-        return self == constituent
+        return self is constituent
 
 # =====================================
 # ---------- ATOMIC NODES -------------
