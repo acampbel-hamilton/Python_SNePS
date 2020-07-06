@@ -129,7 +129,10 @@ def p_EveryStmt(p):
     arb = p[3]
 
     for node in p[5].nodes:
+        if not node.find_constituent(arb):
+            raise SNePSWftError("PARSING FAILED: {} used as a restriction, but does not reference variable".format(node.name))
         arb.add_restriction(node)
+        current_network.current_context.add_hypothesis(node)
 
     current_network.nodes[arb.name] = arb
     p[0] = arb
@@ -147,7 +150,10 @@ def p_SomeStmt(p):
         ind.add_dependency(variables[var_name])
 
     for node in p[8].nodes:
+        if not node.find_constituent(ind):
+            raise SNePSWftError("PARSING FAILED: {} used as a restriction, but does not reference variable".format(node.name))
         ind.add_restriction(node)
+        current_network.current_context.add_hypothesis(node)
 
     current_network.nodes[ind.name] = ind
     p[0] = ind
