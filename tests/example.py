@@ -2,9 +2,10 @@ from psneps import *
 net = Network()
 net.define_slot("agent", "Entity")
 net.define_slot("has", "Entity")
+net.define_slot("happy_thing", "Entity")
 
 net.define_caseframe("Has", "Propositional", ["agent", "has"])
-net.define_caseframe("Happy", "Propositional", ["agent"])
+net.define_caseframe("Happy", "Propositional", ["happy_thing"])
 # net.assert_wft("if(Has(Dog, Bone), Happy(Dog))")
 # net.assert_wft("if(not(Has(Dog, Bone)), not(Happy(Dog)))")
 net.assert_wft("=>([Has(some(x(), Isa(x, Dog)), Food), Has(x, Bone), Has(x, Philosophy)], Happy(x))")
