@@ -69,7 +69,7 @@ class Arbitrary(Variable):
     counter = 1
     def __init__(self, sem_type: SemanticType) -> None:
         self.name = 'arb' + str(self.counter)
-        self.counter += 1
+        Arbitrary.counter += 1
         super().__init__(self.name, sem_type) # These need semantic types. This will be an error.
 
 class Indefinite(Variable):
@@ -77,7 +77,7 @@ class Indefinite(Variable):
     counter = 1
     def __init__(self, sem_type: SemanticType) -> None:
         self.name = 'ind' + str(self.counter)
-        self.counter += 1
+        Indefinite.counter += 1
         self.dependency_set = set()
         super().__init__(self.name, sem_type) # These need semantic types. This will be an error.
 
