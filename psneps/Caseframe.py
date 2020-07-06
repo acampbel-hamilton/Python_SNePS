@@ -119,7 +119,7 @@ class Frame:
     def get_filler_set(self, slot):
         # Returns a set of all fillers that are used with given slot
         slot_fillers = set()
-        for i in range(0, self.caseframe.slots):
+        for i in range(0, len(self.caseframe.slots)):
             if self.caseframe.slots[i] is slot:
                 slot_fillers.update(self.filler_set[i].nodes)
         return slot_fillers
