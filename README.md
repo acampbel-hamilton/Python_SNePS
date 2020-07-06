@@ -190,3 +190,7 @@ If you want draggable graphs, then also run:
 ```bash
 pip install netgraph
 ```
+If you want the graphs to be exported as a dot file:
+```bash
+pip install pydot
+```
