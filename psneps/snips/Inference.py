@@ -1,4 +1,5 @@
 from ..Network import *
+from ..SemanticType import SemError
 
 """
 This is the main file of the SNIPS package. In here, we define the Inference class.
@@ -15,7 +16,10 @@ class Inference:
 
     def ask_if(self, wft_str: str):
         wft = wft_parser(wft_str, self.net)
-        self.net.sem_hierarchy.respecify(wft.name, wft.sem_type, self.net.sem_hierarchy.get_type("Proposition"))
+        try:
+            self.net.sem_hierarchy.assert_proposition(wft)
+        except SemError as e:
+            print(e)
         if self.net.current_context.is_asserted(wft):
             print("{}! [{}] is asserted".format(wft.name, wft_str))
             return True
@@ -23,7 +27,6 @@ class Inference:
 
     def ask_if_not(self, wft_str: str):
         wft = wft_parser('not({})'.format(wft_str), self.net)
-        self.net.sem_hierarchy.respecify(wft.name, wft.sem_type, self.net.sem_hierarchy.get_type("Proposition"))
         if self.net.current_context.is_asserted(wft):
             print("{}! [not({})] is asserted".format(wft.name, wft_str))
             return True
