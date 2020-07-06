@@ -51,7 +51,7 @@ class Inference:
             antecedents = impl.antecedents()
             bound = impl.bound
             for ant in antecedents:
-                if self._ask_if(wft):
+                if self._ask_if(ant):
                     bound -= 1
                     if bound < 1:
                         return True
