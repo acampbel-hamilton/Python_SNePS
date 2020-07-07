@@ -12,8 +12,6 @@ current_network = None
 tokens = WftLex.tokens
 
 variables = {}
-replace = {}
-all_wfts = set()
 top_wft = None
 
 # =====================================
@@ -36,9 +34,7 @@ def p_Wft(p):
     '''
     p[0] = p[1]
     global top_wft
-    global all_wfts
     top_wft = p[0]
-    all_wfts.add(p[0])
 
 # e.g. if(wft1, wft2)
 def p_BinaryOp1(p):
@@ -131,23 +127,15 @@ def p_EveryStmt(p):
     '''
     EveryStmt :         Every LParen ArbVar Comma Argument RParen
     '''
+
     arb = p[3]
 
+    # Add restrictions
     for node in p[5].nodes:
         new_restriction(arb, node)
 
-    # Ensures the variable created is new, and, if so, increments the counter
-    # if not, recursively replaces references to this variable
-    new = True
-    for node in current_network.nodes.values():
-        if isinstance(node, Arbitrary) and node == arb:
-            variables[arb.name] = node
-            replace[arb] = node
-            arb = node
-            new = False
-            break
-    if new:
-        arb.store_in(current_network)
+    # Store in network
+    arb.store_in(current_network)
     p[0] = arb
 
 # e.g. some{x(y)}(Isa(x, y))
@@ -157,6 +145,7 @@ def p_SomeStmt(p):
     '''
     ind = p[3]
 
+    # Add dependencies
     for var_name in p[5]:
         if var_name not in variables:
             raise SNePSWftError("Variable \"{}\" does not exist".format(var_name))
@@ -164,21 +153,12 @@ def p_SomeStmt(p):
             raise SNePSWftError("Variables cannot depend on themselves".format(var_name))
         ind.add_dependency(variables[var_name])
 
+    # Add restrictions
     for node in p[8].nodes:
         new_restriction(ind, node)
 
-    # Ensures the variable created is new, and, if so, increments the counter
-    # if not, recursively replaces references to this variable
-    new = True
-    for node in current_network.nodes.values():
-        if isinstance(node, Indefinite) and node == ind:
-            variables[ind.name] = node
-            replace[ind] = node
-            ind = node
-            new = False
-            break
-    if new:
-        ind.store_in(current_network)
+    # Store in network
+    ind.store_in(current_network)
     p[0] = ind
 
 def p_ArbVar(p):
@@ -422,18 +402,11 @@ def wft_parser(wft, network):
             yacc.parse(wft)
             global top_wft
             global variables
-            global replace
-            global all_wfts
 
-            for temp_node in replace:
-                for some_wft in all_wfts:
-                    all_wfts.replace_var(temp_node, replace[temp_node])
             ret_top_wft = top_wft
 
             top_wft = None
             variables = {}
-            replace = {}
-            all_wfts = set()
 
             return (ret_top_wft)
         except SNError as e:

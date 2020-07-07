@@ -76,17 +76,6 @@ class Variable(Atomic):
                 temp_restriction_set.add(restriction)
         self.restriction_set = temp_restriction_set
 
-    def __eq__(self, other):
-        print("Self: ", end='')
-        print([restr.name for restr in self.restriction_set])
-        print("Other: ", end='')
-        print([restr.name for restr in other.restriction_set])
-        print()
-        return self.restriction_set == other.restriction_set
-
-    def __hash__(self):
-        return id(self)
-
 class Arbitrary(Variable):
     """ An arbitaray individual. """
     counter = 1
@@ -124,12 +113,6 @@ class Indefinite(Variable):
             else:
                 temp_dependency_set.add(dependency)
         self.dependency_set = temp_dependency_set
-
-    def __eq__(self, other):
-        return super.__eq__(other) and self.dependency_set == other.dependency_set
-
-    def __hash__(self):
-        return id(self)
 
 # =====================================
 # --------- MOLECULAR NODES -----------
