@@ -124,17 +124,6 @@ class Frame:
                 slot_fillers.update(self.filler_set[i].nodes)
         return slot_fillers
 
-    def is_arb_combinable(self, other):
-        if self.caseframe is other.caseframe:
-            difference = self.filler_set - other.filler_set
-            for item in difference:
-                if item is not Arbitrary:
-                    return False
-
-            return True
-        else:
-            return False
-
     def __eq__(self, other) -> bool:
         return self.caseframe is other.caseframe and self.filler_set == other.filler_set
 
