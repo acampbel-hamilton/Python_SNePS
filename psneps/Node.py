@@ -35,7 +35,7 @@ class Node:
     def has_constituent(self, constituent):
         return self is constituent
 
-    def recursive_replace_var(self, old, new, visited=[]):
+    def replace_var(self, old, new):
         return
 
 # =====================================
@@ -67,16 +67,21 @@ class Variable(Atomic):
     def add_restriction(self, restriction) -> None: # These need type definitions, since we don't know what restrictions/dependencies are.
         self.restriction_set.add(restriction)
 
-    def recursive_replace_var(self, old, new, visited=[]):
-        visited.append(self)
+    def replace_var(self, old, new):
+        temp_restriction_set = set()
         for restriction in self.restriction_set:
             if restriction is old:
-                self.restriction_set.discard(old)
-                self.restriction_set.add(new)
-            elif restriction not in visited:
-                restriction.recursive_replace_var(old, new, visited)
+                temp_restriction_set.add(new)
+            else:
+                temp_restriction_set.add(restriction)
+        self.restriction_set = temp_restriction_set
 
     def __eq__(self, other):
+        print("Self: ", end='')
+        print([restr.name for restr in self.restriction_set])
+        print("Other: ", end='')
+        print([restr.name for restr in other.restriction_set])
+        print()
         return self.restriction_set == other.restriction_set
 
     def __hash__(self):
@@ -110,14 +115,15 @@ class Indefinite(Variable):
         Indefinite.counter += 1
         current_network.nodes[self.name] = self
 
-    def recursive_replace_var(self, old, new, visited=[]):
-        super().recursive_replace_var(old, new, visited=[])
+    def replace_var(self, old, new):
+        super().replace_var(old, new)
+        temp_dependency_set = set()
         for dependency in self.dependency_set:
             if dependency is old:
-                self.dependency_set.discard(old)
-                self.dependency_set.add(new)
-            elif dependency not in visited:
-                dependency.recursive_replace_var(old, new, visited)
+                temp_dependency_set.add(new)
+            else:
+                temp_dependency_set.add(dependency)
+        self.dependency_set = temp_dependency_set
 
     def __eq__(self, other):
         return super.__eq__(other) and self.dependency_set == other.dependency_set
@@ -166,15 +172,19 @@ class Molecular(Node):
                     return True
         return False
 
-    def recursive_replace_var(self, old, new, visited=[]):
-        visited.append(self)
-        for fillers in self.filler_set:
+    def replace_var(self, old, new):
+        temp_filler_nodes = set()
+        for i in range(0, len(self.frame.filler_set)):
+            slot = self.frame.caseframe.slots[i]
+            fillers = self.frame.filler_set[i]
             for node in fillers.nodes:
                 if node is old:
-                    fillers.nodes.discard(old)
-                    fillers.nodes.add(new)
-                elif node not in visited:
-                    node.recursive_replace_var(old, new, visited)
+                    temp_filler_nodes.add(new)
+                    new.add_up_cable(self, slot)
+                else:
+                    temp_fillers.add(node)
+            fillers.nodes = temp_filler_nodes
+            temp_filler_nodes = set()
 
 
 class MinMaxOpNode(Molecular):

@@ -13,6 +13,7 @@ tokens = WftLex.tokens
 
 variables = {}
 replace = {}
+all_wfts = set()
 top_wft = None
 
 # =====================================
@@ -35,7 +36,9 @@ def p_Wft(p):
     '''
     p[0] = p[1]
     global top_wft
-    top_wft = p[1]
+    global all_wfts
+    top_wft = p[0]
+    all_wfts.add(p[0])
 
 # e.g. if(wft1, wft2)
 def p_BinaryOp1(p):
@@ -136,8 +139,9 @@ def p_EveryStmt(p):
     # Ensures the variable created is new, and, if so, increments the counter
     # if not, recursively replaces references to this variable
     new = True
-    for node in current_network.nodes:
+    for node in current_network.nodes.values():
         if isinstance(node, Arbitrary) and node == arb:
+            variables[arb.name] = node
             replace[arb] = node
             arb = node
             new = False
@@ -166,8 +170,9 @@ def p_SomeStmt(p):
     # Ensures the variable created is new, and, if so, increments the counter
     # if not, recursively replaces references to this variable
     new = True
-    for node in current_network.nodes:
+    for node in current_network.nodes.values():
         if isinstance(node, Indefinite) and node == ind:
+            variables[ind.name] = node
             replace[ind] = node
             ind = node
             new = False
@@ -418,14 +423,17 @@ def wft_parser(wft, network):
             global top_wft
             global variables
             global replace
+            global all_wfts
 
             for temp_node in replace:
-                top_wft.recursive_replace_var(temp_node, replace[temp_node])
+                for some_wft in all_wfts:
+                    all_wfts.replace_var(temp_node, replace[temp_node])
             ret_top_wft = top_wft
 
             top_wft = None
             variables = {}
             replace = {}
+            all_wfts = set()
 
             return (ret_top_wft)
         except SNError as e:
