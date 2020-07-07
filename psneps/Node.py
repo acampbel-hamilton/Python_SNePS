@@ -32,7 +32,9 @@ class Node:
     def __str__(self) -> str:
         return "<{}>: {} ({})".format(self.name, self.sem_type.name, self.docstring)
 
-    def has_constituent(self, constituent, visited=[]):
+    def has_constituent(self, constituent, visited=None):
+        if visited is None:
+            visited = []
         visited.append(self)
         return self is constituent
 
@@ -77,7 +79,9 @@ class Variable(Atomic):
                 temp_restriction_set.add(restriction)
         self.restriction_set = temp_restriction_set
 
-    def has_constituent(self, constituent, visited=[]):
+    def has_constituent(self, constituent, visited=None):
+        if visited is None:
+            visited = []
         if super().has_constituent(constituent, visited):
             return True
         for restriction in self.restriction_set:
@@ -123,7 +127,9 @@ class Indefinite(Variable):
                 temp_dependency_set.add(dependency)
         self.dependency_set = temp_dependency_set
 
-    def has_constituent(self, constituent, visited=[]):
+    def has_constituent(self, constituent, visited=None:
+        if visited is None:
+            visited = []
         if super().has_constituent(constituent):
             return True
         for dependency in self.dependency_set:
@@ -165,7 +171,9 @@ class Molecular(Node):
     def follow_down_cable(self, slot):
         return self.frame.get_filler_set(slot)
 
-    def has_constituent(self, constituent, visited=[]):
+    def has_constituent(self, constituent, visited=None):
+        if visited is None:
+            visited = []
         visited.append(self)
         for filler in self.frame.filler_set:
             for node in filler.nodes:
