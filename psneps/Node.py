@@ -97,7 +97,7 @@ class Molecular(Node):
         self.frame = frame
         super().__init__(name, frame.caseframe.sem_type)
 
-        for i in range(0, len(self.frame.filler_set)):
+        for i in range(len(self.frame.filler_set)):
             slot = self.frame.caseframe.slots[i]
             fillers = self.frame.filler_set[i]
             for node in fillers.nodes:
