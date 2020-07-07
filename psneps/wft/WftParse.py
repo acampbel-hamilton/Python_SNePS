@@ -385,7 +385,7 @@ def new_restriction(variable, restriction):
     if restriction is variable:
         raise SNePSWftError("Variables cannot be restricted on themselves")
     if not restriction.has_constituent(variable):
-        raise SNePSWftError("{} used as a restriction, but does not reference variable".format(node.name))
+        raise SNePSWftError("{} used as a restriction, but does not reference variable".format(variable.name))
     variable.add_restriction(restriction)
     current_network.current_context.add_hypothesis(restriction)
 

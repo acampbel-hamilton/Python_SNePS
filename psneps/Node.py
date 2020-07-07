@@ -76,6 +76,13 @@ class Variable(Atomic):
                 temp_restriction_set.add(restriction)
         self.restriction_set = temp_restriction_set
 
+    def has_constituent(self, constituent):
+        for restriction in self.restriction_set:
+            for node in restriction.nodes:
+                if node.has_constituent(constituent):
+                    return True
+        return False
+
 class Arbitrary(Variable):
     """ An arbitaray individual. """
     counter = 1
@@ -113,6 +120,17 @@ class Indefinite(Variable):
             else:
                 temp_dependency_set.add(dependency)
         self.dependency_set = temp_dependency_set
+
+    def has_constituent(self, constituent):
+        for restriction in self.restriction_set:
+            for node in restriction.nodes:
+                if node.has_constituent(constituent):
+                    return True
+        for dependency in self.dependency_set:
+            for node in dependency.nodes:
+                if node.has_constituent(constituent):
+                    return True
+        return False
 
 # =====================================
 # --------- MOLECULAR NODES -----------
