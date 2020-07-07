@@ -119,17 +119,28 @@ class Frame:
     def get_filler_set(self, slot):
         # Returns a set of all fillers that are used with given slot
         slot_fillers = set()
-        for i in range(0, len(self.caseframe.slots)):
+        for i in range(len(self.caseframe.slots)):
             if self.caseframe.slots[i] is slot:
                 slot_fillers.update(self.filler_set[i].nodes)
         return slot_fillers
+
+    def is_arb_combinable(self, other):
+        if self.caseframe is other.caseframe:
+            difference = self.filler_set - other.filler_set
+            for item in difference:
+                if item is not Arbitrary:
+                    return False
+
+            return True
+        else:
+            return False
 
     def __eq__(self, other) -> bool:
         return self.caseframe is other.caseframe and self.filler_set == other.filler_set
 
     def __str__(self) -> str:
         ret = self.caseframe.name
-        for i in range(0, len(self.filler_set)):
+        for i in range(len(self.filler_set)):
             ret += self.filler_set[i].to_string(self.caseframe.slots[i].name)
         return ret
 
