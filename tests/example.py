@@ -12,7 +12,7 @@ net.assert_wft("1=>([Has(every(x, Isa(x, Dog)), Food), Has(x, Bone), Has(x, Phil
 net.assert_wft("Has(every(x, Isa(x, Dog)), Food)")
 
 snips = Inference(net)
-test = snips.ask_if("=>(Happy(every(x, Isa(x, Dog))), a)")
+test = snips.ask_if("=>(Happy(every(x, Isa(every(x, Isa(x, Dog)), Dog))), a)")
 print(test)
 
 net.export_graph()

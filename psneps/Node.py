@@ -32,7 +32,8 @@ class Node:
     def __str__(self) -> str:
         return "<{}>: {} ({})".format(self.name, self.sem_type.name, self.docstring)
 
-    def has_constituent(self, constituent):
+    def has_constituent(self, constituent, visited=[]):
+        visited.append(self)
         return self is constituent
 
     def replace_var(self, old, new):
@@ -76,13 +77,12 @@ class Variable(Atomic):
                 temp_restriction_set.add(restriction)
         self.restriction_set = temp_restriction_set
 
-    def has_constituent(self, constituent):
-        if super().has_constituent(constituent):
+    def has_constituent(self, constituent, visited=[]):
+        if super().has_constituent(constituent, visited):
             return True
         for restriction in self.restriction_set:
-            for node in restriction.nodes:
-                if node.has_constituent(constituent):
-                    return True
+            if restriction not in visited and restriction.has_constituent(constituent, visited):
+                return True
         return False
 
 class Arbitrary(Variable):
@@ -123,13 +123,12 @@ class Indefinite(Variable):
                 temp_dependency_set.add(dependency)
         self.dependency_set = temp_dependency_set
 
-    def has_constituent(self, constituent):
+    def has_constituent(self, constituent, visited=[]):
         if super().has_constituent(constituent):
             return True
         for dependency in self.dependency_set:
-            for node in dependency.nodes:
-                if node.has_constituent(constituent):
-                    return True
+            if dependency not in visited and dependency.has_constituent(constituent, visited):
+                return True
         return False
 
 # =====================================
@@ -155,7 +154,7 @@ class Molecular(Node):
         return frame == self.frame
 
     def __eq__(self, other):
-        return self.has_frame(other.frame)
+        return isinstance(other, Molecular) and self.has_frame(other.frame)
 
     def __str__(self) -> str:
         return super().__str__() + "\n\t" + str(self.frame)
@@ -166,10 +165,11 @@ class Molecular(Node):
     def follow_down_cable(self, slot):
         return self.frame.get_filler_set(slot)
 
-    def has_constituent(self, constituent):
+    def has_constituent(self, constituent, visited=[]):
+        visited.append(self)
         for filler in self.frame.filler_set:
             for node in filler.nodes:
-                if node.has_constituent(constituent):
+                if node not in visited and node.has_constituent(constituent, visited):
                     return True
         return False
 
