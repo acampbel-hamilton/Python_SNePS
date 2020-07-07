@@ -167,7 +167,7 @@ def p_SomeStmt(p):
     # if not, recursively replaces references to this variable
     new = True
     for node in current_network.nodes:
-        if isinstance(node, Arbitrary) and node == ind:
+        if isinstance(node, Indefinite) and node == ind:
             replace[ind] = node
             ind = node
             new = False
