@@ -77,6 +77,8 @@ class Variable(Atomic):
         self.restriction_set = temp_restriction_set
 
     def has_constituent(self, constituent):
+        if super().has_constituent(constituent):
+            return True
         for restriction in self.restriction_set:
             for node in restriction.nodes:
                 if node.has_constituent(constituent):
@@ -122,10 +124,8 @@ class Indefinite(Variable):
         self.dependency_set = temp_dependency_set
 
     def has_constituent(self, constituent):
-        for restriction in self.restriction_set:
-            for node in restriction.nodes:
-                if node.has_constituent(constituent):
-                    return True
+        if super().has_constituent(constituent):
+            return True
         for dependency in self.dependency_set:
             for node in dependency.nodes:
                 if node.has_constituent(constituent):
