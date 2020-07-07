@@ -33,9 +33,6 @@ class Node:
         return "<{}>: {} ({})".format(self.name, self.sem_type.name, self.docstring)
 
     def has_constituent(self, constituent, visited=None):
-        if visited is None:
-            visited = []
-        visited.append(self)
         return self is constituent
 
     def replace_var(self, old, new):
@@ -79,16 +76,6 @@ class Variable(Atomic):
                 temp_restriction_set.add(restriction)
         self.restriction_set = temp_restriction_set
 
-    def has_constituent(self, constituent, visited=None):
-        if visited is None:
-            visited = []
-        if super().has_constituent(constituent, visited):
-            return True
-        for restriction in self.restriction_set:
-            if restriction not in visited and restriction.has_constituent(constituent, visited):
-                return True
-        return False
-
 class Arbitrary(Variable):
     """ An arbitaray individual. """
     counter = 1
@@ -127,16 +114,6 @@ class Indefinite(Variable):
                 temp_dependency_set.add(dependency)
         self.dependency_set = temp_dependency_set
 
-    def has_constituent(self, constituent, visited=None:
-        if visited is None:
-            visited = []
-        if super().has_constituent(constituent):
-            return True
-        for dependency in self.dependency_set:
-            if dependency not in visited and dependency.has_constituent(constituent, visited):
-                return True
-        return False
-
 # =====================================
 # --------- MOLECULAR NODES -----------
 # =====================================
@@ -173,8 +150,8 @@ class Molecular(Node):
 
     def has_constituent(self, constituent, visited=None):
         if visited is None:
-            visited = []
-        visited.append(self)
+            visited = set()
+        visited.add(self)
         for filler in self.frame.filler_set:
             for node in filler.nodes:
                 if node not in visited and node.has_constituent(constituent, visited):
