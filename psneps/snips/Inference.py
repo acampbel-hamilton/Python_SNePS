@@ -3,6 +3,8 @@ from ..SemanticType import SemError
 from ..Node import Node, ImplNode
 from ..Error import SNError
 
+SLOT_NAMES = ['and', 'or', 'nor', 'xor', 'nand', 'andorargs']
+
 class SNIPSError(SNError):
     pass
 
@@ -45,6 +47,11 @@ class Inference:
     def _slot_based(self, wft: Node):
         """ AKA Wire-Based """
 
+        notNodes = wft.follow_up_cable(self.net.slots['nor'])
+        for node in notNodes:
+            if self._ask_if(node):
+                return False
+
         implNodes = wft.follow_up_cable(self.net.slots['cq'])
         for impl in implNodes:
             # First special case, binary operations/implication
@@ -55,6 +62,22 @@ class Inference:
                     bound -= 1
                     if bound < 1:
                         return True
+
+        andOrNodes = set()
+        for slot_name in SLOT_NAMES:
+            andOrNodes.update(wft.follow_up_cable(self.net.slots[slot_name]))
+        for andOr in andOrNodes:
+            if self._ask_if(andOr):
+                total_num = 0
+                num_true = 0
+                for constituent in andOr.constituents():
+                    total_num += 1
+                    if self._ask_if(constituent):
+                        num_true += 1
+                if andOr.min >= total_num - num-true:
+                    return True
+                if num_true >= andOr.max:
+                    return False
 
         return False
 

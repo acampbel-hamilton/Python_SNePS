@@ -8,8 +8,8 @@ net.define_caseframe("Has", "Propositional", ["agent", "has"])
 net.define_caseframe("Happy", "Propositional", ["happy_thing"])
 
 
-net.assert_wft("1=>([a, b, c, d], [e, f, g])")
-net.assert_wft("b")
+net.assert_wft("2=>([a, b, c, d], [e, f, g])")
+net.assert_wft("and(b, a)")
 
 snips = Inference(net)
 test = snips.ask_if("g")

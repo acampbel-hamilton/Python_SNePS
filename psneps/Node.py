@@ -180,6 +180,10 @@ class MinMaxOpNode(Molecular):
         self.min = min
         self.max = max
 
+    def constituents(self):
+        # All of the propositions to which this and, or, thresh, etc. has wires
+        return self.frame.get_filler_set(self.frame.caseframe.slots[0])
+
     def has_min_max(self, min: int, max: int) -> bool:
         return self.min == min and self.max == max
 
