@@ -35,6 +35,9 @@ class Node:
     def has_constituent(self, constituent):
         return self is constituent
 
+    def replace_var(self, old, new):
+        return
+
 # =====================================
 # ---------- ATOMIC NODES -------------
 # =====================================
@@ -64,25 +67,70 @@ class Variable(Atomic):
     def add_restriction(self, restriction) -> None: # These need type definitions, since we don't know what restrictions/dependencies are.
         self.restriction_set.add(restriction)
 
+    def replace_var(self, old, new):
+        temp_restriction_set = set()
+        for restriction in self.restriction_set:
+            if restriction is old:
+                temp_restriction_set.add(new)
+            else:
+                temp_restriction_set.add(restriction)
+        self.restriction_set = temp_restriction_set
+
+    def has_constituent(self, constituent):
+        for restriction in self.restriction_set:
+            for node in restriction.nodes:
+                if node.has_constituent(constituent):
+                    return True
+        return False
+
 class Arbitrary(Variable):
     """ An arbitaray individual. """
     counter = 1
-    def __init__(self, sem_type: SemanticType) -> None:
-        self.name = 'arb' + str(self.counter)
-        self.counter += 1
+    def __init__(self, name, sem_type: SemanticType) -> None:
+        self.name = name
         super().__init__(self.name, sem_type) # These need semantic types. This will be an error.
+
+    def store_in(self, current_network):
+        self.name = 'arb' + str(self.counter)
+        Arbitrary.counter += 1
+        current_network.nodes[self.name] = self
 
 class Indefinite(Variable):
     """ An indefinite object. """
     counter = 1
-    def __init__(self, sem_type: SemanticType) -> None:
-        self.name = 'ind' + str(self.counter)
-        self.counter += 1
+    def __init__(self, name, sem_type: SemanticType) -> None:
+        self.name = name
         self.dependency_set = set()
         super().__init__(self.name, sem_type) # These need semantic types. This will be an error.
 
     def add_dependency(self, dependency) -> None: # These need type definitions, since we don't know what restrictions/dependencies are.
         self.dependency_set.add(dependency)
+
+    def store_in(self, current_network):
+        self.name = 'ind' + str(self.counter)
+        Indefinite.counter += 1
+        current_network.nodes[self.name] = self
+
+    def replace_var(self, old, new):
+        super().replace_var(old, new)
+        temp_dependency_set = set()
+        for dependency in self.dependency_set:
+            if dependency is old:
+                temp_dependency_set.add(new)
+            else:
+                temp_dependency_set.add(dependency)
+        self.dependency_set = temp_dependency_set
+
+    def has_constituent(self, constituent):
+        for restriction in self.restriction_set:
+            for node in restriction.nodes:
+                if node.has_constituent(constituent):
+                    return True
+        for dependency in self.dependency_set:
+            for node in dependency.nodes:
+                if node.has_constituent(constituent):
+                    return True
+        return False
 
 # =====================================
 # --------- MOLECULAR NODES -----------
@@ -124,6 +172,20 @@ class Molecular(Node):
                 if node.has_constituent(constituent):
                     return True
         return False
+
+    def replace_var(self, old, new):
+        temp_filler_nodes = set()
+        for i in range(0, len(self.frame.filler_set)):
+            slot = self.frame.caseframe.slots[i]
+            fillers = self.frame.filler_set[i]
+            for node in fillers.nodes:
+                if node is old:
+                    temp_filler_nodes.add(new)
+                    new.add_up_cable(self, slot)
+                else:
+                    temp_fillers.add(node)
+            fillers.nodes = temp_filler_nodes
+            temp_filler_nodes = set()
 
 
 class MinMaxOpNode(Molecular):

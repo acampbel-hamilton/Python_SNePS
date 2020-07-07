@@ -29,11 +29,12 @@ def p_Wft(p):
          |              QIdenStmt
          |              AtomicName
          |              Y_WftNode
+         |              VarNode
          |              Function
     '''
     p[0] = p[1]
     global top_wft
-    top_wft = p[1]
+    top_wft = p[0]
 
 # e.g. if(wft1, wft2)
 def p_BinaryOp1(p):
@@ -126,12 +127,15 @@ def p_EveryStmt(p):
     '''
     EveryStmt :         Every LParen ArbVar Comma Argument RParen
     '''
+
     arb = p[3]
 
+    # Add restrictions
     for node in p[5].nodes:
         new_restriction(arb, node)
 
-    current_network.nodes[arb.name] = arb
+    # Store in network
+    arb.store_in(current_network)
     p[0] = arb
 
 # e.g. some{x(y)}(Isa(x, y))
@@ -141,6 +145,7 @@ def p_SomeStmt(p):
     '''
     ind = p[3]
 
+    # Add dependencies
     for var_name in p[5]:
         if var_name not in variables:
             raise SNePSWftError("Variable \"{}\" does not exist".format(var_name))
@@ -148,10 +153,12 @@ def p_SomeStmt(p):
             raise SNePSWftError("Variables cannot depend on themselves".format(var_name))
         ind.add_dependency(variables[var_name])
 
+    # Add restrictions
     for node in p[8].nodes:
         new_restriction(ind, node)
 
-    current_network.nodes[ind.name] = ind
+    # Store in network
+    ind.store_in(current_network)
     p[0] = ind
 
 def p_ArbVar(p):
@@ -160,7 +167,7 @@ def p_ArbVar(p):
            |            Integer
     '''
     if p[1] not in variables:
-        variables[p[1]] = Arbitrary(current_network.sem_hierarchy.get_type("Entity"))
+        variables[p[1]] = Arbitrary(p[1], current_network.sem_hierarchy.get_type("Entity"))
     p[0] = variables[p[1]]
 
     if not isinstance(p[0], Arbitrary):
@@ -172,7 +179,7 @@ def p_IndVar(p):
            |            Integer
     '''
     if p[1] not in variables:
-        variables[p[1]] = Indefinite(current_network.sem_hierarchy.get_type("Entity"))
+        variables[p[1]] = Indefinite(p[1], current_network.sem_hierarchy.get_type("Entity"))
     p[0] = variables[p[1]]
 
     if not isinstance(p[0], Indefinite):
@@ -260,7 +267,6 @@ def p_Arguments(p):
     else:
         p[0] = p[1] + [p[3]]
 
-
 def p_AtomicNameSet(p):
     '''
     AtomicNameSet :
@@ -305,11 +311,24 @@ def p_Y_WftNode(p):
 
     p[0] = current_network.nodes[p[1]]
 
+def p_VarNode1(p):
+    '''
+    VarNode :           IndNode
+    '''
+    if int(p[1][3:]) >= Indefinite.counter:
+        raise SNePSWftError('Invalid ind number. Max number: {}'.format(Indefinite.counter - 1))
+    p[0] = current_network.nodes[p[1]]
+def p_VarNode2(p):
+    '''
+    VarNode :           ArbNode
+    '''
+    if int(p[1][3:]) >= Arbitrary.counter:
+        raise SNePSWftError('Invalid arb number. Max number: {}'.format(Arbitrary.counter - 1))
+    p[0] = current_network.nodes[p[1]]
+
 def p_error(p):
     if p is None:
         raise SNePSWftError("Term reached end unexpectedly.")
-    elif p.type == 'VarName':
-        raise SNePSWftError("Variables cannot be named ind# or arb#")
     else:
         raise SNePSWftError("Syntax error on token '" + p.type + "'")
 
@@ -366,7 +385,7 @@ def new_restriction(variable, restriction):
     if restriction is variable:
         raise SNePSWftError("Variables cannot be restricted on themselves")
     if not restriction.has_constituent(variable):
-        raise SNePSWftError("{} used as a restriction, but does not reference variable".format(node.name))
+        raise SNePSWftError("{} used as a restriction, but does not reference variable".format(variable.name))
     variable.add_restriction(restriction)
     current_network.current_context.add_hypothesis(restriction)
 

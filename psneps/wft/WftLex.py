@@ -51,7 +51,8 @@ tokens = (
     'Comma',
     'LBracket',
     'RBracket',
-    'VarName'
+    'IndNode',
+    'ArbNode'
 )
 
 t_LParen  = r'\('
@@ -75,8 +76,10 @@ def t_Identifier(t):
     r'[A-Za-z][A-Za-z0-9_]*'
     if match(r'^wft\d+$', t.value):
         t.type = 'WftNode'
-    if match(r'^(arb|ind)\d+$', t.value):
-        t.type='VarName'
+    if match(r'^arb\d+$', t.value):
+        t.type='ArbNode'
+    if match(r'^ind\d+$', t.value):
+        t.type='IndNode'
     elif t.value == 'if':
         t.type = 'SingImpl'
     elif t.value == 'andor':
