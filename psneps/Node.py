@@ -32,7 +32,7 @@ class Node:
     def __str__(self) -> str:
         return "<{}>: {} ({})".format(self.name, self.sem_type.name, self.docstring)
 
-    def has_constituent(self, constituent, visited=[]):
+    def has_constituent(self, constituent, visited=None):
         return self is constituent
 
     def replace_var(self, old, new):

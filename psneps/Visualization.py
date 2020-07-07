@@ -35,7 +35,7 @@ class VisualizationMixin:
             print("In order to use this function, you must pip install matplotlib")
             return
 
-        node_labels={}
+        node_labels = {}
 
         G = nx.DiGraph()
         edge_labels = {}
@@ -103,7 +103,7 @@ class VisualizationMixin:
         if not has_pydot:
             print("In order to use this function, you must pip install pydot")
 
-        node_labels={}
+        node_labels = {}
 
         G = nx.MultiDiGraph()
         for node in self.nodes.values():
