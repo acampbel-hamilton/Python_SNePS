@@ -9,9 +9,8 @@ class NodeError(SNError):
 
 class Node:
     """ Root of syntactic hierarchy """
-    def __init__(self, name: str, sem_type: SemanticType, docstring="") -> None:
+    def __init__(self, name: str, sem_type: SemanticType) -> None:
         self.name = name
-        self.docstring = docstring
         self.up_cableset = set() # References to frames that point to this node
         self.sem_type = sem_type
         if type(self) in (Node, Atomic, Variable, MinMaxOpNode):
@@ -30,7 +29,10 @@ class Node:
         return set(up_cable.node for up_cable in self.up_cableset if up_cable.slot is slot)
 
     def __str__(self) -> str:
-        return "<{}>: {} ({})".format(self.name, self.sem_type.name, self.docstring)
+        return self.wft_rep()
+
+    def wft_rep(self, simplify=None):
+        return self.name
 
     def has_constituent(self, constituent, visited=None):
         return self is constituent
@@ -62,6 +64,7 @@ class Variable(Atomic):
     """ A variable term ranging over a restricted domain. """
     def __init__(self, name: str, sem_type: SemanticType) -> None:
         super().__init__(name, sem_type) # This needs a semantic types. This will be an error.
+        self.char_name = name
         self.restriction_set = set()
 
     def add_restriction(self, restriction) -> None: # These need type definitions, since we don't know what restrictions/dependencies are.
@@ -76,25 +79,37 @@ class Variable(Atomic):
                 temp_restriction_set.add(restriction)
         self.restriction_set = temp_restriction_set
 
+    def wft_rep(self, simplify=None):
+        return self.char_name
+
 class Arbitrary(Variable):
     """ An arbitaray individual. """
     counter = 1
     def __init__(self, name, sem_type: SemanticType) -> None:
-        self.name = name
-        super().__init__(self.name, sem_type) # These need semantic types. This will be an error.
+        super().__init__(name, sem_type) # These need semantic types. This will be an error.
 
     def store_in(self, current_network):
         self.name = 'arb' + str(self.counter)
         Arbitrary.counter += 1
         current_network.nodes[self.name] = self
 
+    def wft_rep(self, simplify=None):
+        if simplify is None:
+            simplify = set()
+        if self in simplify:
+            return super().wft_rep()
+        else:
+            simplify.add(self)
+            return "every({} {})".format( \
+                self.char_name, \
+                ", ".join([restriction.wft_rep(simplify.copy()) for restriction in self.restriction_set]))
+
 class Indefinite(Variable):
     """ An indefinite object. """
     counter = 1
     def __init__(self, name, sem_type: SemanticType) -> None:
-        self.name = name
         self.dependency_set = set()
-        super().__init__(self.name, sem_type) # These need semantic types. This will be an error.
+        super().__init__(name, sem_type) # These need semantic types. This will be an error.
 
     def add_dependency(self, dependency) -> None: # These need type definitions, since we don't know what restrictions/dependencies are.
         self.dependency_set.add(dependency)
@@ -113,6 +128,18 @@ class Indefinite(Variable):
             else:
                 temp_dependency_set.add(dependency)
         self.dependency_set = temp_dependency_set
+
+    def wft_rep(self, simplify=None):
+        if simplify is None:
+            simplify = set()
+        if self in simplify:
+            return super().wft_rep(simplify)
+        else:
+            simplify.add(self)
+            return "some({} ({}) {})".format( \
+                self.char_name, \
+                ", ".join([dependency.wft_rep(simplify.copy()) for dependency in self.dependency_set]), \
+                ", ".join([restriction.wft_rep(simplify.copy()) for restriction in self.restriction_set]))
 
 # =====================================
 # --------- MOLECULAR NODES -----------
@@ -138,9 +165,6 @@ class Molecular(Node):
 
     def __eq__(self, other):
         return isinstance(other, Molecular) and self.has_frame(other.frame)
-
-    def __str__(self) -> str:
-        return super().__str__() + "\n\t" + str(self.frame)
 
     def __hash__(self):
         return id(self)
@@ -172,6 +196,27 @@ class Molecular(Node):
             fillers.nodes = temp_filler_nodes
             temp_filler_nodes = set()
 
+    def wft_rep(self, simplify=None):
+        if simplify is None:
+            simplify = set()
+        if self in simplify:
+            return super().wft_rep()
+        else:
+            simplify.add(self)
+            ret = "{}(".format(self.frame.caseframe.name)
+            for i in range(len(self.caseframe.filler_set)):
+                if i > 0:
+                    ret += ", "
+                ret += "["
+                filler = self.caseframe.filler_set[i]
+                for j in len(filler.nodes):
+                    if j > 0:
+                        ret += ", "
+                    ret += filler.nodes[j].wft_rep(simplify.copy())
+                ret += "]"
+            ret += ")"
+        return ret
+
 
 class MinMaxOpNode(Molecular):
     """ Thresh/andor with two values """
@@ -194,9 +239,29 @@ class MinMaxOpNode(Molecular):
     def __hash__(self):
         return id(self)
 
-    def __str__(self) -> str:
-        return Node.__str__(self) + " {}, {}".format(self.min, self.max) + "\n\t" + str(self.frame)
-
+    def wft_rep(self, simplify=None):
+        if simplify is None:
+            simplify = set()
+        if self in simplify:
+            return super().wft_rep()
+        else:
+            simplify.add(self)
+            if self.frame.caseframe.name == "thresh" or self.frame.caseframe.name == "andor":
+                ret = "{}\{{}, {}\}(".format(self.frame.caseframe.name, self.min, self.max)
+            else:
+                ret = "{}(".format(self.frame.caseframe.name)
+            for i in range(len(self.caseframe.filler_set)):
+                if i > 0:
+                    ret += ", "
+                ret += "["
+                filler = self.caseframe.filler_set[i]
+                for j in len(filler.nodes):
+                    if j > 0:
+                        ret += ", "
+                    ret += filler.nodes[j].wft_rep(simplify.copy())
+                ret += "]"
+            ret += ")"
+        return ret
 
 class ThreshNode(MinMaxOpNode):
     """ Thresh with two values """
@@ -227,8 +292,17 @@ class ImplNode(Molecular):
     def __hash__(self):
         return id(self)
 
-    def __str__(self) -> str:
-        return Node.__str__(self) + " {}".format(self.bound) + "\n\t" + str(self.frame)
+    def wft_rep(self, simplify=None):
+        if simplify is None:
+            simplify = set()
+        if self in simplify:
+            return super().wft_rep()
+        else:
+            simplify.add(self)
+            return "{}=>([{}], [{}])".format(self.bound, \
+            ", ".join([ant.wft_rep(simplify.copy()) for ant in self.antecedents]),
+            ", ".join([cq.wft_rep(simplify.copy()) for cq in self.antecedents]))
+
 
 # =====================================
 # -------------- UP CABLE -------------
@@ -253,7 +327,7 @@ class NodeMixin:
             raise NotImplementedError("Mixins can't be instantiated.")
         self.nodes = {}
 
-    def define_term(self, name, sem_type_name="Entity", docstring="") -> None:
+    def define_term(self, name, sem_type_name="Entity") -> None:
         # Creates base atomic node
 
         if match(r'^(arb|ind)\d+$', name) or self.enforce_name_syntax and not match(r'^[A-Za-z][A-Za-z0-9_]*$', name):
@@ -269,7 +343,7 @@ class NodeMixin:
         else:
             # Creation
             sem_type = self.sem_hierarchy.get_type(sem_type_name)
-            self.nodes[name] = Base(name, sem_type, docstring)
+            self.nodes[name] = Base(name, sem_type)
 
     def list_terms(self) -> None:
         for term in self.nodes:

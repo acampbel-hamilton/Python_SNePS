@@ -98,9 +98,9 @@ net = Network()
 The following methods are defined:
 
 ```python
-# Defines a term with a name, optional semantic type, and docstring.
+# Defines a term with a name and optional semantic type.
 # The default semantic type is Entity.
-net.define_term("Ben", sem_type_name="Agent", docstring="Ben is a human being.")
+net.define_term("Ben", sem_type_name="Agent")
 
 # List all terms or find a specific term
 net.list_terms()
