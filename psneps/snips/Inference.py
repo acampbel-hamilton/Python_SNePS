@@ -1,6 +1,6 @@
 from ..Network import *
 from ..SemanticType import SemError
-from ..Node import Node, ImplNode
+from ..Node import Node, ImplNode, AndOrNode
 from ..Error import SNError
 
 ANDOR_SLOT_NAMES = ['and', 'or', 'nor', 'xor', 'nand', 'andorargs']
@@ -81,6 +81,20 @@ class Inference:
 
     def _slot_based(self, wft: Node, ignore):
         """ AKA Wire-Based """
+
+        # 1. Check if not(and()) and treat as nand
+        if isinstance(wft, AndOrNode) and wft.frame.caseframe is self.net.caseframes['nor']:
+            notNodes = wft.follow_down_cable(self.net.slots['nor'])
+            for notNode in notNodes:
+                if isinstance(notNode, AndOrNode) and \
+                    (notNode.frame.caseframe is self.net.caseframes['and']
+                    or notNode.frame.caseframe is self.net.caseframes['andor'] \
+                    and notNode.min == notNode.num_constituents() \
+                    and notNode.max == notNode.num_constituents()):
+
+                        # TODO - evaluate and as nand . . .
+                        pass
+
         return False
 
     def _by_binary_op(self, wft: Node, ignore):
