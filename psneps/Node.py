@@ -31,7 +31,7 @@ class Node:
     def __str__(self) -> str:
         return self.wft_rep()
 
-    def wft_rep(self, simplify=None):
+    def wft_rep(self, simplify=None) -> str:
         return self.name
 
     def has_constituent(self, constituent, visited=None):
@@ -79,7 +79,7 @@ class Variable(Atomic):
                 temp_restriction_set.add(restriction)
         self.restriction_set = temp_restriction_set
 
-    def wft_rep(self, simplify=None):
+    def wft_rep(self, simplify=None) -> str:
         return self.char_name
 
 class Arbitrary(Variable):
@@ -93,7 +93,7 @@ class Arbitrary(Variable):
         Arbitrary.counter += 1
         current_network.nodes[self.name] = self
 
-    def wft_rep(self, simplify=None):
+    def wft_rep(self, simplify=None) -> str:
         if simplify is None:
             simplify = set()
         if self in simplify:
@@ -129,7 +129,7 @@ class Indefinite(Variable):
                 temp_dependency_set.add(dependency)
         self.dependency_set = temp_dependency_set
 
-    def wft_rep(self, simplify=None):
+    def wft_rep(self, simplify=None) -> str:
         if simplify is None:
             simplify = set()
         if self in simplify:
@@ -196,7 +196,7 @@ class Molecular(Node):
             fillers.nodes = temp_filler_nodes
             temp_filler_nodes = set()
 
-    def wft_rep(self, simplify=None):
+    def wft_rep(self, simplify=None) -> str:
         if simplify is None:
             simplify = set()
         if self in simplify:
@@ -234,7 +234,7 @@ class MinMaxOpNode(Molecular):
     def __hash__(self):
         return id(self)
 
-    def wft_rep(self, simplify=None):
+    def wft_rep(self, simplify=None) -> str:
         if simplify is None:
             simplify = set()
         if self in simplify:
@@ -285,7 +285,7 @@ class ImplNode(Molecular):
     def __hash__(self):
         return id(self)
 
-    def wft_rep(self, simplify=None):
+    def wft_rep(self, simplify=None) -> str:
         if simplify is None:
             simplify = set()
         if self in simplify:
