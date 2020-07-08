@@ -36,7 +36,7 @@ class Inference:
 
         truth_value = self._ask_if(wft)
         if truth_value:
-            print("I know that {}! : {}".format(wft.name, wft_str))
+            print("I know that {}".format(wft))
         else:
             print("Unknown")
         return truth_value
@@ -51,7 +51,7 @@ class Inference:
 
         truth_value = self._ask_if(wft)
         if truth_value:
-            print("I know that {}! : not({})".format(wft.name, wft_str))
+            print("I know that {}".format(wft))
         else:
             print("Unknown")
         return truth_value

@@ -244,7 +244,10 @@ class MinMaxOpNode(Molecular):
             if self.frame.caseframe.name == "thresh" or self.frame.caseframe.name == "andor":
                 ret = "{}{{{}, {}}}(".format(self.frame.caseframe.name, self.min, self.max)
             else:
-                ret = "{}(".format(self.frame.caseframe.name)
+                name = self.frame.caseframe.name
+                if name == "nor" and len(self.frame.filler_set) == 1:
+                    name = "not"
+                ret = "{}(".format(name)
             for i in range(len(self.frame.filler_set)):
                 if i > 0:
                     ret += ", "
