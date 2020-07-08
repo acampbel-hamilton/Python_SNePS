@@ -4,6 +4,7 @@ from ..Node import Node, ImplNode
 from ..Error import SNError
 
 ANDOR_SLOT_NAMES = ['and', 'or', 'nor', 'xor', 'nand', 'andorargs']
+THRESH_SLOT_NAMES = ['equivalence', 'threshargs']
 
 class SNIPSError(SNError):
     pass
@@ -69,13 +70,21 @@ class Inference:
             return True
         elif self._slot_based(wft, ignore.copy()):
             return True
+        elif self._by_binary_op(wft, ignore.copy()):
+            return True
+        elif self._by_nary_op(wft, ignore.copy()):
+            return True
         return False
 
     def _slot_based(self, wft: Node, ignore):
         """ AKA Wire-Based """
+        return False
 
-        # First special case, binary operations/implication
-        # Return true if a certain number of antecedents are true
+    def _by_binary_op(self, wft: Node, ignore):
+        """ Follows up cq arc to a binary operator
+        Returns true if the binary operator itself is asserted and
+        the bound is hit by the number of true antecedents """
+
         implNodes = wft.follow_up_cable(self.net.slots['cq'])
         for impl in implNodes:
             if self._ask_if(impl, ignore.copy()):
@@ -87,6 +96,12 @@ class Inference:
                         if bound < 1:
                             self.net.current_context.add_derived(wft)
                             return True
+        return False
+
+    def _by_nary_op(self, wft: Node, ignore):
+        """ Follows up andor and thresh arcs to a minmax (nary) operator
+        Returns true if the nary operator itself is asserted and
+        the wft is needed to fall between the min and max values """
 
         andOrNodes = set()
         for andor_slot_name in ANDOR_SLOT_NAMES:
@@ -96,21 +111,12 @@ class Inference:
                 self.net.current_context.add_derived(wft)
                 return True
 
-        # threshNodes = set()
-        # for thresh_slot_name in THRESH_SLOT_NAMES:
-        #     threshNodes.update(wft.follow_up_cable(self.net.slots[threshsslot_name]))
-        # for thresh in threshNodes:
-        #     if self._ask_if(thresh, ignore.copy()):
-        #         total_num = 0
-        #         num_true = 0
-        #         for constituent in thresh.constituents():
-        #             total_num += 1
-        #             if self._ask_if(constituent, ignore.copy()):
-        #                 num_true += 1
-        #         if thresh.min >= total_num - num_true:
-        #             self.net.current_context.add_derived(wft)
-        #             return True
-        #         if num_true >= thresh.max:
-        #             return False
+        threshNodes = set()
+        for thresh_slot_name in THRESH_SLOT_NAMES:
+            threshNodes.update(wft.follow_up_cable(self.net.slots[thresh_slot_name]))
+        for thresh in threshNodes:
+            if self._ask_if(thresh, ignore.copy()) and thresh.min >= thresh.num_constituents():
+                self.net.current_context.add_derived(wft)
+                return True
 
         return False
