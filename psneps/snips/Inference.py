@@ -29,19 +29,14 @@ class Inference:
             self.net.sem_hierarchy.assert_proposition(wft)
         except SemError as e:
             print(e)
-        truth_value = self._ask_if(wft)
-        if truth_value:
-            self.net.current_context.add_derived(wft)
-        return truth_value
+
+        return self._ask_if(wft)
 
     def ask_if_not(self, wft_str: str):
         wft = wft_parser('not({})'.format(wft_str), self.net)
         if wft is None:
             return False
-        truth_value = self._ask_if(wft)
-        if truth_value:
-            self.net.current_context.add_derived(wft)
-        return truth_value
+        return self._ask_if(wft)
 
     def _ask_if(self, wft: Node, ignore=None):
 
@@ -77,6 +72,7 @@ class Inference:
                 if self._ask_if(ant, ignore.copy()):
                     bound -= 1
                     if bound < 1:
+                        self.net.current_context.add_derived(wft)
                         return True
 
         andOrNodes = set()
@@ -91,6 +87,7 @@ class Inference:
                     if self._ask_if(constituent, ignore.copy()):
                         num_true += 1
                 if andOr.min >= total_num - num_true:
+                    self.net.current_context.add_derived(wft)
                     return True
                 if num_true >= andOr.max:
                     return False
