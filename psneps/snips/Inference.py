@@ -18,15 +18,15 @@ class Inference:
         self.net = net
 
     def ask(self, wft_str: str):
-        print(self.ask_if(wft_str))
-        print(self.ask_if_not(wft_str))
+        truth_value = self.ask_if(wft_str)
+        self.ask_if_not(wft_str)
+        return truth_value
 
     def ask_if(self, wft_str: str):
         print("Checking if <{}> . . .".format(wft_str), end='\n\t')
 
         wft = wft_parser(wft_str, self.net)
         if wft is None:
-            print(False)
             return False
         try:
             self.net.sem_hierarchy.assert_proposition(wft)
@@ -34,7 +34,10 @@ class Inference:
             print(e)
 
         truth_value = self._ask_if(wft)
-        print(truth_value)
+        if truth_value:
+            print(truth_value)
+        else:
+            print("Unknown")
         return truth_value
 
     def ask_if_not(self, wft_str: str):
@@ -46,7 +49,10 @@ class Inference:
             return False
 
         truth_value = self._ask_if(wft)
-        print(truth_value)
+        if truth_value:
+            print(truth_value)
+        else:
+            print("Unknown")
         return truth_value
 
     def _ask_if(self, wft: Node, ignore=None):
