@@ -36,6 +36,9 @@ class Context:
     def add_hypothesis(self, node):
         self.hyps.add(node)
 
+    def add_derived(self, node):
+        self.ders.add(node)
+
     def is_hypothesis(self, node):
         return node in self.hyps
 

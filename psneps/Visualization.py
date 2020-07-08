@@ -41,7 +41,7 @@ class VisualizationMixin:
         edge_labels = {}
         for node in self.nodes.values():
             node_name = node.name
-            if self.current_context.is_hypothesis(node):
+            if self.current_context.is_asserted(node):
                 node_name += '!'
             node_labels[node_name] = node_name
             G.add_node(node_name)
@@ -55,7 +55,7 @@ class VisualizationMixin:
                         name = "not"
                     for filler in fillers.nodes:
                         filler_name = filler.name
-                        if self.current_context.is_hypothesis(filler):
+                        if self.current_context.is_asserted(filler):
                             filler_name += '!'
                         if (node_name, filler_name) in edge_labels:
                             edge_labels[(node_name, filler_name)] += ", " + name
@@ -65,7 +65,7 @@ class VisualizationMixin:
             if isinstance(node, Variable):
                 for restriction_node in node.restriction_set:
                     restriction_name = restriction_node.name
-                    if self.current_context.is_hypothesis(restriction_node):
+                    if self.current_context.is_asserted(restriction_node):
                         restriction_name += '!'
                     if (node_name, restriction_name) in edge_labels:
                         edge_labels[(node_name, restriction_name)] += ", restriction"
@@ -75,7 +75,7 @@ class VisualizationMixin:
                 if isinstance(node, Indefinite):
                     for dependency_node in node.dependency_set:
                         dependency_name = dependency_node.name
-                        if self.current_context.is_hypothesis(dependency_node):
+                        if self.current_context.is_asserted(dependency_node):
                             dependency_name += '!'
                         if (node_name, dependency_name) in edge_labels:
                             edge_labels[(node_name, dependency_name)] += ", dependency"
@@ -108,7 +108,7 @@ class VisualizationMixin:
         G = nx.MultiDiGraph()
         for node in self.nodes.values():
             node_name = node.name
-            if self.current_context.is_hypothesis(node):
+            if self.current_context.is_asserted(node):
                 node_name += '!'
             node_labels[node_name] = node_name
             G.add_node(node_name)
@@ -122,19 +122,19 @@ class VisualizationMixin:
                         name = "not"
                     for filler in fillers.nodes:
                         filler_name = filler.name
-                        if self.current_context.is_hypothesis(filler):
+                        if self.current_context.is_asserted(filler):
                             filler_name += '!'
                         G.add_edge(node_name, filler_name, label=name)
             if isinstance(node, Variable):
                 for restriction_node in node.restriction_set:
                     restriction_name = restriction_node.name
-                    if self.current_context.is_hypothesis(restriction_node):
+                    if self.current_context.is_asserted(restriction_node):
                         restriction_name += '!'
                     G.add_edge(node_name, restriction_name, label="restriction")
                 if isinstance(node, Indefinite):
                     for dependency_node in node.dependency_set:
                         dependency_name = dependency_node.name
-                        if self.current_context.is_hypothesis(dependency_node):
+                        if self.current_context.is_asserted(dependency_node):
                             dependency_name += '!'
                         G.add_edge(node_name, dependency_name, label="dependency")
 

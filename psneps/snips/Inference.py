@@ -29,13 +29,19 @@ class Inference:
             self.net.sem_hierarchy.assert_proposition(wft)
         except SemError as e:
             print(e)
-        return self._ask_if(wft)
+        truth_value = self._ask_if(wft)
+        if truth_value:
+            self.net.current_context.add_derived(wft)
+        return truth_value
 
     def ask_if_not(self, wft_str: str):
         wft = wft_parser('not({})'.format(wft_str), self.net)
         if wft is None:
             return False
-        return self._ask_if(wft)
+        truth_value = self._ask_if(wft)
+        if truth_value:
+            self.net.current_context.add_derived(wft)
+        return truth_value
 
     def _ask_if(self, wft: Node, ignore=None):
 
