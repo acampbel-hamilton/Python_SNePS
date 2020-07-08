@@ -100,7 +100,7 @@ class Arbitrary(Variable):
             return super().wft_rep()
         else:
             simplify.add(self)
-            return "every({} {})".format( \
+            return "every({}, {})".format( \
                 self.char_name, \
                 ", ".join([restriction.wft_rep(simplify.copy()) for restriction in self.restriction_set]))
 
@@ -136,7 +136,7 @@ class Indefinite(Variable):
             return super().wft_rep(simplify)
         else:
             simplify.add(self)
-            return "some({} ({}) {})".format( \
+            return "some({}, ({}) {})".format( \
                 self.char_name, \
                 ", ".join([dependency.wft_rep(simplify.copy()) for dependency in self.dependency_set]), \
                 ", ".join([restriction.wft_rep(simplify.copy()) for restriction in self.restriction_set]))
@@ -204,16 +204,11 @@ class Molecular(Node):
         else:
             simplify.add(self)
             ret = "{}(".format(self.frame.caseframe.name)
-            for i in range(len(self.caseframe.filler_set)):
+            for i in range(len(self.frame.filler_set)):
                 if i > 0:
                     ret += ", "
-                ret += "["
-                filler = self.caseframe.filler_set[i]
-                for j in len(filler.nodes):
-                    if j > 0:
-                        ret += ", "
-                    ret += filler.nodes[j].wft_rep(simplify.copy())
-                ret += "]"
+                ret += "[{}]".format( \
+                    ", ".join([node.wft_rep(simplify.copy()) for node in self.frame.filler_set[i].nodes]))
             ret += ")"
         return ret
 
@@ -247,19 +242,14 @@ class MinMaxOpNode(Molecular):
         else:
             simplify.add(self)
             if self.frame.caseframe.name == "thresh" or self.frame.caseframe.name == "andor":
-                ret = "{}\{{}, {}\}(".format(self.frame.caseframe.name, self.min, self.max)
+                ret = "{}{{{}, {}}}(".format(self.frame.caseframe.name, self.min, self.max)
             else:
                 ret = "{}(".format(self.frame.caseframe.name)
-            for i in range(len(self.caseframe.filler_set)):
+            for i in range(len(self.frame.filler_set)):
                 if i > 0:
                     ret += ", "
-                ret += "["
-                filler = self.caseframe.filler_set[i]
-                for j in len(filler.nodes):
-                    if j > 0:
-                        ret += ", "
-                    ret += filler.nodes[j].wft_rep(simplify.copy())
-                ret += "]"
+                ret += "{}".format( \
+                    ", ".join([node.wft_rep(simplify.copy()) for node in self.frame.filler_set[i].nodes]))
             ret += ")"
         return ret
 
@@ -300,8 +290,8 @@ class ImplNode(Molecular):
         else:
             simplify.add(self)
             return "{}=>([{}], [{}])".format(self.bound, \
-            ", ".join([ant.wft_rep(simplify.copy()) for ant in self.antecedents]),
-            ", ".join([cq.wft_rep(simplify.copy()) for cq in self.antecedents]))
+            ", ".join([ant.wft_rep(simplify.copy()) for ant in self.antecedents()]),
+            ", ".join([cq.wft_rep(simplify.copy()) for cq in self.antecedents()]))
 
 
 # =====================================
