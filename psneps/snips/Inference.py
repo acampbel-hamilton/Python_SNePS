@@ -18,25 +18,36 @@ class Inference:
         self.net = net
 
     def ask(self, wft_str: str):
-        self.ask_if(wft_str)
-        self.ask_if_not(wft_str)
+        print(self.ask_if(wft_str))
+        print(self.ask_if_not(wft_str))
 
     def ask_if(self, wft_str: str):
+        print("Checking if <{}> . . .".format(wft_str), end='\n\t')
+
         wft = wft_parser(wft_str, self.net)
         if wft is None:
+            print(False)
             return False
         try:
             self.net.sem_hierarchy.assert_proposition(wft)
         except SemError as e:
             print(e)
 
-        return self._ask_if(wft)
+        truth_value = self._ask_if(wft)
+        print(truth_value)
+        return truth_value
 
     def ask_if_not(self, wft_str: str):
+        print("Checking if <not({})> . . .".format(wft_str), end='\n\t')
+
         wft = wft_parser('not({})'.format(wft_str), self.net)
         if wft is None:
+            print(False)
             return False
-        return self._ask_if(wft)
+
+        truth_value = self._ask_if(wft)
+        print(truth_value)
+        return truth_value
 
     def _ask_if(self, wft: Node, ignore=None):
 

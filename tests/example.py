@@ -13,8 +13,7 @@ net.assert_wft("2=>([a, b, c, d], [e, f, g])")
 net.assert_wft("and(b, a)")
 
 snips = Inference(net)
-test = snips.ask_if("g")
-print(test)
+snips.ask_if("g")
 
 net.export_graph()
 net.print_graph()
