@@ -92,10 +92,9 @@ class Inference:
         for andor_slot_name in ANDOR_SLOT_NAMES:
             andOrNodes.update(wft.follow_up_cable(self.net.slots[andor_slot_name]))
         for andOr in andOrNodes:
-            if self._ask_if(andOr, ignore.copy()):
-                if andOr.min >= andOr.num_constituents():
-                    self.net.current_context.add_derived(wft)
-                    return True
+            if self._ask_if(andOr, ignore.copy()) and andOr.min >= andOr.num_constituents():
+                self.net.current_context.add_derived(wft)
+                return True
 
         # threshNodes = set()
         # for thresh_slot_name in THRESH_SLOT_NAMES:
