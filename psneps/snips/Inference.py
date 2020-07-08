@@ -48,25 +48,27 @@ class Inference:
 
         if self.net.current_context.is_asserted(wft):
             return True
-        elif self._slot_based(wft, ignore):
+        elif self._slot_based(wft, ignore.copy()):
             return True
         return False
 
     def _slot_based(self, wft: Node, ignore):
         """ AKA Wire-Based """
 
+        #Return false for for nodes that have a positive truth value
         notNodes = wft.follow_up_cable(self.net.slots['nor'])
         for node in notNodes:
-            if self._ask_if(node, ignore):
+            if self._ask_if(node, ignore.copy()):
                 return False
 
+        # Return true if a certain number of antecedents are true
         implNodes = wft.follow_up_cable(self.net.slots['cq'])
         for impl in implNodes:
             # First special case, binary operations/implication
             antecedents = impl.antecedents()
             bound = impl.bound
             for ant in antecedents:
-                if self._ask_if(ant, ignore):
+                if self._ask_if(ant, ignore.copy()):
                     bound -= 1
                     if bound < 1:
                         return True
@@ -75,12 +77,12 @@ class Inference:
         for slot_name in SLOT_NAMES:
             andOrNodes.update(wft.follow_up_cable(self.net.slots[slot_name]))
         for andOr in andOrNodes:
-            if self._ask_if(andOr, ignore):
+            if self._ask_if(andOr, ignore.copy()):
                 total_num = 0
                 num_true = 0
                 for constituent in andOr.constituents():
                     total_num += 1
-                    if self._ask_if(constituent, ignore):
+                    if self._ask_if(constituent, ignore.copy()):
                         num_true += 1
                 if andOr.min >= total_num - num_true:
                     return True
@@ -88,5 +90,3 @@ class Inference:
                     return False
 
         return False
-
-        ask("if(wft1, wft1)")
