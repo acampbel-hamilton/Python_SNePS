@@ -3,7 +3,7 @@ from ..SemanticType import SemError
 from ..Node import Node, ImplNode
 from ..Error import SNError
 
-SLOT_NAMES = ['and', 'or', 'nor', 'xor', 'nand', 'andorargs']
+ANDOR_SLOT_NAMES = ['and', 'or', 'nor', 'xor', 'nand', 'andorargs']
 
 class SNIPSError(SNError):
     pass
@@ -23,7 +23,7 @@ class Inference:
         return truth_value
 
     def ask_if(self, wft_str: str):
-        print("Checking if <{}> . . .".format(wft_str), end='\n\t')
+        print("Checking if {} . . .".format(wft_str), end='\n\t')
 
         wft = wft_parser(wft_str, self.net)
         if wft is None:
@@ -41,7 +41,7 @@ class Inference:
         return truth_value
 
     def ask_if_not(self, wft_str: str):
-        print("Checking if <not({})> . . .".format(wft_str), end='\n\t')
+        print("Checking if not({}) . . .".format(wft_str), end='\n\t')
 
         wft = wft_parser('not({})'.format(wft_str), self.net)
         if wft is None:
@@ -64,6 +64,7 @@ class Inference:
             return False
         ignore.add(wft)
 
+        # Check using different inference methods
         if self.net.current_context.is_asserted(wft):
             return True
         elif self._slot_based(wft, ignore.copy()):
@@ -88,8 +89,8 @@ class Inference:
                             return True
 
         andOrNodes = set()
-        for slot_name in SLOT_NAMES:
-            andOrNodes.update(wft.follow_up_cable(self.net.slots[slot_name]))
+        for andor_slot_name in ANDOR_SLOT_NAMES:
+            andOrNodes.update(wft.follow_up_cable(self.net.slots[andor_slot_name]))
         for andOr in andOrNodes:
             if self._ask_if(andOr, ignore.copy()):
                 total_num = 0
@@ -103,5 +104,22 @@ class Inference:
                     return True
                 if num_true >= andOr.max:
                     return False
+
+        # threshNodes = set()
+        # for thresh_slot_name in THRESH_SLOT_NAMES:
+        #     threshNodes.update(wft.follow_up_cable(self.net.slots[threshsslot_name]))
+        # for thresh in threshNodes:
+        #     if self._ask_if(thresh, ignore.copy()):
+        #         total_num = 0
+        #         num_true = 0
+        #         for constituent in thresh.constituents():
+        #             total_num += 1
+        #             if self._ask_if(constituent, ignore.copy()):
+        #                 num_true += 1
+        #         if thresh.min >= total_num - num_true:
+        #             self.net.current_context.add_derived(wft)
+        #             return True
+        #         if num_true >= thresh.max:
+        #             return False
 
         return False
