@@ -207,11 +207,11 @@ class Molecular(Node):
             for i in range(len(self.frame.filler_set)):
                 if i > 0:
                     ret += ", "
-                joined_nodes = ", ".join([node.wft_rep(simplify.copy()) for node in self.frame.filler_set[i].nodes])
+                fillers_str = ", ".join([node.wft_rep(simplify.copy()) for node in self.frame.filler_set[i].nodes])
                 if len(self.frame.filler_set[i].nodes) > 1:
-                    ret += "[{}]".format(joined_nodes)
+                    ret += "[{}]".format(fillers_str)
                 else:
-                    ret += "{}".format(joined_nodes)
+                    ret += "{}".format(fillers_str)
             ret += ")"
         return ret
 
@@ -295,9 +295,26 @@ class ImplNode(Molecular):
             return super().wft_rep()
         else:
             simplify.add(self)
-            return "{}=>([{}], [{}])".format(self.bound, \
-            ", ".join([ant.wft_rep(simplify.copy()) for ant in self.antecedents()]),
-            ", ".join([cq.wft_rep(simplify.copy()) for cq in self.consequents()]))
+            ret = "{}=>(".format(self.bound)
+
+            antecedents = self.antecedents()
+            ant_str = ", ".join([ant.wft_rep(simplify.copy()) for ant in antecedents])
+            if len(antecedents) > 1:
+                ret += "[{}]".format(ant_str)
+            else:
+                ret += "{}".format(ant_str)
+
+            ret += ", "
+
+            consequents = self.consequents()
+            cq_str = ", ".join([cq.wft_rep(simplify.copy()) for cq in consequents])
+            if len(consequents) > 1:
+                ret += "[{}]".format(cq_str)
+            else:
+                ret += "{}".format(cq_str)
+
+            ret += ")"
+            return ret
 
 
 # =====================================
