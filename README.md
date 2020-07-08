@@ -19,7 +19,7 @@
     * This paper clearly explains the relationship between caseframes and slots. Note that slots are called relations in the paper.
 
 6. [&ldquo;Concurrent Resoning in Inference Graphs&rdquo;](https://cse.buffalo.edu/~shapiro/Papers/schsha13e.pdf) by Daniel R. Schlegel and Stuart C. Shapiro
-  Explains much of the induction work done in the SNiPS package (Note that this is not all complete in CSNePS)
+    * Explains much of the induction work done in the SNiPS package (Note that this is not all complete in CSNePS)
 
 ## Section 1: Structure
 
