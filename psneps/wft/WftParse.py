@@ -128,20 +128,14 @@ def p_EveryStmt(p):
     EveryStmt :         Every LParen ArbVar Comma Argument RParen
     '''
     global variables
-    arb = p[3][0]
+    arb = p[3]
 
     # Add restrictions
     for node in p[5].nodes:
         new_restriction(arb, node)
 
-    # Restore variable
-    old_var = p[3][1]
-    if old_var != None:
-        variables[arb.name] = old_var
-    else:
-        del variables[arb.name]
-
     # Store in network
+    variables[arb.name] = arb
     arb.store_in(current_network)
     p[0] = arb
 
@@ -152,7 +146,7 @@ def p_SomeStmt(p):
     SomeStmt :          Some LParen IndVar LParen AtomicNameSet RParen Comma Argument RParen
     '''
     global variables
-    ind = p[3][0]
+    ind = p[3]
 
     # Add dependencies
     for var_name in p[5]:
@@ -166,14 +160,8 @@ def p_SomeStmt(p):
     for node in p[8].nodes:
         new_restriction(ind, node)
 
-    # Restore variable
-    old_var = p[3][1]
-    if old_var != None:
-        variables[ind.name] = old_var
-    else:
-        del variables[ind.name]
-
     # Store in network
+    variables[ind.name] = ind
     ind.store_in(current_network)
     p[0] = ind
 
@@ -182,32 +170,20 @@ def p_ArbVar(p):
     ArbVar :            Identifier
            |            Integer
     '''
-
-    # Backs up old variable by this name
-    global variables
-    old_var = None
-    if p[1] in variables:
-        old_var = variables[p[1]]
-
     # Stores new variable by name
+    global variables
     variables[p[1]] = Arbitrary(p[1], current_network.sem_hierarchy.get_type("Entity"))
-    p[0] = (variables[p[1]], old_var)
+    p[0] = variables[p[1]]
 
 def p_IndVar(p):
     '''
     IndVar :            Identifier
            |            Integer
     '''
-
-    # Backs up old variable by this name
-    global variables
-    old_var = None
-    if p[1] in variables:
-        old_var = variables[p[1]]
-
     # Stores new variable by name
+    global variables
     variables[p[1]] = Indefinite(p[1], current_network.sem_hierarchy.get_type("Entity"))
-    p[0] = (variables[p[1]], old_var)
+    p[0] = variables[p[1]]
 
 # e.g. close(Dog, wft1)
 def p_CloseStmt(p):

@@ -9,11 +9,12 @@ net.define_caseframe("Happy", "Propositional", ["happy_thing"])
 
 
 net.assert_wft("2=>([a, b, c, d], [e, f, g])")
+net.assert_wft("1=>([Has(every(x, Isa(x, Dog)), Food), Has(x, Bone), Has(x, Philosophy)], Happy(x))")
 net.assert_wft("and(b, a)")
 
 snips = Inference(net)
-test = snips.ask_if("g")
-print(test)
+# test = snips.ask_if("g")
+# print(test)
 
 net.export_graph()
 net.print_graph()
