@@ -29,7 +29,7 @@ class Node:
         return set(up_cable.node for up_cable in self.up_cableset if up_cable.slot is slot)
 
     def __str__(self) -> str:
-        return "{} : {}".format(self.name, self.wft_rep())
+        return self.wft_rep()
 
     def wft_rep(self, simplify=None):
         return self.name

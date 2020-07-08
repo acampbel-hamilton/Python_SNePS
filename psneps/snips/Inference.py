@@ -18,6 +18,9 @@ class Inference:
     def __init__(self, net: Network):
         self.net = net
 
+    def _print_wft(self, wft: Node):
+        print("I know that {}! : {}".format(wft.name, wft))
+
     def ask(self, wft_str: str):
         truth_value = self.ask_if(wft_str)
         self.ask_if_not(wft_str)
@@ -36,7 +39,7 @@ class Inference:
 
         truth_value = self._ask_if(wft)
         if truth_value:
-            print("I know that {}".format(wft))
+            self._print_wft(wft)
         else:
             print("Unknown")
         return truth_value
@@ -51,7 +54,7 @@ class Inference:
 
         truth_value = self._ask_if(wft)
         if truth_value:
-            print("I know that {}".format(wft))
+            self._print_wft(wft)
         else:
             print("Unknown")
         return truth_value
