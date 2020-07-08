@@ -295,9 +295,17 @@ class ImplNode(Molecular):
             return super().wft_rep()
         else:
             simplify.add(self)
-            ret = "{}=>(".format(self.bound)
 
             antecedents = self.antecedents()
+            consequents = self.consequents()
+
+            impl_type = self.bound
+            if impl_type == 1:
+                impl_type = "v"
+            elif impl_type == len(antecedents):
+                impl_type = "&"
+            ret = "{}=>(".format(impl_type)
+
             ant_str = ", ".join([ant.wft_rep(simplify.copy()) for ant in antecedents])
             if len(antecedents) > 1:
                 ret += "[{}]".format(ant_str)
@@ -306,7 +314,6 @@ class ImplNode(Molecular):
 
             ret += ", "
 
-            consequents = self.consequents()
             cq_str = ", ".join([cq.wft_rep(simplify.copy()) for cq in consequents])
             if len(consequents) > 1:
                 ret += "[{}]".format(cq_str)
