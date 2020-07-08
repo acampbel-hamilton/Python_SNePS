@@ -13,8 +13,8 @@ net.assert_wft("1=>([Has(every(x, Isa(x, Dog)), Food), Has(x, Bone), Has(x, Phil
 net.assert_wft("and(b, a)")
 
 snips = Inference(net)
-# test = snips.ask_if("g")
-# print(test)
+test = snips.ask_if("g")
+print(test)
 
 net.export_graph()
 net.print_graph()

@@ -37,19 +37,27 @@ class Inference:
             return False
         return self._ask_if(wft)
 
-    def _ask_if(self, wft: Node):
+    def _ask_if(self, wft: Node, ignore=None):
+
+        # Prevents recursion
+        if ignore is None:
+             ignore = set()
+        if wft in ignore:
+            return False
+        ignore.add(wft)
+
         if self.net.current_context.is_asserted(wft):
             return True
-        elif self._slot_based(wft):
+        elif self._slot_based(wft, ignore):
             return True
         return False
 
-    def _slot_based(self, wft: Node):
+    def _slot_based(self, wft: Node, ignore):
         """ AKA Wire-Based """
 
         notNodes = wft.follow_up_cable(self.net.slots['nor'])
         for node in notNodes:
-            if self._ask_if(node):
+            if self._ask_if(node, ignore):
                 return False
 
         implNodes = wft.follow_up_cable(self.net.slots['cq'])
@@ -58,7 +66,7 @@ class Inference:
             antecedents = impl.antecedents()
             bound = impl.bound
             for ant in antecedents:
-                if self._ask_if(ant):
+                if self._ask_if(ant, ignore):
                     bound -= 1
                     if bound < 1:
                         return True
@@ -67,14 +75,14 @@ class Inference:
         for slot_name in SLOT_NAMES:
             andOrNodes.update(wft.follow_up_cable(self.net.slots[slot_name]))
         for andOr in andOrNodes:
-            if self._ask_if(andOr):
+            if self._ask_if(andOr, ignore):
                 total_num = 0
                 num_true = 0
                 for constituent in andOr.constituents():
                     total_num += 1
-                    if self._ask_if(constituent):
+                    if self._ask_if(constituent, ignore):
                         num_true += 1
-                if andOr.min >= total_num - num-true:
+                if andOr.min >= total_num - num_true:
                     return True
                 if num_true >= andOr.max:
                     return False
