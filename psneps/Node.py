@@ -248,7 +248,7 @@ class MinMaxOpNode(Molecular):
                 ret = "{}{{{}, {}}}(".format(self.frame.caseframe.name, self.min, self.max)
             else:
                 name = self.frame.caseframe.name
-                if name == "nor" and len(self.frame.filler_set) == 1:
+                if name == "nor" and len(self.frame.filler_set[0]) == 1:
                     name = "not"
                 ret = "{}(".format(name)
             for i in range(len(self.frame.filler_set)):
