@@ -67,24 +67,19 @@ class Inference:
     def _slot_based(self, wft: Node, ignore):
         """ AKA Wire-Based """
 
-        #Return false for for nodes that have a positive truth value
-        notNodes = wft.follow_up_cable(self.net.slots['nor'])
-        for node in notNodes:
-            if self._ask_if(node, ignore.copy()):
-                return False
-
+        # First special case, binary operations/implication
         # Return true if a certain number of antecedents are true
         implNodes = wft.follow_up_cable(self.net.slots['cq'])
         for impl in implNodes:
-            # First special case, binary operations/implication
-            antecedents = impl.antecedents()
-            bound = impl.bound
-            for ant in antecedents:
-                if self._ask_if(ant, ignore.copy()):
-                    bound -= 1
-                    if bound < 1:
-                        self.net.current_context.add_derived(wft)
-                        return True
+            if self._ask_if(impl, ignore.copy()):
+                antecedents = impl.antecedents()
+                bound = impl.bound
+                for ant in antecedents:
+                    if self._ask_if(ant, ignore.copy()):
+                        bound -= 1
+                        if bound < 1:
+                            self.net.current_context.add_derived(wft)
+                            return True
 
         andOrNodes = set()
         for slot_name in SLOT_NAMES:
