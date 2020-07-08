@@ -119,17 +119,17 @@ class Frame:
     def get_filler_set(self, slot):
         # Returns a set of all fillers that are used with given slot
         slot_fillers = set()
-        for i in range(0, self.caseframe.slots):
+        for i in range(len(self.caseframe.slots)):
             if self.caseframe.slots[i] is slot:
                 slot_fillers.update(self.filler_set[i].nodes)
         return slot_fillers
 
     def __eq__(self, other) -> bool:
-        return self.caseframe == other.caseframe and self.filler_set == other.filler_set
+        return self.caseframe is other.caseframe and self.filler_set == other.filler_set
 
     def __str__(self) -> str:
         ret = self.caseframe.name
-        for i in range(0, len(self.filler_set)):
+        for i in range(len(self.filler_set)):
             ret += self.filler_set[i].to_string(self.caseframe.slots[i].name)
         return ret
 
@@ -147,7 +147,7 @@ class Fillers:
     def to_string(self, slot_name: str) -> str:
         return "\n\t  " + slot_name + ":" + "".join("\n\t    " + str(node) for node in self.nodes)
 
-    def __eq__(self, other: Frame) -> bool:
+    def __eq__(self, other) -> bool:
         return self.nodes == other.nodes
 
 

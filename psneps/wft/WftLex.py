@@ -50,7 +50,9 @@ tokens = (
     'RBrace',
     'Comma',
     'LBracket',
-    'RBracket'
+    'RBracket',
+    'IndNode',
+    'ArbNode'
 )
 
 t_LParen  = r'\('
@@ -65,12 +67,19 @@ t_Comma = r','
 t_DoubImpl = r'<=>'
 t_Impl = r'\d+=>'
 t_AndImpl = r'&=>'
-t_SingImpl = r'(v)?=>'
+
+def t_SingImpl(t):
+    r'v?=>'
+    return t
 
 def t_Identifier(t):
     r'[A-Za-z][A-Za-z0-9_]*'
     if match(r'^wft\d+$', t.value):
         t.type = 'WftNode'
+    if match(r'^arb\d+$', t.value):
+        t.type='ArbNode'
+    if match(r'^ind\d+$', t.value):
+        t.type='IndNode'
     elif t.value == 'if':
         t.type = 'SingImpl'
     elif t.value == 'andor':

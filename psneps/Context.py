@@ -30,14 +30,11 @@ class Context:
     def __eq__(self, other) -> bool:
         return self.name == other.name
 
-    def add_hypotheses(self, nodes):
-        self.hyps.update(nodes)
-
     def add_hypothesis(self, node):
         self.hyps.add(node)
 
-    def is_hypothesis(self, node):
-        return node in self.hyps
+    def add_derived(self, node):
+        self.ders.add(node)
 
     def is_asserted(self, node):
         return node in self.hyps or node in self.ders

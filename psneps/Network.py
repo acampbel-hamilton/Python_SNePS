@@ -57,22 +57,25 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin,
         self.define_slot("closedvar", "Entity")
         self.define_slot("proposition", "Propositional")
 
-        # Rules
+        # AndOr Rules
         self.define_slot('and', 'Proposition', pos_adj='reduce', neg_adj='expand', min=2)
         self.define_slot('or', 'Proposition', pos_adj='reduce', neg_adj='expand', min=2)
         self.define_slot('nor', 'Proposition', pos_adj='reduce', neg_adj='expand', min=1)
-        self.define_slot('andorargs', 'Proposition', pos_adj='none', neg_adj='none', min=2)
-        self.define_slot('threshargs', 'Proposition', pos_adj='none', neg_adj='none', min=2)
-        self.define_slot('thnor', 'Proposition', pos_adj='reduce', neg_adj='reduce', min=1)
-        self.define_slot('ant', 'Proposition', pos_adj='expand', neg_adj='reduce', min=1)
-        self.define_slot('cq', 'Proposition', pos_adj='reduce', neg_adj='expand', min=1)
         self.define_slot('xor', 'Proposition', pos_adj='reduce', neg_adj='expand', min=2)
         self.define_slot('nand', 'Proposition', pos_adj='reduce', neg_adj='expand', min=2)
+        self.define_slot('andorargs', 'Proposition', pos_adj='none', neg_adj='none', min=2)
+
+        # Thresh Rules
         self.define_slot('equivalence', 'Proposition', pos_adj='reduce', neg_adj='expand', min=2)
+        # self.define_slot('thnor', 'Proposition', pos_adj='reduce', neg_adj='reduce', min=1)
+        self.define_slot('threshargs', 'Proposition', pos_adj='none', neg_adj='none', min=2)
+
+        # Impl rules
+        self.define_slot('ant', 'Proposition', pos_adj='expand', neg_adj='reduce', min=1)
+        self.define_slot('cq', 'Proposition', pos_adj='reduce', neg_adj='expand', min=1)
 
         # SNeRE
         self.define_slot("action", "Action", neg_adj='none', pos_adj='none', min=1, max=1)
-
 
         # Condition-Action Rules
         self.define_slot("condition", "Propositional", neg_adj='reduce', pos_adj='expand', min=1)
@@ -87,7 +90,7 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin,
         self.define_caseframe('and', 'Propositional', slot_names=["and"])
         self.define_caseframe('or', 'Propositional', slot_names=["or"])
         self.define_caseframe('nor', 'Propositional', slot_names=["nor"])
-        self.define_caseframe('thnor', 'Propositional', slot_names=["thnor"])
+        # self.define_caseframe('thnor', 'Propositional', slot_names=["thnor"])
         self.define_caseframe('andor', 'Propositional', slot_names=["andorargs"])
         self.define_caseframe('thresh', 'Propositional', slot_names=["threshargs"])
         self.define_caseframe('if', 'Propositional', slot_names=["ant", "cq"])
@@ -99,7 +102,7 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin,
 
         # Aliases
         self.caseframes["nor"].add_alias("not")
-        self.caseframes["thnor"].add_alias("thnot")
+        # self.caseframes["thnor"].add_alias("thnot")
 
         # Turn off enforcing name syntax
         # ==============================

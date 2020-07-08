@@ -29,11 +29,12 @@ def p_Wft(p):
          |              QIdenStmt
          |              AtomicName
          |              Y_WftNode
+         |              VarNode
          |              Function
     '''
     p[0] = p[1]
     global top_wft
-    top_wft = p[1]
+    top_wft = p[0]
 
 # e.g. if(wft1, wft2)
 def p_BinaryOp1(p):
@@ -126,36 +127,42 @@ def p_EveryStmt(p):
     '''
     EveryStmt :         Every LParen ArbVar Comma Argument RParen
     '''
+    global variables
     arb = p[3]
 
+    # Add restrictions
     for node in p[5].nodes:
-        if not node.find_constituent(arb):
-            raise SNePSWftError("PARSING FAILED: {} used as a restriction, but does not reference variable".format(node.name))
-        arb.add_restriction(node)
-        current_network.current_context.add_hypothesis(node)
+        new_restriction(arb, node)
 
-    current_network.nodes[arb.name] = arb
+    # Store in network
+    variables[arb.name] = arb
+    arb.store_in(current_network)
     p[0] = arb
+
 
 # e.g. some{x(y)}(Isa(x, y))
 def p_SomeStmt(p):
     '''
     SomeStmt :          Some LParen IndVar LParen AtomicNameSet RParen Comma Argument RParen
     '''
+    global variables
     ind = p[3]
 
+    # Add dependencies
     for var_name in p[5]:
         if var_name not in variables:
             raise SNePSWftError("Variable \"{}\" does not exist".format(var_name))
+        if variables[var_name] is ind:
+            raise SNePSWftError("Variables cannot depend on themselves".format(var_name))
         ind.add_dependency(variables[var_name])
 
+    # Add restrictions
     for node in p[8].nodes:
-        if not node.find_constituent(ind):
-            raise SNePSWftError("PARSING FAILED: {} used as a restriction, but does not reference variable".format(node.name))
-        ind.add_restriction(node)
-        current_network.current_context.add_hypothesis(node)
+        new_restriction(ind, node)
 
-    current_network.nodes[ind.name] = ind
+    # Store in network
+    variables[ind.name] = ind
+    ind.store_in(current_network)
     p[0] = ind
 
 def p_ArbVar(p):
@@ -163,24 +170,20 @@ def p_ArbVar(p):
     ArbVar :            Identifier
            |            Integer
     '''
-    if p[1] not in variables:
-        variables[p[1]] = Arbitrary(current_network.sem_hierarchy.get_type("Entity"))
+    # Stores new variable by name
+    global variables
+    variables[p[1]] = Arbitrary(p[1], current_network.sem_hierarchy.get_type("Entity"))
     p[0] = variables[p[1]]
-
-    if not isinstance(p[0], Arbitrary):
-        raise SNePSWftError("Variable \"{}\" cannot be reassigned".format(p[3]))
 
 def p_IndVar(p):
     '''
     IndVar :            Identifier
            |            Integer
     '''
-    if p[1] not in variables:
-        variables[p[1]] = Indefinite(current_network.sem_hierarchy.get_type("Entity"))
+    # Stores new variable by name
+    global variables
+    variables[p[1]] = Indefinite(p[1], current_network.sem_hierarchy.get_type("Entity"))
     p[0] = variables[p[1]]
-
-    if not isinstance(p[0], Indefinite):
-        raise SNePSWftError("Variable \"{}\" cannot be reassigned".format(p[3]))
 
 # e.g. close(Dog, wft1)
 def p_CloseStmt(p):
@@ -264,7 +267,6 @@ def p_Arguments(p):
     else:
         p[0] = p[1] + [p[3]]
 
-
 def p_AtomicNameSet(p):
     '''
     AtomicNameSet :
@@ -309,11 +311,26 @@ def p_Y_WftNode(p):
 
     p[0] = current_network.nodes[p[1]]
 
+def p_VarNode1(p):
+    '''
+    VarNode :           IndNode
+    '''
+    if int(p[1][3:]) >= Indefinite.counter:
+        raise SNePSWftError('Invalid ind number. Max number: {}'.format(Indefinite.counter - 1))
+    p[0] = current_network.nodes[p[1]]
+def p_VarNode2(p):
+    '''
+    VarNode :           ArbNode
+    '''
+    if int(p[1][3:]) >= Arbitrary.counter:
+        raise SNePSWftError('Invalid arb number. Max number: {}'.format(Arbitrary.counter - 1))
+    p[0] = current_network.nodes[p[1]]
+
 def p_error(p):
     if p is None:
-        raise SNePSWftError("PARSING FAILED: Term reached end unexpectedly.")
+        raise SNePSWftError("Term reached end unexpectedly.")
     else:
-        raise SNePSWftError("PARSING FAILED: Syntax error on token '" + p.type + "'")
+        raise SNePSWftError("Syntax error on token '" + p.type + "'")
 
 # =====================================
 # ------------ BUILD FNS --------------
@@ -363,6 +380,15 @@ def build_impl(filler_set, bound):
     current_network.nodes[wftNode.name] = wftNode
     return wftNode
 
+def new_restriction(variable, restriction):
+    """ Adds a restriction to a variable if it is valid """
+    if restriction is variable:
+        raise SNePSWftError("Variables cannot be restricted on themselves")
+    if not restriction.has_constituent(variable):
+        raise SNePSWftError("{} used as a restriction, but does not reference variable".format(variable.name))
+    variable.add_restriction(restriction)
+    current_network.current_context.add_hypothesis(restriction)
+
 # =====================================
 # ------------ PARSER FN --------------
 # =====================================
@@ -386,4 +412,6 @@ def wft_parser(wft, network):
         except SNError as e:
             if type(e) is not SNePSWftError:
                 print("PARSING FAILED:\n\t", end='')
+            else:
+                print("PARSING FAILED: ", end='')
             print(e)

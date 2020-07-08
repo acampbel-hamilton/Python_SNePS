@@ -63,6 +63,11 @@ class SemanticHierarchy:
 
         return self.sem_types[type_name]
 
+    def assert_proposition(self, node):
+        """ Casts a given node to be propositional """
+
+        self.respecify(node.name, node.sem_type, self.sem_types['Proposition'])
+
     def respecify(self, term_name: str, current_type: SemanticType, new_type: SemanticType) -> SemanticType:
         """ Given new and old semantic type for a node, returns a computed new type
             e.g. Cassie is a human and a robot, therefore Cassie is a cyborg """
