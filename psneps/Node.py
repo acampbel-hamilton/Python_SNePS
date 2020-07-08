@@ -207,8 +207,11 @@ class Molecular(Node):
             for i in range(len(self.frame.filler_set)):
                 if i > 0:
                     ret += ", "
-                ret += "[{}]".format( \
-                    ", ".join([node.wft_rep(simplify.copy()) for node in self.frame.filler_set[i].nodes]))
+                joined_nodes = ", ".join([node.wft_rep(simplify.copy()) for node in self.frame.filler_set[i].nodes])
+                if len(self.frame.filler_set[i].nodes) > 1:
+                    ret += "[{}]".format(joined_nodes)
+                else:
+                    ret += "{}".format(joined_nodes)
             ret += ")"
         return ret
 
