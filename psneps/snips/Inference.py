@@ -43,12 +43,12 @@ class Inference:
 
         true = self._ask_if(wft)
 
-        ret = set()
+        results = set()
         if true:
-            ret.add(wft)
+            results.add(wft)
         if not complete_ask:
             print("\n\t{{ {} }}".format(wft))
-        return ret
+        return results
 
     def ask_if_not(self, wft_str: str, complete_ask : bool=False):
 
