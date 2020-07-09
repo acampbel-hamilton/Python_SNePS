@@ -31,6 +31,9 @@ class Node:
     def __str__(self) -> str:
         return self.wft_rep()
 
+    def __repr__(self) -> str:
+        return self.wft_rep()
+
     def wft_rep(self, simplify=None) -> str:
         return self.name
 
