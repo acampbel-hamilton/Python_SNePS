@@ -20,7 +20,10 @@ class Node:
         self.up_cableset.add(UpCable(node, slot))
 
     def has_upcable(self, name):
-        return any(up_cable.name == name for up_cable in self.up_cableset)
+        for up_cable in self.up_cableset:
+            if up_cable.name == name:
+                return True
+        return False
 
     def follow_down_cable(self, slot):
         return set()

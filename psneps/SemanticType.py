@@ -26,7 +26,10 @@ class SemanticType:
 
     def subtype(self, potential_child):
         """ Determines if given node is a descendant of self """
-        return any(child is potential_child or child.subtype(potential_child) for child in self.children)
+        for child in self.children:
+            if child is potential_children or child.subtype(potential_child):
+                return True
+        return False
 
     def __str__(self, level=0):
         return self.name
