@@ -15,7 +15,7 @@ net.assert_wft("andor{2,2}(b, a)")
 # net.assert_wft("andor{2, 4}(Isa(Fido, Dog), Isa(Fido, Human))")
 
 snips = Inference(net)
-snips.toggle_debug()
+# snips.toggle_debug()
 snips.ask("e")
 
 net.export_graph()
