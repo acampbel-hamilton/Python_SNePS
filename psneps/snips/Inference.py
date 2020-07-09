@@ -26,43 +26,33 @@ class Inference:
         print("\tI know that {}! : {}".format(wft.name, wft))
 
     def ask(self, wft_str: str):
-        truth_value = self.ask_if(wft_str)
-        self.ask_if_not(wft_str)
-        return truth_value
+        results = self.ask_if(wft_str, complete_ask=True)
+        not_results = self.ask_if_not(wft_str, complete_ask=True)
+        results.update(not_results)
+        print("\n\t{{ {} }}".format(", ".join([str(wft) for wft in results])))
 
-    def ask_if(self, wft_str: str):
+    def ask_if(self, wft_str: str, complete_ask :bool=False):
         print("Checking if {} . . .".format(wft_str))
 
         wft = wft_parser(wft_str, self.net)
-        if wft is None:
-            return False
         try:
             self.net.sem_hierarchy.assert_proposition(wft)
         except SemError as e:
             print(e)
+            return set()
 
-        truth_value = self._ask_if(wft)
-        if truth_value:
-            self._print_wft(wft)
-        else:
-            print("\tUnknown")
-        return truth_value
+        true = self._ask_if(wft)
 
-    def ask_if_not(self, wft_str: str):
-        print("Checking if not({}) . . .".format(wft_str))
+        ret = set()
+        if true:
+            ret.add(wft)
+        if not complete_ask:
+            print("\n\t{{ {} }}".format(wft))
+        return ret
 
-        wft = wft_parser('not({})'.format(wft_str), self.net)
-        if wft is None:
-            print(False)
-            return False
+    def ask_if_not(self, wft_str: str, complete_ask : bool=False):
 
-        truth_value = self._ask_if(wft)
-        if truth_value:
-            if not self.debug:
-                self._print_wft(wft)
-        else:
-            print("\tUnknown")
-        return truth_value
+        return self.ask_if("not({})".format(wft_str), complete_ask)
 
     def _ask_if(self, wft: Node, ignore=None):
 
