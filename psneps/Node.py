@@ -3,6 +3,7 @@ from .Slot import Slot
 from .Error import SNError
 from .SemanticType import SemanticType
 from re import match
+from .vars.UniqueRep import UniqueRep
 
 class NodeError(SNError):
     pass
@@ -13,8 +14,12 @@ class Node:
         self.name = name
         self.up_cableset = set() # References to frames that point to this node
         self.sem_type = sem_type
+        self.unique_rep = None
         if type(self) in (Node, Atomic, Variable, MinMaxOpNode):
             raise NotImplementedError("Bad syntactic type - see syntax tree in wiki")
+
+    def add_unique_rep(self, rep : UniqueRep) -> None:
+        self.unique_rep = rep
 
     def add_up_cable(self, node, slot: Slot) -> None:
         self.up_cableset.add(UpCable(node, slot))

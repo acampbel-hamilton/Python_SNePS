@@ -1,5 +1,6 @@
 from . import WftLex
 from ..vars.ParseVars import get_vars, SNePSVarError
+from ..vars.UniqueRep import UniqueRep
 from .ply import *
 from ..Network import *
 from ..Caseframe import Frame, Fillers
