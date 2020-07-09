@@ -1,9 +1,9 @@
 from . import WftLex
-from .WftVars import get_vars
+from .vars.WftVars import get_vars
 from .ply import *
 from ..Network import *
 from ..Caseframe import Frame, Fillers
-from ..Node import Base, Molecular, Indefinite, Arbitrary, ThreshNode, AndOrNode, ImplNode
+from ..Node import Base, Molecular, ThreshNode, AndOrNode, ImplNode
 from ..Error import SNError
 
 class SNePSWftError(SNError):

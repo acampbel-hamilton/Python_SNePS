@@ -1,9 +1,13 @@
-from . import WftLex
-from .ply import *
-from ..Error import SNError
+from .. import WftLex
+from ..ply import *
+from ...Error import SNError
+from ...Node import Indefinite, Arbitrary
 
 tokens = WftLex.tokens
 variables = {}
+
+class SNePSVarError(SNError):
+    pass
 
 # =====================================
 # -------------- RULES ----------------
@@ -60,7 +64,7 @@ def p_EveryStmt(p):
     global variables
     arb = p[3]
     if not isinstance(arb, Arbitrary):
-        raise SNePSWftError("Variable {} is not arbitrary!".format(arb.name))
+        raise SNePSVarError("Variable {} is not arbitrary!".format(arb.name))
 
     # Add restrictions
     for node in p[5].nodes:
@@ -79,15 +83,15 @@ def p_SomeStmt(p):
     global variables
     ind = p[3]
     if not isinstance(ind, Isndefinite):
-        raise SNePSWftError("Variable {} is not indefinite!".format(ind.name))
+        raise SNePSVarError("Variable {} is not indefinite!".format(ind.name))
 
     # Add dependencies
     # TODO
     for var_name in p[5]:
         if var_name not in variables:
-            raise SNePSWftError("Variable \"{}\" does not exist".format(var_name))
+            raise SNePSVarError("Variable \"{}\" does not exist".format(var_name))
         if variables[var_name] is ind:
-            raise SNePSWftError("Variables cannot depend on themselves".format(var_name))
+            raise SNePSVarError("Variables cannot depend on themselves".format(var_name))
         ind.add_dependency(variables[var_name])
 
     # Add restrictions
@@ -184,10 +188,7 @@ def p_VarNode(p):
     '''
 
 def p_error(p):
-    if p is None:
-        raise SNePSWftError("Term reached end unexpectedly.")
-    else:
-        raise SNePSWftError("Syntax error on token '" + p.type + "'")
+    pass
 
 
 # =====================================
