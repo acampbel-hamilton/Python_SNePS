@@ -17,9 +17,13 @@ Authors: Ben Kallus, John Madigan, and Seamus Wiseman
 class Inference:
     def __init__(self, net: Network):
         self.net = net
+        self.debug = False
+
+    def toggle_debug(self):
+        self.debug = not self.debug
 
     def _print_wft(self, wft: Node):
-        print("I know that {}! : {}".format(wft.name, wft))
+        print("\tI know that {}! : {}".format(wft.name, wft))
 
     def ask(self, wft_str: str):
         truth_value = self.ask_if(wft_str)
@@ -27,7 +31,7 @@ class Inference:
         return truth_value
 
     def ask_if(self, wft_str: str):
-        print("Checking if {} . . .".format(wft_str), end='\n\t')
+        print("Checking if {} . . .".format(wft_str))
 
         wft = wft_parser(wft_str, self.net)
         if wft is None:
@@ -41,11 +45,11 @@ class Inference:
         if truth_value:
             self._print_wft(wft)
         else:
-            print("Unknown")
+            print("\tUnknown")
         return truth_value
 
     def ask_if_not(self, wft_str: str):
-        print("Checking if not({}) . . .".format(wft_str), end='\n\t')
+        print("Checking if not({}) . . .".format(wft_str))
 
         wft = wft_parser('not({})'.format(wft_str), self.net)
         if wft is None:
@@ -53,13 +57,15 @@ class Inference:
             return False
 
         truth_value = self._ask_if(wft)
-        if truth_value:
+        if truth_value and not self.debug:
             self._print_wft(wft)
         else:
-            print("Unknown")
+            print("\tUnknown")
         return truth_value
 
     def _ask_if(self, wft: Node, ignore=None):
+
+        derived = False
 
         # Prevents recursion
         if ignore is None:
@@ -70,14 +76,19 @@ class Inference:
 
         # Check using different inference methods
         if self.net.current_context.is_asserted(wft):
-            return True
+            derived = True
         elif self._slot_based(wft, ignore.copy()):
-            return True
+            derived = True
         elif self._by_binary_op(wft, ignore.copy()):
-            return True
+            derived = True
         elif self._by_nary_op(wft, ignore.copy()):
-            return True
-        return False
+            derived = True
+
+        if derived:
+            self.net.current_context.add_derived(wft)
+            if self.debug:
+                self._print_wft(wft)
+        return derived
 
     def _slot_based(self, wft: Node, ignore):
         """ AKA Wire-Based """
@@ -111,7 +122,6 @@ class Inference:
                     if self._ask_if(ant, ignore.copy()):
                         bound -= 1
                         if bound < 1:
-                            self.net.current_context.add_derived(wft)
                             return True
         return False
 
@@ -125,7 +135,6 @@ class Inference:
             andOrNodes.update(wft.follow_up_cable(self.net.slots[andor_slot_name]))
         for andOr in andOrNodes:
             if self._ask_if(andOr, ignore.copy()) and andOr.min >= andOr.num_constituents():
-                self.net.current_context.add_derived(wft)
                 return True
 
         threshNodes = set()
@@ -133,7 +142,6 @@ class Inference:
             threshNodes.update(wft.follow_up_cable(self.net.slots[thresh_slot_name]))
         for thresh in threshNodes:
             if self._ask_if(thresh, ignore.copy()) and thresh.min >= thresh.num_constituents():
-                self.net.current_context.add_derived(wft)
                 return True
 
         return False
