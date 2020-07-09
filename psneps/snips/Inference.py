@@ -57,8 +57,9 @@ class Inference:
             return False
 
         truth_value = self._ask_if(wft)
-        if truth_value and not self.debug:
-            self._print_wft(wft)
+        if truth_value:
+            if not self.debug:
+                self._print_wft(wft)
         else:
             print("\tUnknown")
         return truth_value
