@@ -1,5 +1,5 @@
 from . import WftLex
-from ..vars.WftVars import get_vars
+from ..vars.WftVars import get_vars, SNePSVarError
 from .ply import *
 from ..Network import *
 from ..Caseframe import Frame, Fillers
@@ -432,7 +432,7 @@ def wft_parser(wft : str, network):
 
         # Error messages
         except SNError as e:
-            if type(e) is not SNePSWftError:
+            if type(e) is not SNePSWftError and type(e) is not SNePSVarError:
                 print("PARSING FAILED:\n\t", end='')
             else:
                 print("PARSING FAILED: ", end='')

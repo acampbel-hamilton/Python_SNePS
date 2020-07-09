@@ -170,19 +170,10 @@ def get_vars(wft : str, network):
     current_network = network
     yacc.yacc()
 
-    try:
-        yacc.parse(wft)
+    yacc.parse(wft)
 
-        # Reset and return variables
-        global variables
-        ret_variables = variables
-        variables = {}
-        return ret_variables
-
-    # Supress errors
-    except SNError as e:
-        if type(e) is not SNePSVarError:
-            print("PARSING FAILED:\n\t", end='')
-        else:
-            print("PARSING FAILED: ", end='')
-        print(e)
+    # Reset and return variables
+    global variables
+    ret_variables = variables
+    variables = {}
+    return ret_variables
