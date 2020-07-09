@@ -127,7 +127,7 @@ def p_EveryStmt(p):
     new_var = Arbitrary(p[3], current_network.sem_hierarchy.get_type('Entity'))
     if p[3] in variables and variables[p[3]] != new_var:
         raise SNePSVarError("Variable with name {} defined twice in same context!".format(new_var.name))
-
+    variables[p[3]] = new_var
 
 def p_SomeStmt(p):
     '''
@@ -138,6 +138,7 @@ def p_SomeStmt(p):
     new_var = Indefinite(p[3], current_network.sem_hierarchy.get_type('Entity'))
     if p[3] in variables and variables[p[3]] != new_var:
         raise SNePSVarError("Variable with name {} defined twice in same context!".format(new_var.name))
+    variables[p[3]] = new_var
 
 def p_Var(p):
     '''
