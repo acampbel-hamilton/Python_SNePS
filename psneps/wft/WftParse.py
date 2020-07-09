@@ -125,17 +125,18 @@ def p_MinMaxOp(p):
 # e.g. every{x}(Isa(x, Dog))
 def p_EveryStmt(p):
     '''
-    EveryStmt :         Every LParen ArbVar Comma Argument RParen
+    EveryStmt :         Every LParen Var Comma Argument RParen
     '''
     global variables
     arb = p[3]
+    if not isinstance(arb, Arbitrary):
+        raise SNePSWftError("Variable {} is not arbitrary!".format(arb.name))
 
     # Add restrictions
     for node in p[5].nodes:
         new_restriction(arb, node)
 
     # Store in network
-    variables[arb.name] = arb
     arb.store_in(current_network)
     p[0] = arb
 
@@ -143,12 +144,15 @@ def p_EveryStmt(p):
 # e.g. some{x(y)}(Isa(x, y))
 def p_SomeStmt(p):
     '''
-    SomeStmt :          Some LParen IndVar LParen AtomicNameSet RParen Comma Argument RParen
+    SomeStmt :          Some LParen Var LParen AtomicNameSet RParen Comma Argument RParen
     '''
     global variables
     ind = p[3]
+    if not isinstance(ind, Isndefinite):
+        raise SNePSWftError("Variable {} is not indefinite!".format(ind.name))
 
     # Add dependencies
+    # TODO
     for var_name in p[5]:
         if var_name not in variables:
             raise SNePSWftError("Variable \"{}\" does not exist".format(var_name))
@@ -161,28 +165,16 @@ def p_SomeStmt(p):
         new_restriction(ind, node)
 
     # Store in network
-    variables[ind.name] = ind
     ind.store_in(current_network)
     p[0] = ind
 
-def p_ArbVar(p):
+def p_Var(p):
     '''
-    ArbVar :            Identifier
+    Var :                Identifier
            |            Integer
     '''
-    # Stores new variable by name
+    # Grabs from variable dictionary
     global variables
-    variables[p[1]] = Arbitrary(p[1], current_network.sem_hierarchy.get_type("Entity"))
-    p[0] = variables[p[1]]
-
-def p_IndVar(p):
-    '''
-    IndVar :            Identifier
-           |            Integer
-    '''
-    # Stores new variable by name
-    global variables
-    variables[p[1]] = Indefinite(p[1], current_network.sem_hierarchy.get_type("Entity"))
     p[0] = variables[p[1]]
 
 # e.g. close(Dog, wft1)

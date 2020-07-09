@@ -67,7 +67,6 @@ class Variable(Atomic):
     """ A variable term ranging over a restricted domain. """
     def __init__(self, name: str, sem_type: SemanticType) -> None:
         super().__init__(name, sem_type) # This needs a semantic types. This will be an error.
-        self.char_name = name
         self.restriction_set = set()
 
     def add_restriction(self, restriction) -> None: # These need type definitions, since we don't know what restrictions/dependencies are.
@@ -83,10 +82,10 @@ class Variable(Atomic):
         self.restriction_set = temp_restriction_set
 
     def wft_rep(self, simplify=None) -> str:
-        return self.char_name
+        return super().wft_rep()
 
 class Arbitrary(Variable):
-    """ An arbitaray individual. """
+    """ An arbitrary individual. """
     counter = 1
     def __init__(self, name, sem_type: SemanticType) -> None:
         super().__init__(name, sem_type) # These need semantic types. This will be an error.
@@ -104,7 +103,7 @@ class Arbitrary(Variable):
         else:
             simplify.add(self)
             return "every({}, {})".format( \
-                self.char_name, \
+                self.name, \
                 ", ".join([restriction.wft_rep(simplify.copy()) for restriction in self.restriction_set]))
 
 class Indefinite(Variable):
@@ -136,11 +135,11 @@ class Indefinite(Variable):
         if simplify is None:
             simplify = set()
         if self in simplify:
-            return super().wft_rep(simplify)
+            return super().wft_rep()
         else:
             simplify.add(self)
             return "some({}, ({}) {})".format( \
-                self.char_name, \
+                self.name, \
                 ", ".join([dependency.wft_rep(simplify.copy()) for dependency in self.dependency_set]), \
                 ", ".join([restriction.wft_rep(simplify.copy()) for restriction in self.restriction_set]))
 
