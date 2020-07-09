@@ -1,5 +1,5 @@
 from . import WftLex
-from .vars.WftVars import get_vars
+from ..vars.WftVars import get_vars
 from .ply import *
 from ..Network import *
 from ..Caseframe import Frame, Fillers

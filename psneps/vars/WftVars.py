@@ -1,7 +1,7 @@
-from .. import WftLex
-from ..ply import *
-from ...Error import SNError
-from ...Node import Indefinite, Arbitrary
+from . import WftLex
+from .ply import *
+from ..Error import SNError
+from ..Node import Indefinite, Arbitrary
 
 current_network = None
 tokens = WftLex.tokens
