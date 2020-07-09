@@ -29,7 +29,7 @@ class Inference:
         results = self.ask_if(wft_str, complete_ask=True)
         not_results = self.ask_if_not(wft_str, complete_ask=True)
         results.update(not_results)
-        print(results, "!", sep='')
+        print("{}!") if results == set() else print(results, "!", sep='')
         return results
 
     def ask_if(self, wft_str: str, complete_ask :bool=False):
@@ -48,7 +48,7 @@ class Inference:
         if true:
             results.add(wft)
         if not complete_ask:
-            print(results, "!", sep='')
+            print("{}!") if results == set() else print(results, "!", sep='')
         return results
 
     def ask_if_not(self, wft_str: str, complete_ask : bool=False):
