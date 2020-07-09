@@ -1,4 +1,5 @@
 from . import WftLex
+from .WftVars import get_vars
 from .ply import *
 from ..Network import *
 from ..Caseframe import Frame, Fillers
@@ -131,15 +132,7 @@ def p_EveryStmt(p):
     arb = p[3]
     if not isinstance(arb, Arbitrary):
         raise SNePSWftError("Variable {} is not arbitrary!".format(arb.name))
-
-    # Add restrictions
-    for node in p[5].nodes:
-        new_restriction(arb, node)
-
-    # Store in network
-    arb.store_in(current_network)
     p[0] = arb
-
 
 # e.g. some{x(y)}(Isa(x, y))
 def p_SomeStmt(p):
@@ -150,28 +143,12 @@ def p_SomeStmt(p):
     ind = p[3]
     if not isinstance(ind, Isndefinite):
         raise SNePSWftError("Variable {} is not indefinite!".format(ind.name))
-
-    # Add dependencies
-    # TODO
-    for var_name in p[5]:
-        if var_name not in variables:
-            raise SNePSWftError("Variable \"{}\" does not exist".format(var_name))
-        if variables[var_name] is ind:
-            raise SNePSWftError("Variables cannot depend on themselves".format(var_name))
-        ind.add_dependency(variables[var_name])
-
-    # Add restrictions
-    for node in p[8].nodes:
-        new_restriction(ind, node)
-
-    # Store in network
-    ind.store_in(current_network)
     p[0] = ind
 
 def p_Var(p):
     '''
-    Var :                Identifier
-           |            Integer
+    Var :               Identifier
+        |               Integer
     '''
     # Grabs from variable dictionary
     global variables
@@ -409,22 +386,28 @@ def new_restriction(variable, restriction):
 # ------------ PARSER FN --------------
 # =====================================
 
-def wft_parser(wft, network):
+def wft_parser(wft : str, network):
     global current_network
     current_network = network
+
     yacc.yacc()
     if wft != '':
         try:
+            # Store variables in array indexed by names
+            global variables
+            variables = get_vars(wft, network)
+
+            # Parse and store wft created by string (as opposed to sub-wfts it might create)
             yacc.parse(wft)
             global top_wft
-            global variables
-
             ret_top_wft = top_wft
 
+            # Reset globals and return the wft
             top_wft = None
             variables = {}
-
             return (ret_top_wft)
+
+        # Error messages
         except SNError as e:
             if type(e) is not SNePSWftError:
                 print("PARSING FAILED:\n\t", end='')
