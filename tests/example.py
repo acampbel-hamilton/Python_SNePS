@@ -13,9 +13,9 @@ net.assert_wft("2=>([a, b, c, d], [not(e), f, g])")
 net.assert_wft("andor{2,2}(b, a)")
 # net.assert_wft("4=>([a, b, c, every(x, Isa(x, Man))], [nor(e), f, g])")
 # net.assert_wft("andor{2, 4}(Isa(Fido, Dog), Isa(Fido, Human))")
-
+net.assert_wft("e")
 snips = Inference(net)
-# snips.toggle_debug()
+snips.toggle_debug()
 snips.ask("e")
 
 net.export_graph()
