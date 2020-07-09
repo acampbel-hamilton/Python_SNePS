@@ -110,7 +110,7 @@ def p_MinMaxOp(p):
              |          Thresh LBrace Integer Comma Integer RBrace LParen Wfts RParen
              |          Thresh LBrace Integer RBrace LParen Wfts RParen
     '''
-    min = p[3]
+    min = int(p[3])
     if len(p) == 8:
         filler_set = [Fillers(p[6])]
         max = len(p[6]) - 1
@@ -349,6 +349,14 @@ def build_molecular(caseframe_name, filler_set):
 
 def build_thresh (caseframe_name, filler_set, min, max):
     """ Builds and returns (or simply returns) a thresh node from given parameters """
+
+    # Simplifies caseframes - See slide 439:
+    # https://cse.buffalo.edu/~shapiro/Courses/CSE563/Slides/krrSlides.pdf
+    if caseframe_name == 'thresh':
+        num_nodes = len(filler_set[0])
+        if min == 1 and max == num_nodes - 1:
+            caseframe_name = 'iff'
+
     caseframe = current_network.find_caseframe(caseframe_name)
     frame = Frame(caseframe, filler_set)
     for node in current_network.nodes.values():
@@ -360,6 +368,22 @@ def build_thresh (caseframe_name, filler_set, min, max):
 
 def build_andor (caseframe_name, filler_set, min, max):
     """ Builds and returns (or simply returns) an andor node from given parameters """
+
+    # Simplifies caseframes - See slide 437:
+    # https://cse.buffalo.edu/~shapiro/Courses/CSE563/Slides/krrSlides.pdf
+    if caseframe_name == 'andor':
+        num_nodes = len(filler_set[0])
+        if min == max == num_nodes:
+            caseframe_name = 'and'
+        elif min == 1 and max == num_nodes:
+            caseframe_name = 'or'
+        elif min == 0 and max == num_nodes - 1:
+            caseframe_name = 'nand'
+        elif min == max == 0:
+            caseframe_name = 'nor'
+        elif min == max == 1:
+            caseframe_name = 'xor'
+
     caseframe = current_network.find_caseframe(caseframe_name)
     frame = Frame(caseframe, filler_set)
     for node in current_network.nodes.values():
