@@ -2,6 +2,7 @@ from . import WftLex
 from .ply import *
 from ..Error import SNError
 
+tokens = WftLex.tokens
 variables = {}
 
 # =====================================
