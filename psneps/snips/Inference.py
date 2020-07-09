@@ -30,6 +30,7 @@ class Inference:
         not_results = self.ask_if_not(wft_str, complete_ask=True)
         results.update(not_results)
         print("\n{{{}}}!".format(", ".join([str(wft) for wft in results])))
+        return results
 
     def ask_if(self, wft_str: str, complete_ask :bool=False):
         print("Checking if {} . . .".format(wft_str))
