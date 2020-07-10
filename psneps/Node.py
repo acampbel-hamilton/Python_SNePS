@@ -204,10 +204,10 @@ class Molecular(Node):
 
     def new_unique_rep(self) -> UniqueRep:
         children = []
-        for fillers in self.frame.filler_set():
+        for fillers in self.frame.filler_set:
             child = []
             for filler in fillers.nodes:
-                child.append(filler.unique_rep())
+                child.append(filler.get_unique_rep())
             children.append(child)
 
         return UniqueRep(caseframe_name=self.frame.caseframe.name, children=children)
@@ -257,10 +257,10 @@ class MinMaxOpNode(Molecular):
 
     def new_unique_rep(self) -> UniqueRep:
         children = []
-        for fillers in self.frame.filler_set():
+        for fillers in self.frame.filler_set:
             child = []
             for filler in fillers.nodes:
-                child.append(filler.unique_rep())
+                child.append(filler.get_unique_rep())
             children.append(child)
 
         return UniqueRep(caseframe_name=self.frame.caseframe.name, children=children, min=self.min, max=self.max)

@@ -373,6 +373,9 @@ def build_thresh (caseframe_name, filler_set, min, max):
 def build_andor (caseframe_name, filler_set, min, max):
     """ Builds and returns (or simply returns) an andor node from given parameters """
 
+    if caseframe_name == 'and':
+        print(filler_set)
+
     # Simplifies caseframes - See slide 437:
     # https://cse.buffalo.edu/~shapiro/Courses/CSE563/Slides/krrSlides.pdf
     if caseframe_name == 'andor':
