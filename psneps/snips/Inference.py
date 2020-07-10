@@ -36,6 +36,8 @@ class Inference:
         print("Checking if {} . . .".format(wft_str))
 
         wft = wft_parser(wft_str, self.net)
+        if wft is None:
+            return set()
         try:
             self.net.sem_hierarchy.assert_proposition(wft)
         except SemError as e:
