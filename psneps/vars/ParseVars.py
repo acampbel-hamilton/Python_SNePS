@@ -8,6 +8,7 @@ from ..Node import Base, Molecular, Indefinite, Arbitrary, ThreshNode, AndOrNode
 current_network = None
 tokens = WftLex.tokens
 variables = {}
+var_names = {}
 
 class SNePSVarError(SNError):
     pass
@@ -226,13 +227,6 @@ def p_AtomicNames(p):
     else:
         p[0] = p[1] + [p[3]]
 
-def p_AtomicName(p):
-    '''
-    AtomicName :        Identifier
-               |        Integer
-    '''
-    p[0] = UniqueRep(name=p[1])
-
 def p_VarNode(p):
     '''
     VarNode :           IndNode
@@ -240,7 +234,7 @@ def p_VarNode(p):
     '''
     if int(p[1][3:]) >= Arbitrary.counter:
         raise SNePSVarError('Invalid arb number. Max number: {}'.format(Arbitrary.counter - 1))
-    p[0] = current_network.nodes[p[1]].unique_rep()
+    p[0] = current_network.nodes[p[1]].get_unique_rep()
 
 def p_Y_WftNode(p):
     '''
@@ -248,7 +242,7 @@ def p_Y_WftNode(p):
     '''
     if int(p[1][3:]) >= Molecular.counter:
         raise SNePSVarError('Invalid wft number. Max number: {}'.format(Molecular.counter - 1))
-    p[0] = current_network.nodes[p[1]].unique_rep()
+    p[0] = current_network.nodes[p[1]].get_unique_rep()
 
 # =====================================
 # ------------- VAR RULES -------------
@@ -256,11 +250,13 @@ def p_Y_WftNode(p):
 
 def p_EveryStmt(p):
     '''
-    EveryStmt :         Every LParen Var Comma Argument RParen
+    EveryStmt :         Every LParen ArbVar Comma Argument RParen
     '''
     global variables
     global current_network
-    new_var = Arbitrary(p[3], current_network.sem_hierarchy.get_type('Entity'))
+
+    new_var = p[3][1]
+    temp_var_name = p[3][0]
 
     for restriction in p[5]:
         new_var.var_rep.add_restriction(restriction)
@@ -271,18 +267,20 @@ def p_EveryStmt(p):
         if isinstance(node, Arbitrary) and node == new_var:
             new_var = node
 
-    if p[3] in variables and variables[p[3]] != new_var:
+    if temp_var_name in variables and variables[temp_var_name] != new_var:
         raise SNePSVarError("Variable with name {} defined twice in same context!".format(new_var.name))
 
-    variables[p[3]] = new_var
+    variables[temp_var_name] = new_var
 
 def p_SomeStmt(p):
     '''
-    SomeStmt :          Some LParen Var LParen AtomicNameSet RParen Comma Argument RParen
+    SomeStmt :          Some LParen IndVar LParen AtomicNameSet RParen Comma Argument RParen
     '''
     global variables
     global current_network
-    new_var = Indefinite(p[3], current_network.sem_hierarchy.get_type('Entity'))
+
+    new_var = p[3][1]
+    temp_var_name = p[3][0]
 
     for dependency in p[5]:
         new_var.var_rep.add_dependency(dependency)
@@ -294,23 +292,50 @@ def p_SomeStmt(p):
         if isinstance(node, Indefinite) and node == new_var:
             new_var = node
 
-    if p[3] in variables and variables[p[3]] != new_var:
+    if temp_var_name in variables and variables[temp_var_name] != new_var:
         raise SNePSVarError("Variable with name {} defined twice in same context!".format(new_var.name))
 
-    variables[p[3]] = new_var
+    variables[temp_var_name] = new_var
 
-def p_Var(p):
+def p_ArbVar(p):
     '''
-    Var :               Identifier
-        |               Integer
+    ArbVar :            Identifier
+           |            Integer
     '''
-    p[0] = p[1]
+    global current_network
+    global var_names
+    new_var = Arbitrary(p[1], current_network.sem_hierarchy.get_type('Entity'))
+    var_names[p[1]] = new_var.get_unique_rep()
+    p[0] = (p[1], new_var)
+
+
+def p_IndVar(p):
+    '''
+    IndVar :            Identifier
+           |            Integer
+    '''
+    global current_network
+    global var_names
+    new_var = Indefinite(p[1], current_network.sem_hierarchy.get_type('Entity'))
+    var_names[p[1]] = new_var.get_unique_rep()
+    p[0] = (p[1], new_var)
 
 def p_error(p):
     if p is None:
         raise SNePSVarError("Term reached end unexpectedly.")
     else:
         raise SNePSVarError("Syntax error on token '" + p.type + "'")
+
+def p_AtomicName(p):
+    '''
+    AtomicName :        Identifier
+               |        Integer
+    '''
+    global var_names
+    if p[1] in var_names:
+        p[0] = var_names[p[1]]
+    else:
+        p[0] = UniqueRep(name=p[1])
 
 # =====================================
 # ------------- GET FNS ---------------

@@ -45,7 +45,7 @@ class Node:
     def has_constituent(self, constituent, visited=None):
         return self is constituent
 
-    def unique_rep(self) -> UniqueRep:
+    def get_unique_rep(self) -> UniqueRep:
         if self.unique_rep == None:
             self.unique_rep = self.new_unique_rep()
         return self.unique_rep
