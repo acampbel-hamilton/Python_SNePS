@@ -85,6 +85,8 @@ class Variable(Atomic):
         return super().wft_rep()
 
     def __eq__(self, other) -> bool:
+        print(self.var_rep)
+        print(other.var_rep)
         return self.var_rep == other.var_rep
 
     def __hash__(self):

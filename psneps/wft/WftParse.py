@@ -134,9 +134,9 @@ def p_EveryStmt(p):
     if not isinstance(arb, Arbitrary):
         raise SNePSVarError("Variable {} is not arbefinite!".format(arb.name))
 
-    # # Add restrictions
-    # for node in p[8].nodes:
-    #     new_restriction(arb, node)
+    # Add restrictions
+    for node in p[5].nodes:
+        new_restriction(arb, node)
 
     # Store in network
     arb.store_in(current_network)
@@ -152,18 +152,17 @@ def p_SomeStmt(p):
     if not isinstance(ind, Indefinite):
         raise SNePSVarError("Variable {} is not indefinite!".format(ind.name))
 
-    # # Add dependencies
-    # # TODO
-    # for var_name in p[5]:
-    #     if var_name not in variables:
-    #         raise SNePSVarError("Variable \"{}\" does not exist".format(var_name))
-    #     if variables[var_name] is ind:
-    #         raise SNePSVarError("Variables cannot depend on themselves".format(var_name))
-    #     ind.add_dependency(variables[var_name])
-    #
-    # # Add restrictions
-    # for node in p[8].nodes:
-    #     new_restriction(ind, node)
+    # Add dependencies
+    for var_name in p[5]:
+        if var_name not in variables:
+            raise SNePSVarError("Variable \"{}\" does not exist".format(var_name))
+        if variables[var_name] is ind:
+            raise SNePSVarError("Variables cannot depend on themselves".format(var_name))
+        ind.add_dependency(variables[var_name])
+
+    # Add restrictions
+    for node in p[8].nodes:
+        new_restriction(ind, node)
 
     # Store in network
     ind.store_in(current_network)
