@@ -1,7 +1,8 @@
 class UniqueRep:
     """ Unique set-like representation for variables """
-    def __init__(self, name=None, min=None, max=None, bound=None, children=None):
+    def __init__(self, name=None, caseframe_name=None, min=None, max=None, bound=None, children=None):
         self.name = name
+        self.caseframe_name = caseframe_name
         self.min = min
         self.max = max
         self.bound = bound
@@ -10,6 +11,7 @@ class UniqueRep:
 
     def equivalent_structure(self, other, var_name : str):
         return (self.name == other.name or self.name == var_name) and \
+               self.caseframe_name == other.caseframe_name and \
                self.min == other.min and \
                self.max == other.max and \
                self.bound == other.bound and \

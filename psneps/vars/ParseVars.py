@@ -143,6 +143,7 @@ def p_SomeStmt(p):
     '''
     SomeStmt :          Some LParen Var LParen AtomicNameSet RParen Comma Argument RParen
     '''
+    global in_var_stmt
     global variables
     global current_network
     new_var = Indefinite(p[3], current_network.sem_hierarchy.get_type('Entity'))
@@ -156,6 +157,7 @@ def p_Var(p):
     Var :               Identifier
         |               Integer
     '''
+    global in_var_stmt
     in_var_stmt += 1
     p[0] = p[1]
 
@@ -166,74 +168,68 @@ def p_error(p):
 # ------------- GET FNS ---------------
 # =====================================
 
-def get_molecular(caseframe_name, filler_set):
-    """ Returns a UniqueRep object corresponding to the node """
-    caseframe = current_network.find_caseframe(caseframe_name)
-    name = caseframe.name
-    frame = Frame(caseframe, filler_set)
-    for node in current_network.nodes.values():
-        if node.has_frame(frame):
-            return node
-    wftNode = Molecular(frame)
-    current_network.nodes[wftNode.name] = wftNode
-    return wftNode
-
-def get_thresh (caseframe_name, filler_set, min, max):
-    """ Builds and returns (or simply returns) a thresh node from given parameters """
-
-    # Simplifies caseframes - See slide 439:
-    # https://cse.buffalo.edu/~shapiro/Courses/CSE563/Slides/krrSlides.pdf
-    if caseframe_name == 'thresh':
-        num_nodes = len(filler_set[0])
-        if min == 1 and max == num_nodes - 1:
-            caseframe_name = 'iff'
-
-    caseframe = current_network.find_caseframe(caseframe_name)
-    frame = Frame(caseframe, filler_set)
-    for node in current_network.nodes.values():
-        if node.has_frame(frame) and node.has_min_max(min, max):
-            return node
-    wftNode = ThreshNode(frame, min, max)
-    current_network.nodes[wftNode.name] = wftNode
-    return wftNode
-
-def get_andor (caseframe_name, filler_set, min, max):
-    """ Builds and returns (or simply returns) an andor node from given parameters """
-
-    # Simplifies caseframes - See slide 437:
-    # https://cse.buffalo.edu/~shapiro/Courses/CSE563/Slides/krrSlides.pdf
-    if caseframe_name == 'andor':
-        num_nodes = len(filler_set[0])
-        if min == max == num_nodes:
-            caseframe_name = 'and'
-        elif min == 1 and max == num_nodes:
-            caseframe_name = 'or'
-        elif min == 0 and max == num_nodes - 1:
-            caseframe_name = 'nand'
-        elif min == max == 0:
-            caseframe_name = 'nor'
-        elif min == max == 1:
-            caseframe_name = 'xor'
-
-    caseframe = current_network.find_caseframe(caseframe_name)
-    frame = Frame(caseframe, filler_set)
-    for node in current_network.nodes.values():
-        if node.has_frame(frame) and node.has_min_max(min, max):
-            return node
-    wftNode = AndOrNode(frame, min, max)
-    current_network.nodes[wftNode.name] = wftNode
-    return wftNode
-
-def get_impl(filler_set, bound):
-    """ Builds and returns (or simply returns) an impl node from given parameters """
-    caseframe = current_network.find_caseframe("if")
-    frame = Frame(caseframe, filler_set)
-    for node in current_network.nodes.values():
-        if node.has_frame(frame) and node.has_bound(bound):
-            return node
-    wftNode = ImplNode(frame, bound)
-    current_network.nodes[wftNode.name] = wftNode
-    return wftNode
+# def rep_molecular(caseframe_name, children_reps):
+#     """ Returns a UniqueRep object corresponding to the node """
+#     caseframe = current_network.find_caseframe(caseframe_name)
+#     name = caseframe.name
+#     (caseframe_name=caseframe.name, children=children_reps)
+#
+# def rep_thresh (caseframe_name, filler_set, min, max):
+#     """ Returns a UniqueRep object corresponding to the node """
+#
+#     # Simplifies caseframes - See slide 439:
+#     # https://cse.buffalo.edu/~shapiro/Courses/CSE563/Slides/krrSlides.pdf
+#     if caseframe_name == 'thresh':
+#         num_nodes = len(filler_set[0])
+#         if min == 1 and max == num_nodes - 1:
+#             caseframe_name = 'iff'
+#
+#     caseframe = current_network.find_caseframe(caseframe_name)
+#     frame = Frame(caseframe, filler_set)
+#     for node in current_network.nodes.values():
+#         if node.has_frame(frame) and node.has_min_max(min, max):
+#             return node
+#     wftNode = ThreshNode(frame, min, max)
+#     current_network.nodes[wftNode.name] = wftNode
+#     return wftNode
+#
+# def rep_andor (caseframe_name, filler_set, min, max):
+#     """ Returns a UniqueRep object corresponding to the node """
+#
+#     # Simplifies caseframes - See slide 437:
+#     # https://cse.buffalo.edu/~shapiro/Courses/CSE563/Slides/krrSlides.pdf
+#     if caseframe_name == 'andor':
+#         num_nodes = len(filler_set[0])
+#         if min == max == num_nodes:
+#             caseframe_name = 'and'
+#         elif min == 1 and max == num_nodes:
+#             caseframe_name = 'or'
+#         elif min == 0 and max == num_nodes - 1:
+#             caseframe_name = 'nand'
+#         elif min == max == 0:
+#             caseframe_name = 'nor'
+#         elif min == max == 1:
+#             caseframe_name = 'xor'
+#
+#     caseframe = current_network.find_caseframe(caseframe_name)
+#     frame = Frame(caseframe, filler_set)
+#     for node in current_network.nodes.values():
+#         if node.has_frame(frame) and node.has_min_max(min, max):
+#             return node
+#     wftNode = AndOrNode(frame, min, max)
+#     current_network.nodes[wftNode.name] = wftNode
+#     return wftNode
+#
+# def rep_impl(filler_set, bound):
+#     """ Returns a UniqueRep object corresponding to the node """
+#     caseframe = current_network.find_caseframe("if")
+#     frame = Frame(caseframe, filler_set)
+#     for node in current_network.nodes.values():
+#         if node.has_frame(frame) and node.has_bound(bound):
+#             return node
+#     wftNode = ImplNode(frame, bound)
+#     current_network.nodes[wftNode.name] = wftNode
+#     return wftNode
 
 # =====================================
 # ----------- VARIABLE FN -------------
