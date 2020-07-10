@@ -261,8 +261,6 @@ def p_EveryStmt(p):
     for restriction in p[5]:
         new_var.var_rep.add_restriction(restriction)
 
-    print(new_var.var_rep)
-
     for node in current_network.nodes:
         if isinstance(node, Arbitrary) and node == new_var:
             new_var = node

@@ -10,12 +10,22 @@ class UniqueRep:
         self.children = [] if children is None else children
 
     def equivalent_structure(self, other, self_name : str, other_name : str):
-        return (self.name == other.name or (self.name == self_name and other.name == other_name)) and \
-               self.caseframe_name == other.caseframe_name and \
-               self.min == other.min and \
-               self.max == other.max and \
-               self.bound == other.bound and \
-               self.children == other.children
+        if not (self.name == other.name or (self.name == self_name and other.name == other_name)) and \
+            self.caseframe_name == other.caseframe_name and \
+            self.min == other.min and \
+            self.max == other.max and \
+            self.bound == other.bound:
+                return False
+
+        try:
+            for i in range(len(self.children)):
+                for j in range(len(self.children[i])):
+                    if not self.children[i][j].equivalent_structure(other.children[i][j], self_name, other_name):
+                        return False
+        except Exception:
+            return False
+
+        return True
 
     def includes_var(var_name : str):
         if name == var_name:
