@@ -134,6 +134,12 @@ def p_EveryStmt(p):
     if not isinstance(arb, Arbitrary):
         raise SNePSVarError("Variable {} is not arbefinite!".format(arb.name))
 
+    # If this node already exists, return it
+    for node in current_network.nodes.values():
+        if isinstance(node, Arbitrary) and node == arb:
+            p[0] = node
+            return
+
     # Add restrictions
     for node in p[5].nodes:
         new_restriction(arb, node)
@@ -151,6 +157,12 @@ def p_SomeStmt(p):
     ind = p[3]
     if not isinstance(ind, Indefinite):
         raise SNePSVarError("Variable {} is not indefinite!".format(ind.name))
+
+    # If this node already exists, return it
+    for node in current_network.nodes.values():
+        if isinstance(node, Indefinite) and node == ind:
+            p[0] = node
+            return
 
     # Add dependencies
     for var_name in p[5]:

@@ -286,7 +286,7 @@ def p_SomeStmt(p):
     for restriction in p[8]:
         new_var.var_rep.add_restriction(restriction)
 
-    for node in current_network.nodes:
+    for node in current_network.nodes.values():
         if isinstance(node, Indefinite) and node == new_var:
             new_var = node
 
