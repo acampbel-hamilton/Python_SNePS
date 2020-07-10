@@ -1,19 +1,15 @@
 class UniqueRep:
     """ Unique set-like representation for variables """
-    var_num = 1
     def __init__(self, name=None, min=None, max=None, bound=None, children=None):
         self.name = name
-        if self.name == '_':
-            self.name = '_' + UniqueRep.var_num
-            UniqueRep.var_num += 1
         self.min = min
         self.max = max
         self.bound = bound
         # Children should be an ordered list of UniqueRep objects
         self.children = [] if children is None else children
 
-    def __eq__(self, other):
-        return self.name == other.name and \
+    def equivalent_structure(self, other, var_name : str):
+        return (self.name == other.name or self.name == var_name) and \
                self.min == other.min and \
                self.max == other.max and \
                self.bound == other.bound and \
@@ -27,22 +23,52 @@ class UniqueRep:
                 return True
         return False
 
-    def __hash__(self):
-        return hash((self.name, self.min, self.max, self.bound, tuple(self.children)))
-
 class VarRep:
+    var_num = 1
     def __init__(self, name):
+        if self.name == '_':
+            self.name = '_' + VarRep.var_num
+            VarRep.var_num += 1
         # Restrictions should be an unordered set of UniqueRep objects
-        self.restrictions = set()
+        self.restriction_reps = set()
         # Dependencies should be an unordered set of UniqueRep objects
-        self.dependencies = set()
+        self.dependency_reps = set()
 
     def add_restriction(self, restriction : UniqueRep):
-        self.restrictions.add(restriction)
+        self.restriction_reps.add(restriction)
 
     def add_dependency(self, dependency : UniqueRep):
-        self.dependen.add(dependency)
+        self.dependency_reps.add(dependency)
 
     def __eq__(self, other):
-        return self.dependencies == other.dependencies and \
-               self.restrictions == other.restrictions
+        if len(self.dependency_reps) != len(other.dependency_reps) \
+            or len(self.restriction_reps) != len(other.restriction_reps):
+                return False
+
+        # Ensure every dependency on self on other
+        self_dep_reps = self.dependency_reps.copy()
+        other_dep_reps = other.dependency_reps.copy()
+        for rep in self_dep_reps:
+            located = False
+            for other_rep in other_dep_reps:
+                if other_rep.equivalent_structure(rep, other.name):
+                    located = True
+                    other_dep_reps.remove(other_rep)
+                    break
+                if not located:
+                    return False
+
+        # Ensure every restriction on self on other
+        self_rest_reps = self.restriction_reps.copy()
+        other_rest_reps = other.restriction_reps.copy()
+        for rep in self_rest_reps:
+            located = False
+            for other_rep in other_rest_reps:
+                if other_rep.equivalent_structure(rep, other.name):
+                    located = True
+                    other_rest_reps.remove(other_rep)
+                    break
+                if not located:
+                    return False
+
+        return True
