@@ -7,7 +7,7 @@ class Path:
     def reverse(self):
         self.converse = not self.converse
 
-    def __str__(self):
+    def __str__(self) -> str:
         # Prints original path string entered by user
         return self.str_representation
 

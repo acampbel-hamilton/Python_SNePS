@@ -15,7 +15,7 @@ class SemanticType:
     def __hash__(self):
         return hash(self.name)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
     def add_parent(self, parent):
@@ -157,7 +157,7 @@ class SemanticHierarchy:
         if filler_type is not slot_type and not slot_type.subtype(filler_type):
                 node.sem_type = self.respecify(node.name, filler_type, slot_type)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return ", ".join(self.sem_types.keys())
 
 class SemanticMixin:

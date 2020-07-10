@@ -214,7 +214,7 @@ def call_errorfunc(errorfunc, token, parser):
 #        .endlexpos  = Ending lex position (optional, set automatically)
 
 class YaccSymbol:
-    def __str__(self):
+    def __str__(self) -> str:
         return self.type
 
     def __repr__(self):
@@ -1340,7 +1340,7 @@ class Production(object):
         else:
             self.str = '%s -> <empty>' % self.name
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.str
 
     def __repr__(self):
@@ -1390,7 +1390,7 @@ class MiniProduction(object):
         self.line     = line
         self.str      = str
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.str
 
     def __repr__(self):
@@ -1438,7 +1438,7 @@ class LRItem(object):
         self.len        = len(self.prod)
         self.usyms      = p.usyms
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self.prod:
             s = '%s -> %s' % (self.name, ' '.join(self.prod))
         else:

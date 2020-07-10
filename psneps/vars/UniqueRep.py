@@ -25,6 +25,21 @@ class UniqueRep:
                 return True
         return False
 
+    def __str__(self) -> str:
+        return self.to_str()
+
+    def to_str(self, depth=None) -> str:
+        depth = 1 if depth is None else depth
+        ret = "\t" * depth
+        ret += self.name if self.name is not None else self.caseframe_name
+        ret += " ({}, {})".format(self.min, self.max) if self.min is not None else ''
+        ret += " ({})".format(self.bound) if self.bound is not None else ''
+        for child in self.children:
+            for subchild in child:
+                ret += "\n" + subchild.to_str(depth=depth+1)
+            ret += "\n"
+        return ret
+
 class VarRep:
     var_num = 1
     def __init__(self):
@@ -73,3 +88,10 @@ class VarRep:
                     return False
 
         return True
+
+    def __str__(self) -> str:
+        ret = self.name + ":"
+        for restriction in self.restriction_reps:
+            ret += "\n" + str(restriction)
+
+        return ret

@@ -31,7 +31,7 @@ class Slot:
     def __repr__(self):
         return "<Slot {} id: {}>".format(self.name, hex(id(self)))
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "<{}>: {}\n".format(self.name, self.docstring) + \
                "\tSemantic Type: {}\n".format(self.sem_type) + \
                "\tPositive Adjust: {}\n".format(self.pos_adj) + \
