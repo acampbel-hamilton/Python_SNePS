@@ -7,9 +7,10 @@ net.define_slot("happy_thing", "Thing")
 net.define_caseframe("Has", "Propositional", ["agent", "has"])
 net.define_caseframe("Happy", "Propositional", ["happy_thing"])
 
-net.assert_wft("2=>([every(y, Isa(y, Dog)), b, c, d], [not(e), f, g])")
-net.assert_wft("and(every(y, Isa(y, Dog)), b)")
-net.assert_wft("e")
+net.assert_wft("Has(every(x, Isa(x, Human)), some(y(x), Isa(y, Dog)))")
+
+net.assert_wft("2=>([a, b, c, d], [not(e), f, g])")
+net.assert_wft("and(a, b)")
 
 snips = Inference(net)
 snips.toggle_debug()
