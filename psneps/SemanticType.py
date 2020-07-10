@@ -15,7 +15,7 @@ class SemanticType:
     def __hash__(self):
         return hash(self.name)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
     def add_parent(self, parent):
@@ -26,7 +26,10 @@ class SemanticType:
 
     def subtype(self, potential_child):
         """ Determines if given node is a descendant of self """
-        return any(child is potential_child or child.subtype(potential_child) for child in self.children)
+        for child in self.children:
+            if child is potential_child or child.subtype(potential_child):
+                return True
+        return False
 
     def __str__(self, level=0):
         return self.name
@@ -154,7 +157,7 @@ class SemanticHierarchy:
         if filler_type is not slot_type and not slot_type.subtype(filler_type):
                 node.sem_type = self.respecify(node.name, filler_type, slot_type)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return ", ".join(self.sem_types.keys())
 
 class SemanticMixin:

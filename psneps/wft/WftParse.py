@@ -1,4 +1,6 @@
 from . import WftLex
+from ..vars.ParseVars import get_vars, SNePSVarError
+from ..vars.UniqueRep import UniqueRep
 from .ply import *
 from ..Network import *
 from ..Caseframe import Frame, Fillers
@@ -101,7 +103,7 @@ def p_NaryOp7(p):
     NaryOp :            Thnot LParen Wfts RParen
            |            Thnor LParen Wfts RParen
     '''
-    raise SNePSWftError("Not yet implemented!")
+    raise SNePSWftError("Thnot not yet implemented!")
 
 # e.g. thresh{1, 2}(wft1)
 def p_MinMaxOp(p):
@@ -125,35 +127,47 @@ def p_MinMaxOp(p):
 # e.g. every{x}(Isa(x, Dog))
 def p_EveryStmt(p):
     '''
-    EveryStmt :         Every LParen ArbVar Comma Argument RParen
+    EveryStmt :         Every LParen Var Comma Argument RParen
     '''
     global variables
     arb = p[3]
+    if not isinstance(arb, Arbitrary):
+        raise SNePSVarError("Variable {} is not arbefinite!".format(arb.name))
+
+    # If this node already exists, return it
+    for node in current_network.nodes.values():
+        if isinstance(node, Arbitrary) and node == arb:
+            p[0] = node
+            return
 
     # Add restrictions
     for node in p[5].nodes:
         new_restriction(arb, node)
 
     # Store in network
-    variables[arb.name] = arb
     arb.store_in(current_network)
     p[0] = arb
-
 
 # e.g. some{x(y)}(Isa(x, y))
 def p_SomeStmt(p):
     '''
-    SomeStmt :          Some LParen IndVar LParen AtomicNameSet RParen Comma Argument RParen
+    SomeStmt :          Some LParen Var LParen AtomicNameSet RParen Comma Argument RParen
     '''
     global variables
     ind = p[3]
+    if not isinstance(ind, Indefinite):
+        raise SNePSVarError("Variable {} is not indefinite!".format(ind.name))
+
+    # If this node already exists, return it
+    for node in current_network.nodes.values():
+        if isinstance(node, Indefinite) and node == ind:
+            p[0] = node
+            return
 
     # Add dependencies
     for var_name in p[5]:
-        if var_name not in variables:
-            raise SNePSWftError("Variable \"{}\" does not exist".format(var_name))
         if variables[var_name] is ind:
-            raise SNePSWftError("Variables cannot depend on themselves".format(var_name))
+            raise SNePSVarError("Variables cannot depend on themselves".format(var_name))
         ind.add_dependency(variables[var_name])
 
     # Add restrictions
@@ -161,28 +175,16 @@ def p_SomeStmt(p):
         new_restriction(ind, node)
 
     # Store in network
-    variables[ind.name] = ind
     ind.store_in(current_network)
     p[0] = ind
 
-def p_ArbVar(p):
+def p_Var(p):
     '''
-    ArbVar :            Identifier
-           |            Integer
+    Var :               Identifier
+        |               Integer
     '''
-    # Stores new variable by name
+    # Grabs from variable dictionary
     global variables
-    variables[p[1]] = Arbitrary(p[1], current_network.sem_hierarchy.get_type("Entity"))
-    p[0] = variables[p[1]]
-
-def p_IndVar(p):
-    '''
-    IndVar :            Identifier
-           |            Integer
-    '''
-    # Stores new variable by name
-    global variables
-    variables[p[1]] = Indefinite(p[1], current_network.sem_hierarchy.get_type("Entity"))
     p[0] = variables[p[1]]
 
 # e.g. close(Dog, wft1)
@@ -190,7 +192,7 @@ def p_CloseStmt(p):
     '''
     CloseStmt :         Close LParen AtomicNameSet Comma Wft RParen
     '''
-    raise SNePSWftError("Not yet implemented!")
+    raise SNePSWftError("Close not yet implemented!")
 
 # e.g. brothers(Tom, Ted)
 def p_Function(p):
@@ -207,7 +209,7 @@ def p_QIdenStmt(p):
     QIdenStmt :         QIdentifier LParen Wfts RParen
               |         QIdentifier LParen RParen
     '''
-    raise SNePSWftError("Not yet implemented!")
+    raise SNePSWftError("? not yet implemented!")
 
 # e.g. wft1
 def p_Argument1(p):
@@ -369,6 +371,9 @@ def build_thresh (caseframe_name, filler_set, min, max):
 def build_andor (caseframe_name, filler_set, min, max):
     """ Builds and returns (or simply returns) an andor node from given parameters """
 
+    if caseframe_name == 'and':
+        print(filler_set)
+
     # Simplifies caseframes - See slide 437:
     # https://cse.buffalo.edu/~shapiro/Courses/CSE563/Slides/krrSlides.pdf
     if caseframe_name == 'andor':
@@ -417,24 +422,30 @@ def new_restriction(variable, restriction):
 # ------------ PARSER FN --------------
 # =====================================
 
-def wft_parser(wft, network):
+def wft_parser(wft : str, network):
     global current_network
     current_network = network
+
     yacc.yacc()
     if wft != '':
         try:
+            # Store variables in array indexed by names
+            global variables
+            variables = get_vars(wft, network)
+
+            # Parse and store wft created by string (as opposed to sub-wfts it might create)
             yacc.parse(wft)
             global top_wft
-            global variables
-
             ret_top_wft = top_wft
 
+            # Reset globals and return the wft
             top_wft = None
             variables = {}
-
             return (ret_top_wft)
+
+        # Error messages
         except SNError as e:
-            if type(e) is not SNePSWftError:
+            if type(e) is not SNePSWftError and type(e) is not SNePSVarError:
                 print("PARSING FAILED:\n\t", end='')
             else:
                 print("PARSING FAILED: ", end='')

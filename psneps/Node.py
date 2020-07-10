@@ -3,6 +3,7 @@ from .Slot import Slot
 from .Error import SNError
 from .SemanticType import SemanticType
 from re import match
+from .vars.UniqueRep import *
 
 class NodeError(SNError):
     pass
@@ -13,6 +14,7 @@ class Node:
         self.name = name
         self.up_cableset = set() # References to frames that point to this node
         self.sem_type = sem_type
+        self.unique_rep = None
         if type(self) in (Node, Atomic, Variable, MinMaxOpNode):
             raise NotImplementedError("Bad syntactic type - see syntax tree in wiki")
 
@@ -20,7 +22,10 @@ class Node:
         self.up_cableset.add(UpCable(node, slot))
 
     def has_upcable(self, name):
-        return any(up_cable.name == name for up_cable in self.up_cableset)
+        for up_cable in self.up_cableset:
+            if up_cable.name == name:
+                return True
+        return False
 
     def follow_down_cable(self, slot):
         return set()
@@ -31,14 +36,22 @@ class Node:
     def __str__(self) -> str:
         return self.wft_rep()
 
+    def __repr__(self) -> str:
+        return self.wft_rep()
+
     def wft_rep(self, simplify=None) -> str:
         return self.name
 
     def has_constituent(self, constituent, visited=None):
         return self is constituent
 
-    def replace_var(self, old, new):
-        return
+    def get_unique_rep(self) -> UniqueRep:
+        if self.unique_rep == None:
+            self.unique_rep = self.new_unique_rep()
+        return self.unique_rep
+
+    def new_unique_rep(self) -> UniqueRep:
+        return UniqueRep(name=self.name)
 
 # =====================================
 # ---------- ATOMIC NODES -------------
@@ -52,9 +65,7 @@ class Atomic(Node):
 
 class Base(Atomic):
     """ A constant. (An abstract class) """
-    pass
-
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         return self.name == other.name
 
     def __hash__(self):
@@ -64,26 +75,26 @@ class Variable(Atomic):
     """ A variable term ranging over a restricted domain. """
     def __init__(self, name: str, sem_type: SemanticType) -> None:
         super().__init__(name, sem_type) # This needs a semantic types. This will be an error.
-        self.char_name = name
         self.restriction_set = set()
+        self.var_rep = VarRep()
 
     def add_restriction(self, restriction) -> None: # These need type definitions, since we don't know what restrictions/dependencies are.
         self.restriction_set.add(restriction)
 
-    def replace_var(self, old, new):
-        temp_restriction_set = set()
-        for restriction in self.restriction_set:
-            if restriction is old:
-                temp_restriction_set.add(new)
-            else:
-                temp_restriction_set.add(restriction)
-        self.restriction_set = temp_restriction_set
-
     def wft_rep(self, simplify=None) -> str:
-        return self.char_name
+        return super().wft_rep()
+
+    def __eq__(self, other) -> bool:
+        return self.var_rep == other.var_rep
+
+    def __hash__(self):
+        return id(self)
+
+    def new_unique_rep(self) -> UniqueRep:
+        return UniqueRep(name=self.var_rep.name)
 
 class Arbitrary(Variable):
-    """ An arbitaray individual. """
+    """ An arbitrary individual. """
     counter = 1
     def __init__(self, name, sem_type: SemanticType) -> None:
         super().__init__(name, sem_type) # These need semantic types. This will be an error.
@@ -101,7 +112,7 @@ class Arbitrary(Variable):
         else:
             simplify.add(self)
             return "every({}, {})".format( \
-                self.char_name, \
+                self.name, \
                 ", ".join([restriction.wft_rep(simplify.copy()) for restriction in self.restriction_set]))
 
 class Indefinite(Variable):
@@ -119,25 +130,15 @@ class Indefinite(Variable):
         Indefinite.counter += 1
         current_network.nodes[self.name] = self
 
-    def replace_var(self, old, new):
-        super().replace_var(old, new)
-        temp_dependency_set = set()
-        for dependency in self.dependency_set:
-            if dependency is old:
-                temp_dependency_set.add(new)
-            else:
-                temp_dependency_set.add(dependency)
-        self.dependency_set = temp_dependency_set
-
     def wft_rep(self, simplify=None) -> str:
         if simplify is None:
             simplify = set()
         if self in simplify:
-            return super().wft_rep(simplify)
+            return super().wft_rep()
         else:
             simplify.add(self)
             return "some({}, ({}) {})".format( \
-                self.char_name, \
+                self.name, \
                 ", ".join([dependency.wft_rep(simplify.copy()) for dependency in self.dependency_set]), \
                 ", ".join([restriction.wft_rep(simplify.copy()) for restriction in self.restriction_set]))
 
@@ -163,7 +164,7 @@ class Molecular(Node):
     def has_frame(self, frame: Frame) -> bool:
         return frame == self.frame
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         return isinstance(other, Molecular) and self.has_frame(other.frame)
 
     def __hash__(self):
@@ -181,20 +182,6 @@ class Molecular(Node):
                 if node not in visited and node.has_constituent(constituent, visited):
                     return True
         return False
-
-    def replace_var(self, old, new):
-        temp_filler_nodes = set()
-        for i in range(0, len(self.frame.filler_set)):
-            slot = self.frame.caseframe.slots[i]
-            fillers = self.frame.filler_set[i]
-            for node in fillers.nodes:
-                if node is old:
-                    temp_filler_nodes.add(new)
-                    new.add_up_cable(self, slot)
-                else:
-                    temp_fillers.add(node)
-            fillers.nodes = temp_filler_nodes
-            temp_filler_nodes = set()
 
     def wft_rep(self, simplify=None) -> str:
         if simplify is None:
@@ -215,6 +202,15 @@ class Molecular(Node):
             ret += ")"
         return ret
 
+    def new_unique_rep(self) -> UniqueRep:
+        children = []
+        for fillers in self.frame.filler_set:
+            child = []
+            for filler in fillers.nodes:
+                child.append(filler.get_unique_rep())
+            children.append(child)
+
+        return UniqueRep(caseframe_name=self.frame.caseframe.name, children=children)
 
 class MinMaxOpNode(Molecular):
     """ Thresh/andor with two values """
@@ -230,7 +226,7 @@ class MinMaxOpNode(Molecular):
     def has_min_max(self, min: int, max: int) -> bool:
         return self.min == min and self.max == max
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         return super.__eq__(other) and \
             self.min == other.min and self.max == other.max
 
@@ -259,6 +255,16 @@ class MinMaxOpNode(Molecular):
             ret += ")"
         return ret
 
+    def new_unique_rep(self) -> UniqueRep:
+        children = []
+        for fillers in self.frame.filler_set:
+            child = []
+            for filler in fillers.nodes:
+                child.append(filler.get_unique_rep())
+            children.append(child)
+
+        return UniqueRep(caseframe_name=self.frame.caseframe.name, children=children, min=self.min, max=self.max)
+
 class ThreshNode(MinMaxOpNode):
     """ Thresh with two values """
     pass
@@ -281,7 +287,7 @@ class ImplNode(Molecular):
     def consequents(self):
         return self.follow_down_cable(self.frame.caseframe.slots[1])
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         return super.__eq__(other) and \
             self.bound == other.bound
 
@@ -323,6 +329,8 @@ class ImplNode(Molecular):
             ret += ")"
             return ret
 
+    def new_unique_rep(self) -> UniqueRep:
+        return UniqueRep(caseframe_name=self.frame.caseframe.name, bound=self.bound)
 
 # =====================================
 # -------------- UP CABLE -------------
