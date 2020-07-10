@@ -103,7 +103,7 @@ def p_NaryOp7(p):
     NaryOp :            Thnot LParen Wfts RParen
            |            Thnor LParen Wfts RParen
     '''
-    raise SNePSWftError("Not yet implemented!")
+    raise SNePSWftError("Thnot not yet implemented!")
 
 # e.g. thresh{1, 2}(wft1)
 def p_MinMaxOp(p):
@@ -183,7 +183,7 @@ def p_CloseStmt(p):
     '''
     CloseStmt :         Close LParen AtomicNameSet Comma Wft RParen
     '''
-    raise SNePSWftError("Not yet implemented!")
+    raise SNePSWftError("Close not yet implemented!")
 
 # e.g. brothers(Tom, Ted)
 def p_Function(p):
@@ -200,7 +200,7 @@ def p_QIdenStmt(p):
     QIdenStmt :         QIdentifier LParen Wfts RParen
               |         QIdentifier LParen RParen
     '''
-    raise SNePSWftError("Not yet implemented!")
+    raise SNePSWftError("? not yet implemented!")
 
 # e.g. wft1
 def p_Argument1(p):

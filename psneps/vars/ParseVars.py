@@ -7,7 +7,6 @@ from .UniqueRep import *
 current_network = None
 tokens = WftLex.tokens
 variables = {}
-in_var_stmt = 0
 
 class SNePSVarError(SNError):
     pass
@@ -26,78 +25,182 @@ def p_Wft(p):
          |              SomeStmt
          |              QIdenStmt
          |              AtomicName
-         |              WftNode
+         |              Y_WftNode
          |              VarNode
          |              Function
     '''
-    if in_var_stmt > 0:
-        p[0] = p[1]
+    p[0] = p[1]
+    global top_wft
+    top_wft = p[0]
 
-def p_BinaryOp(p):
+# e.g. if(wft1, wft2)
+def p_BinaryOp1(p):
     '''
     BinaryOp :          Impl LParen Argument Comma Argument RParen
-             |          AndImpl LParen Argument Comma Argument RParen
-             |          SingImpl LParen Argument Comma Argument RParen
     '''
-    if in_var_stmt > 0:
-        p[0] = UniqueRep(name='')
+    filler_set = [p[3], p[5]]
+    p[0] = rep_impl(filler_set, int(p[1][:1]))
+def p_BinaryOp2(p):
+    '''
+    BinaryOp :          AndImpl LParen Argument Comma Argument RParen
+    '''
+    filler_set = [p[3], p[5]]
+    p[0] = rep_impl(filler_set, len(p[3]))
+def p_BinaryOp3(p):
+    '''
+    BinaryOp :          SingImpl LParen Argument Comma Argument RParen
+    '''
+    filler_set = [p[3], p[5]]
+    p[0] = rep_impl(filler_set, 1)
 
-def p_NaryOp(p):
+
+# e.g. and(wft1, wft2)
+def p_NaryOp1(p):
     '''
     NaryOp :            And LParen Wfts RParen
-           |            Or LParen Wfts RParen
-           |            Not LParen Wfts RParen
+    '''
+    filler_set = [p[3]]
+    p[0] = rep_andor(p[1], filler_set, len(p[3]), len(p[3]))
+def p_NaryOp2(p):
+    '''
+    NaryOp :            Or LParen Wfts RParen
+    '''
+    filler_set = [p[3]]
+    p[0] = rep_andor(p[1], filler_set, 1, len(p[3]))
+def p_NaryOp3(p):
+    '''
+    NaryOp :            Not LParen Wfts RParen
            |            Nor LParen Wfts RParen
-           |            Nand LParen Wfts RParen
-           |            Xor LParen Wfts RParen
-           |            Iff LParen Wfts RParen
+    '''
+    filler_set = [p[3]]
+    p[0] = rep_andor(p[1], filler_set, 0, 0)
+def p_NaryOp4(p):
+    '''
+    NaryOp :            Nand LParen Wfts RParen
+    '''
+    filler_set = [p[3]]
+    p[0] = rep_andor(p[1], filler_set, 0, len(p[3]) - 1)
+def p_NaryOp5(p):
+    '''
+    NaryOp :            Xor LParen Wfts RParen
+    '''
+    filler_set = [p[3]]
+    p[0] = rep_andor(p[1], filler_set, 1, 1)
+def p_NaryOp6(p):
+    '''
+    NaryOp :            Iff LParen Wfts RParen
            |            DoubImpl LParen Wfts RParen
-           |            Thnot LParen Wfts RParen
+    '''
+    filler_set = [p[3]]
+    p[0] = rep_thresh("iff", filler_set, 1, len(p[3]) - 1)
+def p_NaryOp7(p):
+    '''
+    NaryOp :            Thnot LParen Wfts RParen
            |            Thnor LParen Wfts RParen
     '''
+    raise SNePSWftError("Thnot not yet implemented!")
+
+# e.g. thresh{1, 2}(wft1)
 def p_MinMaxOp(p):
     '''
     MinMaxOp :          AndOr LBrace Integer Comma Integer RBrace LParen Wfts RParen
              |          Thresh LBrace Integer Comma Integer RBrace LParen Wfts RParen
              |          Thresh LBrace Integer RBrace LParen Wfts RParen
     '''
+    min = int(p[3])
+    if len(p) == 8:
+        filler_set = p[6]
+        max = len(p[6]) - 1
+    else:
+        max = int(p[5])
+        filler_set = p[8]
+    if p[1] == "thresh":
+        p[0] = rep_thresh(p[1], filler_set, min, max)
+    else:
+        p[0] = rep_andor(p[1], filler_set, min, max)
+
+# e.g. close(Dog, wft1)
 def p_CloseStmt(p):
     '''
     CloseStmt :         Close LParen AtomicNameSet Comma Wft RParen
     '''
+    raise SNePSWftError("Close not yet implemented!")
+
+# e.g. brothers(Tom, Ted)
 def p_Function(p):
     '''
     Function :          Identifier LParen Arguments RParen
              |          Integer LParen Arguments RParen
     '''
+    filler_set = p[3]
+    p[0] = build_molecular(p[1], filler_set)
+
+# e.g. ?example()
 def p_QIdenStmt(p):
     '''
     QIdenStmt :         QIdentifier LParen Wfts RParen
               |         QIdentifier LParen RParen
     '''
+    raise SNePSWftError("? not yet implemented!")
+
+# e.g. wft1
 def p_Argument1(p):
     '''
     Argument :          Wft
-             |          None
-             |          ArgumentFunction
+    '''
+    p[0] = [p[1]]
+
+# e.g. None
+def p_Argument2(p):
+    '''
+    Argument :          None
+    '''
+    p[0] = []
+
+# e.g. setOf(wft1, wft2)
+def p_Argument3(p):
+    '''
+    Argument :          ArgumentFunction
              |          LBracket RBracket
              |          LBracket Wfts RBracket
     '''
+    if len(p) == 2:
+        p[0] = p[1]
+    elif len(p) == 3:
+        p[0] = []
+    else:
+        p[0] = Fillers(p[2])
+
 def p_ArgumentFunction(p):
     '''
     ArgumentFunction :  SetOf LParen RParen
                      |  SetOf LParen Wfts RParen
     '''
+    if len(p) == 4:
+        p[0] = []
+    else:
+        p[0] = p[3]
+
 def p_Wfts(p):
     '''
     Wfts :              Wft
          |              Wfts Comma Wft
     '''
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[0] = p[1] + [p[3]]
+
 def p_Arguments(p):
     '''
     Arguments :         Argument
               |         Arguments Comma Argument
     '''
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[0] = p[1] + [p[3]]
+
 def p_AtomicNameSet(p):
     '''
     AtomicNameSet :
@@ -105,22 +208,46 @@ def p_AtomicNameSet(p):
                   |     Integer
                   |     LParen AtomicNames RParen
     '''
+    if len(p) == 1:
+        p[0] = []
+    elif len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[0] = p[2]
+
 def p_AtomicNames(p):
     '''
     AtomicNames :       AtomicName
                 |       AtomicNames Comma AtomicName
     '''
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[0] = p[1] + [p[3]]
+
 def p_AtomicName(p):
     '''
     AtomicName :        Identifier
                |        Integer
     '''
+    p[0] = UniqueRep(name=p[1])
 
 def p_VarNode(p):
     '''
     VarNode :           IndNode
             |           ArbNode
     '''
+    if int(p[1][3:]) >= Arbitrary.counter:
+        raise SNePSWftError('Invalid arb number. Max number: {}'.format(Arbitrary.counter - 1))
+    p[0] = current_network.nodes[p[1]].unique_rep
+
+def p_Y_WftNode(p):
+    '''
+    Y_WftNode :         WftNode
+    '''
+    if int(p[1][3:]) >= Molecular.counter:
+        raise SNePSWftError('Invalid wft number. Max number: {}'.format(Molecular.counter - 1))
+    p[0] = current_network.nodes[p[1]].unique_rep
 
 # =====================================
 # ------------- VAR RULES -------------
@@ -130,35 +257,29 @@ def p_EveryStmt(p):
     '''
     EveryStmt :         Every LParen Var Comma Argument RParen
     '''
-    global in_var_stmt
     global variables
     global current_network
     new_var = Arbitrary(p[3], current_network.sem_hierarchy.get_type('Entity'))
     if p[3] in variables and variables[p[3]] != new_var:
         raise SNePSVarError("Variable with name {} defined twice in same context!".format(new_var.name))
     variables[p[3]] = new_var
-    in_var_stmt -= 1
 
 def p_SomeStmt(p):
     '''
     SomeStmt :          Some LParen Var LParen AtomicNameSet RParen Comma Argument RParen
     '''
-    global in_var_stmt
     global variables
     global current_network
     new_var = Indefinite(p[3], current_network.sem_hierarchy.get_type('Entity'))
     if p[3] in variables and variables[p[3]] != new_var:
         raise SNePSVarError("Variable with name {} defined twice in same context!".format(new_var.name))
     variables[p[3]] = new_var
-    in_var_stmt -= 1
 
 def p_Var(p):
     '''
     Var :               Identifier
         |               Integer
     '''
-    global in_var_stmt
-    in_var_stmt += 1
     p[0] = p[1]
 
 def p_error(p):
@@ -168,11 +289,11 @@ def p_error(p):
 # ------------- GET FNS ---------------
 # =====================================
 
-# def rep_molecular(caseframe_name, children_reps):
-#     """ Returns a UniqueRep object corresponding to the node """
-#     caseframe = current_network.find_caseframe(caseframe_name)
-#     name = caseframe.name
-#     (caseframe_name=caseframe.name, children=children_reps)
+def rep_molecular(caseframe_name, children_reps):
+    """ Returns a UniqueRep object corresponding to the node """
+    caseframe = current_network.find_caseframe(caseframe_name)
+    name = caseframe.name
+    return UniqueRep(caseframe_name=caseframe.name, children=children_reps)
 #
 # def rep_thresh (caseframe_name, filler_set, min, max):
 #     """ Returns a UniqueRep object corresponding to the node """
@@ -248,8 +369,6 @@ def get_vars(wft : str, network):
 
     # Reset and return variables
     global variables
-    global in_var_stmt
     ret_variables = variables
     variables = {}
-    in_var_stmt = 0
     return ret_variables
