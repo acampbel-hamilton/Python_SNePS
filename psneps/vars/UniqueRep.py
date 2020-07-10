@@ -57,7 +57,7 @@ class VarRep:
         VarRep.var_num += 1
         # Restrictions should be an unordered set of UniqueRep objects
         self.restriction_reps = set()
-        # Dependencies should be an unordered set of UniqueRep objects
+        # Dependencies should be an unordered set of VarRep objects
         self.dependency_reps = set()
 
     def add_restriction(self, restriction : UniqueRep):
@@ -72,17 +72,8 @@ class VarRep:
                 return False
 
         # Ensure every dependency on self on other
-        self_dep_reps = self.dependency_reps.copy()
-        other_dep_reps = other.dependency_reps.copy()
-        for rep in self_dep_reps:
-            located = False
-            for other_rep in other_dep_reps:
-                if other_rep.equivalent_structure(rep, other.name, self.name):
-                    located = True
-                    other_dep_reps.remove(other_rep)
-                    break
-                if not located:
-                    return False
+        if not self.dependency_reps == other.dependency_reps:
+            return False
 
         # Ensure every restriction on self on other
         self_rest_reps = self.restriction_reps.copy()

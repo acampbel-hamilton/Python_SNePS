@@ -1,7 +1,7 @@
 from . import WftLex
 from .ply import *
 from ..Error import SNError
-from ..Node import Indefinite, Arbitrary
+from ..Node import Indefinite, Arbitrary, Variable
 from .UniqueRep import *
 from ..Node import Base, Molecular, Indefinite, Arbitrary, ThreshNode, AndOrNode, ImplNode
 
@@ -219,8 +219,10 @@ def p_AtomicNameSet(p):
 
 def p_AtomicNames(p):
     '''
-    AtomicNames :       AtomicName
-                |       AtomicNames Comma AtomicName
+    AtomicNames :       Identifier
+                |       Integer
+                |       AtomicNames Comma Identifier
+                |       AtomicNames Comma Integer
     '''
     if len(p) == 2:
         p[0] = [p[1]]
@@ -280,8 +282,12 @@ def p_SomeStmt(p):
     new_var = p[3][1]
     temp_var_name = p[3][0]
 
-    for dependency in p[5]:
-        new_var.var_rep.add_dependency(dependency)
+    for dependency_name in p[5]:
+        located = False
+        if dependency_name in variables:
+            new_var.var_rep.add_dependency(variables[dependency_name])
+        else:
+            raise SNePSVarError("Restriction {} referrenced before variable creation!".format(dependency_name))
 
     for restriction in p[8]:
         new_var.var_rep.add_restriction(restriction)

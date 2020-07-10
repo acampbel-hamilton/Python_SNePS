@@ -166,8 +166,6 @@ def p_SomeStmt(p):
 
     # Add dependencies
     for var_name in p[5]:
-        if var_name not in variables:
-            raise SNePSVarError("Variable \"{}\" does not exist".format(var_name))
         if variables[var_name] is ind:
             raise SNePSVarError("Variables cannot depend on themselves".format(var_name))
         ind.add_dependency(variables[var_name])
