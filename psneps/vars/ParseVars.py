@@ -98,7 +98,7 @@ def p_NaryOp7(p):
     NaryOp :            Thnot LParen Wfts RParen
            |            Thnor LParen Wfts RParen
     '''
-    raise SNePSWftError("Thnot not yet implemented!")
+    raise SNePSVarError("Thnot not yet implemented!")
 
 # e.g. thresh{1, 2}(wft1)
 def p_MinMaxOp(p):
@@ -124,7 +124,7 @@ def p_CloseStmt(p):
     '''
     CloseStmt :         Close LParen AtomicNameSet Comma Wft RParen
     '''
-    raise SNePSWftError("Close not yet implemented!")
+    raise SNePSVarError("Close not yet implemented!")
 
 # e.g. brothers(Tom, Ted)
 def p_Function(p):
@@ -141,7 +141,7 @@ def p_QIdenStmt(p):
     QIdenStmt :         QIdentifier LParen Wfts RParen
               |         QIdentifier LParen RParen
     '''
-    raise SNePSWftError("? not yet implemented!")
+    raise SNePSVarError("? not yet implemented!")
 
 # e.g. wft1
 def p_Argument1(p):
@@ -169,7 +169,7 @@ def p_Argument3(p):
     elif len(p) == 3:
         p[0] = []
     else:
-        p[0] = Fillers(p[2])
+        p[0] = p[2]
 
 def p_ArgumentFunction(p):
     '''
@@ -238,7 +238,7 @@ def p_VarNode(p):
             |           ArbNode
     '''
     if int(p[1][3:]) >= Arbitrary.counter:
-        raise SNePSWftError('Invalid arb number. Max number: {}'.format(Arbitrary.counter - 1))
+        raise SNePSVarError('Invalid arb number. Max number: {}'.format(Arbitrary.counter - 1))
     p[0] = current_network.nodes[p[1]].unique_rep
 
 def p_Y_WftNode(p):
@@ -246,7 +246,7 @@ def p_Y_WftNode(p):
     Y_WftNode :         WftNode
     '''
     if int(p[1][3:]) >= Molecular.counter:
-        raise SNePSWftError('Invalid wft number. Max number: {}'.format(Molecular.counter - 1))
+        raise SNePSVarError('Invalid wft number. Max number: {}'.format(Molecular.counter - 1))
     p[0] = current_network.nodes[p[1]].unique_rep
 
 # =====================================
@@ -283,7 +283,10 @@ def p_Var(p):
     p[0] = p[1]
 
 def p_error(p):
-    pass
+    if p is None:
+        raise SNePSVarError("Term reached end unexpectedly.")
+    else:
+        raise SNePSVarError("Syntax error on token '" + p.type + "'")
 
 # =====================================
 # ------------- GET FNS ---------------
@@ -294,7 +297,7 @@ def rep_molecular(caseframe_name, children_reps):
     caseframe = current_network.find_caseframe(caseframe_name)
     name = caseframe.name
     return UniqueRep(caseframe_name=caseframe.name, children=children_reps)
-#
+
 # def rep_thresh (caseframe_name, filler_set, min, max):
 #     """ Returns a UniqueRep object corresponding to the node """
 #

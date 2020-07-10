@@ -27,10 +27,9 @@ class UniqueRep:
 
 class VarRep:
     var_num = 1
-    def __init__(self, name):
-        if self.name == '_':
-            self.name = '_' + VarRep.var_num
-            VarRep.var_num += 1
+    def __init__(self):
+        self.name = '_' + VarRep.var_num
+        VarRep.var_num += 1
         # Restrictions should be an unordered set of UniqueRep objects
         self.restriction_reps = set()
         # Dependencies should be an unordered set of UniqueRep objects

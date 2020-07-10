@@ -3,7 +3,7 @@ from .Slot import Slot
 from .Error import SNError
 from .SemanticType import SemanticType
 from re import match
-from .vars.UniqueRep import UniqueRep
+from .vars.UniqueRep import *
 
 class NodeError(SNError):
     pass
@@ -76,6 +76,7 @@ class Variable(Atomic):
     def __init__(self, name: str, sem_type: SemanticType) -> None:
         super().__init__(name, sem_type) # This needs a semantic types. This will be an error.
         self.restriction_set = set()
+        self.var_rep = VarRep()
 
     def add_restriction(self, restriction) -> None: # These need type definitions, since we don't know what restrictions/dependencies are.
         self.restriction_set.add(restriction)
@@ -91,6 +92,9 @@ class Variable(Atomic):
 
     def wft_rep(self, simplify=None) -> str:
         return super().wft_rep()
+
+    def __eq__(self, other):
+        return self.var_rep == other.var_rep
 
 class Arbitrary(Variable):
     """ An arbitrary individual. """
