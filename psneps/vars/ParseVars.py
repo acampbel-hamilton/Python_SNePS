@@ -3,6 +3,7 @@ from .ply import *
 from ..Error import SNError
 from ..Node import Indefinite, Arbitrary
 from .UniqueRep import *
+from ..Node import Base, Molecular, Indefinite, Arbitrary, ThreshNode, AndOrNode, ImplNode
 
 current_network = None
 tokens = WftLex.tokens
@@ -133,7 +134,7 @@ def p_Function(p):
              |          Integer LParen Arguments RParen
     '''
     filler_set = p[3]
-    p[0] = build_molecular(p[1], filler_set)
+    p[0] = rep_molecular(p[1], filler_set)
 
 # e.g. ?example()
 def p_QIdenStmt(p):
@@ -239,7 +240,7 @@ def p_VarNode(p):
     '''
     if int(p[1][3:]) >= Arbitrary.counter:
         raise SNePSVarError('Invalid arb number. Max number: {}'.format(Arbitrary.counter - 1))
-    p[0] = current_network.nodes[p[1]].unique_rep
+    p[0] = current_network.nodes[p[1]].unique_rep()
 
 def p_Y_WftNode(p):
     '''
@@ -247,7 +248,7 @@ def p_Y_WftNode(p):
     '''
     if int(p[1][3:]) >= Molecular.counter:
         raise SNePSVarError('Invalid wft number. Max number: {}'.format(Molecular.counter - 1))
-    p[0] = current_network.nodes[p[1]].unique_rep
+    p[0] = current_network.nodes[p[1]].unique_rep()
 
 # =====================================
 # ------------- VAR RULES -------------
@@ -260,8 +261,17 @@ def p_EveryStmt(p):
     global variables
     global current_network
     new_var = Arbitrary(p[3], current_network.sem_hierarchy.get_type('Entity'))
+
+    for restriction in p[5]:
+        new_var.var_rep.add_restriction(restriction)
+
+    for node in current_network.nodes:
+        if isinstance(node, Arbitrary) and node == new_var:
+            new_var = node
+
     if p[3] in variables and variables[p[3]] != new_var:
         raise SNePSVarError("Variable with name {} defined twice in same context!".format(new_var.name))
+
     variables[p[3]] = new_var
 
 def p_SomeStmt(p):
@@ -271,8 +281,20 @@ def p_SomeStmt(p):
     global variables
     global current_network
     new_var = Indefinite(p[3], current_network.sem_hierarchy.get_type('Entity'))
+
+    for dependency in p[5]:
+        new_var.var_rep.add_dependency(dependency)
+
+    for restriction in p[8]:
+        new_var.var_rep.add_restriction(restriction)
+
+    for node in current_network.nodes:
+        if isinstance(node, Indefinite) and node == new_var:
+            new_var = node
+
     if p[3] in variables and variables[p[3]] != new_var:
         raise SNePSVarError("Variable with name {} defined twice in same context!".format(new_var.name))
+
     variables[p[3]] = new_var
 
 def p_Var(p):
@@ -298,62 +320,43 @@ def rep_molecular(caseframe_name, children_reps):
     name = caseframe.name
     return UniqueRep(caseframe_name=caseframe.name, children=children_reps)
 
-# def rep_thresh (caseframe_name, filler_set, min, max):
-#     """ Returns a UniqueRep object corresponding to the node """
-#
-#     # Simplifies caseframes - See slide 439:
-#     # https://cse.buffalo.edu/~shapiro/Courses/CSE563/Slides/krrSlides.pdf
-#     if caseframe_name == 'thresh':
-#         num_nodes = len(filler_set[0])
-#         if min == 1 and max == num_nodes - 1:
-#             caseframe_name = 'iff'
-#
-#     caseframe = current_network.find_caseframe(caseframe_name)
-#     frame = Frame(caseframe, filler_set)
-#     for node in current_network.nodes.values():
-#         if node.has_frame(frame) and node.has_min_max(min, max):
-#             return node
-#     wftNode = ThreshNode(frame, min, max)
-#     current_network.nodes[wftNode.name] = wftNode
-#     return wftNode
-#
-# def rep_andor (caseframe_name, filler_set, min, max):
-#     """ Returns a UniqueRep object corresponding to the node """
-#
-#     # Simplifies caseframes - See slide 437:
-#     # https://cse.buffalo.edu/~shapiro/Courses/CSE563/Slides/krrSlides.pdf
-#     if caseframe_name == 'andor':
-#         num_nodes = len(filler_set[0])
-#         if min == max == num_nodes:
-#             caseframe_name = 'and'
-#         elif min == 1 and max == num_nodes:
-#             caseframe_name = 'or'
-#         elif min == 0 and max == num_nodes - 1:
-#             caseframe_name = 'nand'
-#         elif min == max == 0:
-#             caseframe_name = 'nor'
-#         elif min == max == 1:
-#             caseframe_name = 'xor'
-#
-#     caseframe = current_network.find_caseframe(caseframe_name)
-#     frame = Frame(caseframe, filler_set)
-#     for node in current_network.nodes.values():
-#         if node.has_frame(frame) and node.has_min_max(min, max):
-#             return node
-#     wftNode = AndOrNode(frame, min, max)
-#     current_network.nodes[wftNode.name] = wftNode
-#     return wftNode
-#
-# def rep_impl(filler_set, bound):
-#     """ Returns a UniqueRep object corresponding to the node """
-#     caseframe = current_network.find_caseframe("if")
-#     frame = Frame(caseframe, filler_set)
-#     for node in current_network.nodes.values():
-#         if node.has_frame(frame) and node.has_bound(bound):
-#             return node
-#     wftNode = ImplNode(frame, bound)
-#     current_network.nodes[wftNode.name] = wftNode
-#     return wftNode
+def rep_thresh (caseframe_name, children_reps, min, max):
+    """ Returns a UniqueRep object corresponding to the node """
+
+    # Simplifies caseframes - See slide 439:
+    # https://cse.buffalo.edu/~shapiro/Courses/CSE563/Slides/krrSlides.pdf
+    if caseframe_name == 'thresh':
+        num_nodes = len(children_reps[0])
+        if min == 1 and max == num_nodes - 1:
+            caseframe_name = 'iff'
+
+    return UniqueRep(caseframe_name=caseframe_name, children=children_reps, min=min, max=max)
+
+def rep_andor (caseframe_name, children_reps, min, max):
+    """ Returns a UniqueRep object corresponding to the node """
+
+    # Simplifies caseframes - See slide 437:
+    # https://cse.buffalo.edu/~shapiro/Courses/CSE563/Slides/krrSlides.pdf
+    if caseframe_name == 'andor':
+        # TODO - why does this children thing work??
+        num_nodes = len(children_reps[0].children)
+        if min == max == num_nodes:
+            caseframe_name = 'and'
+        elif min == 1 and max == num_nodes:
+            caseframe_name = 'or'
+        elif min == 0 and max == num_nodes - 1:
+            caseframe_name = 'nand'
+        elif min == max == 0:
+            caseframe_name = 'nor'
+        elif min == max == 1:
+            caseframe_name = 'xor'
+
+    return UniqueRep(caseframe_name=caseframe_name, children=children_reps, min=min, max=max)
+
+def rep_impl(children_reps, bound):
+    """ Returns a UniqueRep object corresponding to the node """
+
+    return UniqueRep(caseframe_name='if', children=children_reps, bound=bound)
 
 # =====================================
 # ----------- VARIABLE FN -------------

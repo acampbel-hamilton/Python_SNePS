@@ -9,8 +9,8 @@ class UniqueRep:
         # Children should be an ordered list of UniqueRep objects
         self.children = [] if children is None else children
 
-    def equivalent_structure(self, other, var_name : str):
-        return (self.name == other.name or self.name == var_name) and \
+    def equivalent_structure(self, other, self_name : str, other_name : str):
+        return (self.name == other.name or (self.name == self_name and other.name == other_name)) and \
                self.caseframe_name == other.caseframe_name and \
                self.min == other.min and \
                self.max == other.max and \
@@ -28,7 +28,7 @@ class UniqueRep:
 class VarRep:
     var_num = 1
     def __init__(self):
-        self.name = '_' + VarRep.var_num
+        self.name = '_' + str(VarRep.var_num)
         VarRep.var_num += 1
         # Restrictions should be an unordered set of UniqueRep objects
         self.restriction_reps = set()
@@ -52,7 +52,7 @@ class VarRep:
         for rep in self_dep_reps:
             located = False
             for other_rep in other_dep_reps:
-                if other_rep.equivalent_structure(rep, other.name):
+                if other_rep.equivalent_structure(rep, other.name, self.name):
                     located = True
                     other_dep_reps.remove(other_rep)
                     break
@@ -65,7 +65,7 @@ class VarRep:
         for rep in self_rest_reps:
             located = False
             for other_rep in other_rest_reps:
-                if other_rep.equivalent_structure(rep, other.name):
+                if other_rep.equivalent_structure(rep, other.name, self.name):
                     located = True
                     other_rest_reps.remove(other_rep)
                     break
