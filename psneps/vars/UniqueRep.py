@@ -10,6 +10,7 @@ class UniqueRep:
         self.children = [] if children is None else children
 
     def equivalent_structure(self, other, self_name : str, other_name : str):
+
         if not (self.name == other.name or (self.name == self_name and other.name == other_name)) and \
             self.caseframe_name == other.caseframe_name and \
             self.min == other.min and \

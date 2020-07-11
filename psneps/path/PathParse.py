@@ -27,7 +27,7 @@ def p_Path2(p):
     '''
     Path :              ReverseSlotName
     '''
-    p[0] = BasePath(current_network.find_slot(p[1][1:]), current_network, backward=True)
+    p[0] = BasePath(current_network.find_slot(p[1][:-1]), current_network, backward=True)
     global producedPaths
     producedPath = p[0]
 

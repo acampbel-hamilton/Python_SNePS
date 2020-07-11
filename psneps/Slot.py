@@ -3,6 +3,7 @@ from .Error import SNError
 from .SemanticType import SemanticType
 from re import match
 from .path.PathParse import path_parser, SNePSPathError
+from .Path import Path
 
 class SlotError(SNError):
     pass
@@ -15,7 +16,7 @@ class AdjRule(Enum):
 class Slot:
     def __init__(self, name: str, sem_type: SemanticType,
                  docstring: str, pos_adj: AdjRule, neg_adj: AdjRule,
-                 min: int, max: int, path) -> None:
+                 min: int, max: int) -> None:
         self.name = name
         self.docstring = docstring
         self.sem_type = sem_type # Semantic type
@@ -26,7 +27,7 @@ class Slot:
             raise SlotError("Invalid adjustment rule string provided. Valid options are \"NONE\", \"REDUCE\", and \"EXPAND\"")
         self.min = min
         self.max = max
-        self.path = path
+        self.paths = set()
 
     def __repr__(self):
         return "<Slot {} id: {}>".format(self.name, hex(id(self)))
@@ -39,6 +40,9 @@ class Slot:
                "\tMinimum Fillers: {}\n".format(self.min) + \
                "\tMaximum Fillers: {}\n".format(self.max) + \
                "\tPath: {}".format(self.path)
+
+    def add_path(self, path : Path) -> None:
+        self.paths.add(path)
 
 class SlotMixin:
     """ Provides functions related to slots to Network """
@@ -68,8 +72,10 @@ class SlotMixin:
         sem_type = self.sem_hierarchy.get_type(sem_type_str)
 
         try:
+            self.slots[name] = Slot(name, sem_type, docstring, pos_adj, neg_adj, min, max)
             path_obj = path_parser(path, self)
-            self.slots[name] = Slot(name, sem_type, docstring, pos_adj, neg_adj, min, max, path_obj)
+            self.slots[name].add_path(path)
+
         except SNePSPathError as e:
             print(e)
 

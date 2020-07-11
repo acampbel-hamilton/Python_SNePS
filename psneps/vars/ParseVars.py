@@ -111,11 +111,11 @@ def p_MinMaxOp(p):
     '''
     min = int(p[3])
     if len(p) == 8:
-        filler_set = p[6]
+        filler_set = [p[6]]
         max = len(p[6]) - 1
     else:
         max = int(p[5])
-        filler_set = p[8]
+        filler_set = [p[8]]
     if p[1] == "thresh":
         p[0] = rep_thresh(p[1], filler_set, min, max)
     else:
@@ -369,8 +369,7 @@ def rep_andor (caseframe_name, children_reps, min, max):
     # Simplifies caseframes - See slide 437:
     # https://cse.buffalo.edu/~shapiro/Courses/CSE563/Slides/krrSlides.pdf
     if caseframe_name == 'andor':
-        # TODO - why does this children thing work??
-        num_nodes = len(children_reps[0].children)
+        num_nodes = len(children_reps[0])
         if min == max == num_nodes:
             caseframe_name = 'and'
         elif min == 1 and max == num_nodes:
