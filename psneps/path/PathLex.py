@@ -31,11 +31,14 @@ t_RParen  = r'\)'
 t_ExPoint = r'\!'
 t_LBracket = r'\['
 t_RBracket = r'\]'
-t_ReverseSlotName = r'[A-Za-z][A-Za-z0-9_]*\-'
 t_Comma = r','
 
 def t_IrreflexiveRestrict(t):
     r'irreflexive-restrict'
+    return t
+
+def t_ReverseSlotName(t):
+    r'[A-Za-z][A-Za-z0-9_]*\-'
     return t
 
 def t_SlotName(t):
