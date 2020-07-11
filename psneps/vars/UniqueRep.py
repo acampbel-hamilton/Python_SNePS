@@ -11,11 +11,11 @@ class UniqueRep:
 
     def equivalent_structure(self, other, self_name : str, other_name : str):
 
-        if not (self.name == other.name or (self.name == self_name and other.name == other_name)) and \
+        if not ((self.name == other.name or (self.name == self_name and other.name == other_name)) and \
             self.caseframe_name == other.caseframe_name and \
             self.min == other.min and \
             self.max == other.max and \
-            self.bound == other.bound:
+            self.bound == other.bound):
                 return False
 
         try:
