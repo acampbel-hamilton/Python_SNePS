@@ -111,7 +111,7 @@ class Arbitrary(Variable):
             return super().wft_rep()
         else:
             simplify.add(self)
-            return "every({}, {})".format( \
+            return "every({}, [{}])".format( \
                 self.name, \
                 ", ".join([restriction.wft_rep(simplify.copy()) for restriction in self.restriction_set]))
 
@@ -137,7 +137,7 @@ class Indefinite(Variable):
             return super().wft_rep()
         else:
             simplify.add(self)
-            return "some({}, ({}) {})".format( \
+            return "some({}({}), [{}])".format( \
                 self.name, \
                 ", ".join([dependency.wft_rep(simplify.copy()) for dependency in self.dependency_set]), \
                 ", ".join([restriction.wft_rep(simplify.copy()) for restriction in self.restriction_set]))

@@ -151,7 +151,7 @@ def p_EveryStmt(p):
 # e.g. some{x(y)}(Isa(x, y))
 def p_SomeStmt(p):
     '''
-    SomeStmt :          Some LParen Var LParen AtomicNameSet RParen Comma Argument RParen
+    SomeStmt :          Some LParen Var LParen AtomicNames RParen Comma Argument RParen
     '''
     global variables
     ind = p[3]
@@ -285,8 +285,10 @@ def p_AtomicNameSet(p):
 
 def p_AtomicNames(p):
     '''
-    AtomicNames :       AtomicName
-                |       AtomicNames Comma AtomicName
+    AtomicNames :       Identifier
+                |       Integer
+                |       AtomicNames Comma Identifier
+                |       AtomicNames Comma Integer
     '''
     if len(p) == 2:
         p[0] = [p[1]]

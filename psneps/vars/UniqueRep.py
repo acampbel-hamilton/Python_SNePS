@@ -11,18 +11,28 @@ class UniqueRep:
 
     def equivalent_structure(self, other, self_name : str, other_name : str):
 
-        if not (self.name == other.name or (self.name == self_name and other.name == other_name)) and \
+        if not ((self.name == other.name or (self.name == self_name and other.name == other_name)) and \
             self.caseframe_name == other.caseframe_name and \
             self.min == other.min and \
             self.max == other.max and \
-            self.bound == other.bound:
+            self.bound == other.bound):
                 return False
 
         try:
             for i in range(len(self.children)):
-                for j in range(len(self.children[i])):
-                    if not self.children[i][j].equivalent_structure(other.children[i][j], self_name, other_name):
+                self_children = self.children[i].copy()
+                other_children = other.children[i].copy()
+
+                for self_child in self_children:
+                    located = False
+                    for other_child in other_children:
+                        if self_child.equivalent_structure(other_child, self_name, other_name):
+                            located = True
+                            other_children.remove(other_child)
+                            break
+                    if not located:
                         return False
+
         except Exception:
             return False
 
@@ -86,8 +96,8 @@ class VarRep:
                     located = True
                     other_rest_reps.remove(other_rep)
                     break
-                if not located:
-                    return False
+            if not located:
+                return False
 
         return True
 
