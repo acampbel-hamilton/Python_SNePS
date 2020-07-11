@@ -50,18 +50,27 @@ class ContextMixin:
             raise NotImplementedError("Mixins can't be instantiated.")
 
         self.contexts = {}
-        self.default_context = Context("_default", docstring="The default context")
+        self.default_context = Context("default", docstring="The default context")
         self.current_context = self.default_context
+        self.contexts[self.current_context.name] = self.current_context
 
-    def define_context(self, name: str, docstring="", parent="_default") -> None:
+    def define_context(self, name: str, docstring : str="", parent : str="default") -> None:
         """ Defines a new context. """
         if self.enforce_name_syntax and not match(r'^[A-Za-z][A-Za-z0-9_]*$', name):
             raise ContextError("ERROR: The context name '{}' is not allowed".format(name))
 
         if name in self.contexts:
-            raise ContextError("ERROR: You cannot define contexts with the same name.")
+            raise ContextError("ERROR: Context {} already defined.".format(parent))
+        elif parent not in self.contexts:
+            raise ContextError("ERROR: Parent context {} does not exist.")
         else:
-            self.contexts[name] = Context(name, docstring, self.contexts[parent], hyps, ders)
+            self.contexts[name] = Context(name, docstring, self.contexts[parent])
+
+    def set_current_context(self, context_name : str) -> None:
+        if context_name in self.contexts:
+            self.current_context = self.contexts[context_name]
+        else:
+            raise ContextError("ERROR: Context \"{}\" does not exist.".format(context_name))
 
     def list_contexts(self) -> None:
         """ Prints out all the contexts in the network """
