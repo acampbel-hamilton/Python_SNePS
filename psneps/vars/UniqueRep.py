@@ -20,9 +20,19 @@ class UniqueRep:
 
         try:
             for i in range(len(self.children)):
-                for j in range(len(self.children[i])):
-                    if not self.children[i][j].equivalent_structure(other.children[i][j], self_name, other_name):
+                self_children = self.children[i].copy()
+                other_children = other.children[i].copy()
+
+                for self_child in self_children:
+                    located = False
+                    for other_child in other_children:
+                        if self_child.equivalent_structure(other_child, self_name, other_name):
+                            located = True
+                            other_children.remove(other_child)
+                            break
+                    if not located:
                         return False
+
         except Exception:
             return False
 
@@ -86,8 +96,8 @@ class VarRep:
                     located = True
                     other_rest_reps.remove(other_rep)
                     break
-                if not located:
-                    return False
+            if not located:
+                return False
 
         return True
 
