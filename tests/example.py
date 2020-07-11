@@ -4,6 +4,9 @@ net.define_slot("agent", "Entity")
 net.define_slot("has", "Thing")
 net.define_slot("happy_thing", "Thing")
 
+net.define_context("test")
+net.set_current_context("test")
+
 net.define_caseframe("Has", "Propositional", ["agent", "has"])
 net.define_caseframe("Happy", "Propositional", ["happy_thing"])
 
