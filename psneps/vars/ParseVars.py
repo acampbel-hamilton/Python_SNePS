@@ -274,7 +274,7 @@ def p_EveryStmt(p):
 
 def p_SomeStmt(p):
     '''
-    SomeStmt :          Some LParen IndVar LParen AtomicNameSet RParen Comma Argument RParen
+    SomeStmt :          Some LParen IndVar LParen AtomicNames RParen Comma Argument RParen
     '''
     global variables
     global current_network
