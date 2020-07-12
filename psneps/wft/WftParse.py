@@ -354,6 +354,11 @@ def build_molecular(caseframe_name, filler_set):
 def build_thresh (caseframe_name, filler_set, min, max):
     """ Builds and returns (or simply returns) a thresh node from given parameters """
 
+    # Min and max must be within bounds
+    size = len(filler_set[0])
+    min = size if min > size else min
+    max = size if max > size else max
+
     # Simplifies caseframes - See slide 439:
     # https://cse.buffalo.edu/~shapiro/Courses/CSE563/Slides/krrSlides.pdf
     if caseframe_name == 'thresh':
@@ -372,6 +377,11 @@ def build_thresh (caseframe_name, filler_set, min, max):
 
 def build_andor (caseframe_name, filler_set, min, max):
     """ Builds and returns (or simply returns) an andor node from given parameters """
+
+    # Min and max must be within bounds
+    size = len(filler_set[0])
+    min = size if min > size else min
+    max = size if max > size else max
 
     # Simplifies caseframes - See slide 437:
     # https://cse.buffalo.edu/~shapiro/Courses/CSE563/Slides/krrSlides.pdf
@@ -399,6 +409,11 @@ def build_andor (caseframe_name, filler_set, min, max):
 
 def build_impl(filler_set, bound):
     """ Builds and returns (or simply returns) an impl node from given parameters """
+
+    # Bound must be within bounds
+    size = len(filler_set[0])
+    bound = size if bound > size else bound
+
     caseframe = current_network.find_caseframe("if")
     frame = Frame(caseframe, filler_set)
     for node in current_network.nodes.values():

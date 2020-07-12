@@ -6,10 +6,34 @@ class UniqueRep:
         self.min = min
         self.max = max
         self.bound = bound
+
         # Children should be an ordered list of UniqueRep objects
         self.children = [] if children is None else children
+        unique_children = []
+        for slot_group in self.children:
+            unique_slot_group = []
+            for filler in slot_group:
+                located = False
+                for unique_filler in unique_slot_group:
+                    if unique_filler.equivalent_structure(filler):
+                        located = True
+                        break
+                if not located:
+                    unique_slot_group.append(filler)
+            unique_children.append(unique_slot_group)
+        self.children = unique_children
 
-    def equivalent_structure(self, other, self_name : str, other_name : str):
+        # Ensure min, max, bound are within bounds
+        if self.min is not None or self.max is not None or self.bound is not None:
+            size = len(self.children[0])
+        if self.min is not None:
+            self.min = size if min > size else min
+        if self.max is not None:
+            self.max = size if max > size else max
+        if self.bound is not None:
+            self.bound = size if bound > size else bound
+
+    def equivalent_structure(self, other, self_name : str=None, other_name : str=None):
 
         if not ((self.name == other.name or (self.name == self_name and other.name == other_name)) and \
             self.caseframe_name == other.caseframe_name and \
@@ -72,7 +96,7 @@ class VarRep:
 
     def add_restriction(self, restriction : UniqueRep):
         for rest_rep in self.restriction_reps:
-            if rest_rep.equivalent_structure(restriction, self.name, self.name):
+            if rest_rep.equivalent_structure(restriction):
                 return
         self.restriction_reps.add(restriction)
 
