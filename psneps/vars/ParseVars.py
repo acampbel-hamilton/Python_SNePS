@@ -121,13 +121,6 @@ def p_MinMaxOp(p):
     else:
         p[0] = rep_andor(p[1], filler_set, min, max)
 
-# e.g. close(Dog, wft1)
-def p_CloseStmt(p):
-    '''
-    CloseStmt :         Close LParen AtomicNameSet Comma Wft RParen
-    '''
-    raise SNePSVarError("Close not yet implemented!")
-
 # e.g. brothers(Tom, Ted)
 def p_Function(p):
     '''
@@ -249,6 +242,12 @@ def p_Y_WftNode(p):
 # =====================================
 # ------------- VAR RULES -------------
 # =====================================
+
+def p_CloseStmt(p):
+    '''
+    CloseStmt :         Close LParen AtomicNameSet Comma Wft RParen
+    '''
+    raise SNePSVarError("Close not yet implemented!")
 
 def p_EveryStmt(p):
     '''
