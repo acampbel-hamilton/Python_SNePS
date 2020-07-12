@@ -15,26 +15,25 @@ class UniqueRep:
             self.caseframe_name == other.caseframe_name and \
             self.min == other.min and \
             self.max == other.max and \
-            self.bound == other.bound):
+            self.bound == other.bound and \
+            len(self.children) == len(other.children)):
                 return False
 
-        try:
-            for i in range(len(self.children)):
-                self_children = self.children[i].copy()
-                other_children = other.children[i].copy()
+        for i in range(len(self.children)):
+            self_children = self.children[i].copy()
+            other_children = other.children[i].copy()
 
-                for self_child in self_children:
-                    located = False
-                    for other_child in other_children:
-                        if self_child.equivalent_structure(other_child, self_name, other_name):
-                            located = True
-                            other_children.remove(other_child)
-                            break
-                    if not located:
-                        return False
-
-        except Exception:
-            return False
+            for self_child in self_children:
+                located = False
+                for other_child in other_children:
+                    if self_child.equivalent_structure(other_child, self_name, other_name):
+                        located = True
+                        other_children.remove(other_child)
+                        break
+                if not located:
+                    return False
+            if len(other_children) != 0:
+                return False
 
         return True
 
@@ -72,6 +71,9 @@ class VarRep:
         self.dependency_reps = set()
 
     def add_restriction(self, restriction : UniqueRep):
+        for rest_rep in self.restriction_reps:
+            if rest_rep.equivalent_structure(restriction, self.name, self.name):
+                return
         self.restriction_reps.add(restriction)
 
     def add_dependency(self, dependency : UniqueRep):
