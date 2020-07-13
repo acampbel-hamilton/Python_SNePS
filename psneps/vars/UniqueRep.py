@@ -1,3 +1,8 @@
+from ..Error import SNError
+
+class SNePSVarError(SNError):
+    pass
+
 class UniqueRep:
     """ Unique set-like representation for variables """
     def __init__(self, name=None, caseframe_name=None, min=None, max=None, bound=None, children=None):
@@ -6,32 +11,18 @@ class UniqueRep:
         self.min = min
         self.max = max
         self.bound = bound
-
         # Children should be an ordered list of UniqueRep objects
         self.children = [] if children is None else children
-        unique_children = []
-        for slot_group in self.children:
-            unique_slot_group = []
-            for filler in slot_group:
-                located = False
-                for unique_filler in unique_slot_group:
-                    if unique_filler.equivalent_structure(filler):
-                        located = True
-                        break
-                if not located:
-                    unique_slot_group.append(filler)
-            unique_children.append(unique_slot_group)
-        self.children = unique_children
 
         # Ensure min, max, bound are within bounds
         if self.min is not None or self.max is not None or self.bound is not None:
             size = len(self.children[0])
-        if self.min is not None:
-            self.min = size if min > size else min
-        if self.max is not None:
-            self.max = size if max > size else max
-        if self.bound is not None:
-            self.bound = size if bound > size else bound
+            if self.min is not None and self.min > size:
+                raise SNePSVarError("The min must be between 0 and {}".format(size))
+            if self.max is not None and self.max > size:
+                raise SNePSVarError("The max must be between 0 and {}".format(size))
+            if self.bound is not None and self.bound > size:
+                raise SNePSVarError("The bound must be between 0 and {}".format(size))
 
     def equivalent_structure(self, other, self_name : str=None, other_name : str=None):
 

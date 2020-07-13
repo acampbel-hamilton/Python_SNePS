@@ -50,7 +50,7 @@ def p_BinaryOp2(p):
     BinaryOp :          AndImpl LParen Argument Comma Argument RParen
     '''
     filler_set = [p[3], p[5]]
-    p[0] = build_impl(filler_set, len(p[3].nodes))
+    p[0] = build_impl(filler_set, len(filler_set[0]))
 def p_BinaryOp3(p):
     '''
     BinaryOp :          SingImpl LParen Argument Comma Argument RParen
@@ -65,13 +65,13 @@ def p_NaryOp1(p):
     NaryOp :            And LParen Wfts RParen
     '''
     filler_set = [Fillers(p[3])]
-    p[0] = build_andor(p[1], filler_set, len(p[3]), len(p[3]))
+    p[0] = build_andor(p[1], filler_set, len(filler_set[0]), len(filler_set[0]))
 def p_NaryOp2(p):
     '''
     NaryOp :            Or LParen Wfts RParen
     '''
     filler_set = [Fillers(p[3])]
-    p[0] = build_andor(p[1], filler_set, 1, len(p[3]))
+    p[0] = build_andor(p[1], filler_set, 1, len(filler_set[0]))
 def p_NaryOp3(p):
     '''
     NaryOp :            Not LParen Wfts RParen
@@ -84,7 +84,7 @@ def p_NaryOp4(p):
     NaryOp :            Nand LParen Wfts RParen
     '''
     filler_set = [Fillers(p[3])]
-    p[0] = build_andor(p[1], filler_set, 0, len(p[3]) - 1)
+    p[0] = build_andor(p[1], filler_set, 0, len(filler_set[0]) - 1)
 def p_NaryOp5(p):
     '''
     NaryOp :            Xor LParen Wfts RParen
@@ -97,7 +97,7 @@ def p_NaryOp6(p):
            |            DoubImpl LParen Wfts RParen
     '''
     filler_set = [Fillers(p[3])]
-    p[0] = build_thresh("iff", filler_set, 1, len(p[3]) - 1)
+    p[0] = build_thresh("iff", filler_set, 1, len(filler_set[0]) - 1)
 def p_NaryOp7(p):
     '''
     NaryOp :            Thnot LParen Wfts RParen
@@ -115,7 +115,7 @@ def p_MinMaxOp(p):
     min = int(p[3])
     if len(p) == 8:
         filler_set = [Fillers(p[6])]
-        max = len(p[6]) - 1
+        max = len(filler_set[0]) - 1
     else:
         max = int(p[5])
         filler_set = [Fillers(p[8])]
@@ -354,11 +354,6 @@ def build_molecular(caseframe_name, filler_set):
 def build_thresh (caseframe_name, filler_set, min, max):
     """ Builds and returns (or simply returns) a thresh node from given parameters """
 
-    # Min and max must be within bounds
-    size = len(filler_set[0])
-    min = size if min > size else min
-    max = size if max > size else max
-
     # Simplifies caseframes - See slide 439:
     # https://cse.buffalo.edu/~shapiro/Courses/CSE563/Slides/krrSlides.pdf
     if caseframe_name == 'thresh':
@@ -377,11 +372,6 @@ def build_thresh (caseframe_name, filler_set, min, max):
 
 def build_andor (caseframe_name, filler_set, min, max):
     """ Builds and returns (or simply returns) an andor node from given parameters """
-
-    # Min and max must be within bounds
-    size = len(filler_set[0])
-    min = size if min > size else min
-    max = size if max > size else max
 
     # Simplifies caseframes - See slide 437:
     # https://cse.buffalo.edu/~shapiro/Courses/CSE563/Slides/krrSlides.pdf
@@ -409,10 +399,6 @@ def build_andor (caseframe_name, filler_set, min, max):
 
 def build_impl(filler_set, bound):
     """ Builds and returns (or simply returns) an impl node from given parameters """
-
-    # Bound must be within bounds
-    size = len(filler_set[0])
-    bound = size if bound > size else bound
 
     caseframe = current_network.find_caseframe("if")
     frame = Frame(caseframe, filler_set)
