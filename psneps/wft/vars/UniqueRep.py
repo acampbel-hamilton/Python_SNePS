@@ -39,13 +39,11 @@ class UniqueRep:
             other_children = other.children[i].copy()
 
             for self_child in self_children:
-                located = False
                 for other_child in other.children[i]:
                     if self_child.equivalent_structure(other_child, self_name, other_name):
-                        located = True
                         other_children.remove(other_child)
                         break
-                if not located:
+                else:
                     return False
             if len(other_children) != 0:
                 return False
