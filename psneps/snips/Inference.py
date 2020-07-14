@@ -54,13 +54,9 @@ class Inference:
         return results
 
     def ask_if_not(self, wft_str: str, complete_ask : bool=False):
-
         return self.ask_if("not({})".format(wft_str), complete_ask)
 
     def _ask_if(self, wft: Node, ignore=None):
-
-        derived = False
-
         # Prevents recursion
         if ignore is None:
              ignore = set()
@@ -69,14 +65,10 @@ class Inference:
         ignore.add(wft)
 
         # Check using different inference methods
-        if self.net.current_context.is_asserted(wft):
-            derived = True
-        elif self._slot_based(wft, ignore.copy()):
-            derived = True
-        elif self._by_binary_op(wft, ignore.copy()):
-            derived = True
-        elif self._by_nary_op(wft, ignore.copy()):
-            derived = True
+        derived = self.net.current_context.is_asserted(wft) or \
+                  self._slot_based(wft, ignore.copy()) or \
+                  elif self._by_binary_op(wft, ignore.copy()) or \
+                  elif self._by_nary_op(wft, ignore.copy())
 
         if derived:
             self.net.current_context.add_derived(wft)

@@ -24,7 +24,7 @@ class UniqueRep:
             if self.bound is not None and self.bound > size:
                 raise SNePSVarError("The bound must be between 0 and {}".format(size))
 
-    def equivalent_structure(self, other, self_name : str=None, other_name : str=None):
+    def equivalent_structure(self, other, self_name: str = None, other_name: str = None):
 
         if not ((self.name == other.name or (self.name == self_name and other.name == other_name)) and \
             self.caseframe_name == other.caseframe_name and \
@@ -52,13 +52,9 @@ class UniqueRep:
 
         return True
 
-    def includes_var(var_name : str):
-        if name == var_name:
-            return True
-        for child in self.children:
-            if child.includes_var(var_name):
-                return True
-        return False
+    def includes_var(var_name: str):
+        """ Returns whether this UniqueRep or any of its children contains the given var. """
+        return name == var_name or any(child.includes_var(var_name) for child in self.children)
 
     def __str__(self) -> str:
         return self.to_str()

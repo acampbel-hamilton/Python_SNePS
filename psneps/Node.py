@@ -24,10 +24,7 @@ class Node:
 
     def has_upcable(self, name: str) -> bool:
         """ True if this node has an up cable with the provided name. """
-        for up_cable in self.up_cableset:
-            if up_cable.name == name:
-                return True
-        return False
+        return any(up_cable.name == name for up_cable in self.up_cableset)
 
     def follow_down_cable(self, slot) -> set:
         """ Since vanilla Nodes have no down cables, this returns an empty set. """
