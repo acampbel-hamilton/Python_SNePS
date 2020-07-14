@@ -312,7 +312,7 @@ def p_AtomicNameSet(p):
     AtomicNameSet :
                   |     Identifier
                   |     Integer
-                  |     LParen AtomicNames RParen
+                  |     LBracket AtomicNames RBracket
     '''
     if len(p) == 1:
         p[0] = []

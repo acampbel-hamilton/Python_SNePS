@@ -40,7 +40,7 @@ class UniqueRep:
 
             for self_child in self_children:
                 located = False
-                for other_child in other_children:
+                for other_child in other.children[i]:
                     if self_child.equivalent_structure(other_child, self_name, other_name):
                         located = True
                         other_children.remove(other_child)
@@ -104,7 +104,7 @@ class VarRep:
         other_rest_reps = other.restriction_reps.copy()
         for rep in self_rest_reps:
             located = False
-            for other_rep in other_rest_reps:
+            for other_rep in other.restriction_reps:
                 if other_rep.equivalent_structure(rep, other.name, self.name):
                     located = True
                     other_rest_reps.remove(other_rep)
