@@ -1,31 +1,32 @@
 from math import inf
 from .Error import SNError
 from re import match
+from typing import List
 
 class SemError(SNError):
     pass
 
 class SemanticType:
     # Node in semantic hierarchy
-    def __init__(self, name):
+    def __init__(self, name: str):
         self.name = name
         self.parents = []
         self.children = []
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self.name)
 
     def __str__(self) -> str:
         return self.name
 
-    def add_parent(self, parent):
+    def add_parent(self, parent) -> None:
         self.parents.append(parent)
 
-    def add_child(self, child):
+    def add_child(self, child) -> None:
         self.children.append(child)
 
     def subtype(self, potential_child):
-        """ Determines if given node is a descendant of self """
+        """ Determines if given SemanticType is a inherits from self """
         return any(child is potential_child or child.subtype(potential_child) for child in self.children)
 
     def __str__(self, level=0):
@@ -140,7 +141,7 @@ class SemanticHierarchy:
         else:
             raise SemError('ERROR: Type "' + type_name + '" does not exist')
 
-    def add_parent(self, type_name, parent_names):
+    def add_parent(self, type_name: str, parent_names: List[str]) -> None:
         type = self.sem_types[type_name]
 
         for parent_name in parent_names:
@@ -149,7 +150,7 @@ class SemanticHierarchy:
                 type.add_parent(parent)
                 parent.add_child(type)
 
-    def fill_slot(self, node, slot_type):
+    def fill_slot(self, node, slot_type) -> None:
         filler_type = node.sem_type
         if filler_type is not slot_type and not slot_type.subtype(filler_type):
                 node.sem_type = self.respecify(node.name, filler_type, slot_type)
@@ -166,11 +167,11 @@ class SemanticMixin:
 
         self.sem_hierarchy = SemanticHierarchy()
 
-    def define_type(self, name, parent_names=None):
-        """ Adds term to hierarchy """
+    def define_type(self, name: str, parent_names: List[str] = None):
+        """ Adds term to hierarchy. This is another important function for interacting with psneps. """
 
         if self.enforce_name_syntax and not match(r'^[A-Za-z][A-Za-z0-9_]*$', name):
-            raise NodeError("ERROR: The semantic type name '{}' is not allowed".format(name))
+            raise NodeError("ERROR: The semantic type name '{}' is not allowed.".format(name))
 
         # see https://effbot.org/zone/default-values.htm for why this is necessary
         if parent_names is None:
