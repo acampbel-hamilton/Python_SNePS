@@ -23,7 +23,9 @@ snips.ask("e")
 
 print(net.find_caseframe("Isa"))
 print(net.find_slot("member"))
+net.define_path("equiv", "compose(!, equiv, kstar(compose(equiv-, !, equiv)))")
 print(net.find_slot("equiv"))
+
 
 net.export_graph()
 # net.print_graph()
