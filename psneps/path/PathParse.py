@@ -2,7 +2,7 @@ from . import PathLex
 from ..ply import *
 from ..Network import *
 from ..Error import SNError
-from .. Path import *
+from .. Path import BasePath, ComposedPaths, KPlusPath, KStarPath, AssertedPath, AndPaths, OrPaths, IRPath
 
 class SNePSPathError(SNError):
     pass
@@ -137,7 +137,7 @@ def path_parser(path, network):
             # Returns the produced path, with a string representation
             global producedPath
             return producedPath
-            
+
         except SNError as e:
             if type(e) is not SNePSPathError:
                 print("PARSING FAILED:\n\t", end='')

@@ -21,7 +21,8 @@ snips = Inference(net)
 snips.toggle_debug()
 snips.ask("e")
 
-print(net.find_caseframe("Equiv"))
+print(net.find_caseframe("Isa"))
+print(net.find_slot("member"))
 print(net.find_slot("equiv"))
 
 net.export_graph()

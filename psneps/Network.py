@@ -8,10 +8,11 @@ from .SemanticType import SemanticMixin
 from .Context import ContextMixin
 from .Slot import SlotMixin, AdjRule
 from .Node import NodeMixin
+from .Path import PathMixin
 from .Caseframe import CaseframeMixin
 from .wft.WftParse import wft_parser
 
-class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin, VisualizationMixin):
+class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin, VisualizationMixin, PathMixin):
     def __init__(self) -> None:
         self.enforce_name_syntax = False
         for cls in type(self).__bases__:
