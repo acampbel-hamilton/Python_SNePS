@@ -145,11 +145,11 @@ def p_error(p):
 def path_parser(path, network):
     global current_network
     current_network = network
-    yacc.yacc()
+    path_parser = yacc.yacc()
     if path != '':
         try:
             # Parse import as path
-            yacc.parse(path, lexer=PathLex.path_lexer)
+            path_parser.parse(path, lexer=PathLex.path_lexer)
 
             # Returns the produced path, with a string representation
             global producedPath

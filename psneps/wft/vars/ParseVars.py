@@ -448,10 +448,10 @@ def get_vars(wft: str, network):
 
     global current_network
     current_network = network
-    yacc.yacc()
+    var_parser = yacc.yacc()
 
     # First pass on wft string
-    yacc.parse(wft, lexer=WftLex.wft_lexer)
+    var_parser.parse(wft, lexer=WftLex.wft_lexer)
 
     # Reset and return variables
     global variables

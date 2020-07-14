@@ -500,7 +500,7 @@ def wft_parser(wft: str, network):
     global current_network
     current_network = network
 
-    yacc.yacc()
+    wft_parser = yacc.yacc()
     if wft != '':
         try:
             # Store variables in array indexed by names
@@ -509,7 +509,7 @@ def wft_parser(wft: str, network):
 
             # Parse and store top-level wft created by string
             # (as opposed to sub-wfts it might create)
-            yacc.parse(wft, lexer=WftLex.wft_lexer)
+            wft_parser.parse(wft, lexer=WftLex.wft_lexer)
             global top_wft
             ret_top_wft = top_wft
 
