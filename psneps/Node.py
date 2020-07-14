@@ -3,7 +3,7 @@ from .Slot import Slot
 from .Error import SNError
 from .SemanticType import SemanticType
 from re import match
-from .vars.UniqueRep import *
+from .wft.vars.UniqueRep import *
 
 class NodeError(SNError):
     pass
@@ -131,7 +131,7 @@ class Indefinite(Variable):
     def add_dependency(self, dependency) -> None: # These need type definitions, since we don't know what restrictions/dependencies are.
         self.dependency_set.add(dependency)
 
-    def store_in(self, current_network: Network):
+    def store_in(self, current_network):
         self.name = 'ind' + str(self.counter)
         Indefinite.counter += 1
         current_network.nodes[self.name] = self

@@ -1,9 +1,9 @@
-from ..wft import WftLex
-from ..ply import *
-from ..Error import SNError
-from ..Node import Indefinite, Arbitrary, Variable
+from .. import WftLex
+from ...ply import *
+from ...Error import SNError
+from ...Node import Indefinite, Arbitrary, Variable
 from .UniqueRep import *
-from ..Node import Base, Molecular, Indefinite, Arbitrary, ThreshNode, AndOrNode, ImplNode
+from ...Node import Base, Molecular, Indefinite, Arbitrary, ThreshNode, AndOrNode, ImplNode
 
 current_network = None
 tokens = WftLex.tokens
