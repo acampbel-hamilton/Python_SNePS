@@ -43,6 +43,7 @@ def p_Path3(p):
 
 # ==============================================================================
 
+# e.g. !
 def p_AssertedPath(p):
     '''
     AssertedNode :      ExPoint
@@ -51,6 +52,7 @@ def p_AssertedPath(p):
 
 # ==============================================================================
 
+# e.g. converse(member)
 def p_ConversePath(p):
     '''
     ConversePath :      Converse LParen Path RParen
@@ -60,6 +62,7 @@ def p_ConversePath(p):
 
 # ==============================================================================
 
+# e.g. kplus(member)
 def p_KPath1(p):
     '''
     KPath :             KPlus LParen Path RParen
@@ -73,6 +76,7 @@ def p_KPath2(p):
 
 # ==============================================================================
 
+# e.g. compose(member)
 def p_MultiPath1(p):
     '''
     MultiPath :         Compose LParen Paths RParen
@@ -95,6 +99,7 @@ def p_MultiPath3(p):
 
 # ==============================================================================
 
+# e.g. irreflexive-restrict(member)
 def p_IRPath(p):
     '''
     IRPath :            IrreflexiveRestrict LParen Path RParen
