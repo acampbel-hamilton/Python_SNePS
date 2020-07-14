@@ -29,17 +29,19 @@ class SemanticType:
         """ Determines if given SemanticType is a inherits from self """
         return any(child is potential_child or child.subtype(potential_child) for child in self.children)
 
-    def __str__(self, level=0):
+    def __str__(self, level: int = 0):
+        """ The level parameter is for compatibility with other __str__ methods, and is not used (clearly) """
         return self.name
 
 class SemanticHierarchy:
-    """ Contains tree-like structure for semantics (Entity, individual, etc.) """
+    """ Contains tree-like structure for semantics (Entity, Individual, etc.) """
     def __init__(self) -> None:
         self.root_node = SemanticType("Entity")
         self.sem_types = {} # Maps strs to SemanticType objects.
         self.sem_types["Entity"] = self.root_node
 
-    def add_type(self, type_name: str, parent_names=None) -> None:
+    def add_type(self, type_name: str, parent_names: List[str] = None) -> None:
+        """ Adds a new semantic type to the hierarchy. This will be another function called by users. """
         # see https://effbot.org/zone/default-values.htm for why this is necessary
         if parent_names is None:
             parent_names = []

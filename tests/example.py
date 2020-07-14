@@ -27,5 +27,5 @@ net.define_path("equiv", "compose(!, equiv, kstar(compose(equiv-, !, equiv)))")
 print(net.find_slot("equiv"))
 
 
-net.export_graph()
-# net.print_graph()
+# net.export_graph()
+net.print_graph()
