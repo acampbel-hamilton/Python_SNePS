@@ -31,7 +31,7 @@ class ComposedPaths(Path):
         return derived
 
     def __str__(self) -> str:
-        return "compose({})".format(", ".join(self.paths))
+        return "compose({})".format(", ".join([str(path) for path in self.paths]))
 
 class AndPaths(ComposedPaths):
     def derivable(self, start_node, parent_converse=False):
@@ -46,7 +46,7 @@ class AndPaths(ComposedPaths):
         return derived
 
     def __str__(self) -> str:
-        return "and({})".format(", ".join(self.paths))
+        return "and({})".format(", ".join([str(path) for path in self.paths]))
 
 class OrPaths(ComposedPaths):
     def derivable(self, start_node, parent_converse=False):
@@ -61,7 +61,7 @@ class OrPaths(ComposedPaths):
         return derived
 
     def __str__(self) -> str:
-        return "or({})".format(", ".join(self.paths))
+        return "or({})".format(", ".join([str(path) for path in self.paths]))
 
 class ModPath(Path):
     """ Performs some modification on a single path """
@@ -123,7 +123,7 @@ class BasePath(Path):
             return start_node.follow_up_cable(self.slot)
 
     def __str__(self) -> str:
-        return ("-" if backward else "") + self.slot.name
+        return self.slot.name + ("-" if self.backward else "")
 
 # Asserted Path singleton
 class AssertedPath(Path):
