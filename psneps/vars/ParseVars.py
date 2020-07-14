@@ -1,5 +1,5 @@
-from . import WftLex
-from .ply import *
+from ..wft import WftLex
+from ..ply import *
 from ..Error import SNError
 from ..Node import Indefinite, Arbitrary, Variable
 from .UniqueRep import *
@@ -415,7 +415,7 @@ def get_vars(wft : str, network):
     current_network = network
     yacc.yacc()
 
-    yacc.parse(wft)
+    yacc.parse(wft, lexer=WftLex.wft_lexer)
 
     # Reset and return variables
     global variables

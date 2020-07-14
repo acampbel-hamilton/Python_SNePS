@@ -1,5 +1,5 @@
 from . import PathLex
-from .ply import *
+from ..ply import *
 from ..Network import *
 from ..Error import SNError
 from .. Path import *
@@ -122,7 +122,7 @@ def path_parser(path, network):
     yacc.yacc()
     if path != '':
         try:
-            yacc.parse(path)
+            yacc.parse(path,lexer=PathLex.path_lexer)
             global producedPath
             producedPath.str_representation = path
             return producedPath

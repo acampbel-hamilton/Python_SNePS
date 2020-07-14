@@ -6,7 +6,7 @@ well-formed-term. """
 # -------------- IMPORTS --------------
 # =====================================
 
-from .ply import *
+from ..ply import *
 from re import match
 
 # =====================================
@@ -108,8 +108,8 @@ def t_error(t):
 t_ignore = ' \t\r\n\f\v'
 
 # Build the lexer
-from .ply import lex
-lexer = lex.lex()
+from ..ply import lex
+wft_lexer = lex.lex()
 
 # =====================================
 # -------------- TEST FN --------------
@@ -119,7 +119,6 @@ lexer = lex.lex()
 # Use "exit()" to exit.
 
 if __name__ == '__main__':
-    lexer = lex.lex()
     while True:
         try:
             s = input('Command: ')
@@ -128,9 +127,9 @@ if __name__ == '__main__':
         if s == 'exit()':
             break
         try:
-            lexer.input(s)
+            wft_lexer.input(s)
             while True:
-                token = lexer.token()
+                token = wft_lexer.token()
                 if not token:
                     break
                 print(token)

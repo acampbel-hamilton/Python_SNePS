@@ -8,7 +8,7 @@ use them to build Python_SNePS nodes and frames. """
 from . import WftLex
 from ..vars.ParseVars import get_vars, SNePSVarError
 from ..vars.UniqueRep import UniqueRep
-from .ply import *
+from ..ply import *
 from ..Network import *
 from ..Caseframe import Frame, Fillers
 from ..Node import Base, Molecular, Indefinite, Arbitrary, ThreshNode, AndOrNode, ImplNode
@@ -509,7 +509,7 @@ def wft_parser(wft : str, network):
 
             # Parse and store top-level wft created by string
             # (as opposed to sub-wfts it might create)
-            yacc.parse(wft)
+            yacc.parse(wft, lexer=WftLex.wft_lexer)
             global top_wft
             ret_top_wft = top_wft
 
