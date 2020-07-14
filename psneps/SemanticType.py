@@ -26,10 +26,7 @@ class SemanticType:
 
     def subtype(self, potential_child):
         """ Determines if given node is a descendant of self """
-        for child in self.children:
-            if child is potential_child or child.subtype(potential_child):
-                return True
-        return False
+        return any(child is potential_child or child.subtype(potential_child) for child in self.children)
 
     def __str__(self, level=0):
         return self.name
@@ -38,7 +35,7 @@ class SemanticHierarchy:
     """ Contains tree-like structure for semantics (Entity, individual, etc.) """
     def __init__(self) -> None:
         self.root_node = SemanticType("Entity")
-        self.sem_types = {}
+        self.sem_types = {} # Maps strs to SemanticType objects.
         self.sem_types["Entity"] = self.root_node
 
     def add_type(self, type_name: str, parent_names=None) -> None:
