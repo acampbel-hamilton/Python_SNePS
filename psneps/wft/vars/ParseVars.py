@@ -426,9 +426,9 @@ def rep_impl(children_reps, bound):
 
 def unique_children(children):
     """ Returns a list of unique representations for children """
+    print(children)
     unique_children = []
     for slot_group in children:
-        print(slot_group)
         unique_slot_group = []
         for filler in slot_group:
             located = False
