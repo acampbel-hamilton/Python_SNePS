@@ -430,6 +430,7 @@ def unique_children(children):
     for slot_group in children:
         unique_slot_group = []
         for filler in slot_group:
+            print(filler, "\n")
             located = False
             for unique_filler in unique_slot_group:
                 if unique_filler.equivalent_structure(filler):
