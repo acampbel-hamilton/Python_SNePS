@@ -67,6 +67,7 @@ class ContextMixin:
             self.contexts[name] = Context(name, docstring, self.contexts[parent])
 
     def set_current_context(self, context_name: str) -> None:
+        """ Sets the current context. As it is, only the default context is defined. """
         if context_name in self.contexts:
             self.current_context = self.contexts[context_name]
         else:

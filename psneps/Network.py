@@ -111,6 +111,7 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin,
 
 
     def assert_wft(self, wft_str: str, inf: bool = False) -> None:
+        """ Asserts a provided. This is one of the main ways to interact with the psneps system. """
         wft = wft_parser(wft_str, self)
         if wft is not None:
             print(wft.name + "! :", wft)
