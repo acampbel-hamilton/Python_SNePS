@@ -271,12 +271,10 @@ class MinMaxOpNode(Molecular):
 
         return UniqueRep(caseframe_name=self.frame.caseframe.name, children=children, min=self.min, max=self.max)
 
-### What are these here for?
 class ThreshNode(MinMaxOpNode):
     """ Thresh with two values """
     pass
 
-### What are these here for?
 class AndOrNode(MinMaxOpNode):
     """ AndOr with two values """
     pass
