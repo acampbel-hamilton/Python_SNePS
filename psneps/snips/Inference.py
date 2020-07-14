@@ -67,8 +67,8 @@ class Inference:
         # Check using different inference methods
         derived = self.net.current_context.is_asserted(wft) or \
                   self._slot_based(wft, ignore.copy()) or \
-                  elif self._by_binary_op(wft, ignore.copy()) or \
-                  elif self._by_nary_op(wft, ignore.copy())
+                  self._by_binary_op(wft, ignore.copy()) or \
+                  self._by_nary_op(wft, ignore.copy())
 
         if derived:
             self.net.current_context.add_derived(wft)
