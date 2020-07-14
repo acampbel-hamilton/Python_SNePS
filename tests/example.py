@@ -10,6 +10,7 @@ net.set_current_context("test")
 net.define_caseframe("Has", "Propositional", ["agent", "has"])
 net.define_caseframe("Happy", "Propositional", ["happy_thing"])
 
+net.assert_wft("Isa(every(x, Isa(x, Human)), Animal)")
 net.assert_wft("and(Isa(every(x, Isa(x, Human)), Animal), Isa(every(x, Isa(x, Human)), Being))")
 net.assert_wft("nand(a, b, c, d)")
 
