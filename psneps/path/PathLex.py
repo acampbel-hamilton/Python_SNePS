@@ -9,6 +9,10 @@ path expression. """
 from ..ply import *
 from re import match
 
+# =====================================
+# --------------- TOKENS --------------
+# =====================================
+
 keywords = (
     'converse',
     'compose',
