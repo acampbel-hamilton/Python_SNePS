@@ -6,8 +6,8 @@ use them to build Python_SNePS nodes and frames. """
 # =====================================
 
 from . import WftLex
-from ..vars.ParseVars import get_vars, SNePSVarError
-from ..vars.UniqueRep import UniqueRep
+from .vars.ParseVars import get_vars, SNePSVarError
+from .vars.UniqueRep import UniqueRep
 from ..ply import *
 from ..Network import *
 from ..Caseframe import Frame, Fillers
@@ -312,7 +312,7 @@ def p_AtomicNameSet(p):
     AtomicNameSet :
                   |     Identifier
                   |     Integer
-                  |     LParen AtomicNames RParen
+                  |     LBracket AtomicNames RBracket
     '''
     if len(p) == 1:
         p[0] = []
@@ -496,7 +496,7 @@ def new_restriction(variable, restriction):
 # ------------ PARSER FN --------------
 # =====================================
 
-def wft_parser(wft : str, network):
+def wft_parser(wft: str, network):
     global current_network
     current_network = network
 

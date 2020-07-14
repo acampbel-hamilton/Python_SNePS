@@ -2,7 +2,6 @@ from enum import Enum
 from .Error import SNError
 from .SemanticType import SemanticType
 from re import match
-from .path.PathParse import path_parser, SNePSPathError
 from .Path import Path
 
 class SlotError(SNError):
@@ -39,9 +38,11 @@ class Slot:
                "\tNegative Adjust: {}\n".format(self.neg_adj) + \
                "\tMinimum Fillers: {}\n".format(self.min) + \
                "\tMaximum Fillers: {}\n".format(self.max) + \
-               "\tPath: {}".format(self.path)
+               "\tPaths:{}{}".format(
+                    "\n\t  " if len(self.paths) > 0 else '',
+                    "\n\t  ".join([str(path) for path in self.paths]))
 
-    def add_path(self, path : Path) -> None:
+    def add_path(self, path: Path) -> None:
         self.paths.add(path)
 
 class SlotMixin:
@@ -71,13 +72,8 @@ class SlotMixin:
 
         sem_type = self.sem_hierarchy.get_type(sem_type_str)
 
-        try:
-            self.slots[name] = Slot(name, sem_type, docstring, pos_adj, neg_adj, min, max)
-            path_obj = path_parser(path, self)
-            self.slots[name].add_path(path)
-
-        except SNePSPathError as e:
-            print(e)
+        self.slots[name] = Slot(name, sem_type, docstring, pos_adj, neg_adj, min, max)
+        self.define_path(name, path)
 
     def list_slots(self) -> None:
         """ Lists all slots in network """

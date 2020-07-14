@@ -14,8 +14,8 @@ class Context:
 
     def __contains__(self, term: str) -> bool:
         """ Overloads the 'in' operator for use on contexts.
-        checks if the given term object is asserted in the context,
-        i.e. that term in in either hyps or ders """
+            Checks if the given term object is asserted in the context,
+            i.e. that term in in either hyps or ders """
         return term in self.hyps or term in self.ders
 
     def __repr__(self) -> str:
@@ -54,7 +54,7 @@ class ContextMixin:
         self.current_context = self.default_context
         self.contexts[self.current_context.name] = self.current_context
 
-    def define_context(self, name: str, docstring : str="", parent : str="default") -> None:
+    def define_context(self, name: str, docstring: str = "", parent: str = "default") -> None:
         """ Defines a new context. """
         if self.enforce_name_syntax and not match(r'^[A-Za-z][A-Za-z0-9_]*$', name):
             raise ContextError("ERROR: The context name '{}' is not allowed".format(name))
@@ -66,7 +66,8 @@ class ContextMixin:
         else:
             self.contexts[name] = Context(name, docstring, self.contexts[parent])
 
-    def set_current_context(self, context_name : str) -> None:
+    def set_current_context(self, context_name: str) -> None:
+        """ Sets the current context. As it is, only the default context is defined. """
         if context_name in self.contexts:
             self.current_context = self.contexts[context_name]
         else:

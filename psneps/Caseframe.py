@@ -2,6 +2,7 @@ from .Slot import *
 from .SemanticType import SemanticType, SemanticHierarchy
 from .Error import SNError
 from re import match
+from typing import List
 
 class CaseframeError(SNError):
     pass
@@ -9,7 +10,7 @@ class CaseframeError(SNError):
 class Caseframe:
     def __init__(self, name: str, sem_type: SemanticType,
                  sem_hierarchy: SemanticHierarchy,
-                 docstring: str, slots: list) -> None:
+                 docstring: str, slots: List[Slot]) -> None:
         self.name = name
         self.sem_type = sem_type
         self.sem_hierarchy = sem_hierarchy
@@ -41,7 +42,8 @@ class Caseframe:
     def __str__(self) -> str:
         return "<{}>: {}\n".format(self.name, self.docstring) + \
                "\tSemantic Type: {}\n".format(self.sem_type.name) + \
-               "\tAliases: [" + ", ".join(self.aliases) + "]"
+               "\tAliases: [{}]\n".format(", ".join(self.aliases)) + \
+               "\tSlots: [{}]".format(", ".join([slot.name for slot in self.slots]))
 
     def add_adj_to(self, other) -> None:
         self.adj_to.add(other)

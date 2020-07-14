@@ -3,7 +3,7 @@ from .Slot import Slot
 from .Error import SNError
 from .SemanticType import SemanticType
 from re import match
-from .vars.UniqueRep import *
+from .wft.vars.UniqueRep import *
 
 class NodeError(SNError):
     pass
@@ -11,26 +11,27 @@ class NodeError(SNError):
 class Node:
     """ Root of syntactic hierarchy """
     def __init__(self, name: str, sem_type: SemanticType) -> None:
-        self.name = name
-        self.up_cableset = set() # References to frames that point to this node
+        self.name = name # This is unique to each wft (eg. wft1)
+        self.up_cableset = set() # Set of UpCable objects that point to this node
         self.sem_type = sem_type
         self.unique_rep = None
-        if type(self) in (Node, Atomic, Variable, MinMaxOpNode):
+        if type(self) in (Node, Atomic, Variable, MinMaxOpNode): # These are all abstract classes.
             raise NotImplementedError("Bad syntactic type - see syntax tree in wiki")
 
     def add_up_cable(self, node, slot: Slot) -> None:
+        """ Adds an up cable to this node. (Up cables contain a node and a slot.) """
         self.up_cableset.add(UpCable(node, slot))
 
-    def has_upcable(self, name):
-        for up_cable in self.up_cableset:
-            if up_cable.name == name:
-                return True
-        return False
+    def has_upcable(self, name: str) -> bool:
+        """ True if this node has an up cable with the provided name. """
+        return any(up_cable.name == name for up_cable in self.up_cableset)
 
-    def follow_down_cable(self, slot):
+    def follow_down_cable(self, slot) -> set:
+        """ Since vanilla Nodes have no down cables, this returns an empty set. """
         return set()
 
-    def follow_up_cable(self, slot):
+    def follow_up_cable(self, slot: Slot) -> set:
+        """ Returns the set of nodes that  """
         return set(up_cable.node for up_cable in self.up_cableset if up_cable.slot is slot)
 
     def __str__(self) -> str:
@@ -40,13 +41,15 @@ class Node:
         return self.wft_rep()
 
     def wft_rep(self, simplify=None) -> str:
+        """ This exists because many classes have wft_rep methods. In some classes,
+            these are distinct from __str__. Thus, we're stuck with both in this case. """
         return self.name
 
     def has_constituent(self, constituent, visited=None):
         return self is constituent
 
     def get_unique_rep(self) -> UniqueRep:
-        if self.unique_rep == None:
+        if self.unique_rep is None:
             self.unique_rep = self.new_unique_rep()
         return self.unique_rep
 
@@ -74,11 +77,11 @@ class Base(Atomic):
 class Variable(Atomic):
     """ A variable term ranging over a restricted domain. """
     def __init__(self, name: str, sem_type: SemanticType) -> None:
-        super().__init__(name, sem_type) # This needs a semantic types. This will be an error.
+        super().__init__(name, sem_type)
         self.restriction_set = set()
         self.var_rep = VarRep()
 
-    def add_restriction(self, restriction) -> None: # These need type definitions, since we don't know what restrictions/dependencies are.
+    def add_restriction(self, restriction) -> None:
         self.restriction_set.add(restriction)
 
     def wft_rep(self, simplify=None) -> str:
@@ -88,13 +91,16 @@ class Variable(Atomic):
         return self.var_rep == other.var_rep
 
     def __hash__(self):
+        """ Even though __eq__ looks var_reps, that's for creation time.
+            Once variables are in the system, we can be sure they're unique,
+            so we can just check ids. """
         return id(self)
 
     def new_unique_rep(self) -> UniqueRep:
         return UniqueRep(name=self.var_rep.name)
 
 class Arbitrary(Variable):
-    """ An arbitrary individual. """
+    """ An arbitrary individual. Originates from an Every statement. """
     counter = 1
     def __init__(self, name, sem_type: SemanticType) -> None:
         super().__init__(name, sem_type) # These need semantic types. This will be an error.
@@ -116,13 +122,13 @@ class Arbitrary(Variable):
                 ", ".join([restriction.wft_rep(simplify.copy()) for restriction in self.restriction_set]))
 
 class Indefinite(Variable):
-    """ An indefinite object. """
+    """ An indefinite object. Originates from a Some statement. """
     counter = 1
     def __init__(self, name, sem_type: SemanticType) -> None:
         self.dependency_set = set()
-        super().__init__(name, sem_type) # These need semantic types. This will be an error.
+        super().__init__(name, sem_type)
 
-    def add_dependency(self, dependency) -> None: # These need type definitions, since we don't know what restrictions/dependencies are.
+    def add_dependency(self, dependency: VarRep) -> None:
         self.dependency_set.add(dependency)
 
     def store_in(self, current_network):
@@ -138,17 +144,17 @@ class Indefinite(Variable):
         else:
             simplify.add(self)
             return "some({}({}), [{}])".format( \
-                self.name, \
-                ", ".join([dependency.wft_rep(simplify.copy()) for dependency in self.dependency_set]), \
-                ", ".join([restriction.wft_rep(simplify.copy()) for restriction in self.restriction_set]))
+                   self.name, \
+                   ", ".join([dependency.wft_rep(simplify.copy()) for dependency in self.dependency_set]), \
+                   ", ".join([restriction.wft_rep(simplify.copy()) for restriction in self.restriction_set]))
 
 # =====================================
 # --------- MOLECULAR NODES -----------
 # =====================================
 
 class Molecular(Node):
+    """ Non-leaf nodes. """
     counter = 1
-    # Non-leaf nodes
     def __init__(self, frame: Frame) -> None:
         name = "wft" + str(Molecular.counter)
         Molecular.counter += 1
@@ -190,7 +196,7 @@ class Molecular(Node):
             return super().wft_rep()
         else:
             simplify.add(self)
-            ret = "{}(".format(self.frame.caseframe.name)
+            ret = self.frame.caseframe.name + "("
             for i in range(len(self.frame.filler_set)):
                 if i > 0:
                     ret += ", "
@@ -220,15 +226,14 @@ class MinMaxOpNode(Molecular):
         self.max = max
 
     def num_constituents(self):
-        # All of the propositions to which this and, or, thresh, etc. has wires
+        """ All of the propositions to which this and, or, thresh, etc. has wires """
         return len(self.frame.filler_set[0])
 
     def has_min_max(self, min: int, max: int) -> bool:
         return self.min == min and self.max == max
 
     def __eq__(self, other) -> bool:
-        return super.__eq__(other) and \
-            self.min == other.min and self.max == other.max
+        return super.__eq__(other) and (self.min, self.max) == (other.min, other.max)
 
     def __hash__(self):
         return id(self)
@@ -288,8 +293,7 @@ class ImplNode(Molecular):
         return self.follow_down_cable(self.frame.caseframe.slots[1])
 
     def __eq__(self, other) -> bool:
-        return super.__eq__(other) and \
-            self.bound == other.bound
+        return super.__eq__(other) and self.bound == other.bound
 
     def __hash__(self):
         return id(self)
