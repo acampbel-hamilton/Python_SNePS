@@ -101,13 +101,11 @@ class VarRep:
         self_rest_reps = self.restriction_reps.copy()
         other_rest_reps = other.restriction_reps.copy()
         for rep in self_rest_reps:
-            located = False
             for other_rep in other.restriction_reps:
                 if other_rep.equivalent_structure(rep, other.name, self.name):
-                    located = True
                     other_rest_reps.remove(other_rep)
                     break
-            if not located:
+            else:
                 return False
 
         return True
