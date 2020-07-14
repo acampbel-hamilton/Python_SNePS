@@ -41,7 +41,8 @@ class Caseframe:
     def __str__(self) -> str:
         return "<{}>: {}\n".format(self.name, self.docstring) + \
                "\tSemantic Type: {}\n".format(self.sem_type.name) + \
-               "\tAliases: [" + ", ".join(self.aliases) + "]"
+               "\tAliases: [{}]\n".format(", ".join(self.aliases)) + \
+               "\tSlots: [{}]".format(", ".join([slot.name for slot in self.slots]))
 
     def add_adj_to(self, other) -> None:
         self.adj_to.add(other)
