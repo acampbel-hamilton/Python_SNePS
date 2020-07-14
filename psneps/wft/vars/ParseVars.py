@@ -459,4 +459,5 @@ def get_vars(wft: str, network):
     global variables
     ret_variables = variables
     variables = {}
+    var_names = {}
     return ret_variables
