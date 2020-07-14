@@ -1,6 +1,17 @@
-from .ply import *
+""" This file uses regular expression matching to generate tokens from a
+string of text entered by the user, and corresponding to a Python_SNePS
+well-formed-term. """
+
+# =====================================
+# -------------- IMPORTS --------------
+# =====================================
+
+from ..ply import *
 from re import match
-from ..Node import Indefinite, Arbitrary
+
+# =====================================
+# --------------- TOKENS --------------
+# =====================================
 
 keywords = (
     'xor',
@@ -97,11 +108,17 @@ def t_error(t):
 t_ignore = ' \t\r\n\f\v'
 
 # Build the lexer
-from .ply import lex
-lexer = lex.lex()
+from ..ply import lex
+wft_lexer = lex.lex()
+
+# =====================================
+# -------------- TEST FN --------------
+# =====================================
+
+# Repeatedly prompts for user input and prints the tokens generated.
+# Use "exit()" to exit.
 
 if __name__ == '__main__':
-    lexer = lex.lex()
     while True:
         try:
             s = input('Command: ')
@@ -110,11 +127,11 @@ if __name__ == '__main__':
         if s == 'exit()':
             break
         try:
-            lexer.input(s)
+            wft_lexer.input(s)
             while True:
-                token = lexer.token()
+                token = wft_lexer.token()
                 if not token:
                     break
                 print(token)
-        except: # This is probably not a good idea...
+        except:
             print("Syntax error")

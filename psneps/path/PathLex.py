@@ -1,4 +1,4 @@
-from .ply import *
+from ..ply import *
 from re import match
 
 keywords = (
@@ -58,11 +58,10 @@ def t_error(t):
 t_ignore = ' \t\r\n\f\v'
 
 # Build the lexer
-from .ply import lex
-lexer = lex.lex()
+from ..ply import lex
+path_lexer = lex.lex()
 
 if __name__ == '__main__':
-    lexer = lex.lex()
     while True:
         try:
             s = input('Command: ')
@@ -71,9 +70,9 @@ if __name__ == '__main__':
         if s == 'exit()':
             break
         try:
-            lexer.input(s)
+            path_lexer.input(s)
             while True:
-                token = lexer.token()
+                token = path_lexer.token()
                 if not token:
                     break
                 print(token)

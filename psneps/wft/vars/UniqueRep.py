@@ -1,3 +1,8 @@
+from ...Error import SNError
+
+class SNePSVarError(SNError):
+    pass
+
 class UniqueRep:
     """ Unique set-like representation for variables """
     def __init__(self, name=None, caseframe_name=None, min=None, max=None, bound=None, children=None):
@@ -9,32 +14,41 @@ class UniqueRep:
         # Children should be an ordered list of UniqueRep objects
         self.children = [] if children is None else children
 
-    def equivalent_structure(self, other, self_name : str, other_name : str):
+        # Ensure min, max, bound are within bounds
+        if self.min is not None or self.max is not None or self.bound is not None:
+            size = len(self.children[0])
+            if self.min is not None and self.min > size:
+                raise SNePSVarError("The min must be between 0 and {}".format(size))
+            if self.max is not None and self.max > size:
+                raise SNePSVarError("The max must be between 0 and {}".format(size))
+            if self.bound is not None and self.bound > size:
+                raise SNePSVarError("The bound must be between 0 and {}".format(size))
+
+    def equivalent_structure(self, other, self_name : str=None, other_name : str=None):
 
         if not ((self.name == other.name or (self.name == self_name and other.name == other_name)) and \
             self.caseframe_name == other.caseframe_name and \
             self.min == other.min and \
             self.max == other.max and \
-            self.bound == other.bound):
+            self.bound == other.bound and \
+            len(self.children) == len(other.children)):
                 return False
 
-        try:
-            for i in range(len(self.children)):
-                self_children = self.children[i].copy()
-                other_children = other.children[i].copy()
+        for i in range(len(self.children)):
+            self_children = self.children[i].copy()
+            other_children = other.children[i].copy()
 
-                for self_child in self_children:
-                    located = False
-                    for other_child in other_children:
-                        if self_child.equivalent_structure(other_child, self_name, other_name):
-                            located = True
-                            other_children.remove(other_child)
-                            break
-                    if not located:
-                        return False
-
-        except Exception:
-            return False
+            for self_child in self_children:
+                located = False
+                for other_child in other_children:
+                    if self_child.equivalent_structure(other_child, self_name, other_name):
+                        located = True
+                        other_children.remove(other_child)
+                        break
+                if not located:
+                    return False
+            if len(other_children) != 0:
+                return False
 
         return True
 
@@ -72,6 +86,9 @@ class VarRep:
         self.dependency_reps = set()
 
     def add_restriction(self, restriction : UniqueRep):
+        for rest_rep in self.restriction_reps:
+            if rest_rep.equivalent_structure(restriction):
+                return
         self.restriction_reps.add(restriction)
 
     def add_dependency(self, dependency : UniqueRep):

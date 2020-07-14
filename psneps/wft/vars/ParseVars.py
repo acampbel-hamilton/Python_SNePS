@@ -1,9 +1,9 @@
-from . import WftLex
-from .ply import *
-from ..Error import SNError
-from ..Node import Indefinite, Arbitrary, Variable
+from .. import WftLex
+from ...ply import *
+from ...Error import SNError
+from ...Node import Indefinite, Arbitrary, Variable
 from .UniqueRep import *
-from ..Node import Base, Molecular, Indefinite, Arbitrary, ThreshNode, AndOrNode, ImplNode
+from ...Node import Base, Molecular, Indefinite, Arbitrary, ThreshNode, AndOrNode, ImplNode
 
 current_network = None
 tokens = WftLex.tokens
@@ -40,19 +40,19 @@ def p_BinaryOp1(p):
     '''
     BinaryOp :          Impl LParen Argument Comma Argument RParen
     '''
-    filler_set = [p[3], p[5]]
+    filler_set = unique_children([p[3], p[5]])
     p[0] = rep_impl(filler_set, int(p[1][:1]))
 def p_BinaryOp2(p):
     '''
     BinaryOp :          AndImpl LParen Argument Comma Argument RParen
     '''
-    filler_set = [p[3], p[5]]
-    p[0] = rep_impl(filler_set, len(p[3]))
+    filler_set = unique_children([p[3], p[5]])
+    p[0] = rep_impl(filler_set, len(filler_set[0]))
 def p_BinaryOp3(p):
     '''
     BinaryOp :          SingImpl LParen Argument Comma Argument RParen
     '''
-    filler_set = [p[3], p[5]]
+    filler_set = unique_children([p[3], p[5]])
     p[0] = rep_impl(filler_set, 1)
 
 
@@ -61,45 +61,46 @@ def p_NaryOp1(p):
     '''
     NaryOp :            And LParen Wfts RParen
     '''
-    filler_set = [p[3]]
-    p[0] = rep_andor(p[1], filler_set, len(p[3]), len(p[3]))
+    filler_set = unique_children([p[3]])
+    p[0] = rep_andor(p[1], filler_set, len(filler_set[0]), len(filler_set[0]))
 def p_NaryOp2(p):
     '''
     NaryOp :            Or LParen Wfts RParen
     '''
-    filler_set = [p[3]]
-    p[0] = rep_andor(p[1], filler_set, 1, len(p[3]))
+    filler_set = unique_children([p[3]])
+    p[0] = rep_andor(p[1], filler_set, 1, len(filler_set[0]))
 def p_NaryOp3(p):
     '''
     NaryOp :            Not LParen Wfts RParen
            |            Nor LParen Wfts RParen
     '''
-    filler_set = [p[3]]
+    filler_set = unique_children([p[3]])
     p[0] = rep_andor(p[1], filler_set, 0, 0)
 def p_NaryOp4(p):
     '''
     NaryOp :            Nand LParen Wfts RParen
     '''
-    filler_set = [p[3]]
-    p[0] = rep_andor(p[1], filler_set, 0, len(p[3]) - 1)
+    filler_set = unique_children([p[3]])
+    p[0] = rep_andor(p[1], filler_set, 0, len(filler_set[0]) - 1)
 def p_NaryOp5(p):
     '''
     NaryOp :            Xor LParen Wfts RParen
     '''
-    filler_set = [p[3]]
+    filler_set = unique_children([p[3]])
     p[0] = rep_andor(p[1], filler_set, 1, 1)
 def p_NaryOp6(p):
     '''
     NaryOp :            Iff LParen Wfts RParen
            |            DoubImpl LParen Wfts RParen
     '''
-    filler_set = [p[3]]
-    p[0] = rep_thresh("iff", filler_set, 1, len(p[3]) - 1)
+    filler_set = unique_children([p[3]])
+    p[0] = rep_thresh("iff", filler_set, 1, len(filler_set[0]) - 1)
 def p_NaryOp7(p):
     '''
     NaryOp :            Thnot LParen Wfts RParen
            |            Thnor LParen Wfts RParen
     '''
+    filler_set = unique_children([p[3]])
     raise SNePSVarError("Thnot not yet implemented!")
 
 # e.g. thresh{1, 2}(wft1)
@@ -111,22 +112,15 @@ def p_MinMaxOp(p):
     '''
     min = int(p[3])
     if len(p) == 8:
-        filler_set = [p[6]]
-        max = len(p[6]) - 1
+        filler_set = unique_children([p[6]])
+        max = len(filler_set[0]) - 1
     else:
         max = int(p[5])
-        filler_set = [p[8]]
+        filler_set = unique_children([p[8]])
     if p[1] == "thresh":
         p[0] = rep_thresh(p[1], filler_set, min, max)
     else:
         p[0] = rep_andor(p[1], filler_set, min, max)
-
-# e.g. close(Dog, wft1)
-def p_CloseStmt(p):
-    '''
-    CloseStmt :         Close LParen AtomicNameSet Comma Wft RParen
-    '''
-    raise SNePSVarError("Close not yet implemented!")
 
 # e.g. brothers(Tom, Ted)
 def p_Function(p):
@@ -134,7 +128,7 @@ def p_Function(p):
     Function :          Identifier LParen Arguments RParen
              |          Integer LParen Arguments RParen
     '''
-    filler_set = p[3]
+    filler_set = unique_children(p[3])
     p[0] = rep_molecular(p[1], filler_set)
 
 # e.g. ?example()
@@ -249,6 +243,12 @@ def p_Y_WftNode(p):
 # =====================================
 # ------------- VAR RULES -------------
 # =====================================
+
+def p_CloseStmt(p):
+    '''
+    CloseStmt :         Close LParen AtomicNameSet Comma Wft RParen
+    '''
+    raise SNePSVarError("Close not yet implemented!")
 
 def p_EveryStmt(p):
     '''
@@ -380,13 +380,27 @@ def rep_andor (caseframe_name, children_reps, min, max):
             caseframe_name = 'nor'
         elif min == max == 1:
             caseframe_name = 'xor'
-
     return UniqueRep(caseframe_name=caseframe_name, children=children_reps, min=min, max=max)
 
 def rep_impl(children_reps, bound):
     """ Returns a UniqueRep object corresponding to the node """
-
     return UniqueRep(caseframe_name='if', children=children_reps, bound=bound)
+
+def unique_children(children):
+    """ Returns a list of unique representations for children """
+    unique_children = []
+    for slot_group in children:
+        unique_slot_group = []
+        for filler in slot_group:
+            located = False
+            for unique_filler in unique_slot_group:
+                if unique_filler.equivalent_structure(filler):
+                    located = True
+                    break
+            if not located:
+                unique_slot_group.append(filler)
+        unique_children.append(unique_slot_group)
+    return unique_children
 
 # =====================================
 # ----------- VARIABLE FN -------------
@@ -401,7 +415,7 @@ def get_vars(wft : str, network):
     current_network = network
     yacc.yacc()
 
-    yacc.parse(wft)
+    yacc.parse(wft, lexer=WftLex.wft_lexer)
 
     # Reset and return variables
     global variables
