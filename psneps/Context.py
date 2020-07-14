@@ -66,7 +66,7 @@ class ContextMixin:
         else:
             self.contexts[name] = Context(name, docstring, self.contexts[parent])
 
-    def set_current_context(self, context_name : str) -> None:
+    def set_current_context(self, context_name: str) -> None:
         if context_name in self.contexts:
             self.current_context = self.contexts[context_name]
         else:

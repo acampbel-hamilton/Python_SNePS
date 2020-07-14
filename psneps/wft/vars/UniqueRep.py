@@ -81,13 +81,13 @@ class VarRep:
         # Dependencies should be an unordered set of VarRep objects
         self.dependency_reps = set()
 
-    def add_restriction(self, restriction : UniqueRep):
+    def add_restriction(self, restriction: UniqueRep):
         for rest_rep in self.restriction_reps:
             if rest_rep.equivalent_structure(restriction):
                 return
         self.restriction_reps.add(restriction)
 
-    def add_dependency(self, dependency : UniqueRep):
+    def add_dependency(self, dependency: UniqueRep):
         self.dependency_reps.add(dependency)
 
     def __eq__(self, other):

@@ -154,7 +154,7 @@ from .path.PathParse import path_parser, SNePSPathError
 class PathMixin:
     """ Provides functions related to paths to Network """
 
-    def define_path(self, slot_str : str, path_str : str):
+    def define_path(self, slot_str: str, path_str: str):
         path = path_parser(path_str, self)
         if path is not None:
             slot = self.find_slot(slot_str)

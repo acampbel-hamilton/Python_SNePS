@@ -407,7 +407,7 @@ def unique_children(children):
 # =====================================
 
 
-def get_vars(wft : str, network):
+def get_vars(wft: str, network):
     """ Strips vars from a wft and ensures uniqueness,
     then returns a dictionary in which variable names correspond to their nodes """
 

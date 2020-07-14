@@ -496,7 +496,7 @@ def new_restriction(variable, restriction):
 # ------------ PARSER FN --------------
 # =====================================
 
-def wft_parser(wft : str, network):
+def wft_parser(wft: str, network):
     global current_network
     current_network = network
 

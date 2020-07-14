@@ -42,7 +42,7 @@ class Slot:
                     "\n\t  " if len(self.paths) > 0 else '',
                     "\n\t  ".join([str(path) for path in self.paths]))
 
-    def add_path(self, path : Path) -> None:
+    def add_path(self, path: Path) -> None:
         self.paths.add(path)
 
 class SlotMixin:
