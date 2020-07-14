@@ -109,7 +109,6 @@ class Arbitrary(Variable):
         self.name = 'arb' + str(self.counter)
         Arbitrary.counter += 1
         current_network.nodes[self.name] = self
-        print(self.var_rep)
 
     def wft_rep(self, simplify=None) -> str:
         if simplify is None:
