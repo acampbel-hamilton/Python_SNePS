@@ -2,14 +2,9 @@ class Path:
     """ Superclass for all paths """
     def __init__(self):
         self.converse = False
-        self.str_representation = ""
 
     def reverse(self):
         self.converse = not self.converse
-
-    def __str__(self) -> str:
-        # Prints original path string entered by user
-        return self.str_representation
 
 class ComposedPaths(Path):
     """ A composed list of path objects, following one after another """
@@ -35,6 +30,9 @@ class ComposedPaths(Path):
             derived = temp_derived
         return derived
 
+    def __str__(self) -> str:
+        return "compose({})".format(", ".join(self.paths))
+
 class AndPaths(ComposedPaths):
     def derivable(self, start_node, parent_converse=False):
 
@@ -46,6 +44,9 @@ class AndPaths(ComposedPaths):
         for path in paths:
             derived.intersection_update(path.derivable(start_node, converse))
         return derived
+
+    def __str__(self) -> str:
+        return "and({})".format(", ".join(self.paths))
 
 class OrPaths(ComposedPaths):
     def derivable(self, start_node, parent_converse=False):
@@ -59,6 +60,9 @@ class OrPaths(ComposedPaths):
             derived.update(path.derivable(start_node, converse))
         return derived
 
+    def __str__(self) -> str:
+        return "or({})".format(", ".join(self.paths))
+
 class ModPath(Path):
     """ Performs some modification on a single path """
 
@@ -66,7 +70,7 @@ class ModPath(Path):
         super().__init__()
         self.path = path
 
-class KPlusPaths(ModPath):
+class KPlusPath(ModPath):
     """ Follows one or more instances of the given path """
 
     def derivable(self, start_node, parent_converse=False):
@@ -82,10 +86,16 @@ class KPlusPaths(ModPath):
             derived.update(set(next))
         return derived
 
-class KStarPaths(KPlusPaths):
+    def __str__(self) -> str:
+        return "kplus({})".format(self.path)
+
+class KStarPath(KPlusPath):
     """ Follows zero or more instances of the given path """
     def derivable(self, start_node, parent_converse=False):
         return super().derivable(start_node, self.converse != parent_converse).add(start_node)
+
+    def __str__(self) -> str:
+        return "kstar({})".format(self.path)
 
 class IRPath(ModPath):
     """ Follows paths provided end node is not start node """
@@ -94,6 +104,9 @@ class IRPath(ModPath):
         derived = self.path.derivable(next_node, self.converse != parent_converse)
         derived.discard(start_node)
         return derived
+
+    def __str__(self) -> str:
+        return "irreflexive-restrict({})".format(self.path)
 
 class BasePath(Path):
     """ Atomic path existing on a single non-repeated slot """
@@ -109,8 +122,11 @@ class BasePath(Path):
         else:
             return start_node.follow_up_cable(self.slot)
 
+    def __str__(self) -> str:
+        return ("-" if backward else "") + self.slot.name
+
 # Asserted Path singleton
-class AssertedPath:
+class AssertedPath(Path):
     class _AssertedPath:
         def __init__(self, current_network):
             self.current_network = current_network
@@ -125,3 +141,6 @@ class AssertedPath:
             return set([start_node])
         else:
             return set()
+
+    def __str__(self) -> str:
+        return "!"

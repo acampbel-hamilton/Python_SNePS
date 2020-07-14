@@ -39,7 +39,7 @@ class Slot:
                "\tNegative Adjust: {}\n".format(self.neg_adj) + \
                "\tMinimum Fillers: {}\n".format(self.min) + \
                "\tMaximum Fillers: {}\n".format(self.max) + \
-               "\tPath: {}".format(self.path)
+               "\tPaths:\n\t  {}".format("\n\t  ".join([path for path in self.paths]))
 
     def add_path(self, path : Path) -> None:
         self.paths.add(path)

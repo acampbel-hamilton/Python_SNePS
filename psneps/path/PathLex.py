@@ -1,3 +1,11 @@
+""" This file uses regular expression matching to generate tokens from a
+string of text entered by the user, and corresponding to a Python_SNePS
+path expression. """
+
+# =====================================
+# -------------- IMPORTS --------------
+# =====================================
+
 from ..ply import *
 from re import match
 
@@ -61,6 +69,13 @@ t_ignore = ' \t\r\n\f\v'
 from ..ply import lex
 path_lexer = lex.lex()
 
+# =====================================
+# -------------- TEST FN --------------
+# =====================================
+
+# Repeatedly prompts for user input and prints the tokens generated.
+# Use "exit()" to exit.
+
 if __name__ == '__main__':
     while True:
         try:
@@ -76,5 +91,5 @@ if __name__ == '__main__':
                 if not token:
                     break
                 print(token)
-        except: # We probably shouldn't catch **all** errors here.
+        except:
             print("Syntax error")
