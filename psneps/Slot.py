@@ -74,7 +74,7 @@ class SlotMixin:
         try:
             self.slots[name] = Slot(name, sem_type, docstring, pos_adj, neg_adj, min, max)
             path_obj = path_parser(path, self)
-            self.slots[name].add_path(path)
+            self.slots[name].add_path(path_obj)
 
         except SNePSPathError as e:
             print(e)
