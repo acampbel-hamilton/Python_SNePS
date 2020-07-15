@@ -12,7 +12,7 @@ from ..ply import *
 from ..Network import *
 from ..Caseframe import Frame, Fillers
 from ..Node import Base, Molecular, Indefinite, Arbitrary, ThreshNode, AndOrNode, ImplNode
-from ...Error import SNError
+from ..SNError import SNError
 
 # =====================================
 # -------------- GLOBALS --------------

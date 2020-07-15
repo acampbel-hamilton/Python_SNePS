@@ -1,5 +1,5 @@
 from math import inf
-from ..Error import SNError
+from .SNError import SNError
 from re import match
 from typing import List
 

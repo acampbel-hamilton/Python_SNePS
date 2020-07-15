@@ -1,4 +1,4 @@
-from ....Error import SNError
+from ...SNError import SNError
 
 class SNePSVarError(SNError):
     pass
