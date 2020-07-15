@@ -232,15 +232,18 @@ def p_AtomicNameSet(p):
 
 def p_AtomicNames(p):
     '''
-    AtomicNames :       Identifier
+    AtomicNames :
+                |       Identifier
                 |       Integer
-                |       AtomicNames Comma Identifier
-                |       AtomicNames Comma Integer
+                |       Identifier Comma AtomicNames
+                |       Integer Comma AtomicNames
     '''
-    if len(p) == 2:
+    if len(p) == 1:
+        p[0] = []
+    elif len(p) == 2:
         p[0] = [p[1]]
     else:
-        p[0] = p[1] + [p[3]]
+        p[0] = [p[1]] + p[3]
 
 # ==============================================================================
 
