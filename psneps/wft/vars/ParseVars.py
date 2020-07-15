@@ -105,6 +105,12 @@ def p_NaryOp7(p):
     '''
     filler_set = unique_children([p[3]])
     raise SNePSVarError("Thnot not yet implemented!")
+def p_NaryOp8(p):
+    '''
+    NaryOp :            Equiv LParen Wfts RParen
+    '''
+    filler_set = unique_children([p[3]])
+    p[0] = rep_molecular(p[1], filler_set)
 
 # ==============================================================================
 

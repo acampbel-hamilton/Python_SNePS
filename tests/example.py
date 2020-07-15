@@ -10,23 +10,24 @@ net.set_current_context("test")
 net.define_caseframe("Has", "Propositional", ["agent", "has"])
 net.define_caseframe("Happy", "Propositional", ["happy_thing"])
 
-net.assert_wft("and(Isa(some(x(g), Isa([x, every(g, Isa(g, Test))], Human)), Animal), Isa(some(y(z), Isa([y, every(z, Isa(z, Test))], Human)), Being))")
-net.assert_wft("and(Isa(some(x(g), Isa([x, every(g, Isa(g, Test))], Human)), Animal), Isa(some(y(z), Isa([y, every(z, Isa(z, Test))], Human)), Being))")
-# net.assert_wft("nand(a, b, c, d)")
+# net.assert_wft("and(Isa(some(x(g), Isa([x, every(g, Isa(g, Test))], Human)), Animal), Isa(some(y(z), Isa([y, every(z, Isa(z, Test))], Human)), Being))")
+# net.assert_wft("and(Isa(some(x(g), Isa([x, every(g, Isa(g, Test))], Human)), Animal), Isa(some(y(z), Isa([y, every(z, Isa(z, Test))], Human)), Being))")
+# # net.assert_wft("nand(a, b, c, d)")
+#
+# # net.assert_wft("2=>([a, b, c, d], [not(e), f, g])")
+# # net.assert_wft("and(a, b)")
+#
+# snips = Inference(net)
+# snips.toggle_debug()
+# snips.ask("Isa(some(x(g), Isa([x, every(g, Isa(g, Test))], Human)), Animal)")
+#
+# print('\n\n')
 
-# net.assert_wft("2=>([a, b, c, d], [not(e), f, g])")
-# net.assert_wft("and(a, b)")
-
-snips = Inference(net)
-snips.toggle_debug()
-snips.ask("Isa(some(x(g), Isa([x, every(g, Isa(g, Test))], Human)), Animal)")
-
-print('\n\n')
-
-net.assert_wft("Equiv([test1, test2])")
-net.assert_wft("Equiv([test2, test3])")
+net.assert_wft("if(Equiv(test1, test2), Equiv(test1, test2))")
+net.assert_wft("Equiv(test1, test2)")
+net.assert_wft("Equiv(test2, test3)")
 net.assert_wft("test1")
-print(net.paths_from(['wft7'], 'compose(!, equiv, kstar(compose(equiv-, !, equiv)))'))
+print(net.paths_from(['wft1'], 'compose(!, equiv, kstar(compose(equiv-, !, equiv)))'))
 
 net.export_graph()
 net.print_graph()

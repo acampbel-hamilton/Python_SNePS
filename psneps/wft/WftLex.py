@@ -27,7 +27,8 @@ keywords = (
     'None',
     'not',
     'close',
-    'iff'
+    'iff',
+    'Equiv'
 )
 
 tokens = (
@@ -63,7 +64,8 @@ tokens = (
     'LBracket',
     'RBracket',
     'IndNode',
-    'ArbNode'
+    'ArbNode',
+    'Equiv'
 )
 
 t_LParen  = r'\('
