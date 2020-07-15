@@ -24,7 +24,7 @@ class UniqueRep:
             if self.bound is not None and self.bound > size:
                 raise SNePSVarError("The bound must be between 0 and {}".format(size))
 
-    def equivalent_structure(self, other, self_name : str=None, other_name : str=None):
+    def equivalent_structure(self, other, self_name: str = None, other_name: str = None):
 
         if not ((self.name == other.name or (self.name == self_name and other.name == other_name)) and \
             self.caseframe_name == other.caseframe_name and \
@@ -39,26 +39,20 @@ class UniqueRep:
             other_children = other.children[i].copy()
 
             for self_child in self_children:
-                located = False
-                for other_child in other_children:
+                for other_child in other.children[i]:
                     if self_child.equivalent_structure(other_child, self_name, other_name):
-                        located = True
                         other_children.remove(other_child)
                         break
-                if not located:
+                else:
                     return False
             if len(other_children) != 0:
                 return False
 
         return True
 
-    def includes_var(var_name : str):
-        if name == var_name:
-            return True
-        for child in self.children:
-            if child.includes_var(var_name):
-                return True
-        return False
+    def includes_var(var_name: str):
+        """ Returns whether this UniqueRep or any of its children contains the given var. """
+        return name == var_name or any(child.includes_var(var_name) for child in self.children)
 
     def __str__(self) -> str:
         return self.to_str()
@@ -85,13 +79,13 @@ class VarRep:
         # Dependencies should be an unordered set of VarRep objects
         self.dependency_reps = set()
 
-    def add_restriction(self, restriction : UniqueRep):
+    def add_restriction(self, restriction: UniqueRep):
         for rest_rep in self.restriction_reps:
             if rest_rep.equivalent_structure(restriction):
                 return
         self.restriction_reps.add(restriction)
 
-    def add_dependency(self, dependency : UniqueRep):
+    def add_dependency(self, dependency: UniqueRep):
         self.dependency_reps.add(dependency)
 
     def __eq__(self, other):
@@ -107,13 +101,11 @@ class VarRep:
         self_rest_reps = self.restriction_reps.copy()
         other_rest_reps = other.restriction_reps.copy()
         for rep in self_rest_reps:
-            located = False
-            for other_rep in other_rest_reps:
+            for other_rep in other.restriction_reps:
                 if other_rep.equivalent_structure(rep, other.name, self.name):
-                    located = True
                     other_rest_reps.remove(other_rep)
                     break
-            if not located:
+            else:
                 return False
 
         return True

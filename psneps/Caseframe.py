@@ -2,6 +2,7 @@ from .Slot import *
 from .SemanticType import SemanticType, SemanticHierarchy
 from .Error import SNError
 from re import match
+from typing import List
 
 class CaseframeError(SNError):
     pass
@@ -9,19 +10,19 @@ class CaseframeError(SNError):
 class Caseframe:
     def __init__(self, name: str, sem_type: SemanticType,
                  sem_hierarchy: SemanticHierarchy,
-                 docstring: str, slots: list) -> None:
+                 docstring: str, slots: List[Slot]) -> None:
         self.name = name
         self.sem_type = sem_type
         self.sem_hierarchy = sem_hierarchy
         self.docstring = docstring
         self.slots = slots
-        self.aliases = [self.name]
+        self.aliases = set([self.name])
         self.adj_to = set()
         self.adj_from = set()
 
     def add_alias(self, alias: str) -> None:
         # Adds new alias to array
-        self.aliases.append(alias)
+        self.aliases.add(alias)
 
     def has_alias(self, alias: str) -> bool:
         # Checks if string in aliases
@@ -41,7 +42,8 @@ class Caseframe:
     def __str__(self) -> str:
         return "<{}>: {}\n".format(self.name, self.docstring) + \
                "\tSemantic Type: {}\n".format(self.sem_type.name) + \
-               "\tAliases: [" + ", ".join(self.aliases) + "]"
+               "\tAliases: [{}]\n".format(", ".join(self.aliases)) + \
+               "\tSlots: [{}]".format(", ".join([slot.name for slot in self.slots]))
 
     def add_adj_to(self, other) -> None:
         self.adj_to.add(other)
@@ -170,6 +172,11 @@ class CaseframeMixin:
     def list_caseframes(self) -> None:
         for caseframe in self.caseframes:
             print(self.caseframes[caseframe])
+
+    def same_frame(self, aliases : List[str], caseframe_str : str):
+        caseframe = self.find_caseframe(caseframe_str)
+        for alias in aliases:
+            caseframe.add_alias(alias)
 
     def define_caseframe(self, name: str, sem_type_name: str, slot_names: list, docstring="") -> None:
         """ Defines a new caseframe. """

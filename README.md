@@ -167,7 +167,7 @@ BinaryOp :   i ∅ '=>' | 'v=>' | '=>' | 'if'          // 'v=>' does or-implicat
 
 NaryOp :     'and' | 'or' | 'not' | 'nor'            // These operators, exclusively, can take
        |     'thnot' | 'thnor' | 'nand'              // any number of parameters
-       |     'xor' | 'iff' | '<=>'
+       |     'xor' | 'iff' | '<=>' | Equiv
 
 
 Param2Op :   'andor' | 'thresh'

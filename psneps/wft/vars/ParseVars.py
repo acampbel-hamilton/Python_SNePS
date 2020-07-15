@@ -32,8 +32,10 @@ def p_Wft(p):
          |              Function
     '''
     p[0] = p[1]
-    global top_wft
-    top_wft = p[0]
+
+# ==============================================================================
+
+# ==============================================================================
 
 # e.g. if(wft1, wft2)
 def p_BinaryOp1(p):
@@ -55,6 +57,7 @@ def p_BinaryOp3(p):
     filler_set = unique_children([p[3], p[5]])
     p[0] = rep_impl(filler_set, 1)
 
+# ==============================================================================
 
 # e.g. and(wft1, wft2)
 def p_NaryOp1(p):
@@ -102,6 +105,14 @@ def p_NaryOp7(p):
     '''
     filler_set = unique_children([p[3]])
     raise SNePSVarError("Thnot not yet implemented!")
+def p_NaryOp8(p):
+    '''
+    NaryOp :            Equiv LParen Wfts RParen
+    '''
+    filler_set = unique_children([p[3]])
+    p[0] = rep_molecular(p[1], filler_set)
+
+# ==============================================================================
 
 # e.g. thresh{1, 2}(wft1)
 def p_MinMaxOp(p):
@@ -122,6 +133,8 @@ def p_MinMaxOp(p):
     else:
         p[0] = rep_andor(p[1], filler_set, min, max)
 
+# ==============================================================================
+
 # e.g. brothers(Tom, Ted)
 def p_Function(p):
     '''
@@ -131,6 +144,8 @@ def p_Function(p):
     filler_set = unique_children(p[3])
     p[0] = rep_molecular(p[1], filler_set)
 
+# ==============================================================================
+
 # e.g. ?example()
 def p_QIdenStmt(p):
     '''
@@ -139,20 +154,20 @@ def p_QIdenStmt(p):
     '''
     raise SNePSVarError("? not yet implemented!")
 
+# ==============================================================================
+
 # e.g. wft1
 def p_Argument1(p):
     '''
     Argument :          Wft
     '''
     p[0] = [p[1]]
-
 # e.g. None
 def p_Argument2(p):
     '''
     Argument :          None
     '''
     p[0] = []
-
 # e.g. setOf(wft1, wft2)
 def p_Argument3(p):
     '''
@@ -167,6 +182,8 @@ def p_Argument3(p):
     else:
         p[0] = p[2]
 
+# ==============================================================================
+
 def p_ArgumentFunction(p):
     '''
     ArgumentFunction :  SetOf LParen RParen
@@ -176,6 +193,8 @@ def p_ArgumentFunction(p):
         p[0] = []
     else:
         p[0] = p[3]
+
+# ==============================================================================
 
 def p_Wfts(p):
     '''
@@ -187,6 +206,8 @@ def p_Wfts(p):
     else:
         p[0] = p[1] + [p[3]]
 
+# ==============================================================================
+
 def p_Arguments(p):
     '''
     Arguments :         Argument
@@ -197,12 +218,14 @@ def p_Arguments(p):
     else:
         p[0] = p[1] + [p[3]]
 
+# ==============================================================================
+
 def p_AtomicNameSet(p):
     '''
     AtomicNameSet :
                   |     Identifier
                   |     Integer
-                  |     LParen AtomicNames RParen
+                  |     LBracket AtomicNames RBracket
     '''
     if len(p) == 1:
         p[0] = []
@@ -211,18 +234,26 @@ def p_AtomicNameSet(p):
     else:
         p[0] = p[2]
 
+# ==============================================================================
+
 def p_AtomicNames(p):
     '''
-    AtomicNames :       Identifier
+    AtomicNames :
+                |       Identifier
                 |       Integer
-                |       AtomicNames Comma Identifier
-                |       AtomicNames Comma Integer
+                |       Identifier Comma AtomicNames
+                |       Integer Comma AtomicNames
     '''
-    if len(p) == 2:
+    if len(p) == 1:
+        p[0] = []
+    elif len(p) == 2:
         p[0] = [p[1]]
     else:
-        p[0] = p[1] + [p[3]]
+        p[0] = [p[1]] + p[3]
 
+# ==============================================================================
+
+# e.g. ind8
 def p_VarNode(p):
     '''
     VarNode :           IndNode
@@ -232,6 +263,9 @@ def p_VarNode(p):
         raise SNePSVarError('Invalid arb number. Max number: {}'.format(Arbitrary.counter - 1))
     p[0] = current_network.nodes[p[1]].get_unique_rep()
 
+# ==============================================================================
+
+# e.g. wft9
 def p_Y_WftNode(p):
     '''
     Y_WftNode :         WftNode
@@ -250,6 +284,8 @@ def p_CloseStmt(p):
     '''
     raise SNePSVarError("Close not yet implemented!")
 
+# ==============================================================================
+
 def p_EveryStmt(p):
     '''
     EveryStmt :         Every LParen ArbVar Comma Argument RParen
@@ -257,20 +293,39 @@ def p_EveryStmt(p):
     global variables
     global current_network
 
+    # Stores variable and shorthand representation
     new_var = p[3][1]
     temp_var_name = p[3][0]
 
+    # Representation of restrictions
     for restriction in p[5]:
         new_var.var_rep.add_restriction(restriction)
 
-    for node in current_network.nodes.values():
-        if isinstance(node, Arbitrary) and node == new_var:
-            new_var = node
+    # Ensures variable name only used to refer to one object in wft
+    if temp_var_name in variables:
+        if variables[temp_var_name] != new_var:
+            raise SNePSVarError("Variable with name {} defined twice in same context!".format(new_var.name))
+        p[0] = variables[temp_var_name].get_unique_rep()
+        return
 
-    if temp_var_name in variables and variables[temp_var_name] != new_var:
-        raise SNePSVarError("Variable with name {} defined twice in same context!".format(new_var.name))
+    # Ensures two names not used for same variable in wft
+    for var in variables.values():
+        if var == new_var:
+            new_var = var
+            break
 
+    # Checks if node already exists in network
+    else:
+        for node in current_network.nodes.values():
+            if isinstance(node, Arbitrary) and node == new_var:
+                new_var = node
+                break
+
+    # Stores in variable dictionary for second pass
     variables[temp_var_name] = new_var
+    p[0] = new_var.get_unique_rep()
+
+# ==============================================================================
 
 def p_SomeStmt(p):
     '''
@@ -279,9 +334,11 @@ def p_SomeStmt(p):
     global variables
     global current_network
 
+    # Stores variable and shorthand representation
     new_var = p[3][1]
     temp_var_name = p[3][0]
 
+    # Representation of dependencies
     for dependency_name in p[5]:
         located = False
         if dependency_name in variables:
@@ -289,28 +346,49 @@ def p_SomeStmt(p):
         else:
             raise SNePSVarError("Restriction {} referrenced before variable creation!".format(dependency_name))
 
+    # Representation of restrictions
     for restriction in p[8]:
         new_var.var_rep.add_restriction(restriction)
 
-    for node in current_network.nodes.values():
-        if isinstance(node, Indefinite) and node == new_var:
-            new_var = node
+    # Ensures variable name only used to refer to one object in wft
+    if temp_var_name in variables:
+        if variables[temp_var_name] != new_var:
+            raise SNePSVarError("Variable with name {} defined twice in same context!".format(new_var.name))
+        p[0] = variables[temp_var_name].get_unique_rep()
+        return
 
-    if temp_var_name in variables and variables[temp_var_name] != new_var:
-        raise SNePSVarError("Variable with name {} defined twice in same context!".format(new_var.name))
+    # Ensures two names not used for same variable in wft
+    for var in variables.values():
+        if var == new_var:
+            new_var = var
+            break
 
+    # Checks if node already exists in network
+    else:
+        for node in current_network.nodes.values():
+            if isinstance(node, Indefinite) and node == new_var:
+                new_var = node
+                break
+
+    # Stores in variable dictionary for second pass
     variables[temp_var_name] = new_var
+    p[0] = new_var.get_unique_rep()
+
+# ==============================================================================
 
 def p_ArbVar(p):
     '''
     ArbVar :            Identifier
            |            Integer
     '''
+    # Returns a tuuple of the variable followed by a shorthand representation (e.g. "x")
     global current_network
     global var_names
     new_var = Arbitrary(p[1], current_network.sem_hierarchy.get_type('Entity'))
     var_names[p[1]] = new_var.get_unique_rep()
     p[0] = (p[1], new_var)
+
+# ==============================================================================
 
 
 def p_IndVar(p):
@@ -318,11 +396,14 @@ def p_IndVar(p):
     IndVar :            Identifier
            |            Integer
     '''
+    # Returns a tuuple of the variable followed by a shorthand representation (e.g. "x")
     global current_network
     global var_names
     new_var = Indefinite(p[1], current_network.sem_hierarchy.get_type('Entity'))
     var_names[p[1]] = new_var.get_unique_rep()
     p[0] = (p[1], new_var)
+
+# ==============================================================================
 
 def p_error(p):
     if p is None:
@@ -406,19 +487,21 @@ def unique_children(children):
 # ----------- VARIABLE FN -------------
 # =====================================
 
-
-def get_vars(wft : str, network):
+def get_vars(wft: str, network):
     """ Strips vars from a wft and ensures uniqueness,
-    then returns a dictionary in which variable names correspond to their nodes """
+        then returns a dictionary in which variable names correspond to their nodes. """
 
     global current_network
     current_network = network
-    yacc.yacc()
+    var_parser = yacc.yacc()
 
-    yacc.parse(wft, lexer=WftLex.wft_lexer)
+    # First pass on wft string
+    var_parser.parse(wft, lexer=WftLex.wft_lexer)
 
     # Reset and return variables
     global variables
+    global var_names
     ret_variables = variables
     variables = {}
+    var_names = {}
     return ret_variables

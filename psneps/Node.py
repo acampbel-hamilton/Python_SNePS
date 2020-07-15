@@ -24,10 +24,7 @@ class Node:
 
     def has_upcable(self, name: str) -> bool:
         """ True if this node has an up cable with the provided name. """
-        for up_cable in self.up_cableset:
-            if up_cable.name == name:
-                return True
-        return False
+        return any(up_cable.name == name for up_cable in self.up_cableset)
 
     def follow_down_cable(self, slot) -> set:
         """ Since vanilla Nodes have no down cables, this returns an empty set. """
@@ -58,6 +55,9 @@ class Node:
 
     def new_unique_rep(self) -> UniqueRep:
         return UniqueRep(name=self.name)
+
+    def follow_down_cable(self, slot):
+        return set()
 
 # =====================================
 # ---------- ATOMIC NODES -------------
@@ -94,6 +94,9 @@ class Variable(Atomic):
         return self.var_rep == other.var_rep
 
     def __hash__(self):
+        """ Even though __eq__ looks var_reps, that's for creation time.
+            Once variables are in the system, we can be sure they're unique,
+            so we can just check ids. """
         return id(self)
 
     def new_unique_rep(self) -> UniqueRep:
@@ -126,9 +129,9 @@ class Indefinite(Variable):
     counter = 1
     def __init__(self, name, sem_type: SemanticType) -> None:
         self.dependency_set = set()
-        super().__init__(name, sem_type) # These need semantic types. This will be an error.
+        super().__init__(name, sem_type)
 
-    def add_dependency(self, dependency) -> None: # These need type definitions, since we don't know what restrictions/dependencies are.
+    def add_dependency(self, dependency: VarRep) -> None:
         self.dependency_set.add(dependency)
 
     def store_in(self, current_network):
@@ -153,8 +156,8 @@ class Indefinite(Variable):
 # =====================================
 
 class Molecular(Node):
+    """ Non-leaf nodes. """
     counter = 1
-    # Non-leaf nodes
     def __init__(self, frame: Frame) -> None:
         name = "wft" + str(Molecular.counter)
         Molecular.counter += 1
@@ -196,7 +199,7 @@ class Molecular(Node):
             return super().wft_rep()
         else:
             simplify.add(self)
-            ret = "{}(".format(self.frame.caseframe.name)
+            ret = self.frame.caseframe.name + "("
             for i in range(len(self.frame.filler_set)):
                 if i > 0:
                     ret += ", "
@@ -233,8 +236,7 @@ class MinMaxOpNode(Molecular):
         return self.min == min and self.max == max
 
     def __eq__(self, other) -> bool:
-        return super.__eq__(other) and \
-            self.min == other.min and self.max == other.max
+        return super.__eq__(other) and (self.min, self.max) == (other.min, other.max)
 
     def __hash__(self):
         return id(self)
@@ -294,8 +296,7 @@ class ImplNode(Molecular):
         return self.follow_down_cable(self.frame.caseframe.slots[1])
 
     def __eq__(self, other) -> bool:
-        return super.__eq__(other) and \
-            self.bound == other.bound
+        return super.__eq__(other) and self.bound == other.bound
 
     def __hash__(self):
         return id(self)
@@ -381,7 +382,9 @@ class NodeMixin:
 
     def list_terms(self) -> None:
         for term in self.nodes:
-            print(self.nodes[term])
+            node = self.nodes[term]
+            print("<{}>{}:".format(node.name, '!' if self.current_context.is_asserted(node) else ''))
+            print("\t{}".format(node))
 
     def find_term(self, name: str) -> Node:
         if name in self.nodes:

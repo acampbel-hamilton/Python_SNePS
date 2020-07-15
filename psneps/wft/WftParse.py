@@ -119,6 +119,12 @@ def p_NaryOp7(p):
            |            Thnor LParen Wfts RParen
     '''
     raise SNePSWftError("Thnot not yet implemented!")
+def p_NaryOp8(p):
+    '''
+    NaryOp :            Equiv LParen Wfts RParen
+    '''
+    filler_set = [Fillers(p[3])]
+    p[0] = build_molecular(p[1], filler_set)
 
 # ==============================================================================
 
@@ -312,7 +318,7 @@ def p_AtomicNameSet(p):
     AtomicNameSet :
                   |     Identifier
                   |     Integer
-                  |     LParen AtomicNames RParen
+                  |     LBracket AtomicNames RBracket
     '''
     if len(p) == 1:
         p[0] = []
@@ -325,15 +331,18 @@ def p_AtomicNameSet(p):
 
 def p_AtomicNames(p):
     '''
-    AtomicNames :       Identifier
+    AtomicNames :
+                |       Identifier
                 |       Integer
-                |       AtomicNames Comma Identifier
-                |       AtomicNames Comma Integer
+                |       Identifier Comma AtomicNames
+                |       Integer Comma AtomicNames
     '''
-    if len(p) == 2:
+    if len(p) == 1:
+        p[0] = []
+    elif len(p) == 2:
         p[0] = [p[1]]
     else:
-        p[0] = p[1] + [p[3]]
+        p[0] = [p[1]] + p[3]
 
 # ==============================================================================
 
@@ -496,11 +505,11 @@ def new_restriction(variable, restriction):
 # ------------ PARSER FN --------------
 # =====================================
 
-def wft_parser(wft : str, network):
+def wft_parser(wft: str, network):
     global current_network
     current_network = network
 
-    yacc.yacc()
+    wft_parser = yacc.yacc()
     if wft != '':
         try:
             # Store variables in array indexed by names
@@ -509,7 +518,7 @@ def wft_parser(wft : str, network):
 
             # Parse and store top-level wft created by string
             # (as opposed to sub-wfts it might create)
-            yacc.parse(wft, lexer=WftLex.wft_lexer)
+            wft_parser.parse(wft, lexer=WftLex.wft_lexer)
             global top_wft
             ret_top_wft = top_wft
 

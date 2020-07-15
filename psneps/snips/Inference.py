@@ -53,14 +53,10 @@ class Inference:
             print("{}!") if results == set() else print(results, "!", sep='')
         return results
 
-    def ask_if_not(self, wft_str: str, complete_ask : bool=False):
-
+    def ask_if_not(self, wft_str: str, complete_ask: bool = False):
         return self.ask_if("not({})".format(wft_str), complete_ask)
 
     def _ask_if(self, wft: Node, ignore=None):
-
-        derived = False
-
         # Prevents recursion
         if ignore is None:
              ignore = set()
@@ -69,14 +65,10 @@ class Inference:
         ignore.add(wft)
 
         # Check using different inference methods
-        if self.net.current_context.is_asserted(wft):
-            derived = True
-        elif self._slot_based(wft, ignore.copy()):
-            derived = True
-        elif self._by_binary_op(wft, ignore.copy()):
-            derived = True
-        elif self._by_nary_op(wft, ignore.copy()):
-            derived = True
+        derived = self.net.current_context.is_asserted(wft) or \
+                  self._slot_based(wft, ignore.copy()) or \
+                  self._by_binary_op(wft, ignore.copy()) or \
+                  self._by_nary_op(wft, ignore.copy())
 
         if derived:
             self.net.current_context.add_derived(wft)
@@ -92,10 +84,10 @@ class Inference:
             notNodes = wft.follow_down_cable(self.net.slots['nor'])
             for notNode in notNodes:
                 if isinstance(notNode, AndOrNode) and \
-                    (notNode.frame.caseframe is self.net.caseframes['and']
-                    or notNode.frame.caseframe is self.net.caseframes['andor'] \
-                    and notNode.min == notNode.num_constituents() \
-                    and notNode.max == notNode.num_constituents()):
+                   (notNode.frame.caseframe is self.net.caseframes['and'] or \
+                   notNode.frame.caseframe is self.net.caseframes['andor'] and \
+                   notNode.min == notNode.num_constituents() and \
+                   notNode.max == notNode.num_constituents()):
 
                         # TODO - evaluate and as nand . . .
                         pass
@@ -110,9 +102,8 @@ class Inference:
         implNodes = wft.follow_up_cable(self.net.slots['cq'])
         for impl in implNodes:
             if self._ask_if(impl, ignore.copy()):
-                antecedents = impl.antecedents()
                 bound = impl.bound
-                for ant in antecedents:
+                for ant in impl.antecedents():
                     if self._ask_if(ant, ignore.copy()):
                         bound -= 1
                         if bound < 1:
