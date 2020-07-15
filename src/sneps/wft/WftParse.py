@@ -223,6 +223,8 @@ def p_CloseStmt(p):
     '''
     CloseStmt :         Close LParen AtomicNameSet Comma Wft RParen
     '''
+    # When this is implemented, be sure to implement in the vars directory as well
+    # and to ensure variable uniqueness holds!
     raise SNePSWftError("Close not yet implemented!")
 
 # ==============================================================================
@@ -244,6 +246,8 @@ def p_QIdenStmt(p):
     QIdenStmt :         QIdentifier LParen Wfts RParen
               |         QIdentifier LParen RParen
     '''
+    # When this is implemented, be sure to implement in the vars directory as well
+    # and to ensure variable uniqueness holds!
     raise SNePSWftError("? not yet implemented!")
 
 # ==============================================================================
