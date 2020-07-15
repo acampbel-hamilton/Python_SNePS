@@ -97,7 +97,9 @@ class KPlusPath(ModPath):
 class KStarPath(KPlusPath):
     """ Follows zero or more instances of the given path """
     def derivable(self, start_node, parent_converse=False):
-        return super().derivable(start_node, self.converse != parent_converse).add(start_node)
+        derived = super().derivable(start_node, self.converse != parent_converse)
+        derived.add(start_node)
+        return derived
 
     def __str__(self) -> str:
         return "kstar({})".format(self.path)
