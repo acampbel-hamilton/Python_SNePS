@@ -32,6 +32,9 @@ net.assert_wft("Isa(Dog, Animal)")
 print(net.paths_from(['Fido'], 'and(irreflexive-restrict([member-, kstar([class, member-]), class]), [member-, class])'))
 
 net.list_contexts()
+net.list_slots()
+net.list_caseframes()
+net.list_terms()
 
 net.export_graph()
 net.print_graph()

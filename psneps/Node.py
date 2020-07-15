@@ -381,12 +381,10 @@ class NodeMixin:
             self.nodes[name] = Base(name, sem_type)
 
     def list_terms(self) -> None:
-        print("Terms:")
         for term in self.nodes:
             node = self.nodes[term]
-            print('  ', node.name, '!' if self.current_context.is_asserted(node) else '', \
-            ' :', sep='')
-            print('    ', node, sep='')
+            print("<{}>{}:".format(node.name, '!' if self.current_context.is_asserted(node) else ''))
+            print("\t{}".format(node))
 
     def find_term(self, name: str) -> Node:
         if name in self.nodes:

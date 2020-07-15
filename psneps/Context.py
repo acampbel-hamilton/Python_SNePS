@@ -22,7 +22,7 @@ class Context:
         return "<Context {} id: {}>".format(self.name, hex(id(self)))
 
     def __str__(self) -> str:
-        return "{}:\n\tparent : {}\n\tdocstring : {}\n\thyps : [{}]\n\tders : [{}]\n\t".format(
+        return "<{}>:\n\tparent : {}\n\tdocstring : {}\n\thyps : [{}]\n\tders : [{}]\n\t".format(
             self.name, self.parent.name if self.parent is not None else '', self.docstring,
             ", ".join([hyp.name for hyp in self.hyps]), ", ".join([der.name for der in self.ders]))
 
