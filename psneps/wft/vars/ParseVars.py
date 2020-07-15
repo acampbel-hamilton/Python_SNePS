@@ -295,26 +295,29 @@ def p_EveryStmt(p):
     for restriction in p[5]:
         new_var.var_rep.add_restriction(restriction)
 
-    # Checks if node already exists in network
-    for node in current_network.nodes.values():
-        if isinstance(node, Arbitrary) and node == new_var:
-            new_var = node
-
     # Ensures variable name only used to refer to one object in wft
     if temp_var_name in variables:
         if variables[temp_var_name] != new_var:
             raise SNePSVarError("Variable with name {} defined twice in same context!".format(new_var.name))
         p[0] = variables[temp_var_name].get_unique_rep()
+        return
+
+    # Ensures two names not used for same variable in wft
+    for var in variables.values():
+        if var == new_var:
+            new_var = var
+            break
+
+    # Checks if node already exists in network
     else:
-        # Ensures two names not used for same variable in wft
-        for var in variables.values():
-            if var == new_var:
-                new_var = var
+        for node in current_network.nodes.values():
+            if isinstance(node, Arbitrary) and node == new_var:
+                new_var = node
                 break
 
-        # Stores in variable dictionary for second pass
-        variables[temp_var_name] = new_var
-        p[0] = new_var.get_unique_rep()
+    # Stores in variable dictionary for second pass
+    variables[temp_var_name] = new_var
+    p[0] = new_var.get_unique_rep()
 
 # ==============================================================================
 
@@ -341,26 +344,29 @@ def p_SomeStmt(p):
     for restriction in p[8]:
         new_var.var_rep.add_restriction(restriction)
 
-    # Checks if node already exists in network
-    for node in current_network.nodes.values():
-        if isinstance(node, Indefinite) and node == new_var:
-            new_var = node
-
     # Ensures variable name only used to refer to one object in wft
     if temp_var_name in variables:
         if variables[temp_var_name] != new_var:
             raise SNePSVarError("Variable with name {} defined twice in same context!".format(new_var.name))
         p[0] = variables[temp_var_name].get_unique_rep()
+        return
+
+    # Ensures two names not used for same variable in wft
+    for var in variables.values():
+        if var == new_var:
+            new_var = var
+            break
+
+    # Checks if node already exists in network
     else:
-        # Ensures two names not used for same variable in wft
-        for var in variables.values():
-            if var == new_var:
-                new_var = var
+        for node in current_network.nodes.values():
+            if isinstance(node, Indefinite) and node == new_var:
+                new_var = node
                 break
 
-        # Stores in variable dictionary for second pass
-        variables[temp_var_name] = new_var
-        p[0] = new_var.get_unique_rep()
+    # Stores in variable dictionary for second pass
+    variables[temp_var_name] = new_var
+    p[0] = new_var.get_unique_rep()
 
 # ==============================================================================
 
