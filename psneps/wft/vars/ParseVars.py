@@ -275,6 +275,8 @@ def p_CloseStmt(p):
     '''
     raise SNePSVarError("Close not yet implemented!")
 
+# ==============================================================================
+
 def p_EveryStmt(p):
     '''
     EveryStmt :         Every LParen ArbVar Comma Argument RParen
@@ -296,11 +298,16 @@ def p_EveryStmt(p):
             new_var = node
 
     # Ensures variable name only used to refer to one object in wft
-    if temp_var_name in variables and variables[temp_var_name] != new_var:
-        raise SNePSVarError("Variable with name {} defined twice in same context!".format(new_var.name))
+    if temp_var_name in variables:
+        if variables[temp_var_name] != new_var:
+            raise SNePSVarError("Variable with name {} defined twice in same context!".format(new_var.name))
+        p[0] = variables[temp_var_name].get_unique_rep()
+    else:
+        # Stores in variable dictionary for second pass
+        variables[temp_var_name] = new_var
+        p[0] = new_var.get_unique_rep()
 
-    # Stores in variable dictionary for second pass
-    variables[temp_var_name] = new_var
+# ==============================================================================
 
 def p_SomeStmt(p):
     '''
@@ -331,11 +338,16 @@ def p_SomeStmt(p):
             new_var = node
 
     # Ensures variable name only used to refer to one object in wft
-    if temp_var_name in variables and variables[temp_var_name] != new_var:
-        raise SNePSVarError("Variable with name {} defined twice in same context!".format(new_var.name))
+    if temp_var_name in variables:
+        if variables[temp_var_name] != new_var:
+            raise SNePSVarError("Variable with name {} defined twice in same context!".format(new_var.name))
+        p[0] = variables[temp_var_name].get_unique_rep()
+    else:
+        # Stores in variable dictionary for second pass
+        variables[temp_var_name] = new_var
+        p[0] = new_var.get_unique_rep()
 
-    # Stores in variable dictionary for second pass
-    variables[temp_var_name] = new_var
+# ==============================================================================
 
 def p_ArbVar(p):
     '''
@@ -349,6 +361,8 @@ def p_ArbVar(p):
     var_names[p[1]] = new_var.get_unique_rep()
     p[0] = (p[1], new_var)
 
+# ==============================================================================
+
 
 def p_IndVar(p):
     '''
@@ -361,6 +375,8 @@ def p_IndVar(p):
     new_var = Indefinite(p[1], current_network.sem_hierarchy.get_type('Entity'))
     var_names[p[1]] = new_var.get_unique_rep()
     p[0] = (p[1], new_var)
+
+# ==============================================================================
 
 def p_error(p):
     if p is None:
