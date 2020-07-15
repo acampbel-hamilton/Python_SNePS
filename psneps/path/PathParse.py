@@ -31,14 +31,14 @@ def p_Path1(p):
     '''
     Path :              SlotName
     '''
-    p[0] = BasePath(current_network.find_slot(p[1]), current_network)
+    p[0] = BasePath(current_network.find_slot(p[1]))
     global producedPath
     producedPath = p[0]
 def p_Path2(p):
     '''
     Path :              ReverseSlotName
     '''
-    p[0] = BasePath(current_network.find_slot(p[1][:-1]), current_network, backward=True)
+    p[0] = BasePath(current_network.find_slot(p[1][:-1]), backward=True)
     global producedPaths
     producedPath = p[0]
 def p_Path3(p):
