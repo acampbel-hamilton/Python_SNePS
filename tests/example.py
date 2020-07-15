@@ -23,11 +23,12 @@ net.define_caseframe("Happy", "Propositional", ["happy_thing"])
 #
 # print('\n\n')
 
-net.assert_wft("if(Equiv(test1, test2), Equiv(test1, test2))")
-net.assert_wft("Equiv(test1, test2)")
-net.assert_wft("Equiv(test2, test3)")
-net.assert_wft("test1")
-print(net.paths_from(['wft1'], 'compose(!, equiv, kstar(compose(equiv-, !, equiv)))'))
+# net.assert_wft("if(Equiv(test1, test2), Equiv(test1, test2))")
+# net.assert_wft("Isa(test1, test2)")
+# net.define_path('member', '[!, member, kstar(member-, !, class)]')
+net.assert_wft("Isa(Fido, Dog)")
+net.assert_wft("Isa(Dog, Animal)")
+print(net.paths_from(['Fido'], '[member-, kstar([class, member-]), class]'))
 
 net.export_graph()
 net.print_graph()
