@@ -82,9 +82,7 @@ class KPlusPath(ModPath):
         next = [start_node]
         while next != []:
             # Get new nodes from traversing the path another time
-            next = set()
-            for next_nodes in next:
-                next.update(self.path.derivable(next_nodes, converse))
+            next = self.path.derivable(next_node, converse) for next_node in next]
             derived.update(set(next))
         return derived
 
