@@ -19,13 +19,14 @@ net.assert_wft("and(Isa(some(x(g), Isa([x, every(g, Isa(g, Test))], Human)), Ani
 
 snips = Inference(net)
 snips.toggle_debug()
-snips.ask("e")
+snips.ask("Isa(some(x(g), Isa([x, every(g, Isa(g, Test))], Human)), Animal)")
 
-print(net.find_caseframe("Isa"))
-print(net.find_slot("member"))
-net.define_path("equiv", "compose(!, equiv, kstar(compose(equiv-, !, equiv)))")
-print(net.find_slot("equiv"))
+print('\n\n')
 
+net.assert_wft("Equiv([test1, test2])")
+net.assert_wft("Equiv([test2, test3])")
+net.assert_wft("test1")
+print(net.paths_from(['wft7'], 'compose(!, equiv, kstar(compose(equiv-, !, equiv)))'))
 
-# net.export_graph()
+net.export_graph()
 net.print_graph()

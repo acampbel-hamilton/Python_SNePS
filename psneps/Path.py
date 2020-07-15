@@ -127,17 +127,11 @@ class BasePath(Path):
 
 # Asserted Path singleton
 class AssertedPath(Path):
-    class _AssertedPath:
-        def __init__(self, current_network):
-            self.current_network = current_network
-
-    instance = None
     def __init__(self, current_network):
-        if AssertedPath.instance is None:
-            AssertedPath.instance = AssertedPath._AssertedPath(current_network)
+        self.current_network = current_network
 
     def derivable(self, start_node, converse=False):
-        if AssertedPath.instance.current_network.current_context.is_asserted(start_node):
+        if self.current_network.current_context.is_asserted(start_node):
             return set([start_node])
         else:
             return set()
@@ -150,12 +144,20 @@ class AssertedPath(Path):
 # =====================================
 
 from .path.PathParse import path_parser, SNePSPathError
+from typing import List
 
 class PathMixin:
     """ Provides functions related to paths to Network """
 
-    def define_path(self, slot_str: str, path_str: str):
+    def define_path(self, slot_str : str, path_str : str):
         path = path_parser(path_str, self)
         if path is not None:
             slot = self.find_slot(slot_str)
             slot.add_path(path)
+
+    def paths_from(self, terms : List[str], path_str : str):
+        path = path_parser(path_str, self)
+        derived = set()
+        for term in terms:
+            start_node = self.find_term(term)
+            derived.update(path.derivable(start_node))

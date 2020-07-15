@@ -56,6 +56,9 @@ class Node:
     def new_unique_rep(self) -> UniqueRep:
         return UniqueRep(name=self.name)
 
+    def follow_down_cable(self, slot):
+        return set()
+
 # =====================================
 # ---------- ATOMIC NODES -------------
 # =====================================
@@ -378,8 +381,12 @@ class NodeMixin:
             self.nodes[name] = Base(name, sem_type)
 
     def list_terms(self) -> None:
+        print("Terms:")
         for term in self.nodes:
-            print(self.nodes[term])
+            node = self.nodes[term]
+            print('  ', node.name, '!' if self.current_context.is_asserted(node) else '', \
+            ' :', sep='')
+            print('    ', node, sep='')
 
     def find_term(self, name: str) -> Node:
         if name in self.nodes:
