@@ -43,10 +43,11 @@ class AndPaths(ComposedPaths):
 
         # Follow paths consecutively
         derived = set()
-        i = 0
+        first  = True
         for path in self.paths:
-            if i == 0:
+            if first:
                 derived = path.derivable(start_node, converse)
+                first = False
             else:
                 derived.intersection_update(path.derivable(start_node, converse))
             i += 1
