@@ -166,3 +166,4 @@ class PathMixin:
         for term in terms:
             start_node = self.find_term(term)
             derived.update(path.derivable(start_node))
+        return derived
