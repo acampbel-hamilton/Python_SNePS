@@ -108,7 +108,7 @@ class IRPath(ModPath):
     """ Follows paths provided end node is not start node """
 
     def derivable(self, start_node, parent_converse=False):
-        derived = self.path.derivable(next_node, self.converse != parent_converse)
+        derived = self.path.derivable(start_node, self.converse != parent_converse)
         derived.discard(start_node)
         return derived
 
