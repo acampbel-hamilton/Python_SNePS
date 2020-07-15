@@ -8,7 +8,7 @@ use them to build Python_SNePS paths. """
 from . import PathLex
 from ..ply import *
 from ..Network import *
-from ..Error import SNError
+from ...Error import SNError
 from .. Path import BasePath, ComposedPaths, KPlusPath, KStarPath, AssertedPath, AndPaths, OrPaths, IRPath
 
 # =====================================

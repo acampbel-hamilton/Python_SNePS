@@ -1,6 +1,6 @@
 from .Caseframe import Frame
 from .Slot import Slot
-from .Error import SNError
+from ..Error import SNError
 from .SemanticType import SemanticType
 from re import match
 from .wft.vars.UniqueRep import *

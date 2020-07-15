@@ -1,6 +1,6 @@
-from ..Network import *
-from ..SemanticType import SemError
-from ..Node import Node, ImplNode, AndOrNode
+from ..sneps.Network import *
+from ..sneps.SemanticType import SemError
+from ..sneps.Node import Node, ImplNode, AndOrNode
 from ..Error import SNError
 
 ANDOR_SLOT_NAMES = ['and', 'or', 'nor', 'xor', 'nand', 'andorargs']
