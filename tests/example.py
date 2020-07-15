@@ -35,6 +35,7 @@ net.list_contexts()
 net.list_slots()
 net.list_caseframes()
 net.list_terms()
+net.list_types()
 
 net.export_graph()
 net.print_graph()
