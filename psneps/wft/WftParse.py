@@ -119,6 +119,12 @@ def p_NaryOp7(p):
            |            Thnor LParen Wfts RParen
     '''
     raise SNePSWftError("Thnot not yet implemented!")
+def p_NaryOp8(p):
+    '''
+    NaryOp :            Equiv LParen Wfts RParen
+    '''
+    filler_set = [Fillers(p[3])]
+    p[0] = build_molecular(p[1], filler_set)
 
 # ==============================================================================
 

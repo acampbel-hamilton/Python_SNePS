@@ -16,13 +16,13 @@ class Caseframe:
         self.sem_hierarchy = sem_hierarchy
         self.docstring = docstring
         self.slots = slots
-        self.aliases = [self.name]
+        self.aliases = set([self.name])
         self.adj_to = set()
         self.adj_from = set()
 
     def add_alias(self, alias: str) -> None:
         # Adds new alias to array
-        self.aliases.append(alias)
+        self.aliases.add(alias)
 
     def has_alias(self, alias: str) -> bool:
         # Checks if string in aliases
@@ -172,6 +172,11 @@ class CaseframeMixin:
     def list_caseframes(self) -> None:
         for caseframe in self.caseframes:
             print(self.caseframes[caseframe])
+
+    def same_frame(self, aliases : List[str], caseframe_str : str):
+        caseframe = self.find_caseframe(caseframe_str)
+        for alias in aliases:
+            caseframe.add_alias(alias)
 
     def define_caseframe(self, name: str, sem_type_name: str, slot_names: list, docstring="") -> None:
         """ Defines a new caseframe. """
