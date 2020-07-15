@@ -34,8 +34,8 @@ class Slot:
     def __str__(self) -> str:
         return "<{}>: {}\n".format(self.name, self.docstring) + \
                "\tSemantic Type: {}\n".format(self.sem_type) + \
-               "\tPositive Adjust: {}\n".format(self.pos_adj) + \
-               "\tNegative Adjust: {}\n".format(self.neg_adj) + \
+               "\tPositive Adjust: {}\n".format(self.pos_adj.name.lower()) + \
+               "\tNegative Adjust: {}\n".format(self.neg_adj.name.lower()) + \
                "\tMinimum Fillers: {}\n".format(self.min) + \
                "\tMaximum Fillers: {}\n".format(self.max) + \
                "\tPaths:{}{}".format(
