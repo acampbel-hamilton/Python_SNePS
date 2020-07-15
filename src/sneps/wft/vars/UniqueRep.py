@@ -87,23 +87,17 @@ class VarRep:
                 return
         self.restriction_reps.add(restriction)
 
-    def add_dependency(self, dependency: UniqueRep):
+    def add_dependency(self, dependency):
         self.dependency_reps.add(dependency)
 
     def add_dependency_name(self, dependency_name: str):
         self.dependency_names.add(dependency_name)
 
-    def swap_dependency_name(self, dependency_name: str, dependency: UniqueRep):
+    def swap_dependency_name(self, dependency_name: str, dependency):
         if dependency_name in self.dependency_names:
             self.dependency_names.remove(dependency_name)
             self.dependency_reps.add(dependency)
-
-        if len(delf.dependency_names) == 0:
-            return true
-
-        else:
-            return false
-
+    
     def complete(self):
         return len(self.dependency_names) == 0
 

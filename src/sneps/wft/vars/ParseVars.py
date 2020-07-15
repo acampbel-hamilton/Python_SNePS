@@ -32,7 +32,7 @@ tokens = WftLex.tokens
 current_network = None
 variables = {}
 var_names = {}
-incomplete_vars = {}
+incomplete_vars = set()
 
 # =====================================
 # -------------- RULES ----------------
@@ -348,6 +348,12 @@ def p_EveryStmt(p):
 
     # Stores in variable dictionary for second pass
     variables[temp_var_name] = new_var
+
+    # Clean up and return
+    for var in incomplete_vars:
+        var.var_rep.swap_dependency_name(temp_var_name, new_var.var_rep)
+        if var.var_rep.complete():
+            incomplete_vars.remove(var)
     p[0] = new_var.get_unique_rep()
 
 # ==============================================================================
@@ -358,6 +364,7 @@ def p_SomeStmt(p):
     '''
     global variables
     global current_network
+    global incomplete_vars
 
     # Stores variable and shorthand representation
     new_var = p[3][1]
@@ -369,7 +376,11 @@ def p_SomeStmt(p):
         if dependency_name in variables:
             new_var.var_rep.add_dependency(variables[dependency_name])
         else:
-            raise SNePSVarError("Dependency {} referrenced before variable creation!".format(dependency_name))
+            if dependency_name in var_names:
+                new_var.var_rep.add_dependency_name(var_names[dependency_name])
+                incomplete_vars.add(new_var)
+            else:
+                raise SNePSVarError("Dependency {} referrenced before variable creation!".format(dependency_name))
 
     # Representation of restrictions (UniqueReps)
     for restriction in p[8]:
@@ -385,6 +396,7 @@ def p_SomeStmt(p):
     # Ensures two names not used for same variable in wft
     for var in variables.values():
         if var == new_var:
+            incomplete_vars.discard(new_var)
             new_var = var
             break
 
@@ -397,6 +409,12 @@ def p_SomeStmt(p):
 
     # Stores in variable dictionary for second pass
     variables[temp_var_name] = new_var
+
+    # Clean up and return
+    for var in incomplete_vars:
+        var.var_rep.swap_dependency_name(temp_var_name, new_var.var_rep)
+        if var.var_rep.complete():
+            incomplete_vars.remove(var)
     p[0] = new_var.get_unique_rep()
 
 # ==============================================================================
@@ -536,7 +554,13 @@ def get_vars(wft: str, network):
     # Reset globals and return variables
     global variables
     global var_names
+    global incomplete_vars
+    ret_incomplete = incomplete_vars
     ret_variables = variables
     variables = {}
     var_names = {}
+    incomplete_vars = set()
+
+    if incomplete_vars != set():
+        raise SNePSVarError("Some dependencies never defined in wft!")
     return ret_variables
