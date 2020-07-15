@@ -97,7 +97,7 @@ class VarRep:
         if dependency_name in self.dependency_names:
             self.dependency_names.remove(dependency_name)
             self.dependency_reps.add(dependency)
-    
+
     def complete(self):
         return len(self.dependency_names) == 0
 
@@ -110,11 +110,22 @@ class VarRep:
         if not (self.dependency_names == other.dependency_names or \
             (self.dependency_names - other.dependency_names == set([self.name]) and \
             other.dependency_names - self.dependency_names == set([other.name]))):
-                return False
+                return Falses
+
+        # # Ensure every dependency on self on other
+        # if not self.dependency_reps == other.dependency_reps:
+        #     return False
 
         # Ensure every dependency on self on other
-        if not self.dependency_reps == other.dependency_reps:
-            return False
+        self_dep_reps = self.dependency_reps.copy()
+        other_dep_reps = other.dependency_reps.copy()
+        for rep in self_dep_reps:
+            for other_rep in other.dependency_reps:
+                if rep == other_rep:
+                    other_rest_reps.remove(other_rep)
+                    break
+            else:
+                return False
 
         # Ensure every restriction on self on other
         self_rest_reps = self.restriction_reps.copy()
@@ -126,7 +137,6 @@ class VarRep:
                     break
             else:
                 return False
-
         return True
 
     def __str__(self) -> str:
