@@ -1,3 +1,5 @@
+from typing import List
+
 class Path:
     """ Superclass for all paths """
     def __init__(self):
@@ -149,7 +151,6 @@ class AssertedPath(Path):
 # =====================================
 
 from .path.PathParse import path_parser, SNePSPathError
-from typing import List
 
 class PathMixin:
     """ Provides functions related to paths to Network """
