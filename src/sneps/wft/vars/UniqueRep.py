@@ -78,6 +78,8 @@ class VarRep:
         self.restriction_reps = set()
         # Dependencies should be an unordered set of VarRep objects
         self.dependency_reps = set()
+        # Temporarily holds names of dependencies
+        self.dependency_names = set()
 
     def add_restriction(self, restriction: UniqueRep):
         for rest_rep in self.restriction_reps:
@@ -88,9 +90,32 @@ class VarRep:
     def add_dependency(self, dependency: UniqueRep):
         self.dependency_reps.add(dependency)
 
+    def add_dependency_name(self, dependency_name: str):
+        self.dependency_names.add(dependency_name)
+
+    def swap_dependency_name(self, dependency_name: str, dependency: UniqueRep):
+        if dependency_name in self.dependency_names:
+            self.dependency_names.remove(dependency_name)
+            self.dependency_reps.add(dependency)
+
+        if len(delf.dependency_names) == 0:
+            return true
+
+        else:
+            return false
+
+    def complete(self):
+        return len(self.dependency_names) == 0
+
     def __eq__(self, other):
         if len(self.dependency_reps) != len(other.dependency_reps) \
             or len(self.restriction_reps) != len(other.restriction_reps):
+                return False
+
+        # Ensure every dependency name on self (temporary) on other
+        if not (self.dependency_names == other.dependency_names or \
+            (self.dependency_names - other.dependency_names == set([self.name]) and \
+            other.dependency_names - self.dependency_names == set([other.name]))):
                 return False
 
         # Ensure every dependency on self on other

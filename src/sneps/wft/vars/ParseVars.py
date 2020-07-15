@@ -32,6 +32,7 @@ tokens = WftLex.tokens
 current_network = None
 variables = {}
 var_names = {}
+incomplete_vars = {}
 
 # =====================================
 # -------------- RULES ----------------
