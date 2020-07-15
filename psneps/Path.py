@@ -43,8 +43,13 @@ class AndPaths(ComposedPaths):
 
         # Follow paths consecutively
         derived = set()
-        for path in paths:
-            derived.intersection_update(path.derivable(start_node, converse))
+        i = 0
+        for path in self.paths:
+            if i == 0:
+                derived = path.derivable(start_node, converse)
+            else:
+                derived.intersection_update(path.derivable(start_node, converse))
+            i += 1
         return derived
 
     def __str__(self) -> str:
@@ -58,7 +63,7 @@ class OrPaths(ComposedPaths):
 
         # Follow paths consecutively
         derived = set()
-        for path in paths:
+        for path in self.paths:
             derived.update(path.derivable(start_node, converse))
         return derived
 

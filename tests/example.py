@@ -29,7 +29,7 @@ net.define_caseframe("Happy", "Propositional", ["happy_thing"])
 net.assert_wft("Isa(Fido, Fido)")
 net.assert_wft("Isa(Fido, Dog)")
 net.assert_wft("Isa(Dog, Animal)")
-print(net.paths_from(['Fido'], 'irreflexive-restrict([member-, kstar([class, member-]), class])'))
+print(net.paths_from(['Fido'], 'and(irreflexive-restrict([member-, kstar([class, member-]), class]), [member-, class])'))
 
 net.export_graph()
 net.print_graph()
