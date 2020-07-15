@@ -306,6 +306,12 @@ def p_EveryStmt(p):
             raise SNePSVarError("Variable with name {} defined twice in same context!".format(new_var.name))
         p[0] = variables[temp_var_name].get_unique_rep()
     else:
+        # Ensures two names not used for same variable in wft
+        for var in variables.values():
+            if var == new_var:
+                new_var = var
+                break
+
         # Stores in variable dictionary for second pass
         variables[temp_var_name] = new_var
         p[0] = new_var.get_unique_rep()
@@ -346,6 +352,12 @@ def p_SomeStmt(p):
             raise SNePSVarError("Variable with name {} defined twice in same context!".format(new_var.name))
         p[0] = variables[temp_var_name].get_unique_rep()
     else:
+        # Ensures two names not used for same variable in wft
+        for var in variables.values():
+            if var == new_var:
+                new_var = var
+                break
+
         # Stores in variable dictionary for second pass
         variables[temp_var_name] = new_var
         p[0] = new_var.get_unique_rep()
