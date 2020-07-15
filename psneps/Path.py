@@ -25,6 +25,8 @@ class ComposedPaths(Path):
         for path in paths:
             temp_derived = set()
             for next_node in derived:
+                if path.derivable(next_node, converse) is None:
+                    print(type(path))
                 # Store all nodes derived by following the next path
                 temp_derived.update(path.derivable(next_node, converse))
             derived = temp_derived
