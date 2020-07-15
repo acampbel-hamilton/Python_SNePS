@@ -1,25 +1,23 @@
 from src import *
 net = Network()
 
-net.define_context("test")
-net.set_current_context("test")
+net.define_type("Agent", ["Thing"])
+net.define_slot("agent", "Agent")
 
-net.assert_wft("nand(a, b, c, d)")
-net.assert_wft("2=>([a, b, c, d], [not(e), f, g])")
-net.assert_wft("and(a, b)")
+net.define_slot("beats", "Thing")
+net.define_caseframe("Beats", "Act", ["agent", "beats"])
 
-snips = Inference(net)
-snips.toggle_debug()
-snips.ask("e")
+net.define_slot("farmer", "Agent")
+net.define_caseframe("Farmer", "Proposition", ["farmer"])
 
-print('\n\n')
+net.define_slot("donkey", "Thing")
+net.define_caseframe("Donkey", "Proposition", ["donkey"])
 
-net.assert_wft("Isa(Fido, Fido)")
-net.assert_wft("Isa(Fido, Dog)")
-net.assert_wft("Isa(Dog, Animal)")
-print(net.paths_from(['Dog'], 'converse(and(irreflexive-restrict([member-, kstar([class, member-]), class]), [member-, class]))'))
+net.define_slot("owner", "Agent")
+net.define_slot("owns", "Thing")
+net.define_caseframe("Owns", "Proposition", ["owner", "owns"])
 
-net.list_slots()
+net.assert_wft("Beats(every(x, [Farmer(x), Owns(x, some(y(x), Donkey(y)))]), y)")
 
 net.export_graph()
 net.print_graph()
