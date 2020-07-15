@@ -368,7 +368,7 @@ def p_SomeStmt(p):
         if dependency_name in variables:
             new_var.var_rep.add_dependency(variables[dependency_name])
         else:
-            raise SNePSVarError("Restriction {} referrenced before variable creation!".format(dependency_name))
+            raise SNePSVarError("Dependency {} referrenced before variable creation!".format(dependency_name))
 
     # Representation of restrictions (UniqueReps)
     for restriction in p[8]:
