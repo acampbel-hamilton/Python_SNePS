@@ -110,7 +110,7 @@ class VarRep:
         if not (self.dependency_names == other.dependency_names or \
             (self.dependency_names - other.dependency_names == set([self.name]) and \
             other.dependency_names - self.dependency_names == set([other.name]))):
-                return Falses
+                return False
 
         # # Ensure every dependency on self on other
         # if not self.dependency_reps == other.dependency_reps:
