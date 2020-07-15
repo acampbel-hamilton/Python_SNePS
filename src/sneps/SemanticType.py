@@ -137,7 +137,7 @@ class SemanticHierarchy:
 
         return gcds[0]
 
-    def get_type(self, type_name):
+    def get_type(self, type_name: str):
         if type_name in self.sem_types:
             return self.sem_types[type_name]
         else:

@@ -21,11 +21,11 @@ class Caseframe:
         self.adj_from = set()
 
     def add_alias(self, alias: str) -> None:
-        # Adds new alias to array
+        """ Adds new alias to array """
         self.aliases.add(alias)
 
     def has_alias(self, alias: str) -> bool:
-        # Checks if string in aliases
+        """ Checks if string in aliases """
         return alias in self.aliases
 
     def __eq__(self, other) -> bool:
@@ -51,12 +51,12 @@ class Caseframe:
     def add_adj_from(self, other) -> None:
         self.adj_from.add(other)
 
-    def adjustable(self, other):
+    def adjustable(self, other) -> bool:
         return self.can_pos_adj(other) or \
                self.can_neg_adj(other) or \
                self.pseudo_adjustable(other)
 
-    def can_pos_adj(self, other):
+    def can_pos_adj(self, other) -> bool:
         """ Returns true if self is a caseframe that is pos_adj to the caseframe
             other. Self caseframe is pos_adj to other caseframe if:
                 1. self.type is the same, or a subtype of other.type
@@ -68,7 +68,7 @@ class Caseframe:
                 return True
         return False
 
-    def can_neg_adj(self, other):
+    def can_neg_adj(self, other) -> bool:
         """ Returns true if self is a caseframe that is neg_adj to the caseframe
             other. Self caseframe is neg_adj to other caseframe if:
                 1. self is the same, or a subtype of other
@@ -80,7 +80,7 @@ class Caseframe:
                 return True
         return False
 
-    def pseudo_adjustable(self, other):
+    def pseudo_adjustable(self, other) -> bool:
         # This is a special case for adjustments
         return self.name == "Nor" and other.name == "AndOr"
 
@@ -147,6 +147,7 @@ class Fillers:
         return len(self.nodes)
 
     def to_string(self, slot_name: str) -> str:
+        """ We don't use __str__ for this because we need another parameter. """
         return "\n\t  " + slot_name + ":" + "".join("\n\t    " + str(node) for node in self.nodes)
 
     def __eq__(self, other) -> bool:
@@ -160,7 +161,7 @@ class CaseframeMixin:
         if type(self) is CaseframeMixin:
             raise NotImplementedError("Mixins can't be instantiated.")
 
-        self.caseframes = {}
+        self.caseframes = {} # Maps strs to Caseframe objects.
 
     def find_caseframe(self, name: str) -> Caseframe:
         for caseframe in self.caseframes.values():
@@ -170,6 +171,7 @@ class CaseframeMixin:
             raise CaseframeError('ERROR: Caseframe "' + name + '" not defined.')
 
     def list_caseframes(self) -> None:
+        """ Prints out the defined caseframes. """
         for caseframe in self.caseframes:
             print(self.caseframes[caseframe])
 
@@ -193,8 +195,7 @@ class CaseframeMixin:
 
         # Checks provided type is valid
         sem_type = self.sem_hierarchy.get_type(sem_type_name)
-        if sem_type is None:
-            raise CaseframeError("ERROR: The semantic type '{}' does not exist".format(sem_type_name))
+        # If the type was invalid, get_type will raise an error.
 
         # Builds new caseframe with given parameters
         new_caseframe = Caseframe(name, sem_type, self.sem_hierarchy, docstring, frame_slots)
