@@ -85,6 +85,7 @@ class KPlusPath(ModPath):
             temp_next = set()
             [temp_next.update(self.path.derivable(next_node, converse)) for next_node in next]
             next = temp_next
+            next = next - derived
             derived.update(next)
         return derived
 
