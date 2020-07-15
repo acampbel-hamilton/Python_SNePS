@@ -1,6 +1,6 @@
 from .Slot import *
 from .SemanticType import SemanticType, SemanticHierarchy
-from .Error import SNError
+from .SNError import SNError
 from re import match
 from typing import List
 

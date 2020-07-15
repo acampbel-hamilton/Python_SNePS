@@ -1,4 +1,4 @@
-from .Error import SNError
+from .SNError import SNError
 from re import match
 
 class ContextError(SNError):

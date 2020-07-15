@@ -1,5 +1,5 @@
 from enum import Enum
-from .Error import SNError
+from .SNError import SNError
 from .SemanticType import SemanticType
 from re import match
 from .Path import Path

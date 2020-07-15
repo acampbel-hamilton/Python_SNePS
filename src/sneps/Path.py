@@ -2,14 +2,17 @@ from typing import List
 
 class Path:
     """ Superclass for all paths """
+
     def __init__(self):
-        self.converse = False
+        self.converse = False # Set to true if path should be followed in reverse
 
     def reverse(self):
+        # A converse within a converse is read forward
         self.converse = not self.converse
 
 class ComposedPaths(Path):
     """ A composed list of path objects, following one after another """
+
     def __init__(self, paths):
         self.paths = paths
         super().__init__()
@@ -41,7 +44,7 @@ class AndPaths(ComposedPaths):
         # Exclusive or for whether to use converse
         converse = self.converse != parent_converse
 
-        # Follow paths consecutively
+        # Follow each of the paths
         derived = set()
         first  = True
         for path in self.paths:
@@ -49,6 +52,7 @@ class AndPaths(ComposedPaths):
                 derived = path.derivable(start_node, converse)
                 first = False
             else:
+                # Store the intersection of the derived nodes from each path
                 derived.intersection_update(path.derivable(start_node, converse))
         return derived
 
@@ -61,9 +65,10 @@ class OrPaths(ComposedPaths):
         # Exclusive or for whether to use converse
         converse = self.converse != parent_converse
 
-        # Follow paths consecutively
+        # Follow each of the paths
         derived = set()
         for path in self.paths:
+            # Store the union of the derived nodes from each path
             derived.update(path.derivable(start_node, converse))
         return derived
 
@@ -85,6 +90,7 @@ class KPlusPath(ModPath):
         # Exclusive or for whether to use converse
         converse = self.converse != parent_converse
 
+        # Traverse path until every node derivable located
         derived = set()
         next = set([start_node])
         while next != set():
@@ -92,6 +98,8 @@ class KPlusPath(ModPath):
             temp_next = set()
             [temp_next.update(self.path.derivable(next_node, converse)) for next_node in next]
             next = temp_next
+
+            # Ensures derivations not repeated - prevents infinite recursion
             next = next - derived
             derived.update(next)
         return derived
@@ -101,7 +109,10 @@ class KPlusPath(ModPath):
 
 class KStarPath(KPlusPath):
     """ Follows zero or more instances of the given path """
+
     def derivable(self, start_node, parent_converse=False):
+
+        # KPlus paths, plus the starting node (the starting node represents zero traversals)
         derived = super().derivable(start_node, self.converse != parent_converse)
         derived.add(start_node)
         return derived
@@ -114,6 +125,8 @@ class IRPath(ModPath):
 
     def derivable(self, start_node, parent_converse=False):
         derived = self.path.derivable(start_node, self.converse != parent_converse)
+
+        # Ignores any paths that return to where they began
         derived.discard(start_node)
         return derived
 
@@ -122,13 +135,14 @@ class IRPath(ModPath):
 
 class BasePath(Path):
     """ Atomic path existing on a single non-repeated slot """
-    def __init__(self, slot, current_network, backward=False):
-        self.slot = slot
-        self.current_network = current_network
-        self.backward = backward
+
+    def __init__(self, slot, backward=False):
+        self.slot = slot # The single slot to follow
+        self.backward = backward # Whether to folow an upcable instead
         super().__init__()
 
     def derivable(self, start_node, parent_converse=False):
+        # Follows the single cable up or down
         if (self.converse != parent_converse) == self.backward:
             return start_node.follow_down_cable(self.slot)
         else:
@@ -137,14 +151,17 @@ class BasePath(Path):
     def __str__(self) -> str:
         return self.slot.name + ("-" if self.backward else "")
 
-# Asserted Path singleton
 class AssertedPath(Path):
+    """ Ensures the starting node provided is asserted within the current context """
+
     def __init__(self, current_network):
         self.current_network = current_network
 
     def derivable(self, start_node, converse=False):
+        # If asserted, returns a set containing the starting_node
         if self.current_network.current_context.is_asserted(start_node):
             return set([start_node])
+        # Otherwise returns the empty set
         else:
             return set()
 
@@ -161,12 +178,16 @@ class PathMixin:
     """ Provides functions related to paths to Network """
 
     def define_path(self, slot_str : str, path_str : str):
+        # The slot slot_str exists between two nodes when the path path_str
+        # can be followed from one to the other
         path = path_parser(path_str, self)
         if path is not None:
             slot = self.find_slot(slot_str)
             slot.add_path(path)
 
     def paths_from(self, terms : List[str], path_str : str):
+        # Given a starting list of node names and a path, follows the path from
+        # each of the nodes and returns the set of nodes derived
         path = path_parser(path_str, self)
         derived = set()
         for term in terms:

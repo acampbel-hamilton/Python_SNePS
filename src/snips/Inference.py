@@ -1,13 +1,10 @@
-from ..Network import *
-from ..SemanticType import SemError
-from ..Node import Node, ImplNode, AndOrNode
-from ..Error import SNError
+from ..sneps.Network import *
+from ..sneps.SemanticType import SemError
+from ..sneps.Node import Node, ImplNode, AndOrNode
+from .SNIPSError import SNIPSError
 
 ANDOR_SLOT_NAMES = ['and', 'or', 'nor', 'xor', 'nand', 'andorargs']
 THRESH_SLOT_NAMES = ['equivalence', 'threshargs']
-
-class SNIPSError(SNError):
-    pass
 
 """
 This is the main file of the SNIPS package. In here, we define the Inference class.
