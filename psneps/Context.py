@@ -22,10 +22,9 @@ class Context:
         return "<Context {} id: {}>".format(self.name, hex(id(self)))
 
     def __str__(self) -> str:
-        s = ""
-        for k,v in sorted(self.__dict__.items()):
-            s += "{:<16}: {:>20}\n".format(str(k), str(v))
-        return s
+        return "{}:\n\tparent : {}\n\tdocstring : {}\n\thyps : [{}]\n\tders : [{}]\n\t".format(
+            self.name, self.parent.name if self.parent is not None else '', self.docstring,
+            ", ".join([hyp.name for hyp in self.hyps]), ", ".join([der.name for der in self.ders]))
 
     def __eq__(self, other) -> bool:
         return self.name == other.name
