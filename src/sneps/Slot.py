@@ -64,7 +64,7 @@ class SlotMixin:
                     neg_adj="NONE", min=1, max=None, path='') -> None:
         """ Adds new slot to network """
 
-        if self.enforce_name_syntax and not match(r'^[A-Za-z][A-Za-z0-9_]*$', name):
+        if not match(r'^[A-Za-z][A-Za-z0-9_]*$', name):
             raise SlotError("ERROR: The slot name '{}' is not allowed".format(name))
 
         if name in self.slots:

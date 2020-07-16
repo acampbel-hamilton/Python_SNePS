@@ -365,7 +365,7 @@ class NodeMixin:
     def define_term(self, name, sem_type_name="Entity") -> None:
         # Creates base atomic node
 
-        if match(r'^(arb|ind)\d+$', name) or self.enforce_name_syntax and not match(r'^[A-Za-z][A-Za-z0-9_]*$', name):
+        if match(r'^(arb|ind)\d+$', name) or not match(r'^[A-Za-z][A-Za-z0-9_]*$', name):
             raise NodeError("ERROR: The term name '{}' is not allowed".format(name))
 
         if name in self.nodes:

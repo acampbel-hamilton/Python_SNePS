@@ -172,7 +172,7 @@ class SemanticMixin:
     def define_type(self, name: str, parent_names: List[str] = None):
         """ Adds term to hierarchy. This is another important function for interacting with psneps. """
 
-        if self.enforce_name_syntax and not match(r'^[A-Za-z][A-Za-z0-9_]*$', name):
+        if not match(r'^[A-Za-z][A-Za-z0-9_]*$', name):
             raise NodeError("ERROR: The semantic type name '{}' is not allowed.".format(name))
 
         # see https://effbot.org/zone/default-values.htm for why this is necessary
