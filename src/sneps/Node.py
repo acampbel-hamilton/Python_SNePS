@@ -163,7 +163,7 @@ class Indefinite(Variable):
         """ Adds a dependency arc from the variable to another node. """
         self.dependency_set.add(dependency)
 
-    def store_in(self, current_network):
+    def store_in(self, current_network) -> None:
         """ Gives an arb# name and stores in the given network. """
         self.name = 'ind' + str(self.counter)
         Indefinite.counter += 1
