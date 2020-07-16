@@ -52,6 +52,7 @@ class Caseframe:
         self.adj_from.add(other)
 
     def adjustable(self, other) -> bool:
+        """ Returns true if this caseframe can adjust to the other. """
         return self.can_pos_adj(other) or \
                self.can_neg_adj(other) or \
                self.pseudo_adjustable(other)
@@ -81,22 +82,23 @@ class Caseframe:
         return False
 
     def pseudo_adjustable(self, other) -> bool:
-        # This is a special case for adjustments
+        """ Special case for adjustments, based on fopl. """
         return self.name == "Nor" and other.name == "AndOr"
 
 class Frame:
     def __init__(self, caseframe: Caseframe, filler_set=None) -> None:
         self.caseframe = caseframe
-        self.filler_set = [] if filler_set is None else filler_set # see https://effbot.org/zone/default-values.htm for why this is necessary
+        self.filler_set = [] if filler_set is None else filler_set
 
+        # Confirm proper number of fillers for all slots in caseframe before building slot
         if len(self.filler_set) != len(self.caseframe.slots):
             raise CaseframeError('ERROR: Wrong number of fillers. "' + self.caseframe.name + '" takes ' + \
                                  str(len(self.caseframe.slots)) + ' fillers.')
 
-        self.verify_slots()
+        # Confirm given fillers correspond to the caseframe's slots
+        self.verify_fillers()
 
-
-    def verify_slots(self) -> None:
+    def verify_fillers(self) -> None:
         """ Check fillers correspond to slots
             Fillers are entered as a list of type Fillers:
                 - Each Fillers instance corresponds to one slot
@@ -106,23 +108,24 @@ class Frame:
             slot = self.caseframe.slots[i]
             fillers = self.filler_set[i]
 
-            # Check if filler is legal (given limit, adjustment rule)
+            # Check if filler has a legal semantic type for the slot, and casts its type if so
             for node in fillers.nodes:
                 sem_hierarchy = self.caseframe.sem_hierarchy
                 sem_hierarchy.fill_slot(node, slot.sem_type)
 
-            # Ensures within min/max of slots
+            # Ensures number of fillers is within min/max of slots
             if len(fillers) < slot.min:
                 raise CaseframeError('ERROR: Fewer than minimum required slots provided for "' + slot.name + '"')
-
-            if slot.max > 0 and len(fillers) > slot.max:
+            if slot.max is not None and len(fillers) > slot.max:
                 raise CaseframeError('ERROR: Greater than maximum slots provided for "' + slot.name + '"')
 
     def get_filler_set(self, slot):
-        # Returns a set of all fillers that are used with given slot
+        """ Returns a set of all fillers that are used with given slot """
+
         slot_fillers = set()
         for i in range(len(self.caseframe.slots)):
             if self.caseframe.slots[i] is slot:
+                # Adds all fillers at the end of cables designated by the slot's name
                 slot_fillers.update(self.filler_set[i].nodes)
         return slot_fillers
 
@@ -132,7 +135,7 @@ class Frame:
     def __str__(self) -> str:
         ret = self.caseframe.name
         for i in range(len(self.filler_set)):
-            ret += self.filler_set[i].to_string(self.caseframe.slots[i].name)
+            ret += self.filler_set[i].to_str(self.caseframe.slots[i].name)
         return ret
 
 
@@ -141,12 +144,11 @@ class Fillers:
 
     def __init__(self, nodes=None) -> None:
         self.nodes = set() if nodes is None else set(nodes)
-        # See https://effbot.org/zone/default-values.htm for why this is necessary
 
     def __len__(self) -> int:
         return len(self.nodes)
 
-    def to_string(self, slot_name: str) -> str:
+    def to_str(self, slot_name: str) -> str:
         """ We don't use __str__ for this because we need another parameter. """
         return "\n\t  " + slot_name + ":" + "".join("\n\t    " + str(node) for node in self.nodes)
 

@@ -510,6 +510,8 @@ def new_restriction(variable, restriction):
 # =====================================
 
 def wft_parser(wft: str, network):
+    """ Uses lex and yacc to produce a Node instance from a string """
+
     global current_network
     current_network = network
 
