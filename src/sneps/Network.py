@@ -3,6 +3,10 @@ This is the main file of the SNePS module. In here, we define the Network class.
 Authors: Ben Kallus, John Madigan, and Seamus Wiseman
 """
 
+# =====================================
+# -------------- IMPORTS --------------
+# =====================================
+
 from .Visualization import VisualizationMixin
 from .SemanticType import SemanticMixin
 from .Context import ContextMixin
@@ -17,6 +21,13 @@ from .wft.WftParse import wft_parser
 # =====================================
 
 class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin, VisualizationMixin, PathMixin):
+    """ The Network class is the main class of the semantic network module, and provides this
+        functionality to SNePS.
+        Currently, SNePS itself (excluding SNIPS, SNEBR, etc.) is close to a finished project.
+        close statements, ?identifier statements, and thnor/thnot have not been implemented,
+        and variable uniqueness fails on reflexive donkey statements, as discussed in the various
+        SNePS-related papers in this repository, and provided in our demo folder. """
+
     def __init__(self) -> None:
         for cls in type(self).__bases__:
             cls.__init__(self)
@@ -29,6 +40,7 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin,
         # self.contexts = {} (defined in Context.py)
         # self.default_context = Context(docstring="The default context") (defined in Context.py,_default",
         # self.default_context = self.default_context
+        
         self._build_default()
 
     def _build_default(self) -> None:
