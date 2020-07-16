@@ -62,7 +62,7 @@ class Inference:
         ignore.add(wft)
 
         # Check using different inference methods
-        derived = self.net.current_context.is_asserted(wft) or \
+        derived = wft in self.net.current_context or \
                   self._slot_based(wft, ignore.copy()) or \
                   self._by_binary_op(wft, ignore.copy()) or \
                   self._by_nary_op(wft, ignore.copy())

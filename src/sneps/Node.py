@@ -383,7 +383,7 @@ class NodeMixin:
     def list_terms(self) -> None:
         for term in self.nodes:
             node = self.nodes[term]
-            print("<{}>{}:".format(node.name, '!' if self.current_context.is_asserted(node) else ''))
+            print("<{}>{}:".format(node.name, '!' if node in self.current_context else ''))
             print("\t{}".format(node))
 
     def find_term(self, name: str) -> Node:

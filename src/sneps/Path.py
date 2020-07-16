@@ -159,7 +159,7 @@ class AssertedPath(Path):
 
     def derivable(self, start_node, converse=False):
         # If asserted, returns a set containing the starting_node
-        if self.current_network.current_context.is_asserted(start_node):
+        if start_node in self.current_network.current_context:
             return set([start_node])
         # Otherwise returns the empty set
         else:

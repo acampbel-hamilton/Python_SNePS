@@ -40,9 +40,6 @@ class Context:
     def add_derived(self, node):
         self.ders.add(node)
 
-    def is_asserted(self, node):
-        return node in self.hyps or node in self.ders
-
     def all_asserted(self):
         return self.hyps | self.ders
 
@@ -70,24 +67,30 @@ class ContextMixin:
 
     def define_context(self, name: str, docstring: str = "", parent: str = "default") -> None:
         """ Defines a new context. """
+
         if self.enforce_name_syntax and not match(r'^[A-Za-z][A-Za-z0-9_]*$', name):
             raise ContextError("ERROR: The context name '{}' is not allowed".format(name))
 
+        # Ensures uniqueness
         if name in self.contexts:
             raise ContextError("ERROR: Context {} already defined.".format(parent))
+
+        # Parent must exist
         elif parent not in self.contexts:
             raise ContextError("ERROR: Parent context {} does not exist.")
+
+        # Builds new Context object and stores in Network
         else:
             self.contexts[name] = Context(name, docstring, self.contexts[parent])
 
     def set_current_context(self, context_name: str) -> None:
-        """ Sets the current context. As it is, only the default context is defined. """
+        """ Sets the current context. """
         if context_name in self.contexts:
             self.current_context = self.contexts[context_name]
         else:
             raise ContextError("ERROR: Context \"{}\" does not exist.".format(context_name))
 
     def list_contexts(self) -> None:
-        """ Prints out all the contexts in the network """
+        """ Prints out representations for all the contexts in the network """
         for context_name in self.contexts:
             print(self.contexts[context_name])
