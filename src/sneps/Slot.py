@@ -44,7 +44,7 @@ class Slot:
         """ Adds a new path object on which the slot exists. """
         self.paths.add(path)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "<Slot {} id: {}>".format(self.name, hex(id(self)))
 
     def __str__(self) -> str:
