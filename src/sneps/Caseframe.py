@@ -121,7 +121,6 @@ class Frame:
 
     def get_filler_set(self, slot):
         """ Returns a set of all fillers that are used with given slot """
-
         slot_fillers = set()
         for i in range(len(self.caseframe.slots)):
             if self.caseframe.slots[i] is slot:
