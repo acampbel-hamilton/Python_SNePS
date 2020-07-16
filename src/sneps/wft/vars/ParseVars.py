@@ -350,7 +350,7 @@ def p_EveryStmt(p):
     variables[temp_var_name] = new_var
 
     # Clean up and return
-    for var in incomplete_vars:
+    for var in incomplete_vars.copy():
         var.var_rep.swap_dependency_name(temp_var_name, new_var.var_rep)
         if var.var_rep.complete():
             incomplete_vars.remove(var)
@@ -377,7 +377,7 @@ def p_SomeStmt(p):
             new_var.var_rep.add_dependency(variables[dependency_name])
         else:
             if dependency_name in var_names:
-                new_var.var_rep.add_dependency_name(var_names[dependency_name])
+                new_var.var_rep.add_dependency_name(dependency_name)
                 incomplete_vars.add(new_var)
             else:
                 raise SNePSVarError("Dependency {} referrenced before variable creation!".format(dependency_name))
@@ -411,7 +411,7 @@ def p_SomeStmt(p):
     variables[temp_var_name] = new_var
 
     # Clean up and return
-    for var in incomplete_vars:
+    for var in incomplete_vars.copy():
         var.var_rep.swap_dependency_name(temp_var_name, new_var.var_rep)
         if var.var_rep.complete():
             incomplete_vars.remove(var)
@@ -551,7 +551,7 @@ def get_vars(wft: str, network):
     # First pass on wft string
     var_parser.parse(wft, lexer=WftLex.wft_lexer)
 
-    # Reset globals and return variables
+    # Reset globals
     global variables
     global var_names
     global incomplete_vars
@@ -561,6 +561,7 @@ def get_vars(wft: str, network):
     var_names = {}
     incomplete_vars = set()
 
+    # Returns if all vars completed
     if incomplete_vars != set():
         raise SNePSVarError("Some dependencies never defined in wft!")
     return ret_variables

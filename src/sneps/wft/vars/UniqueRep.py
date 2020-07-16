@@ -96,7 +96,11 @@ class VarRep:
     def swap_dependency_name(self, dependency_name: str, dependency):
         if dependency_name in self.dependency_names:
             self.dependency_names.remove(dependency_name)
-            self.dependency_reps.add(dependency)
+            for existing_dependency in self.dependency_reps:
+                if existing_dependency == dependency:
+                    break
+            else:
+                self.dependency_reps.add(dependency)
 
     def complete(self):
         return len(self.dependency_names) == 0
@@ -140,8 +144,10 @@ class VarRep:
         return True
 
     def __str__(self) -> str:
-        ret = self.name + ":"
+        ret = "{} : [{}]".format(self.name, ", ".join([dependency.name for dependency in self.dependency_reps]))
         for restriction in self.restriction_reps:
             ret += "\n" + str(restriction)
-
         return ret
+
+    def __hash__(self):
+        return id(self)
