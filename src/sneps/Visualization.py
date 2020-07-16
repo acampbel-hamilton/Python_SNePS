@@ -135,7 +135,7 @@ class VisualizationMixin:
         plt.show()
 
 
-    def export_graph(self) -> None:
+    def export_graph(self, file_name = "network") -> None:
         """ Generates network.dot graphviz representation. """
         # Ensure proper packages available and imported
         if not has_nx:
@@ -197,7 +197,7 @@ class VisualizationMixin:
                         G.add_edge(node_name, dependency_name, label="dependency")
 
         # Writes graph to network.dot file
-        nx.nx_pydot.write_dot(G, 'network.dot')
+        nx.nx_pydot.write_dot(G, file_name + ".dot")
 
         # Print message to confirm graph exported
-        print("Graph exported to network.dot")
+        print("Graph exported to {}.dot".format(file_name))
