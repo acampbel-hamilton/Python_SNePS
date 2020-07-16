@@ -188,7 +188,7 @@ class VisualizationMixin:
                         restriction_name += '!'
                     G.add_edge(node_name, restriction_name, label="restriction")
 
-                 Draws edges to other nodes to which node has arcs formed by dependencies
+                # Draws edges to other nodes to which node has arcs formed by dependencies
                 if isinstance(node, Indefinite):
                     for dependency_node in node.dependency_set:
                         dependency_name = dependency_node.name
