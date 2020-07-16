@@ -215,6 +215,8 @@ class CaseframeMixin:
                         break
                     elif "NO".startswith(response.upper()):
                         break
+                    else:
+                        print("What?")
 
                 while True:
                     response = input('Would you like to override the docstring for "'+ caseframe.name + '"? (y/N)')
@@ -223,6 +225,8 @@ class CaseframeMixin:
                         break
                     elif "NO".startswith(response.upper()):
                         break
+                    else:
+                        print("Huh?")
 
                 return
 
