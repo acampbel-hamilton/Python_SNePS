@@ -1,3 +1,3 @@
 class SNIPSError(Exception):
-    """ Super class used for errors in the SNIPS module. """
+    """ Superclass used for errors in the SNIPS module. """
     pass
