@@ -1,8 +1,16 @@
 from .SNError import SNError
 from re import match
 
+# =====================================
+# -------------- GLOBALS --------------
+# =====================================
+
 class ContextError(SNError):
     pass
+
+# =====================================
+# -------------- CONTEXT --------------
+# =====================================
 
 class Context:
     def __init__(self, name: str, docstring="", parent=None) -> None:
@@ -26,20 +34,24 @@ class Context:
             self.name, self.parent.name if self.parent is not None else '', self.docstring,
             ", ".join([hyp.name for hyp in self.hyps]), ", ".join([der.name for der in self.ders]))
 
-    def __eq__(self, other) -> bool:
-        return self.name == other.name
-
     def add_hypothesis(self, node):
         self.hyps.add(node)
 
     def add_derived(self, node):
         self.ders.add(node)
 
-    def is_asserted(self, node):
-        return node in self.hyps or node in self.ders
-
     def all_asserted(self):
         return self.hyps | self.ders
+
+    def __eq__(self, other) -> bool:
+        return self.name == other.name
+
+    def __hash__(self) -> int:
+        return id(self) # Contexts are unique
+
+# =====================================
+# --------------- MIXIN ---------------
+# =====================================
 
 class ContextMixin:
     """ Provides functions related to contexts to network. """
@@ -55,24 +67,30 @@ class ContextMixin:
 
     def define_context(self, name: str, docstring: str = "", parent: str = "default") -> None:
         """ Defines a new context. """
-        if self.enforce_name_syntax and not match(r'^[A-Za-z][A-Za-z0-9_]*$', name):
+
+        if not match(r'^[A-Za-z][A-Za-z0-9_]*$', name):
             raise ContextError("ERROR: The context name '{}' is not allowed".format(name))
 
+        # Ensures uniqueness
         if name in self.contexts:
             raise ContextError("ERROR: Context {} already defined.".format(parent))
+
+        # Parent must exist
         elif parent not in self.contexts:
             raise ContextError("ERROR: Parent context {} does not exist.")
+
+        # Builds new Context object and stores in Network
         else:
             self.contexts[name] = Context(name, docstring, self.contexts[parent])
 
     def set_current_context(self, context_name: str) -> None:
-        """ Sets the current context. As it is, only the default context is defined. """
+        """ Sets the current context. """
         if context_name in self.contexts:
             self.current_context = self.contexts[context_name]
         else:
             raise ContextError("ERROR: Context \"{}\" does not exist.".format(context_name))
 
     def list_contexts(self) -> None:
-        """ Prints out all the contexts in the network """
+        """ Prints out representations for all the contexts in the network """
         for context_name in self.contexts:
             print(self.contexts[context_name])

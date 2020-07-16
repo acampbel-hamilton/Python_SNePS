@@ -143,6 +143,8 @@ def p_error(p):
 # =====================================
 
 def path_parser(path, network):
+    """ Uses lex and yacc to produce a Path instance from a string. """
+
     global current_network
     current_network = network
     path_parser = yacc.yacc()

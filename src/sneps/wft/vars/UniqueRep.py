@@ -5,7 +5,7 @@ class SNePSVarError(SNError):
 
 class UniqueRep:
     """ Unique set-like representation for variables """
-    def __init__(self, name=None, caseframe_name=None, min=None, max=None, bound=None, children=None):
+    def __init__(self, name=None, caseframe_name=None, min=None, max=None, bound=None, children=None) -> None:
         self.name = name
         self.caseframe_name = caseframe_name
         self.min = min
@@ -27,11 +27,11 @@ class UniqueRep:
     def equivalent_structure(self, other, self_name: str = None, other_name: str = None):
 
         if not ((self.name == other.name or (self.name == self_name and other.name == other_name)) and \
-            self.caseframe_name == other.caseframe_name and \
-            self.min == other.min and \
-            self.max == other.max and \
-            self.bound == other.bound and \
-            len(self.children) == len(other.children)):
+                self.caseframe_name == other.caseframe_name and \
+                self.min == other.min and \
+                self.max == other.max and \
+                self.bound == other.bound and \
+                len(self.children) == len(other.children)):
                 return False
 
         for i in range(len(self.children)):
@@ -50,7 +50,7 @@ class UniqueRep:
 
         return True
 
-    def includes_var(var_name: str):
+    def includes_var(var_name: str) -> bool:
         """ Returns whether this UniqueRep or any of its children contains the given var. """
         return name == var_name or any(child.includes_var(var_name) for child in self.children)
 
@@ -71,31 +71,61 @@ class UniqueRep:
 
 class VarRep:
     var_num = 1
-    def __init__(self):
+    def __init__(self) -> None:
         self.name = '_' + str(VarRep.var_num)
         VarRep.var_num += 1
         # Restrictions should be an unordered set of UniqueRep objects
         self.restriction_reps = set()
         # Dependencies should be an unordered set of VarRep objects
         self.dependency_reps = set()
+        # Temporarily holds names of dependencies
+        self.dependency_names = set()
 
-    def add_restriction(self, restriction: UniqueRep):
+    def add_restriction(self, restriction: UniqueRep) -> None:
         for rest_rep in self.restriction_reps:
             if rest_rep.equivalent_structure(restriction):
                 return
         self.restriction_reps.add(restriction)
 
-    def add_dependency(self, dependency: UniqueRep):
+    def add_dependency(self, dependency) -> None:
         self.dependency_reps.add(dependency)
 
-    def __eq__(self, other):
+    def add_dependency_name(self, dependency_name: str) -> None:
+        self.dependency_names.add(dependency_name)
+
+    def swap_dependency_name(self, dependency_name: str, dependency) -> None:
+        if dependency_name in self.dependency_names:
+            self.dependency_names.remove(dependency_name)
+            for existing_dependency in self.dependency_reps:
+                if existing_dependency == dependency:
+                    break
+            else:
+                self.dependency_reps.add(dependency)
+
+    def complete(self) -> int:
+        return len(self.dependency_names) == 0
+
+    def __eq__(self, other) -> bool:
         if len(self.dependency_reps) != len(other.dependency_reps) \
             or len(self.restriction_reps) != len(other.restriction_reps):
                 return False
 
+        # Ensure every dependency name on self (temporary) on other
+        if not (self.dependency_names == other.dependency_names or \
+            (self.dependency_names - other.dependency_names == set([self.name]) and \
+            other.dependency_names - self.dependency_names == set([other.name]))):
+                return False
+
         # Ensure every dependency on self on other
-        if not self.dependency_reps == other.dependency_reps:
-            return False
+        self_dep_reps = self.dependency_reps.copy()
+        other_dep_reps = other.dependency_reps.copy()
+        for rep in self_dep_reps:
+            for other_rep in other.dependency_reps:
+                if rep == other_rep:
+                    other_dep_reps.remove(other_rep)
+                    break
+            else:
+                return False
 
         # Ensure every restriction on self on other
         self_rest_reps = self.restriction_reps.copy()
@@ -107,12 +137,13 @@ class VarRep:
                     break
             else:
                 return False
-
         return True
 
     def __str__(self) -> str:
-        ret = self.name + ":"
+        ret = "{} : [{}]".format(self.name, ", ".join([dependency.name for dependency in self.dependency_reps]))
         for restriction in self.restriction_reps:
             ret += "\n" + str(restriction)
-
         return ret
+
+    def __hash__(self) -> int:
+        return id(self)

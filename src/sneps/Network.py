@@ -1,7 +1,11 @@
 """
-This is the main file of the SNePS package. In here, we define the Network class.
+This is the main file of the SNePS module. In here, we define the Network class.
 Authors: Ben Kallus, John Madigan, and Seamus Wiseman
 """
+
+# =====================================
+# -------------- IMPORTS --------------
+# =====================================
 
 from .Visualization import VisualizationMixin
 from .SemanticType import SemanticMixin
@@ -12,9 +16,19 @@ from .Path import PathMixin
 from .Caseframe import CaseframeMixin
 from .wft.WftParse import wft_parser
 
+# =====================================
+# -------------- NETWORK --------------
+# =====================================
+
 class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin, VisualizationMixin, PathMixin):
+    """ The Network class is the main class of the semantic network module, and provides this
+        functionality to SNePS.
+        Currently, SNePS itself (excluding SNIPS, SNEBR, etc.) is close to a finished project.
+        close statements, ?identifier statements, and thnor/thnot have not been implemented,
+        and variable uniqueness fails on reflexive donkey statements, as discussed in the various
+        SNePS-related papers in this repository, and provided in our demo folder. """
+
     def __init__(self) -> None:
-        self.enforce_name_syntax = False
         for cls in type(self).__bases__:
             cls.__init__(self)
 
@@ -26,6 +40,7 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin,
         # self.contexts = {} (defined in Context.py)
         # self.default_context = Context(docstring="The default context") (defined in Context.py,_default",
         # self.default_context = self.default_context
+        
         self._build_default()
 
     def _build_default(self) -> None:
@@ -105,14 +120,16 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin,
         self.caseframes['nor'].add_alias('not')
         # self.caseframes['thnor'].add_alias('thnot')
 
-        # Turn off enforcing name syntax
-        # ==============================
-        self.enforce_name_syntax = True
-
 
     def assert_wft(self, wft_str: str, inf: bool = False) -> None:
-        """ Asserts a provided. This is one of the main ways to interact with the psneps system. """
+        """ Asserts a provided. This is one of the main ways to interact with the sneps system. """
+        # NOTE: Currently inf does nothing. In the future, perhaps it can be used to trigger
+        # forward inference from a queue of unsolved SNIPS queries
+
+        # Parses string and returns node
         wft = wft_parser(wft_str, self)
+
+        # Adds wft as asserted hypothesis in current context
         if wft is not None:
             print(wft.name + "! :", wft)
             self.current_context.add_hypothesis(wft)

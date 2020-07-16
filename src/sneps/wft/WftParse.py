@@ -11,7 +11,7 @@ from .vars.UniqueRep import UniqueRep
 from ..ply import *
 from ..Network import *
 from ..Caseframe import Frame, Fillers
-from ..Node import Base, Molecular, Indefinite, Arbitrary, ThreshNode, AndOrNode, ImplNode
+from ..Node import Base, Molecular, Indefinite, Arbitrary, ThreshNode, AndOrNode, ImplNode, Variable
 from ..SNError import SNError
 
 # =====================================
@@ -27,6 +27,7 @@ tokens = WftLex.tokens
 current_network = None
 variables = {}
 top_wft = None
+pause = 0
 
 # =====================================
 # -------------- RULES ----------------
@@ -155,6 +156,7 @@ def p_EveryStmt(p):
     EveryStmt :         Every LParen Var Comma Argument RParen
     '''
     global variables
+    global pause
     arb = p[3]
     if not isinstance(arb, Arbitrary):
         raise SNePSVarError("Variable {} is not arbefinite!".format(arb.name))
@@ -162,6 +164,7 @@ def p_EveryStmt(p):
     # If this node already exists, return it
     for node in current_network.nodes.values():
         if isinstance(node, Arbitrary) and node == arb:
+            pause -= 1
             p[0] = node
             return
 
@@ -181,6 +184,7 @@ def p_SomeStmt(p):
     SomeStmt :          Some LParen Var LParen AtomicNames RParen Comma Argument RParen
     '''
     global variables
+    global pause
     ind = p[3]
     if not isinstance(ind, Indefinite):
         raise SNePSVarError("Variable {} is not indefinite!".format(ind.name))
@@ -188,6 +192,7 @@ def p_SomeStmt(p):
     # If this node already exists, return it
     for node in current_network.nodes.values():
         if isinstance(node, Indefinite) and node == ind:
+            pause -= 1
             p[0] = node
             return
 
@@ -214,7 +219,13 @@ def p_Var(p):
     '''
     # Grabs from variable dictionary (created by ParseVars)
     global variables
+    global pause
     p[0] = variables[p[1]]
+
+    # Pausing stops redundant creation of nodes when this wft is already in the network
+    for node in current_network.nodes.values():
+        if isinstance(node, Variable) and node == p[0]:
+            pause += 1
 
 # ==============================================================================
 
@@ -223,6 +234,8 @@ def p_CloseStmt(p):
     '''
     CloseStmt :         Close LParen AtomicNameSet Comma Wft RParen
     '''
+    # When this is implemented, be sure to implement in the vars directory as well
+    # and to ensure variable uniqueness holds!
     raise SNePSWftError("Close not yet implemented!")
 
 # ==============================================================================
@@ -244,6 +257,8 @@ def p_QIdenStmt(p):
     QIdenStmt :         QIdentifier LParen Wfts RParen
               |         QIdentifier LParen RParen
     '''
+    # When this is implemented, be sure to implement in the vars directory as well
+    # and to ensure variable uniqueness holds!
     raise SNePSWftError("? not yet implemented!")
 
 # ==============================================================================
@@ -351,10 +366,12 @@ def p_AtomicName(p):
     AtomicName :        Identifier
                |        Integer
     '''
+    global pause
     if p[1] in variables:
         p[0] = variables[p[1]]
     else:
-        current_network.define_term(p[1])
+        if pause == 0:
+            current_network.define_term(p[1])
         p[0] = current_network.find_term(p[1])
 
 # ==============================================================================
@@ -401,6 +418,7 @@ def p_error(p):
 
 def build_molecular(caseframe_name, filler_set):
     """ Builds and returns (or simply returns) a Molecular node from given parameters """
+    global pause
 
     # Builds a frame by combining filler with caseframe (slots)
     caseframe = current_network.find_caseframe(caseframe_name)
@@ -413,11 +431,13 @@ def build_molecular(caseframe_name, filler_set):
 
     # Builds, stores and returns a new node with this frame
     wftNode = Molecular(frame)
-    current_network.nodes[wftNode.name] = wftNode
+    if pause == 0:
+        current_network.nodes[wftNode.name] = wftNode
     return wftNode
 
 def build_thresh (caseframe_name, filler_set, min, max):
     """ Builds and returns (or simply returns) a thresh node from given parameters """
+    global pause
 
     # Simplifies caseframes - See slide 439:
     # https://cse.buffalo.edu/~shapiro/Courses/CSE563/Slides/krrSlides.pdf
@@ -437,11 +457,13 @@ def build_thresh (caseframe_name, filler_set, min, max):
 
     # Builds, stores and returns a new node with this frame, min, and max
     wftNode = ThreshNode(frame, min, max)
-    current_network.nodes[wftNode.name] = wftNode
+    if pause == 0:
+        current_network.nodes[wftNode.name] = wftNode
     return wftNode
 
 def build_andor (caseframe_name, filler_set, min, max):
     """ Builds and returns (or simply returns) an andor node from given parameters """
+    global pause
 
     # Simplifies caseframes - See slide 437:
     # https://cse.buffalo.edu/~shapiro/Courses/CSE563/Slides/krrSlides.pdf
@@ -469,11 +491,13 @@ def build_andor (caseframe_name, filler_set, min, max):
 
     # Builds, stores and returns a new node with this frame, min, and max
     wftNode = AndOrNode(frame, min, max)
-    current_network.nodes[wftNode.name] = wftNode
+    if pause == 0:
+        current_network.nodes[wftNode.name] = wftNode
     return wftNode
 
 def build_impl(filler_set, bound):
     """ Builds and returns (or simply returns) an impl node from given parameters """
+    global pause
 
     # Builds a frame by combining filler with caseframe (slots)
     caseframe = current_network.find_caseframe("if")
@@ -486,11 +510,13 @@ def build_impl(filler_set, bound):
 
     # Builds, stores and returns a new node with this frame and bound
     wftNode = ImplNode(frame, bound)
-    current_network.nodes[wftNode.name] = wftNode
+    if pause == 0:
+        current_network.nodes[wftNode.name] = wftNode
     return wftNode
 
 def new_restriction(variable, restriction):
     """ Adds a restriction to a variable if it is valid """
+    global pause
 
     if restriction is variable:
         raise SNePSWftError("Variables cannot be restricted on themselves")
@@ -499,13 +525,16 @@ def new_restriction(variable, restriction):
     variable.add_restriction(restriction)
 
     # Restrictions on variables are asserted to allow for inference
-    current_network.current_context.add_hypothesis(restriction)
+    if pause == 0:
+        current_network.current_context.add_hypothesis(restriction)
 
 # =====================================
 # ------------ PARSER FN --------------
 # =====================================
 
 def wft_parser(wft: str, network):
+    """ Uses lex and yacc to produce a Node instance from a string """
+
     global current_network
     current_network = network
 
