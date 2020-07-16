@@ -17,7 +17,7 @@ class NodeError(SNError):
 # =====================================
 
 class Node:
-    """ Root of syntactic hierarchy """
+    """ Root of syntactic hierarchy (Abstract class) """
     def __init__(self, name: str, sem_type: SemanticType) -> None:
         self.name = name # This is unique to each wft (eg. wft1)
         self.up_cableset = set() # Set of UpCable objects that point to this node
@@ -55,17 +55,19 @@ class Node:
         return self.name
 
     def has_constituent(self, constituent, visited=None):
-        """ Used in variable construction to ensure restrictions reference the variable """
+        """ Recursively checks this node and all nodes to which it has down cables,
+        looking for a given Node (constituent) """
         return self is constituent
 
     def get_unique_rep(self) -> UniqueRep:
-        """ UniqueRep objects help the system, ensure variable uniquness.
+        """ UniqueRep objects help the system ensure variable uniquness.
         They never change and are therefore cached. """
         if self.unique_rep is None:
             self.unique_rep = self.new_unique_rep()
         return self.unique_rep
 
     def new_unique_rep(self) -> UniqueRep:
+        """ UniqueRep objects help the system ensure variable uniquness. """
         return UniqueRep(name=self.name)
 
     def follow_down_cable(self, slot):
@@ -77,7 +79,7 @@ class Node:
 # =====================================
 
 class Atomic(Node):
-    """ Node that is a leaf in a graph. (An abstract class) """
+    """ A leaf in a network. (Abstract class) """
 
     def has_frame(self, frame: Frame) -> bool:
         """ Atomic Nodes don't have frames, so this always returns False. """
@@ -98,45 +100,50 @@ class Base(Atomic):
 
 class Variable(Atomic):
     """ A variable term ranging over a restricted domain. """
-    
+
     def __init__(self, name: str, sem_type: SemanticType) -> None:
         super().__init__(name, sem_type)
         self.restriction_set = set()
         self.var_rep = VarRep()
 
     def add_restriction(self, restriction) -> None:
+        """ Adds a restriction arc from the variable to another node. """
         self.restriction_set.add(restriction)
 
     def wft_rep(self, simplify=None) -> str:
+        """ String representation """
         return super().wft_rep()
 
     def __eq__(self, other) -> bool:
         return self.var_rep == other.var_rep
 
     def __hash__(self):
-        """ Even though __eq__ looks var_reps, that's for creation time.
-            Once variables are in the system, we can be sure they're unique,
-            so we can just check ids. """
+        """ __eq__ checks var_reps at creation time.
+            Once variables are in the network, uniqueness is guarenteed """
         return id(self)
 
     def new_unique_rep(self) -> UniqueRep:
+        """ UniqueRep objects help the system ensure variable uniquness. """
         return UniqueRep(name=self.var_rep.name)
 
 class Arbitrary(Variable):
-    """ An arbitrary individual. Originates from an Every statement. """
+    """ An arbitrary variable. Originates from an every statement. """
     counter = 1
+
     def __init__(self, name, sem_type: SemanticType) -> None:
-        super().__init__(name, sem_type) # These need semantic types. This will be an error.
+        super().__init__(name, sem_type)
 
     def store_in(self, current_network):
+        """ Gives an arb# name and stores in the given network. """
         self.name = 'arb' + str(self.counter)
         Arbitrary.counter += 1
         current_network.nodes[self.name] = self
 
     def wft_rep(self, simplify=None) -> str:
+        """ String representation """
         if simplify is None:
             simplify = set()
-        if self in simplify:
+        if self in simplify: # Gives the arb#-style name within the some statement
             return super().wft_rep()
         else:
             simplify.add(self)
@@ -152,17 +159,20 @@ class Indefinite(Variable):
         super().__init__(name, sem_type)
 
     def add_dependency(self, dependency: VarRep) -> None:
+        """ Adds a dependency arc from the variable to another node. """
         self.dependency_set.add(dependency)
 
     def store_in(self, current_network):
+        """ Gives an arb# name and stores in the given network. """
         self.name = 'ind' + str(self.counter)
         Indefinite.counter += 1
         current_network.nodes[self.name] = self
 
     def wft_rep(self, simplify=None) -> str:
+        """ String representation """
         if simplify is None:
             simplify = set()
-        if self in simplify:
+        if self in simplify: # Gives the ind#-style name within the some statement
             return super().wft_rep()
         else:
             simplify.add(self)
@@ -178,12 +188,14 @@ class Indefinite(Variable):
 class Molecular(Node):
     """ Non-leaf nodes. """
     counter = 1
+
     def __init__(self, frame: Frame) -> None:
         name = "wft" + str(Molecular.counter)
         Molecular.counter += 1
         self.frame = frame
         super().__init__(name, frame.caseframe.sem_type)
 
+        # Adds up cables corresponding to each down cable in the frame
         for i in range(len(self.frame.filler_set)):
             slot = self.frame.caseframe.slots[i]
             fillers = self.frame.filler_set[i]
@@ -191,21 +203,34 @@ class Molecular(Node):
                 node.add_up_cable(self, slot)
 
     def has_frame(self, frame: Frame) -> bool:
+        """ Returns if this node has a frame identical to the one provided.
+        (Not necessarily the same object) """
         return frame == self.frame
 
     def __eq__(self, other) -> bool:
+        """ Molecular Nodes unique by frame. """
         return isinstance(other, Molecular) and self.has_frame(other.frame)
 
     def __hash__(self):
         return id(self)
 
     def follow_down_cable(self, slot):
+        """ Returns all the nodes arrived at by following the down cables formed by some particular slot. """
         return self.frame.get_filler_set(slot)
 
     def has_constituent(self, constituent, visited=None):
+        """ Recursively checks this node and all nodes to which it has down cables,
+        looking for a given Node (constituent) """
+        # Checks if self the constituent
+        if super().has_constituent(constituent):
+            return True
         if visited is None:
             visited = set()
+
+        # Stops infinite recursion
         visited.add(self)
+
+        # Checks if fillers have the constituent
         for filler in self.frame.filler_set:
             for node in filler.nodes:
                 if node not in visited and node.has_constituent(constituent, visited):
@@ -213,6 +238,7 @@ class Molecular(Node):
         return False
 
     def wft_rep(self, simplify=None) -> str:
+        """ String representation """
         if simplify is None:
             simplify = set()
         if self in simplify:
@@ -232,36 +258,40 @@ class Molecular(Node):
         return ret
 
     def new_unique_rep(self) -> UniqueRep:
+        """ UniqueRep objects help the system ensure variable uniquness. """
         children = []
         for fillers in self.frame.filler_set:
             child = []
             for filler in fillers.nodes:
                 child.append(filler.get_unique_rep())
             children.append(child)
-
         return UniqueRep(caseframe_name=self.frame.caseframe.name, children=children)
 
 class MinMaxOpNode(Molecular):
-    """ Thresh/andor with two values """
+    """ thresh/andor with two values serving as numeric limits to truth for fillers """
+
     def __init__(self, frame, min, max) -> None:
         super().__init__(frame)
         self.min = min
         self.max = max
 
     def num_constituents(self):
-        """ All of the propositions to which this and, or, thresh, etc. has wires """
+        """ Total number of fillers for the given caseframe's single slot (max=None) """
         return len(self.frame.filler_set[0])
 
     def has_min_max(self, min: int, max: int) -> bool:
+        """ Used to check equality """
         return self.min == min and self.max == max
 
     def __eq__(self, other) -> bool:
+        """ MinMaxOp Nodes are unique by tuple of (frame, min, max) """
         return super.__eq__(other) and (self.min, self.max) == (other.min, other.max)
 
     def __hash__(self):
         return id(self)
 
     def wft_rep(self, simplify=None) -> str:
+        """ String representation """
         if simplify is None:
             simplify = set()
         if self in simplify:
@@ -284,6 +314,7 @@ class MinMaxOpNode(Molecular):
         return ret
 
     def new_unique_rep(self) -> UniqueRep:
+        """ UniqueRep objects help the system ensure variable uniquness. """
         children = []
         for fillers in self.frame.filler_set:
             child = []
@@ -302,26 +333,33 @@ class AndOrNode(MinMaxOpNode):
     pass
 
 class ImplNode(Molecular):
+    """ if/=> with bound value serving as numeric threshold to truth for antecedents """
+
     def __init__(self, frame, bound) -> None:
         super().__init__(frame)
         self.bound = bound
 
     def has_bound(self, bound: int) -> bool:
+        """ Used to check equality """
         return self.bound == bound
 
-    def antecedents(self):
-        return self.follow_down_cable(self.frame.caseframe.slots[0])
-
-    def consequents(self):
-        return self.follow_down_cable(self.frame.caseframe.slots[1])
-
     def __eq__(self, other) -> bool:
+        """ ImplNode Nodes are unique by tuple of (frame, bound) """
         return super.__eq__(other) and self.bound == other.bound
 
     def __hash__(self):
         return id(self)
 
+    def antecedents(self):
+        """ Returns a set of the node's frame's antecedents """
+        return self.follow_down_cable(self.frame.caseframe.slots[0])
+
+    def consequents(self):
+        """ Returns a set of the node's frame's consequents """
+        return self.follow_down_cable(self.frame.caseframe.slots[1])
+
     def wft_rep(self, simplify=None) -> str:
+        """ String representation """
         if simplify is None:
             simplify = set()
         if self in simplify:
@@ -357,6 +395,7 @@ class ImplNode(Molecular):
             return ret
 
     def new_unique_rep(self) -> UniqueRep:
+        """ UniqueRep objects help the system ensure variable uniquness. """
         return UniqueRep(caseframe_name=self.frame.caseframe.name, bound=self.bound)
 
 # =====================================
@@ -383,30 +422,31 @@ class NodeMixin:
         self.nodes = {}
 
     def define_term(self, name, sem_type_name="Entity") -> None:
-        # Creates base atomic node
+        """ Creates a base node by the given name and semantic type. """
 
         if match(r'^(arb|ind)\d+$', name) or not match(r'^[A-Za-z][A-Za-z0-9_]*$', name):
             raise NodeError("ERROR: The term name '{}' is not allowed".format(name))
 
         if name in self.nodes:
+            # Respecification of existing node
             node = self.nodes[name]
-
-            # Respecification
             current_type = node.sem_type
             new_type = self.sem_hierarchy.get_type(sem_type_name)
             node.sem_type = self.sem_hierarchy.respecify(name, current_type, new_type)
         else:
-            # Creation
+            # Creation of new node
             sem_type = self.sem_hierarchy.get_type(sem_type_name)
             self.nodes[name] = Base(name, sem_type)
 
     def list_terms(self) -> None:
+        """ Prints representations of each Node in the Network """
         for term in self.nodes:
             node = self.nodes[term]
             print("<{}>{}:".format(node.name, '!' if node in self.current_context else ''))
             print("\t{}".format(node))
 
     def find_term(self, name: str) -> Node:
+        """ Returns the Node object with the given name in the network """
         if name in self.nodes:
             return self.nodes[name]
         else:
