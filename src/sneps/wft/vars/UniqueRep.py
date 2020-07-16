@@ -116,17 +116,13 @@ class VarRep:
             other.dependency_names - self.dependency_names == set([other.name]))):
                 return False
 
-        # # Ensure every dependency on self on other
-        # if not self.dependency_reps == other.dependency_reps:
-        #     return False
-
         # Ensure every dependency on self on other
         self_dep_reps = self.dependency_reps.copy()
         other_dep_reps = other.dependency_reps.copy()
         for rep in self_dep_reps:
             for other_rep in other.dependency_reps:
                 if rep == other_rep:
-                    other_rest_reps.remove(other_rep)
+                    other_dep_reps.remove(other_rep)
                     break
             else:
                 return False

@@ -374,7 +374,7 @@ def p_SomeStmt(p):
     for dependency_name in p[5]:
         located = False
         if dependency_name in variables:
-            new_var.var_rep.add_dependency(variables[dependency_name])
+            new_var.var_rep.add_dependency(variables[dependency_name].var_rep)
         else:
             if dependency_name in var_names:
                 new_var.var_rep.add_dependency_name(dependency_name)
