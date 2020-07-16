@@ -1,8 +1,16 @@
 from .SNError import SNError
 from re import match
 
+# =====================================
+# -------------- GLOBALS --------------
+# =====================================
+
 class ContextError(SNError):
     pass
+
+# =====================================
+# -------------- CONTEXT --------------
+# =====================================
 
 class Context:
     def __init__(self, name: str, docstring="", parent=None) -> None:
@@ -26,9 +34,6 @@ class Context:
             self.name, self.parent.name if self.parent is not None else '', self.docstring,
             ", ".join([hyp.name for hyp in self.hyps]), ", ".join([der.name for der in self.ders]))
 
-    def __eq__(self, other) -> bool:
-        return self.name == other.name
-
     def add_hypothesis(self, node):
         self.hyps.add(node)
 
@@ -40,6 +45,16 @@ class Context:
 
     def all_asserted(self):
         return self.hyps | self.ders
+
+    def __eq__(self, other) -> bool:
+        return self.name == other.name
+
+    def __hash__(self):
+        return id(self) # Contexts are unique
+
+# =====================================
+# --------------- MIXIN ---------------
+# =====================================
 
 class ContextMixin:
     """ Provides functions related to contexts to network. """

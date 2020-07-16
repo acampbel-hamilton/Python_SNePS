@@ -44,8 +44,7 @@ class Caseframe:
         return other is not None and self.sem_type is other.sem_type and self.slots == other.slots
 
     def __hash__(self):
-        """ This is only because Caseframes are unique. """
-        return id(self)
+        return id(self) # Caseframes are unique
 
     def __str__(self) -> str:
         return "<{}>: {}\n".format(self.name, self.docstring) + \
@@ -154,7 +153,7 @@ class Frame:
 # =====================================
 
 class Fillers:
-    """ Forms 'cables'/'cablesets' """
+    """ Form 'cables'/'cablesets' """
 
     def __init__(self, nodes=None) -> None:
         self.nodes = set() if nodes is None else set(nodes)
