@@ -40,7 +40,7 @@ class SemanticType:
         """ Determines if given SemanticType is a subtype of self. """
         return any(child is potential_child or child.subtype(potential_child) for child in self.children)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
 # =====================================

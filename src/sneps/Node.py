@@ -4,6 +4,7 @@ from .SNError import SNError
 from .SemanticType import SemanticType
 from re import match
 from .wft.vars.UniqueRep import *
+from typing import Set
 
 # =====================================
 # -------------- GLOBALS --------------
@@ -54,7 +55,7 @@ class Node:
         to themselves)"""
         return self.name
 
-    def has_constituent(self, constituent, visited=None):
+    def has_constituent(self, constituent, visited=None) -> bool:
         """ Recursively checks this node and all nodes to which it has down cables,
         looking for a given Node (constituent) """
         return self is constituent
@@ -70,7 +71,7 @@ class Node:
         """ UniqueRep objects help the system ensure variable uniquness. """
         return UniqueRep(name=self.name)
 
-    def follow_down_cable(self, slot):
+    def follow_down_cable(self, slot) -> set:
         """ Atomic nodes lack down cables so this returns the empty set for them. """
         return set()
 
@@ -91,7 +92,7 @@ class Base(Atomic):
     def __eq__(self, other) -> bool:
         return self.name == other.name
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return id(self)
 
 # =====================================
@@ -117,7 +118,7 @@ class Variable(Atomic):
     def __eq__(self, other) -> bool:
         return self.var_rep == other.var_rep
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """ __eq__ checks var_reps at creation time.
             Once variables are in the network, uniqueness is guarenteed """
         return id(self)
@@ -162,7 +163,7 @@ class Indefinite(Variable):
         """ Adds a dependency arc from the variable to another node. """
         self.dependency_set.add(dependency)
 
-    def store_in(self, current_network):
+    def store_in(self, current_network) -> None:
         """ Gives an arb# name and stores in the given network. """
         self.name = 'ind' + str(self.counter)
         Indefinite.counter += 1
@@ -211,7 +212,7 @@ class Molecular(Node):
         """ Molecular Nodes unique by frame. """
         return isinstance(other, Molecular) and self.has_frame(other.frame)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return id(self)
 
     def follow_down_cable(self, slot):
@@ -287,7 +288,7 @@ class MinMaxOpNode(Molecular):
         """ MinMaxOp Nodes are unique by tuple of (frame, min, max) """
         return super.__eq__(other) and (self.min, self.max) == (other.min, other.max)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return id(self)
 
     def wft_rep(self, simplify=None) -> str:
@@ -347,7 +348,7 @@ class ImplNode(Molecular):
         """ ImplNode Nodes are unique by tuple of (frame, bound) """
         return super.__eq__(other) and self.bound == other.bound
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return id(self)
 
     def antecedents(self):

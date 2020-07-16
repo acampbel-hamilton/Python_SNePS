@@ -2,7 +2,7 @@ from .Slot import *
 from .SemanticType import SemanticType, SemanticHierarchy
 from .SNError import SNError
 from re import match
-from typing import List
+from typing import List, Set
 
 # =====================================
 # -------------- GLOBALS --------------
@@ -43,7 +43,7 @@ class Caseframe:
                 2. They have the same slots (disregarding order) """
         return other is not None and self.sem_type is other.sem_type and self.slots == other.slots
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return id(self) # Caseframes are unique
 
     def __str__(self) -> str:
@@ -101,12 +101,7 @@ class Frame:
         self.caseframe = caseframe
         self.filler_set = [] if filler_set is None else filler_set
 
-        # Confirm proper number of fillers for all slots in caseframe before building slot
-        if len(self.filler_set) != len(self.caseframe.slots):
-            raise CaseframeError('ERROR: Wrong number of fillers. "' + self.caseframe.name + '" takes ' + \
-                                 str(len(self.caseframe.slots)) + ' fillers.')
-
-        # Confirm given fillers correspond to the caseframe's slots
+        # Confirm correct number of fillers, and fillers correspond to the caseframe's slots
         self.verify_fillers()
 
     def verify_fillers(self) -> None:
@@ -114,6 +109,11 @@ class Frame:
             Fillers are entered as a list of type Fillers:
                 - Each Fillers instance corresponds to one slot
                 - One slot might have multiple nodes """
+
+        # Confirm proper number of fillers for all slots in caseframe before building slot
+        if len(self.filler_set) != len(self.caseframe.slots):
+            raise CaseframeError('ERROR: Wrong number of fillers. "' + self.caseframe.name + '" takes ' + \
+                                 str(len(self.caseframe.slots)) + ' fillers.')
 
         for i in range(len(self.filler_set)):
             slot = self.caseframe.slots[i]
@@ -130,13 +130,14 @@ class Frame:
             if slot.max is not None and len(fillers) > slot.max:
                 raise CaseframeError('ERROR: Greater than maximum slots provided for "' + slot.name + '"')
 
-    def get_filler_set(self, slot):
+    def get_filler_set(self, slot) -> Set[Slot]:
         """ Returns a set of all fillers that are used with given slot """
         slot_fillers = set()
         for i in range(len(self.caseframe.slots)):
             if self.caseframe.slots[i] is slot:
                 # Adds all fillers at the end of cables designated by the slot's name
                 slot_fillers.update(self.filler_set[i].nodes)
+                print(type(slot_filler) for slot_filler in slot_fillers)
         return slot_fillers
 
     def __eq__(self, other) -> bool:
@@ -201,10 +202,9 @@ class CaseframeMixin:
 
             # Ensures user cannot give two caseframes the same alias
             try:
-                existing_caseframe = None
                 existing_caseframe = self.find_caseframe(alias)
-            except CaseframeError as e:
-                pass
+            except CaseframeError:
+                existing_caseframe = None
             if existing_caseframe is not None and existing_caseframe is not caseframe:
                 raise CaseframeError('ERROR: A caseframe with alias "' + alias + '" already exists.')
 
