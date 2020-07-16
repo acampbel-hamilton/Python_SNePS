@@ -101,7 +101,7 @@ class Frame:
         self.caseframe = caseframe
         self.filler_set = [] if filler_set is None else filler_set
 
-        # Confirm correct number of fillers, and fillers correspond to the caseframe's slots
+        # Confirm correct number of fillers and that fillers correspond to the caseframe's slots
         self.verify_fillers()
 
     def verify_fillers(self) -> None:
@@ -137,7 +137,6 @@ class Frame:
             if self.caseframe.slots[i] is slot:
                 # Adds all fillers at the end of cables designated by the slot's name
                 slot_fillers.update(self.filler_set[i].nodes)
-                print(type(slot_filler) for slot_filler in slot_fillers)
         return slot_fillers
 
     def __eq__(self, other) -> bool:
