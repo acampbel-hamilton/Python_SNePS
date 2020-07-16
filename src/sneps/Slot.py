@@ -14,7 +14,7 @@ class AdjRule(Enum):
 
 class Slot:
     def __init__(self, name: str, sem_type: SemanticType,
-                 docstring: str, pos_adj: AdjRule, neg_adj: AdjRule,
+                 docstring: str, pos_adj: str, neg_adj: str,
                  min: int, max: int) -> None:
         self.name = name
         self.docstring = docstring
@@ -76,6 +76,6 @@ class SlotMixin:
         self.define_path(name, path)
 
     def list_slots(self) -> None:
-        """ Lists all slots in network """
+        """ Prints all slots in network """
         for slot_name in self.slots:
             print(self.slots[slot_name])
