@@ -4,8 +4,16 @@ from .SNError import SNError
 from re import match
 from typing import List
 
+# =====================================
+# -------------- GLOBALS --------------
+# =====================================
+
 class CaseframeError(SNError):
     pass
+
+# =====================================
+# ------------- CASEFRAME -------------
+# =====================================
 
 class Caseframe:
     def __init__(self, name: str, sem_type: SemanticType,
@@ -85,6 +93,10 @@ class Caseframe:
         """ Special case for adjustments, based on fopl. """
         return self.name == "Nor" and other.name == "AndOr"
 
+# =====================================
+# --------------- FRAME ---------------
+# =====================================
+
 class Frame:
     def __init__(self, caseframe: Caseframe, filler_set=None) -> None:
         self.caseframe = caseframe
@@ -137,6 +149,9 @@ class Frame:
             ret += self.filler_set[i].to_str(self.caseframe.slots[i].name)
         return ret
 
+# =====================================
+# -------------- FILLERS --------------
+# =====================================
 
 class Fillers:
     """ Forms 'cables'/'cablesets' """
@@ -154,6 +169,9 @@ class Fillers:
     def __eq__(self, other) -> bool:
         return self.nodes == other.nodes
 
+# =====================================
+# --------------- MIXIN ---------------
+# =====================================
 
 class CaseframeMixin:
     """ Provides functions related to caseframes to network """
@@ -162,9 +180,10 @@ class CaseframeMixin:
         if type(self) is CaseframeMixin:
             raise NotImplementedError("Mixins can't be instantiated.")
 
-        self.caseframes = {} # Maps strs to Caseframe objects.
+        self.caseframes = {} # Maps strings to Caseframe objects
 
     def find_caseframe(self, name: str) -> Caseframe:
+        """ Locates a named caseframe in the network and returns the associated object. """
         for caseframe in self.caseframes.values():
             if caseframe.has_alias(name):
                 return caseframe
@@ -172,20 +191,31 @@ class CaseframeMixin:
             raise CaseframeError('ERROR: Caseframe "' + name + '" not defined.')
 
     def list_caseframes(self) -> None:
-        """ Prints out the defined caseframes. """
+        """ Prints out all representations for all of the defined caseframes. """
         for caseframe in self.caseframes:
             print(self.caseframes[caseframe])
 
     def same_frame(self, aliases : List[str], caseframe_str : str):
+        """ Add aliases to caseframe. """
         caseframe = self.find_caseframe(caseframe_str)
         for alias in aliases:
+
+            # Ensures user cannot give two caseframes the same alias
+            try:
+                existing_caseframe = None
+                existing_caseframe = self.find_caseframe(alias)
+            except CaseframeError as e:
+                pass
+            if existing_caseframe is not None and existing_caseframe is not caseframe:
+                raise CaseframeError('ERROR: A caseframe with alias "' + alias + '" already exists.')
+
             caseframe.add_alias(alias)
 
     def define_caseframe(self, name: str, sem_type_name: str, slot_names: list, docstring="") -> None:
-        """ Defines a new caseframe. """
+        """ Defines a new caseframe in the network """
 
         if self.enforce_name_syntax and not match(r'^[A-Za-z][A-Za-z0-9_]*$', name):
-            raise CaseframeError("ERROR: The casframe name '{}' is not allowed".format(name))
+            raise CaseframeError("ERROR: The caseframe name '{}' is not allowed".format(name))
 
         # Checks provided slots names are valid
         frame_slots = []
@@ -195,8 +225,8 @@ class CaseframeMixin:
             frame_slots.append(self.slots[slot_name])
 
         # Checks provided type is valid
-        sem_type = self.sem_hierarchy.get_type(sem_type_name)
         # If the type was invalid, get_type will raise an error.
+        sem_type = self.sem_hierarchy.get_type(sem_type_name)
 
         # Builds new caseframe with given parameters
         new_caseframe = Caseframe(name, sem_type, self.sem_hierarchy, docstring, frame_slots)
@@ -207,8 +237,10 @@ class CaseframeMixin:
                 raise CaseframeError("ERROR: Caseframe name '{}' is already taken".format(name))
 
             if new_caseframe == caseframe:
-                print('Your caseframe "' + new_caseframe.name + '" has the same name as "' + caseframe.name + '".')
+                print("The existing caseframe \"{}\" is identical to the new caseframe you have defined".format(
+                    caseframe.name, name))
 
+                # Allows user to use new name as an alias, if an identical caseframe already exists
                 while True:
                     response = input('Would you like to add an alias to "' + caseframe.name + '"? (y/N)')
                     if "YES".startswith(response.upper()):
@@ -219,6 +251,7 @@ class CaseframeMixin:
                     else:
                         print("What?")
 
+                # Allows user to use new docstring, if an identical caseframe already exists
                 while True:
                     response = input('Would you like to override the docstring for "'+ caseframe.name + '"? (y/N)')
                     if "YES".startswith(response.upper()):
@@ -229,9 +262,10 @@ class CaseframeMixin:
                     else:
                         print("Huh?")
 
+                # Exit early if the caseframe already exists
                 return
 
-        # Add adjustments
+        # Add adjustments to other caseframes in network
         for case in self.caseframes.values():
             if new_caseframe.adjustable(case):
                 new_caseframe.add_adj_to(case)
