@@ -1,4 +1,11 @@
 from .Node import Molecular, MinMaxOpNode, Variable, Indefinite
+
+# =====================================
+# --------- OPTIONAL IMPORTS ----------
+# =====================================
+""" These imports are used to create visual representations of a knowledge base.
+    Because a knowledge engineer can do everything without the visual representation,
+    the packages are not required for regular use. """
 try:
     import networkx as nx
     has_nx = True
@@ -19,6 +26,10 @@ try:
     has_ng = True
 except ModuleNotFoundError:
     has_ng = False
+
+# =====================================
+# -------------- MIXIN ----------------
+# =====================================
 
 class VisualizationMixin:
     """ Provides graph visualization related to nodes to Network """
