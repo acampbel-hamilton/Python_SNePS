@@ -1,5 +1,9 @@
 from typing import List
 
+# =====================================
+# --------------- PATH ----------------
+# =====================================
+
 class Path:
     """ Superclass for all paths """
 
@@ -18,6 +22,7 @@ class ComposedPaths(Path):
         super().__init__()
 
     def derivable(self, start_node, parent_converse=False):
+        """ Returns a set of all nodes which might be derived by following this path. """
 
         # Exclusive or for whether to use converse
         converse = self.converse != parent_converse
@@ -39,7 +44,10 @@ class ComposedPaths(Path):
         return "compose({})".format(", ".join([str(path) for path in self.paths]))
 
 class AndPaths(ComposedPaths):
+    """ A composed list of path objects, following one after another """
+
     def derivable(self, start_node, parent_converse=False):
+        """ Returns a set of all nodes which might be derived by following this path. """
 
         # Exclusive or for whether to use converse
         converse = self.converse != parent_converse
@@ -61,6 +69,7 @@ class AndPaths(ComposedPaths):
 
 class OrPaths(ComposedPaths):
     def derivable(self, start_node, parent_converse=False):
+        """ Returns a set of all nodes which might be derived by following this path. """
 
         # Exclusive or for whether to use converse
         converse = self.converse != parent_converse
@@ -86,6 +95,7 @@ class KPlusPath(ModPath):
     """ Follows one or more instances of the given path """
 
     def derivable(self, start_node, parent_converse=False):
+        """ Returns a set of all nodes which might be derived by following this path. """
 
         # Exclusive or for whether to use converse
         converse = self.converse != parent_converse
@@ -111,6 +121,7 @@ class KStarPath(KPlusPath):
     """ Follows zero or more instances of the given path """
 
     def derivable(self, start_node, parent_converse=False):
+        """ Returns a set of all nodes which might be derived by following this path. """
 
         # KPlus paths, plus the starting node (the starting node represents zero traversals)
         derived = super().derivable(start_node, self.converse != parent_converse)
@@ -124,6 +135,7 @@ class IRPath(ModPath):
     """ Follows paths provided end node is not start node """
 
     def derivable(self, start_node, parent_converse=False):
+        """ Returns a set of all nodes which might be derived by following this path. """
         derived = self.path.derivable(start_node, self.converse != parent_converse)
 
         # Ignores any paths that return to where they began
@@ -142,6 +154,7 @@ class BasePath(Path):
         super().__init__()
 
     def derivable(self, start_node, parent_converse=False):
+        """ Returns a set of all nodes which might be derived by following this path. """
         # Follows the single cable up or down
         if (self.converse != parent_converse) == self.backward:
             return start_node.follow_down_cable(self.slot)
@@ -157,7 +170,9 @@ class AssertedPath(Path):
     def __init__(self, current_network):
         self.current_network = current_network
 
-    def derivable(self, start_node, converse=False):
+    def derivable(self, start_node, parent_converse=False):
+        """ Returns a set of all nodes which might be derived by following this path. """
+
         # If asserted, returns a set containing the starting_node
         if start_node in self.current_network.current_context:
             return set([start_node])
@@ -178,16 +193,16 @@ class PathMixin:
     """ Provides functions related to paths to Network """
 
     def define_path(self, slot_str : str, path_str : str):
-        # The slot slot_str exists between two nodes when the path path_str
-        # can be followed from one to the other
+        """ The slot slot_str exists between two nodes when the path path_str
+            can be followed from one to the other """
         path = path_parser(path_str, self)
         if path is not None:
             slot = self.find_slot(slot_str)
             slot.add_path(path)
 
     def paths_from(self, terms : List[str], path_str : str):
-        # Given a starting list of node names and a path, follows the path from
-        # each of the nodes and returns the set of nodes derived
+        """ Given a starting list of node names and a path, follows the path from
+            each of the nodes and returns the set of nodes derived """
         path = path_parser(path_str, self)
         derived = set()
         for term in terms:
