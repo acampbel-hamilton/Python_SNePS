@@ -5,8 +5,16 @@ from .SemanticType import SemanticType
 from re import match
 from .wft.vars.UniqueRep import *
 
+# =====================================
+# -------------- GLOBALS --------------
+# =====================================
+
 class NodeError(SNError):
     pass
+
+# =====================================
+# --------------- NODE ----------------
+# =====================================
 
 class Node:
     """ Root of syntactic hierarchy """
@@ -16,7 +24,7 @@ class Node:
         self.sem_type = sem_type
         self.unique_rep = None
         if type(self) in (Node, Atomic, Variable, MinMaxOpNode): # These are all abstract classes.
-            raise NotImplementedError("Bad syntactic type - see syntax tree in wiki")
+            raise NotImplementedError("Bad syntactic type: See syntax tree in wiki; only leaves are valid.")
 
     def add_up_cable(self, node, slot: Slot) -> None:
         """ Adds an up cable to this node. (Up cables contain a node and a slot.) """
@@ -27,11 +35,11 @@ class Node:
         return any(up_cable.name == name for up_cable in self.up_cableset)
 
     def follow_down_cable(self, slot) -> set:
-        """ Since vanilla Nodes have no down cables, this returns an empty set. """
+        """ Since atomic Nodes have no down cables, this returns an empty set. """
         return set()
 
     def follow_up_cable(self, slot: Slot) -> set:
-        """ Returns the set of nodes that  """
+        """ Returns the set of nodes which point to this node via a downcable on the provided slot. """
         return set(up_cable.node for up_cable in self.up_cableset if up_cable.slot is slot)
 
     def __str__(self) -> str:
@@ -41,14 +49,18 @@ class Node:
         return self.wft_rep()
 
     def wft_rep(self, simplify=None) -> str:
-        """ This exists because many classes have wft_rep methods. In some classes,
-            these are distinct from __str__. Thus, we're stuck with both in this case. """
+        """ Because repr and str cannot take parameters, this has been created to allow us to simplify
+        string representations of nodes (and thereby prevent infinite recursion in nodes that have down cables
+        to themselves)"""
         return self.name
 
     def has_constituent(self, constituent, visited=None):
+        """ Used in variable construction to ensure restrictions reference the variable """
         return self is constituent
 
     def get_unique_rep(self) -> UniqueRep:
+        """ UniqueRep objects help the system, ensure variable uniquness.
+        They never change and are therefore cached. """
         if self.unique_rep is None:
             self.unique_rep = self.new_unique_rep()
         return self.unique_rep
@@ -57,28 +69,36 @@ class Node:
         return UniqueRep(name=self.name)
 
     def follow_down_cable(self, slot):
+        """ Atomic nodes lack down cables so this returns the empty set for them. """
         return set()
 
 # =====================================
-# ---------- ATOMIC NODES -------------
+# ----------- BASE NODES --------------
 # =====================================
 
 class Atomic(Node):
     """ Node that is a leaf in a graph. (An abstract class) """
+
     def has_frame(self, frame: Frame) -> bool:
-        """ Atomics don't have frames, so this always returns False. """
+        """ Atomic Nodes don't have frames, so this always returns False. """
         return False
 
 class Base(Atomic):
-    """ A constant. (An abstract class) """
+    """ A constant within the system, represented in the graph by a provided string (e.g. Fido) """
+
     def __eq__(self, other) -> bool:
         return self.name == other.name
 
     def __hash__(self):
         return id(self)
 
+# =====================================
+# ---------- VARIABLE NODES -----------
+# =====================================
+
 class Variable(Atomic):
     """ A variable term ranging over a restricted domain. """
+    
     def __init__(self, name: str, sem_type: SemanticType) -> None:
         super().__init__(name, sem_type)
         self.restriction_set = set()
