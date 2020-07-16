@@ -17,7 +17,9 @@ net.define_slot("owner", "Agent")
 net.define_slot("owns", "Thing")
 net.define_caseframe("Owns", "Proposition", ["owner", "owns"])
 
-net.assert_wft("Beats(every(x, [Farmer(x), Owns(x, some(y(x), Donkey(y)))]), y)")
+# net.assert_wft("Beats(every(x, [Farmer(x), Owns(x, some(y(x), Donkey(y)))]), y)")
+net.assert_wft("and(some(x(y), Isa(x, b)), every(y, Isa(y, a)))")
+net.assert_wft("and(some(x(y), Isa(x, b)), every(y, Isa(y, a)))")
 
 net.export_graph()
 net.print_graph()

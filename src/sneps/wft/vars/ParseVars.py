@@ -376,11 +376,8 @@ def p_SomeStmt(p):
         if dependency_name in variables:
             new_var.var_rep.add_dependency(variables[dependency_name].var_rep)
         else:
-            if dependency_name in var_names:
-                new_var.var_rep.add_dependency_name(dependency_name)
-                incomplete_vars.add(new_var)
-            else:
-                raise SNePSVarError("Dependency {} referrenced before variable creation!".format(dependency_name))
+            new_var.var_rep.add_dependency_name(dependency_name)
+            incomplete_vars.add(new_var)
 
     # Representation of restrictions (UniqueReps)
     for restriction in p[8]:
@@ -562,6 +559,6 @@ def get_vars(wft: str, network):
     incomplete_vars = set()
 
     # Returns if all vars completed
-    if incomplete_vars != set():
+    if ret_incomplete != set():
         raise SNePSVarError("Some dependencies never defined in wft!")
     return ret_variables
