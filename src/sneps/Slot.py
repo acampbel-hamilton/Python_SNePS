@@ -4,15 +4,27 @@ from .SemanticType import SemanticType
 from re import match
 from .Path import Path
 
+# =====================================
+# ------------- GLOBALS ---------------
+# =====================================
+
 class SlotError(SNError):
     pass
 
 class AdjRule(Enum):
+    """ Enum allows us to use these names as shorthands in adjustment rules. """
     NONE = 0
     REDUCE = 1
     EXPAND = 2
 
+# =====================================
+# --------------- SLOT ----------------
+# =====================================
+
 class Slot:
+    """ A unique object used in the construction of caseframes and the corresponding nodes.
+        Also referred to as relations. """
+
     def __init__(self, name: str, sem_type: SemanticType,
                  docstring: str, pos_adj: str, neg_adj: str,
                  min: int, max: int) -> None:
@@ -28,6 +40,10 @@ class Slot:
         self.max = max
         self.paths = set()
 
+    def add_path(self, path: Path) -> None:
+        """ Adds a new path object on which the slot exists. """
+        self.paths.add(path)
+
     def __repr__(self):
         return "<Slot {} id: {}>".format(self.name, hex(id(self)))
 
@@ -42,8 +58,9 @@ class Slot:
                     "\n\t  " if len(self.paths) > 0 else '',
                     "\n\t  ".join([str(path) for path in self.paths]))
 
-    def add_path(self, path: Path) -> None:
-        self.paths.add(path)
+# =====================================
+# -------------- MIXIN ----------------
+# =====================================
 
 class SlotMixin:
     """ Provides functions related to slots to Network """
@@ -54,7 +71,7 @@ class SlotMixin:
         self.slots = {} # AKA Relations
 
     def find_slot(self, name: str):
-        """ Locates a slot in the nework """
+        """ Locates a slot with the given name in the Network """
         if name in self.slots:
             return self.slots[name]
         else:
@@ -67,12 +84,15 @@ class SlotMixin:
         if not match(r'^[A-Za-z][A-Za-z0-9_]*$', name):
             raise SlotError("ERROR: The slot name '{}' is not allowed".format(name))
 
-        if name in self.slots:
+        if name in self.slots: # Slots are unique
             raise SlotError("ERROR: Slot " + name + " already defined.")
 
         sem_type = self.sem_hierarchy.get_type(sem_type_str)
 
+        # Creates and stores the slot in the Network
         self.slots[name] = Slot(name, sem_type, docstring, pos_adj, neg_adj, min, max)
+
+        # Adds any path which might have been provided to the slot
         self.define_path(name, path)
 
     def list_slots(self) -> None:
