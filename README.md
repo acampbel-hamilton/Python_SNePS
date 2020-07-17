@@ -3,23 +3,26 @@
 
 ## Section 0: Preliminary Reading
 
-1. [&ldquo;A Logic of Arbitrary and Indefinite Objects&rdquo;](https://www.aaai.org/Papers/KR/2004/KR04-059.pdf) by Stuart Shapiro
+1. [“A Logic of Arbitrary and Indefinite Objects”](https://www.aaai.org/Papers/KR/2004/KR04-059.pdf) by Stuart Shapiro
     * This paper outlines the ideas behind the logical language implemented in SNePS 3. We have revised SNePS's grammar to be more Python-like in syntax, but the general concepts from this paper are very important.
 
-2. [&ldquo;An Introduction to SNePS 3&rdquo;](https://cse.buffalo.edu/~shapiro/Papers/sneps3intro.pdf) by Stuart Shapiro
+2. [“An Introduction to SNePS 3”](https://cse.buffalo.edu/~shapiro/Papers/sneps3intro.pdf) by Stuart Shapiro
     * This paper explains the different semantic and syntactic types, the function of caseframes, frames, and slots (relations), and the different inference methods.
 
-3. [&ldquo;Visually Interacting with a Knowledge Base Using Frames, Logic, and Propositional Graphs&rdquo;](https://cse.buffalo.edu/~shapiro/Papers/schsha2011b.pdf) by Daniel R. Schlegel and Stuart C. Shapiro
+3. [“Visually Interacting with a Knowledge Base Using Frames, Logic, and Propositional Graphs”](https://cse.buffalo.edu/~shapiro/Papers/schsha2011b.pdf) by Daniel R. Schlegel and Stuart C. Shapiro
     * This paper gives great working definitions for the various terms used in SNePS 3.
 
-4. [&ldquo;SNePS 3 User&rsquo;s Manual&rdquo;](https://cse.buffalo.edu/sneps/Projects/sneps3manual.pdf) by Stuart Shapiro
-    * Reference this manual to understand the user commands. The pseudo-yacc rules are defunct in Python_SNePS.
+4. [“SNePS 3 User&rsquo;s Manual”](https://cse.buffalo.edu/sneps/Projects/sneps3manual.pdf) by Stuart Shapiro
+    * Reference this manual to understand the user commands. The pseudo-yacc rules are defunct in Python_SNePS, but redefined below in Section 3 of the README.
 
-5. [&ldquo;Types in SNePS 3&rdquo;](https://cse.buffalo.edu/~shapiro/Talks/TypesInSneps3.pdf) by Stuart Shapiro
-    * This paper clearly explains the relationship between caseframes and slots. Note that slots are called relations in the paper.
+5. [“Types in SNePS 3”](https://cse.buffalo.edu/~shapiro/Talks/TypesInSneps3.pdf) by Stuart Shapiro
+    * This paper clearly explains the relationship between caseframes and slots. Note that slots are called “relations” in the paper.
 
-6. [&ldquo;Concurrent Resoning in Inference Graphs&rdquo;](https://cse.buffalo.edu/~shapiro/Papers/schsha13e.pdf) by Daniel R. Schlegel and Stuart C. Shapiro
-    * Explains much of the induction work done in the SNiPS package (Note that this is not all complete in CSNePS)
+6. [“Concurrent Reasoning in Inference Graphs”](https://cse.buffalo.edu/~shapiro/Papers/schsha13e.pdf) by Daniel R. Schlegel and Stuart C. Shapiro
+    * Explains much of the induction work done in the SNIPS package (Note that this is not all complete in CSNePS).
+
+7. [“SUNY at Buffalo CSE563 Lecture Notes”](https://cse.buffalo.edu/~shapiro/Courses/CSE563/Slides/krrSlides.pdf) by Stuart C. Shapiro
+    * Explains many SNePS concepts in varying degrees of detail. If I were learning SNePS from scratch again, this would be a valuable resource.
 
 ## Section 1: Structure
 
@@ -66,7 +69,7 @@ A caseframe is a unique object, consisting of the following:
 
 ### Slots
 
-Slots are &ldquo;relations.&rdquo; A slot is a unique object, consisting of the following:
+Slots are “relations.” A slot is a unique object, consisting of the following:
 1. Name
 2. Docstring
 3. Semantic Type
