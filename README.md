@@ -1,7 +1,18 @@
 # Python_SNePS
 > SNePS 3 in Python
 
-## Section 0: Preliminary Reading
+This repository contains a partial implementation of the SNePS 3 semantic network in Python. A few test files have been included to demonstrate the system's current capabilities.
+
+#### Complete:
+* SNePS module for building a network
+
+#### Incomplete:
+* Some tokens in well-formed-terms (See section 4)
+* Uniqueness on variables in ‘donkey sentences’ (See section 1, resource 1)
+* Inference package
+* Belief revision
+
+## Section 1: Preliminary Reading
 
 1. [“A Logic of Arbitrary and Indefinite Objects”](https://www.aaai.org/Papers/KR/2004/KR04-059.pdf) by Stuart Shapiro
     * This paper outlines the ideas behind the logical language implemented in SNePS 3. We have revised SNePS's grammar to be more Python-like in syntax, but the general concepts from this paper are very important.
@@ -13,7 +24,7 @@
     * This paper gives great working definitions for the various terms used in SNePS 3.
 
 4. [“SNePS 3 User&rsquo;s Manual”](https://cse.buffalo.edu/sneps/Projects/sneps3manual.pdf) by Stuart Shapiro
-    * Reference this manual to understand the user commands. The pseudo-yacc rules are defunct in Python_SNePS, but redefined below in Section 3 of the README.
+    * Reference this manual to understand the user commands. The pseudo-yacc rules are defunct in Python_SNePS, but redefined below in Section 4 of the README.
 
 5. [“Types in SNePS 3”](https://cse.buffalo.edu/~shapiro/Talks/TypesInSneps3.pdf) by Stuart Shapiro
     * This paper clearly explains the relationship between caseframes and slots. Note that slots are called “relations” in the paper.
@@ -24,7 +35,7 @@
 7. [“SUNY at Buffalo CSE563 Lecture Notes”](https://cse.buffalo.edu/~shapiro/Courses/CSE563/Slides/krrSlides.pdf) by Stuart C. Shapiro
     * Lecture notes from Stuart C. Shapiro’s course on knowledge representation. A long read, but explains many of the logical concepts at play beneath SNePS (e.g. andor, thresh, relations). The most thorough tutorial available.
 
-## Section 1: Structure
+## Section 2: Structure
 
 ### Nodes
 
@@ -89,7 +100,7 @@ Because certain slots require certain types of entities, semantic types ensure o
 
 ### Paths
 
-## Section 2: Using Python_SNePS's Functions
+## Section 3: Using Python_SNePS's Functions
 
 Create a network object:
 
@@ -145,7 +156,7 @@ net.assert_wft("Isa(Dog, Pet)", inf=False)
 net.print_graph()
 ```
 
-## Section 3: Using Python_SNePS's Well Formed Terms (wfts)
+## Section 4: Using Python_SNePS's Well Formed Terms (wfts)
 
 All wft parsing is handled through ply, a Python module that implements lex and yacc. The following yacc-like reduction rules should give an idea of how a wft is parsed.
 
@@ -188,7 +199,7 @@ argument :   wft
 
 ```
 
-## Section 4: Viewing Graphs
+## Section 5: Viewing Graphs
 
 Viewing graphs requires some extra Python modules. If you want to visualize small graphs, run:
 ```bash
