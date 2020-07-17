@@ -226,8 +226,29 @@ To do inference, instantiate an object in the Instance class, and call its metho
 
 ```python
 from src import *
+
 net = Network()
+
+# Makes the inference object
 inf = Inference(net)
+
+# Tells the network to print out intermediate knowledge as it goes.
+inf.toggle_debug()
+
+# The parameter wft_str should be a valid wft string, as described in Seciton 5.
+wft_str = 
+
+# This asks if one or both of the following is asserted or can be derived:
+# 1. The statement represented by wft_str
+# 2. The rejection of that statement
+inf.ask(wft_str)
+
+# This asks if the statement represented by wft_str is asserted or can be derived:
+inf.ask_if(wft_str)
+
+# This asks if the rejection of the statement represented by wft_str is asserted or can be derived:
+inf.ask_if_not(wft_str)
+
 ```
 
 ## Section 5: Using Python_SNePS's Well Formed Terms (wfts)

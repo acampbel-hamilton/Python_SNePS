@@ -34,10 +34,13 @@ class Inference:
         self.net = net
         self.debug = False
 
-    def toggle_debug(self):
+    def toggle_debug(self, debug: bool = None):
         """ In debug mode, SNIP prints the intermediate knowledge it uses while
             attempting to infer a proposition. """
-        self.debug = not self.debug
+        if debug is not None:
+            self.debug = bool(debug)
+        else:
+            self.debug = not self.debug
 
     def _print_wft(self, wft: Node):
         print("\tI know that {}! : {}".format(wft.name, wft))
@@ -52,10 +55,13 @@ class Inference:
 
         # Combine, print, and return results
         results.update(not_results)
-        print("{}!") if results == set() else print(results, "!", sep='')
+        if results == set():
+            print("{}!")
+        else:
+            print(results, "!", sep='')
         return results
 
-    def ask_if(self, wft_str: str, complete_ask :bool=False):
+    def ask_if(self, wft_str: str, complete_ask: bool = False):
         """ Checks if a positive statement is asserted or can be derived in the
             current context. """
         print("Checking if {} . . .".format(wft_str))
