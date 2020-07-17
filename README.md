@@ -3,8 +3,6 @@
 
 This repository contains a partial implementation of the SNePS 3 semantic network in Python. A few test files have been included to demonstrate the system's current capabilities.
 
-Previous versions of Python_SNePS can be found under the Releases tab on GitHub, and may be useful for reference.
-
 #### Implemented:
 * SNePS module for building a network
 
@@ -208,17 +206,23 @@ argument :   wft
 
 ```
 
-## Section 5: Viewing Graphs
+## Section 5: Imports
 
-Viewing graphs requires some extra Python modules. If you want to visualize small graphs, run:
+To display visual graphs, Pthon_SNePS requires extra Python modules. For simple graphs, run:
 ```bash
 pip install networkx matplotlib
 ```
-If you want draggable graphs, then also run:
+
+For draggable graphs, also run:
 ```bash
 pip install netgraph
 ```
-If you want the graphs to be exported as a dot file:
+
+To export graphs as dot files, run:
 ```bash
 pip install pydot
 ```
+
+## Section 6: Older Versions of Python_SNePS
+
+Previous versions of Python_SNePS can be found under the Releases tab on GitHub, and may be useful for reference.
