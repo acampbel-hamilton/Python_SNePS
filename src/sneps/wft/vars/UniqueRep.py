@@ -57,12 +57,12 @@ class UniqueRep:
     def __str__(self) -> str:
         return self.to_str()
 
-    def to_str(self, depth=None) -> str:
+    def to_str(self, depth: int = None) -> str:
         depth = 1 if depth is None else depth
-        ret = "\t" * depth
-        ret += self.name if self.name is not None else self.caseframe_name
-        ret += " ({}, {})".format(self.min, self.max) if self.min is not None else ''
-        ret += " ({})".format(self.bound) if self.bound is not None else ''
+        ret = "\t" * depth + \
+              self.name if self.name is not None else self.caseframe_name + \
+              " ({}, {})".format(self.min, self.max) if self.min is not None else '' + \
+              " ({})".format(self.bound) if self.bound is not None else ''
         for child in self.children:
             for subchild in child:
                 ret += "\n" + subchild.to_str(depth=depth+1)
