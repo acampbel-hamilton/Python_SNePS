@@ -1,9 +1,9 @@
+from __future__ import annotations # Allows type hints to reference self's type
 from .Slot import *
 from .SemanticType import SemanticType, SemanticHierarchy
 from .SNError import SNError
 from re import match
 from typing import List, Set
-from __future__ import annotations # Allows type hints to reference self's type
 
 # =====================================
 # -------------- GLOBALS --------------
