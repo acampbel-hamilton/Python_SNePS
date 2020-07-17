@@ -36,7 +36,7 @@ class SemanticType:
         """ Adds child to list of children. """
         self.children.append(child)
 
-    def subtype(self, potential_child):
+    def subtype(self, potential_child) -> bool:
         """ Determines if given SemanticType is a subtype of self. """
         return any(child is potential_child or child.subtype(potential_child) for child in self.children)
 
@@ -79,7 +79,7 @@ class SemanticHierarchy:
 
         return self.sem_types[type_name]
 
-    def assert_proposition(self, node):
+    def assert_proposition(self, node) -> None:
         """ Casts a given node to a Proposition """
         self.respecify(node.name, node.sem_type, self.sem_types['Proposition'])
 
@@ -100,7 +100,7 @@ class SemanticHierarchy:
         raise SemError('WARNING: Could not retypecast "' + term_name + '" from ' + current_type.name + " to " + new_type.name)
         return current_type
 
-    def greatest_common_subtype(self, term_name: str, type1: SemanticType, type2: SemanticType):
+    def greatest_common_subtype(self, term_name: str, type1: SemanticType, type2: SemanticType) -> SemanticType:
         """ Finds the greatest common subtype of type1 and type2. If type1 is a
             subtype of type2, or vice versa, then that type is returned. If this
             isn't the case, then this function returns the type that derives
@@ -155,7 +155,7 @@ class SemanticHierarchy:
 
         return gcds[0]
 
-    def get_type(self, type_name: str):
+    def get_type(self, type_name: str) -> SemanticType:
         """ Returns the type in the hierarchy with the given name. """
         if type_name in self.sem_types:
             return self.sem_types[type_name]
@@ -194,7 +194,7 @@ class SemanticMixin:
 
         self.sem_hierarchy = SemanticHierarchy()
 
-    def define_type(self, name: str, parent_names: List[str] = None):
+    def define_type(self, name: str, parent_names: List[str] = None) -> None:
         """ Adds a term to the semantic hierarchy. This is another important
             function for interacting with SNePS. """
 
@@ -204,6 +204,6 @@ class SemanticMixin:
         parent_names = [] if parent_names is None else parent_names
         self.sem_hierarchy.add_type(name, parent_names)
 
-    def list_types(self):
+    def list_types(self) -> None:
         """ Prints a string representation of each type in the semantic hierarchy. """
         print("[{}]".format(self.sem_hierarchy))

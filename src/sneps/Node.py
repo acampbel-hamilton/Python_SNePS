@@ -219,7 +219,7 @@ class Molecular(Node):
         """ Returns all the nodes arrived at by following the down cables formed by some particular slot. """
         return self.frame.get_filler_set(slot)
 
-    def has_constituent(self, constituent, visited=None):
+    def has_constituent(self, constituent, visited=None) -> bool:
         """ Recursively checks this node and all nodes to which it has down cables,
         looking for a given Node (constituent) """
         # Checks if self the constituent
@@ -336,7 +336,7 @@ class AndOrNode(MinMaxOpNode):
 class ImplNode(Molecular):
     """ if/=> with bound value serving as numeric threshold to truth for antecedents """
 
-    def __init__(self, frame, bound) -> None:
+    def __init__(self, frame: Frame, bound: int) -> None:
         super().__init__(frame)
         self.bound = bound
 

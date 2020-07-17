@@ -29,6 +29,8 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin,
         SNePS-related papers in this repository, and provided in our demo folder. """
 
     def __init__(self) -> None:
+
+        # Initialize the mixins to get instance variables
         for cls in type(self).__bases__:
             cls.__init__(self)
 
@@ -40,7 +42,7 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin,
         # self.contexts = {} (defined in Context.py)
         # self.default_context = Context(docstring="The default context") (defined in Context.py,_default",
         # self.default_context = self.default_context
-        
+
         self._build_default()
 
     def _build_default(self) -> None:
