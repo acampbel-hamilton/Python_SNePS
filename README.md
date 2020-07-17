@@ -1,29 +1,43 @@
 # Python_SNePS
 > SNePS 3 in Python
 
-## Section 0: Preliminary Reading
+This repository contains a partial implementation of the SNePS 3 semantic network in Python. A few test files have been included to demonstrate the system's current capabilities.
 
-1. [&ldquo;A Logic of Arbitrary and Indefinite Objects&rdquo;](https://www.aaai.org/Papers/KR/2004/KR04-059.pdf) by Stuart Shapiro
+#### Complete:
+* SNePS module for building a network
+
+#### Incomplete:
+* Some tokens in well-formed-terms (See section 4)
+* Uniqueness on variables in ‘donkey sentences’ (See section 1, resource 1)
+* Inference package
+* Belief revision
+
+## Section 1: Preliminary Reading
+
+1. [“A Logic of Arbitrary and Indefinite Objects”](https://www.aaai.org/Papers/KR/2004/KR04-059.pdf) by Stuart Shapiro
     * This paper outlines the ideas behind the logical language implemented in SNePS 3. We have revised SNePS's grammar to be more Python-like in syntax, but the general concepts from this paper are very important.
 
-2. [&ldquo;An Introduction to SNePS 3&rdquo;](https://cse.buffalo.edu/~shapiro/Papers/sneps3intro.pdf) by Stuart Shapiro
+2. [“An Introduction to SNePS 3”](https://cse.buffalo.edu/~shapiro/Papers/sneps3intro.pdf) by Stuart Shapiro
     * This paper explains the different semantic and syntactic types, the function of caseframes, frames, and slots (relations), and the different inference methods.
 
-3. [&ldquo;Visually Interacting with a Knowledge Base Using Frames, Logic, and Propositional Graphs&rdquo;](https://cse.buffalo.edu/~shapiro/Papers/schsha2011b.pdf) by Daniel R. Schlegel and Stuart C. Shapiro
+3. [“Visually Interacting with a Knowledge Base Using Frames, Logic, and Propositional Graphs”](https://cse.buffalo.edu/~shapiro/Papers/schsha2011b.pdf) by Daniel R. Schlegel and Stuart C. Shapiro
     * This paper gives great working definitions for the various terms used in SNePS 3.
 
-4. [&ldquo;SNePS 3 User&rsquo;s Manual&rdquo;](https://cse.buffalo.edu/sneps/Projects/sneps3manual.pdf) by Stuart Shapiro
-    * Reference this manual to understand the user commands. The pseudo-yacc rules are defunct in Python_SNePS.
+4. [“SNePS 3 User&rsquo;s Manual”](https://cse.buffalo.edu/sneps/Projects/sneps3manual.pdf) by Stuart Shapiro
+    * Reference this manual to understand the user commands. The pseudo-yacc rules are defunct in Python_SNePS, but redefined below in Section 4 of the README.
 
-5. [&ldquo;Types in SNePS 3&rdquo;](https://cse.buffalo.edu/~shapiro/Talks/TypesInSneps3.pdf) by Stuart Shapiro
-    * This paper clearly explains the relationship between caseframes and slots. Note that slots are called relations in the paper.
+5. [“Types in SNePS 3”](https://cse.buffalo.edu/~shapiro/Talks/TypesInSneps3.pdf) by Stuart Shapiro
+    * This paper clearly explains the relationship between caseframes and slots. Note that slots are called “relations” in the paper.
 
-6. [&ldquo;Concurrent Resoning in Inference Graphs&rdquo;](https://cse.buffalo.edu/~shapiro/Papers/schsha13e.pdf) by Daniel R. Schlegel and Stuart C. Shapiro
-    * Explains much of the induction work done in the SNiPS package (Note that this is not all complete in CSNePS)
+6. [“Concurrent Reasoning in Inference Graphs”](https://cse.buffalo.edu/~shapiro/Papers/schsha13e.pdf) by Daniel R. Schlegel and Stuart C. Shapiro
+    * Explains much of the induction work done in the SNIPS package (Note that this is not all complete in CSNePS).
 
-## Section 1: Structure
+7. [“SUNY at Buffalo CSE563 Lecture Notes”](https://cse.buffalo.edu/~shapiro/Courses/CSE563/Slides/krrSlides.pdf) by Stuart C. Shapiro
+    * Lecture notes from Stuart C. Shapiro’s course on knowledge representation. A long read, but explains many of the logical concepts at play beneath SNePS (e.g. andor, thresh, relations). The most thorough tutorial available.
 
-### Nodes
+## Section 2: Structure
+
+### 1: Nodes
 
 A node is a unique syntactic object, consisting of the following:
 1. Name
@@ -35,26 +49,25 @@ and sometimes:
 
 5. Frame
 
-Nodes are typecast to syntactic types. Syntactic types are represented by classes.
+Nodes are typecast to syntactic types, which theoretically correspond to the functions performed by certain grammatical structures (e.g. If x then y), and are, in our system, represented by classes.
 
-![Syntactic Types](https://raw.githubusercontent.com/acampbel-hamilton/Python_SNePS/master/assets/syntactic.svg)
+![Syntactic Types](/assets/syntactic.svg)
 
-MinMaxOpNodes are created by thresh and andor.
-
-### Frames
+### 2: Frames
 
 A frame is a unique object, consisting of the following tuple:
 1. Caseframe
-2. Filler Set (An ordered list of fillers)
+2. Filler Set (An ordered list of Fillers)
 
-Each Fillers instance must correspond to a slot in the caseframe (i.e. their semantic types must be compatible)
-Each molecular node has a single frame.
+Each Fillers instance must correspond to a slot in the caseframe (i.e. their semantic types must be compatible with the slot and their number must fall within the range set by the slot's min and max).
 
-### Fillers
+Each molecular node has a *single* frame.
 
-A filler is a non-unique object that contains an array of nodes.
+### 3: Fillers
 
-### Caseframes
+A filler is a non-unique object that contains an array of nodes. Fillers are used by frames to fill slots.
+
+### 4. Caseframes
 
 A caseframe is a unique object, consisting of the following:
 1. Name
@@ -64,9 +77,9 @@ A caseframe is a unique object, consisting of the following:
 5. Slots (An ordered list of slots)
 6. Aliases (An array of strings also referring to this frame)
 
-### Slots
+### 5: Slots
 
-Slots are &ldquo;relations.&rdquo; A slot is a unique object, consisting of the following:
+Slots are “relations.” A slot is a unique object, consisting of the following:
 1. Name
 2. Docstring
 3. Semantic Type
@@ -76,17 +89,17 @@ Slots are &ldquo;relations.&rdquo; A slot is a unique object, consisting of the 
 7. Maximum number of fillers
 8. Path
 
-### Semantic Types
+### 6: Semantic Types
 
 Semantic types tell a user the type of ontological entity a node represents (e.g. agent, action).
 
 Because certain slots require certain types of entities, semantic types ensure ontological consistency. For example, a person can perform an action, but a person cannot perform an agent.
 
-![Semantic Types](https://raw.githubusercontent.com/acampbel-hamilton/Python_SNePS/master/assets/semantic.svg)
+![Semantic Types](/assets/semantic.svg)
 
-### Paths
+### 7: Paths
 
-## Section 2: Using Python SNePS's Functions
+## Section 3: Using Python_SNePS's Functions
 
 Create a network object:
 
@@ -102,7 +115,7 @@ The following methods are defined:
 # The default semantic type is Entity.
 net.define_term("Ben", sem_type_name="Agent")
 
-# List all terms or find a specific term
+# Prints all terms or find a specific term
 net.list_terms()
 net.find_term("Ben")
 
@@ -110,7 +123,7 @@ net.find_term("Ben")
 # optional array of parent types
 net.define_type("Action", ["Thing"])
 
-# List all types
+# Prints all types
 net.list_types()
 
 # Defines a slot corresponding to a type
@@ -120,7 +133,7 @@ net.define_slot("class", "Category",
                 docstring="Points to a Category that some Entity is a member of.",
                 pos_adj="none", neg_adj="reduce", min=1, max=0, path='')
 
-# Lists all slots
+# Prints all slots
 net.list_slots()
 
 # Defines a new caseframe with a name, semantic type, list of slots,
@@ -128,8 +141,10 @@ net.list_slots()
 net.define_caseframe("Isa", "Propositional", ["member", "class"],
                      docstring="Epistemic relationship for class membership")
 
-# Lists all caseframes or find a specific caseframe
+# Prints all caseframes
 net.list_caseframes()
+
+# Finds a specific caseframe
 net.find_caseframe("Isa")
 
 # Passes wft followed by optional parameter "inf" for
@@ -140,7 +155,7 @@ net.assert_wft("Isa(Dog, Pet)", inf=False)
 net.print_graph()
 ```
 
-## Section 3: Using Python SNePS's Well Formed Terms (wfts)
+## Section 4: Using Python_SNePS's Well Formed Terms (wfts)
 
 All wft parsing is handled through ply, a Python module that implements lex and yacc. The following yacc-like reduction rules should give an idea of how a wft is parsed.
 
@@ -183,7 +198,7 @@ argument :   wft
 
 ```
 
-## Section 4: Viewing Graphs
+## Section 5: Viewing Graphs
 
 Viewing graphs requires some extra Python modules. If you want to visualize small graphs, run:
 ```bash
