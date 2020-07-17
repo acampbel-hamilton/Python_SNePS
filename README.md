@@ -235,8 +235,8 @@ inf = Inference(net)
 # Tells the network to print out intermediate knowledge as it goes.
 inf.toggle_debug()
 
-# The parameter wft_str should be a valid wft string, as described in Seciton 5.
-wft_str = 
+# This should be a valid wft string, as described in Seciton 5.
+wft_str = "Isa(Fido, Dog)"
 
 # This asks if one or both of the following is asserted or can be derived:
 # 1. The statement represented by wft_str
@@ -296,7 +296,7 @@ argument :   wft
 
 ## Section 6: Imports
 
-To display visual graphs, Pthon_SNePS requires extra Python modules. For simple graphs, run:
+To display visual graphs, Python_SNePS requires extra Python modules. For simple graphs, run:
 ```bash
 pip install networkx matplotlib
 ```
