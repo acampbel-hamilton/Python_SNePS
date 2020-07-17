@@ -40,7 +40,7 @@ and sometimes:
 
 Nodes are typecast to syntactic types. Syntactic types are represented by classes.
 
-![Syntactic Types](https://raw.githubusercontent.com/acampbel-hamilton/Python_SNePS/master/assets/syntactic.svg)
+![Syntactic Types](/assets/syntactic.svg)
 
 MinMaxOpNodes are created by thresh and andor.
 
@@ -85,7 +85,7 @@ Semantic types tell a user the type of ontological entity a node represents (e.g
 
 Because certain slots require certain types of entities, semantic types ensure ontological consistency. For example, a person can perform an action, but a person cannot perform an agent.
 
-![Semantic Types](https://raw.githubusercontent.com/acampbel-hamilton/Python_SNePS/master/assets/semantic.svg)
+![Semantic Types](/assets/semantic.svg)
 
 ### Paths
 
