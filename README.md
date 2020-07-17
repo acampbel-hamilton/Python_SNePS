@@ -7,7 +7,7 @@ This repository contains a partial implementation of the SNePS 3 semantic networ
 * SNePS module for building a network
 
 #### Not implemented:
-* Some tokens in well-formed-terms (See section 4)
+* Some tokens in well-formed-terms (See section 5)
 * Uniqueness on variables in ‘donkey sentences’ (See section 1, resource 1)
 * Inference package
 * Belief revision
@@ -26,13 +26,13 @@ We would recommend any persons continuing with this project implement the missin
     * This paper gives great working definitions for the various terms used in SNePS 3.
 
 4. [“SNePS 3 User&rsquo;s Manual”](https://cse.buffalo.edu/sneps/Projects/sneps3manual.pdf) by Stuart Shapiro
-    * Reference this manual to understand the user commands. The pseudo-yacc rules are defunct in Python_SNePS, but redefined below in Section 4 of the README.
+    * Reference this manual to understand the user commands. The pseudo-yacc rules are defunct in Python_SNePS, but redefined below in Section 5 of the README.
 
 5. [“Types in SNePS 3”](https://cse.buffalo.edu/~shapiro/Talks/TypesInSneps3.pdf) by Stuart Shapiro
     * This paper clearly explains the relationship between caseframes and slots. Note that slots are called “relations” in the paper.
 
 6. [“Concurrent Reasoning in Inference Graphs”](https://cse.buffalo.edu/~shapiro/Papers/schsha13e.pdf) by Daniel R. Schlegel and Stuart C. Shapiro
-    * Explains much of the induction work done in the SNIPS package (Note that this is not all complete in CSNePS).
+    * Explains much of the induction work done in the SNIP package (Note that this is not all complete in CSNePS).
 
 7. [“SUNY at Buffalo CSE563 Lecture Notes”](https://cse.buffalo.edu/~shapiro/Courses/CSE563/Slides/krrSlides.pdf) by Stuart C. Shapiro
     * Lecture notes from Stuart C. Shapiro’s course on knowledge representation. A long read, but explains many of the logical concepts at play beneath SNePS (e.g. andor, thresh, relations). The most thorough tutorial available.
@@ -118,7 +118,7 @@ path :       slotname                   // e.g. "member"
      |       slotname ∅ '-'             // Follows slot backward e.g. "member-"
      |       '!'                        // Node at this point in interpretation
                                         // must be asserted in the context
-     |       'converse' '(' path ')'    // 
+     |       'converse' '(' path ')'    //
 ```
 
 ## Section 3: Using Python_SNePS's Functions
@@ -126,7 +126,7 @@ path :       slotname                   // e.g. "member"
 Create a network object:
 
 ```python
-from psneps import *
+from src import *
 net = Network()
 ```
 
@@ -198,15 +198,24 @@ net.set_current_context("test")
 # Prints out the contexts defined in the network.
 net.list_contexts()
 
-
 ### NOT DONE ANNOTATING:
 net.define_path()
 net.paths_from()
-
-
 ```
 
-## Section 4: Using Python_SNePS's Well Formed Terms (wfts)
+## Section 4: Inference
+
+We have implemented a portion of SNIP, the inference package for SNePS, in the snip directory of this repository.
+
+To do inference, instantiate an object in the Instance class, and call its methods. These methods are documented below:
+
+```python
+from src import *
+net = Network()
+inf = Inference(net)
+```
+
+## Section 5: Using Python_SNePS's Well Formed Terms (wfts)
 
 All wft parsing is handled through ply, a Python module that implements lex and yacc. The following yacc-like reduction rules should give an idea of how a wft is parsed.
 
@@ -249,7 +258,7 @@ argument :   wft
 
 ```
 
-## Section 5: Imports
+## Section 6: Imports
 
 To display visual graphs, Pthon_SNePS requires extra Python modules. For simple graphs, run:
 ```bash
@@ -266,6 +275,6 @@ To export graphs as dot files, run:
 pip install pydot
 ```
 
-## Section 6: Older Versions of Python_SNePS
+## Section 7: Older Versions of Python_SNePS
 
-Previous versions of Python_SNePS can be found under the Releases tab on GitHub, and may be useful for reference.
+A previous version of Python_SNePS from the summer of 2019 can be found under the Releases tab on GitHub, and may be useful for reference.
