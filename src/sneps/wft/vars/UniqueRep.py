@@ -43,7 +43,7 @@ class UniqueRep:
                     if self_child.equivalent_structure(other_child, self_name, other_name):
                         other_children.remove(other_child)
                         break
-                else: # This is an else-for, not a typo
+                else:
                     return False
             if len(other_children) != 0:
                 return False
