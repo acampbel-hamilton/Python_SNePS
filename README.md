@@ -248,7 +248,6 @@ inf.ask_if(wft_str)
 
 # This asks if the rejection of the statement represented by wft_str is asserted or can be derived:
 inf.ask_if_not(wft_str)
-
 ```
 
 ## Section 5: Using Python_SNePS's Well Formed Terms (wfts)
@@ -291,7 +290,6 @@ argument :   wft
          |   'None'                                  // Equivalent to an empty set
          |   'setof' '(' wfts* ')'                   // Creates a set of filler nodes for a single slot
          |   '[' wfts* ']'                           // Equivalent to 'setof(wfts*)'
-
 ```
 
 ## Section 6: Imports
