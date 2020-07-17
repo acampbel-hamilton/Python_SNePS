@@ -3,6 +3,8 @@
 
 This repository contains a partial implementation of the SNePS 3 semantic network in Python. A few test files have been included to demonstrate the system's current capabilities.
 
+Previous versions of Python_SNePS can be found under the Releases tab on GitHub, and may be useful for reference.
+
 #### Implemented:
 * SNePS module for building a network
 
