@@ -85,7 +85,7 @@ Semantic types tell a user the type of ontological entity a node represents (e.g
 
 Because certain slots require certain types of entities, semantic types ensure ontological consistency. For example, a person can perform an action, but a person cannot perform an agent.
 
-<img src="/assets/semantic.svg" width="500px">
+![Semantic Types](/assets/semantic.svg)
 
 ### Paths
 
