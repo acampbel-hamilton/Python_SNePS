@@ -1,3 +1,4 @@
+from __future__ import annotations
 from .Caseframe import Frame
 from .Slot import Slot
 from .SNError import SNError
@@ -27,7 +28,7 @@ class Node:
         if type(self) in (Node, Atomic, Variable, MinMaxOpNode): # These are all abstract classes.
             raise NotImplementedError("Bad syntactic type: See syntax tree in wiki; only leaves are valid.")
 
-    def add_up_cable(self, node, slot: Slot) -> None:
+    def add_up_cable(self, node: Node, slot: Slot) -> None:
         """ Adds an up cable to this node. (Up cables contain a node and a slot.) """
         self.up_cableset.add(UpCable(node, slot))
 
@@ -35,7 +36,7 @@ class Node:
         """ True if this node has an up cable with the provided name. """
         return any(up_cable.name == name for up_cable in self.up_cableset)
 
-    def follow_down_cable(self, slot) -> set:
+    def follow_down_cable(self, slot: Slot) -> set:
         """ Since atomic Nodes have no down cables, this returns an empty set. """
         return set()
 
@@ -55,7 +56,7 @@ class Node:
         to themselves)"""
         return self.name
 
-    def has_constituent(self, constituent, visited=None) -> bool:
+    def has_constituent(self, constituent: Node, visited=None) -> bool:
         """ Recursively checks this node and all nodes to which it has down cables,
         looking for a given Node (constituent) """
         return self is constituent
@@ -71,7 +72,7 @@ class Node:
         """ UniqueRep objects help the system ensure variable uniquness. """
         return UniqueRep(name=self.name)
 
-    def follow_down_cable(self, slot) -> set:
+    def follow_down_cable(self, slot: Slot) -> set:
         """ Atomic nodes lack down cables so this returns the empty set for them. """
         return set()
 
@@ -155,7 +156,7 @@ class Arbitrary(Variable):
 class Indefinite(Variable):
     """ An indefinite object. Originates from a Some statement. """
     counter = 1
-    def __init__(self, name, sem_type: SemanticType) -> None:
+    def __init__(self, name: str, sem_type: SemanticType) -> None:
         self.dependency_set = set()
         super().__init__(name, sem_type)
 
@@ -215,7 +216,7 @@ class Molecular(Node):
     def __hash__(self) -> int:
         return id(self)
 
-    def follow_down_cable(self, slot):
+    def follow_down_cable(self, slot: Slot):
         """ Returns all the nodes arrived at by following the down cables formed by some particular slot. """
         return self.frame.get_filler_set(slot)
 

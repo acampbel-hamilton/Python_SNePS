@@ -1,3 +1,4 @@
+from __future__ import annotations # Allows type hints to reference self's type. Python 4.0 will have this feature by default.
 from .Slot import *
 from .SemanticType import SemanticType, SemanticHierarchy
 from .SNError import SNError
@@ -36,7 +37,7 @@ class Caseframe:
         """ Checks if string in aliases """
         return alias in self.aliases
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Caseframe) -> bool:
         """ Returns true if both arguments are equivalent caseframes.
             Two caseframes are equivalent when:
                 1. They have the same type
@@ -52,19 +53,19 @@ class Caseframe:
                "\tAliases: [{}]\n".format(", ".join(self.aliases)) + \
                "\tSlots: [{}]".format(", ".join([slot.name for slot in self.slots]))
 
-    def add_adj_to(self, other) -> None:
+    def add_adj_to(self, other: Caseframe) -> None:
         self.adj_to.add(other)
 
-    def add_adj_from(self, other) -> None:
+    def add_adj_from(self, other: Caseframe) -> None:
         self.adj_from.add(other)
 
-    def adjustable(self, other) -> bool:
+    def adjustable(self, other: Caseframe) -> bool:
         """ Returns true if this caseframe can adjust to the other. """
         return self.can_pos_adj(other) or \
                self.can_neg_adj(other) or \
                self.pseudo_adjustable(other)
 
-    def can_pos_adj(self, other) -> bool:
+    def can_pos_adj(self, other: Caseframe) -> bool:
         """ Returns true if self is a caseframe that is pos_adj to the caseframe
             other. Self caseframe is pos_adj to other caseframe if:
                 1. self.type is the same, or a subtype of other.type
@@ -76,7 +77,7 @@ class Caseframe:
                 return True
         return False
 
-    def can_neg_adj(self, other) -> bool:
+    def can_neg_adj(self, other: Caseframe) -> bool:
         """ Returns true if self is a caseframe that is neg_adj to the caseframe
             other. Self caseframe is neg_adj to other caseframe if:
                 1. self is the same, or a subtype of other
@@ -88,7 +89,7 @@ class Caseframe:
                 return True
         return False
 
-    def pseudo_adjustable(self, other) -> bool:
+    def pseudo_adjustable(self, other: Caseframe) -> bool:
         """ Special case for adjustments, based on fopl. """
         return self.name == "Nor" and other.name == "AndOr"
 
@@ -130,7 +131,7 @@ class Frame:
             if slot.max is not None and len(fillers) > slot.max:
                 raise CaseframeError('ERROR: Greater than maximum slots provided for "' + slot.name + '"')
 
-    def get_filler_set(self, slot) -> Set[Slot]:
+    def get_filler_set(self, slot: Slot) -> Set[Slot]:
         """ Returns a set of all fillers that are used with given slot """
         slot_fillers = set()
         for i in range(len(self.caseframe.slots)):
@@ -139,7 +140,7 @@ class Frame:
                 slot_fillers.update(self.filler_set[i].nodes)
         return slot_fillers
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Caseframe) -> bool:
         return self.caseframe is other.caseframe and self.filler_set == other.filler_set
 
     def __str__(self) -> str:
@@ -165,7 +166,7 @@ class Fillers:
         """ We don't use __str__ for this because we need another parameter. """
         return "\n\t  " + slot_name + ":" + "".join("\n\t    " + str(node) for node in self.nodes)
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Fillers) -> bool:
         return self.nodes == other.nodes
 
 # =====================================
@@ -194,7 +195,7 @@ class CaseframeMixin:
         for caseframe in self.caseframes:
             print(self.caseframes[caseframe])
 
-    def same_frame(self, aliases : List[str], caseframe_str : str):
+    def same_frame(self, aliases: List[str], caseframe_str: str):
         """ Add aliases to caseframe. """
         caseframe = self.find_caseframe(caseframe_str)
         for alias in aliases:
@@ -209,7 +210,7 @@ class CaseframeMixin:
 
             caseframe.add_alias(alias)
 
-    def define_caseframe(self, name: str, sem_type_name: str, slot_names: list, docstring="") -> None:
+    def define_caseframe(self, name: str, sem_type_name: str, slot_names: List[str], docstring: str = "") -> None:
         """ Defines a new caseframe in the network """
 
         if not match(r'^[A-Za-z][A-Za-z0-9_]*$', name):
