@@ -235,7 +235,7 @@ inf = Inference(net)
 # Tells the network to print out intermediate knowledge as it goes.
 inf.toggle_debug()
 
-# This should be a valid wft string, as described in Seciton 5.
+# This should be a valid wft string, as described in Section 5.
 wft_str = "Isa(Fido, Dog)"
 
 # This asks if one or both of the following is asserted or can be derived:
