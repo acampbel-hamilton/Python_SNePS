@@ -107,6 +107,20 @@ Because certain slots require certain types of entities, semantic types ensure o
 
 ### 7: Paths
 
+Paths, defined on slots, are items of the class Path. Some paths perform functions on child paths, and others perform functions on multiple children. The user should enter paths into functions as strings using the following syntax:
+
+* ∅ is used to indicate that there should be no space between two tokens  
+* \+ is used to indicate that there can be one or more of a given token  
+* \* is used to indicate that there can be zero or more of a given token
+
+```yacc
+path :       slotname                   // e.g. "member"
+     |       slotname ∅ '-'             // Follows slot backward e.g. "member-"
+     |       '!'                        // Node at this point in interpretation
+                                        // must be asserted in the context
+     |       'converse' '(' path ')'    // 
+```
+
 ## Section 3: Using Python_SNePS's Functions
 
 Create a network object:
