@@ -184,6 +184,11 @@ class CaseframeMixin:
 
     def find_caseframe(self, name: str) -> Caseframe:
         """ Locates a named caseframe in the network and returns the associated object. """
+        # If this is a Caseframe's real name
+        if name in self.caseframes:
+            return self.caseframes[name]
+
+        # If this is a Caseframe's alias
         for caseframe in self.caseframes.values():
             if caseframe.has_alias(name):
                 return caseframe
