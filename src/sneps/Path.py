@@ -192,7 +192,7 @@ from .path.PathParse import path_parser, SNePSPathError
 class PathMixin:
     """ Provides functions related to paths to Network """
 
-    def define_path(self, slot_str : str, path_str : str):
+    def define_path(self, slot_str: str, path_str: str):
         """ The slot slot_str exists between two nodes when the path path_str
             can be followed from one to the other """
         path = path_parser(path_str, self)
@@ -200,7 +200,7 @@ class PathMixin:
             slot = self.find_slot(slot_str)
             slot.add_path(path)
 
-    def paths_from(self, terms : List[str], path_str : str):
+    def paths_from(self, terms: List[str], path_str: str):
         """ Given a starting list of node names and a path, follows the path from
             each of the nodes and returns the set of nodes derived """
         path = path_parser(path_str, self)
