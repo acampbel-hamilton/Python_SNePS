@@ -22,7 +22,7 @@
     * Explains much of the induction work done in the SNIPS package (Note that this is not all complete in CSNePS).
 
 7. [“SUNY at Buffalo CSE563 Lecture Notes”](https://cse.buffalo.edu/~shapiro/Courses/CSE563/Slides/krrSlides.pdf) by Stuart C. Shapiro
-    * Explains many SNePS concepts in varying degrees of detail. If I were learning SNePS from scratch again, this would be a valuable resource.
+    * Lecture notes from Stuart C. Shapiro’s course on knowledge representation. A long read, but explains many of the logical concepts at play beneath SNePS (e.g. andor, thresh, relations). The most thorough tutorial available.
 
 ## Section 1: Structure
 
@@ -85,11 +85,11 @@ Semantic types tell a user the type of ontological entity a node represents (e.g
 
 Because certain slots require certain types of entities, semantic types ensure ontological consistency. For example, a person can perform an action, but a person cannot perform an agent.
 
-![Semantic Types](/assets/semantic.svg)
+<img src="/assets/semantic.svg" width="500px">
 
 ### Paths
 
-## Section 2: Using Python SNePS's Functions
+## Section 2: Using Python_SNePS's Functions
 
 Create a network object:
 
@@ -105,7 +105,7 @@ The following methods are defined:
 # The default semantic type is Entity.
 net.define_term("Ben", sem_type_name="Agent")
 
-# List all terms or find a specific term
+# Prints all terms or find a specific term
 net.list_terms()
 net.find_term("Ben")
 
@@ -113,7 +113,7 @@ net.find_term("Ben")
 # optional array of parent types
 net.define_type("Action", ["Thing"])
 
-# List all types
+# Prints all types
 net.list_types()
 
 # Defines a slot corresponding to a type
@@ -123,7 +123,7 @@ net.define_slot("class", "Category",
                 docstring="Points to a Category that some Entity is a member of.",
                 pos_adj="none", neg_adj="reduce", min=1, max=0, path='')
 
-# Lists all slots
+# Prints all slots
 net.list_slots()
 
 # Defines a new caseframe with a name, semantic type, list of slots,
@@ -131,8 +131,10 @@ net.list_slots()
 net.define_caseframe("Isa", "Propositional", ["member", "class"],
                      docstring="Epistemic relationship for class membership")
 
-# Lists all caseframes or find a specific caseframe
+# Prints all caseframes
 net.list_caseframes()
+
+# Finds a specific caseframe
 net.find_caseframe("Isa")
 
 # Passes wft followed by optional parameter "inf" for
@@ -143,7 +145,7 @@ net.assert_wft("Isa(Dog, Pet)", inf=False)
 net.print_graph()
 ```
 
-## Section 3: Using Python SNePS's Well Formed Terms (wfts)
+## Section 3: Using Python_SNePS's Well Formed Terms (wfts)
 
 All wft parsing is handled through ply, a Python module that implements lex and yacc. The following yacc-like reduction rules should give an idea of how a wft is parsed.
 
