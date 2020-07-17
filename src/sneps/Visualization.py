@@ -134,8 +134,7 @@ class VisualizationMixin:
         plt.subplots_adjust(left=0.0, right=1.0, top=1.0, bottom=0.0)
         plt.show()
 
-
-    def export_graph(self, file_name = "network") -> None:
+    def export_graph(self, file_name: str = "network") -> None:
         """ Generates network.dot graphviz representation. """
         # Ensure proper packages available and imported
         if not has_nx:

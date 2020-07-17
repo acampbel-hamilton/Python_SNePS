@@ -187,6 +187,7 @@ class AssertedPath(Path):
 # --------------- MIXIN ---------------
 # =====================================
 
+# This is here instead of at the top of the file to avoid circular imports.
 from .path.PathParse import path_parser, SNePSPathError
 
 class PathMixin:
