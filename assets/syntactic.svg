@@ -14,7 +14,6 @@
 <svg width="500pt" height="260pt" viewBox="0.00 0.00 500.00 260.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph1" class="graph" transform="scale(1 1) rotate(0) translate(4 256)">
 <title>G</title>
-<polygon fill="white" stroke="white" points="-4,5 -4,-256 497,-256 497,5 -4,5"></polygon>
 <!-- Node -->
 <g id="node1" class="node"><title>Node</title>
 <ellipse fill="none" stroke="black" cx="226" cy="-234" rx="31.4281" ry="18"></ellipse>
