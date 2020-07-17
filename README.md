@@ -114,11 +114,26 @@ Paths, defined on slots, are items of the class Path. Some paths perform functio
 * \* is used to indicate that there can be zero or more of a given token
 
 ```yacc
-path :       slotname                   // e.g. "member"
-     |       slotname ∅ '-'             // Follows slot backward e.g. "member-"
-     |       '!'                        // Node at this point in interpretation
-                                        // must be asserted in the context
-     |       'converse' '(' path ')'    // 
+path :       slotname                             // e.g. "member"
+     |       slotname ∅ '-'                       // Follows slot backward e.g. "member-"
+     |       '!'                                  // Node at this point in interpretation
+                                                  // must be asserted in the context
+     |       'converse' '(' path ')'              // Follows a given path backward
+     |       'kplus' '(' path ')'                 // Follows a path one or more times
+     |       'kstar' '(' path ')'                 // Follows a path zero or more times
+     |       composed
+     |       'or' '(' paths ')'                   // Follows all of the paths and returns the
+                                                  // set of nodes that at least one of them reaches
+     |       'and' '(' paths ')'                  // Follows all of the paths and returns the
+                                                  // set of nodes that every one of them reaches
+     |       'irreflexive-restrict' '(' path ')'  // Follows the path such that it doesn't wind up
+                                                  // where it began
+
+paths :      'path'
+      |      'path' ',' 'paths'
+
+composed :   'composed' '(' paths ')'             // Follows each path followed by the next
+         |   '[' paths ']'
 ```
 
 ## Section 3: Using Python_SNePS's Functions
