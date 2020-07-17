@@ -5,7 +5,8 @@ class SNePSVarError(SNError):
 
 class UniqueRep:
     """ Unique set-like representation for variables """
-    def __init__(self, name=None, caseframe_name=None, min=None, max=None, bound=None, children=None) -> None:
+    def __init__(self, name: str = None, caseframe_name: str = None, min: int = None,
+                 max: int = None, bound: int = None, children=None) -> None:
         self.name = name
         self.caseframe_name = caseframe_name
         self.min = min
@@ -25,14 +26,13 @@ class UniqueRep:
                 raise SNePSVarError("The bound must be between 0 and {}".format(size))
 
     def equivalent_structure(self, other, self_name: str = None, other_name: str = None):
-
         if not ((self.name == other.name or (self.name == self_name and other.name == other_name)) and \
                 self.caseframe_name == other.caseframe_name and \
                 self.min == other.min and \
                 self.max == other.max and \
                 self.bound == other.bound and \
                 len(self.children) == len(other.children)):
-                return False
+            return False
 
         for i in range(len(self.children)):
             self_children = self.children[i].copy()
@@ -57,12 +57,12 @@ class UniqueRep:
     def __str__(self) -> str:
         return self.to_str()
 
-    def to_str(self, depth=None) -> str:
+    def to_str(self, depth: int = None) -> str:
         depth = 1 if depth is None else depth
-        ret = "\t" * depth
-        ret += self.name if self.name is not None else self.caseframe_name
-        ret += " ({}, {})".format(self.min, self.max) if self.min is not None else ''
-        ret += " ({})".format(self.bound) if self.bound is not None else ''
+        ret = "\t" * depth + \
+              self.name if self.name is not None else self.caseframe_name + \
+              " ({}, {})".format(self.min, self.max) if self.min is not None else '' + \
+              " ({})".format(self.bound) if self.bound is not None else ''
         for child in self.children:
             for subchild in child:
                 ret += "\n" + subchild.to_str(depth=depth+1)

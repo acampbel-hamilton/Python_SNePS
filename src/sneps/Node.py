@@ -336,7 +336,7 @@ class AndOrNode(MinMaxOpNode):
 class ImplNode(Molecular):
     """ if/=> with bound value serving as numeric threshold to truth for antecedents """
 
-    def __init__(self, frame, bound) -> None:
+    def __init__(self, frame: Frame, bound: int) -> None:
         super().__init__(frame)
         self.bound = bound
 
