@@ -1,4 +1,4 @@
-from __future__ import annotations # Allows type hints to reference self's type
+from __future__ import annotations # Allows type hints to reference self's type. Python 4.0 will have this feature by default.
 from .Slot import *
 from .SemanticType import SemanticType, SemanticHierarchy
 from .SNError import SNError

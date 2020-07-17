@@ -17,11 +17,11 @@ class Path:
 class ComposedPaths(Path):
     """ A composed list of path objects, following one after another """
 
-    def __init__(self, paths):
+    def __init__(self, paths: List[Path]):
         self.paths = paths
         super().__init__()
 
-    def derivable(self, start_node, parent_converse=False):
+    def derivable(self, start_node, parent_converse: bool = False):
         """ Returns a set of all nodes which might be derived by following this path. """
 
         # Exclusive or for whether to use converse
@@ -46,7 +46,7 @@ class ComposedPaths(Path):
 class AndPaths(ComposedPaths):
     """ A composed list of path objects, following one after another """
 
-    def derivable(self, start_node, parent_converse=False):
+    def derivable(self, start_node, parent_converse: bool = False):
         """ Returns a set of all nodes which might be derived by following this path. """
 
         # Exclusive or for whether to use converse
@@ -68,7 +68,7 @@ class AndPaths(ComposedPaths):
         return "and({})".format(", ".join([str(path) for path in self.paths]))
 
 class OrPaths(ComposedPaths):
-    def derivable(self, start_node, parent_converse=False):
+    def derivable(self, start_node, parent_converse: bool = False):
         """ Returns a set of all nodes which might be derived by following this path. """
 
         # Exclusive or for whether to use converse
@@ -87,14 +87,14 @@ class OrPaths(ComposedPaths):
 class ModPath(Path):
     """ Performs some modification on a single path """
 
-    def __init__(self, path):
+    def __init__(self, path: Path):
         super().__init__()
         self.path = path
 
 class KPlusPath(ModPath):
     """ Follows one or more instances of the given path """
 
-    def derivable(self, start_node, parent_converse=False):
+    def derivable(self, start_node, parent_converse: bool = False):
         """ Returns a set of all nodes which might be derived by following this path. """
 
         # Exclusive or for whether to use converse
@@ -170,7 +170,7 @@ class AssertedPath(Path):
     def __init__(self, current_network):
         self.current_network = current_network
 
-    def derivable(self, start_node, parent_converse=False):
+    def derivable(self, start_node, parent_converse: bool = False):
         """ Returns a set of all nodes which might be derived by following this path. """
 
         # If asserted, returns a set containing the starting_node
