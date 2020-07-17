@@ -123,8 +123,10 @@ The following methods are defined:
 # The default semantic type is Entity.
 net.define_term("Ben", sem_type_name="Agent")
 
-# Prints all terms or find a specific term
+# Prints all terms
 net.list_terms()
+
+# Returns the term we just defined.
 net.find_term("Ben")
 
 # Defines a semantic type, with a given name, followed by an
@@ -141,6 +143,9 @@ net.define_slot("class", "Category",
                 docstring="Points to a Category that some Entity is a member of.",
                 pos_adj="none", neg_adj="reduce", min=1, max=0, path='')
 
+# Returns the Slot object we just defined.
+net.find_slot("class")
+
 # Prints all slots
 net.list_slots()
 
@@ -155,12 +160,36 @@ net.list_caseframes()
 # Finds a specific caseframe
 net.find_caseframe("Isa")
 
+# Adds two aliases, "AlsoIsa" and "IsAlsoa", to the "Isa" caseframe.
+net.same_frame(["AlsoIsa", "IsAlsoa"], "Isa")
+
 # Passes wft followed by optional parameter "inf" for
 # triggering forward inference
 net.assert_wft("Isa(Dog, Pet)", inf=False)
 
 # Prints out a visual representation of the knowledge base
+# This should probably be renamed to something else, since it's not
+# printing anything to stdout, but making a matplotlib window.
 net.print_graph()
+
+# Outputs the network in the Graphviz DOT format to out.dot
+net.export_graph(file_name="out.dot")
+
+# Defines a new context, accessible through net.contexts["test"]
+net.define_context("test")
+
+# Sets the current context to the "test" context.
+net.set_current_context("test")
+
+# Prints out the contexts defined in the network.
+net.list_contexts()
+
+
+### NOT DONE ANNOTATING:
+net.define_path()
+net.paths_from()
+
+
 ```
 
 ## Section 4: Using Python_SNePS's Well Formed Terms (wfts)
