@@ -1,5 +1,5 @@
 """
-This is the main file of the SNIPS package. In here, we define the Inference class.
+This is the main file of the SNIP package. In here, we define the Inference class.
 Authors: Ben Kallus, John Madigan, and Seamus Wiseman
 """
 
@@ -10,7 +10,7 @@ Authors: Ben Kallus, John Madigan, and Seamus Wiseman
 from ..sneps.Network import *
 from ..sneps.SemanticType import SemError
 from ..sneps.Node import Node, ImplNode, AndOrNode
-from .SNIPSError import SNIPSError
+from .SNIPError import SNIPError
 
 # =====================================
 # -------------- GLOBALS --------------
@@ -26,7 +26,7 @@ THRESH_SLOT_NAMES = ['equivalence', 'threshargs']
 class Inference:
     """ The Inference class is the main class of the inference module, and provides this
         functionality to SNePS.
-        As it stands, SNIPS has not been implemented. The few inference functions
+        As it stands, SNIP has not been implemented. The few inference functions
         written so far serve as a demonstration of what inference can be performed
         with a more robust inference module in the future. """
 
@@ -35,7 +35,7 @@ class Inference:
         self.debug = False
 
     def toggle_debug(self):
-        """ In debug mode, SNIPS prints the intermediate knowledge it uses while
+        """ In debug mode, SNIP prints the intermediate knowledge it uses while
             attempting to infer a proposition. """
         self.debug = not self.debug
 

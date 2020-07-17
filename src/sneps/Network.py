@@ -23,7 +23,7 @@ from .wft.WftParse import wft_parser
 class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin, VisualizationMixin, PathMixin):
     """ The Network class is the main class of the semantic network module, and provides this
         functionality to SNePS.
-        Currently, SNePS itself (excluding SNIPS, SNEBR, etc.) is close to a finished project.
+        Currently, SNePS itself (excluding SNIP, SNEBR, etc.) is close to a finished project.
         close statements, ?identifier statements, and thnor/thnot have not been implemented,
         and variable uniqueness fails on reflexive donkey statements, as discussed in the various
         SNePS-related papers in this repository, and provided in our demo folder. """
@@ -126,7 +126,7 @@ class Network(SlotMixin, CaseframeMixin, SemanticMixin, NodeMixin, ContextMixin,
     def assert_wft(self, wft_str: str, inf: bool = False) -> None:
         """ Asserts a provided. This is one of the main ways to interact with the sneps system. """
         # NOTE: Currently inf does nothing. In the future, perhaps it can be used to trigger
-        # forward inference from a queue of unsolved SNIPS queries
+        # forward inference from a queue of unsolved SNIP queries
 
         # Parses string and returns node
         wft = wft_parser(wft_str, self)
