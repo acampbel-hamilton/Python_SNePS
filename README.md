@@ -3,14 +3,16 @@
 
 This repository contains a partial implementation of the SNePS 3 semantic network in Python. A few test files have been included to demonstrate the system's current capabilities.
 
-#### Complete:
+#### Implemented:
 * SNePS module for building a network
 
-#### Incomplete:
+#### Not implemented:
 * Some tokens in well-formed-terms (See section 4)
 * Uniqueness on variables in ‘donkey sentences’ (See section 1, resource 1)
 * Inference package
 * Belief revision
+
+We would recommend any persons continuing with this project implement the missing features in the order in which they are listed.
 
 ## Section 1: Preliminary Reading
 
@@ -43,11 +45,13 @@ A node is a unique syntactic object, consisting of the following:
 1. Name
 2. Semantic Type
 3. Up Cableset (An array of frames)
-4. Docstring
 
 and sometimes:
 
-5. Frame
+4. Frame
+5. Min
+6. Max
+7. Bound
 
 Nodes are typecast to syntactic types, which theoretically correspond to the functions performed by certain grammatical structures (e.g. If x then y), and are, in our system, represented by classes.
 
@@ -76,6 +80,10 @@ A caseframe is a unique object, consisting of the following:
 4. Docstring
 5. Slots (An ordered list of slots)
 6. Aliases (An array of strings also referring to this frame)
+
+Caseframes, like *Isa*, form Molecular nodes and tell the system something about the nodes which are used (via Frames) to fill their slots.
+
+(In the case of *Isa*, fillers in the first slot must be of type Entity (or a subtype) and are designated as *member*, and fillers in the second slot must be of type *Category* (or a subtype) and are designated as *class*)
 
 ### 5: Slots
 
