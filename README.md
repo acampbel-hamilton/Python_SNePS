@@ -37,7 +37,7 @@ This repository contains a partial implementation of the SNePS 3 semantic networ
 
 ## Section 2: Structure
 
-### Nodes
+### 1: Nodes
 
 A node is a unique syntactic object, consisting of the following:
 1. Name
@@ -49,26 +49,25 @@ and sometimes:
 
 5. Frame
 
-Nodes are typecast to syntactic types. Syntactic types are represented by classes.
+Nodes are typecast to syntactic types, which theoretically correspond to the functions performed by certain grammatical structures (e.g. If x then y), and are, in our system, represented by classes.
 
 ![Syntactic Types](/assets/syntactic.svg)
 
-MinMaxOpNodes are created by thresh and andor.
-
-### Frames
+### 2: Frames
 
 A frame is a unique object, consisting of the following tuple:
 1. Caseframe
-2. Filler Set (An ordered list of fillers)
+2. Filler Set (An ordered list of Fillers)
 
-Each Fillers instance must correspond to a slot in the caseframe (i.e. their semantic types must be compatible)
-Each molecular node has a single frame.
+Each Fillers instance must correspond to a slot in the caseframe (i.e. their semantic types must be compatible with the slot and their number must fall within the range set by the slot's min and max).
 
-### Fillers
+Each molecular node has a *single* frame.
 
-A filler is a non-unique object that contains an array of nodes.
+### 3: Fillers
 
-### Caseframes
+A filler is a non-unique object that contains an array of nodes. Fillers are used by frames to fill slots.
+
+### 4. Caseframes
 
 A caseframe is a unique object, consisting of the following:
 1. Name
@@ -78,7 +77,7 @@ A caseframe is a unique object, consisting of the following:
 5. Slots (An ordered list of slots)
 6. Aliases (An array of strings also referring to this frame)
 
-### Slots
+### 5: Slots
 
 Slots are “relations.” A slot is a unique object, consisting of the following:
 1. Name
@@ -90,7 +89,7 @@ Slots are “relations.” A slot is a unique object, consisting of the followin
 7. Maximum number of fillers
 8. Path
 
-### Semantic Types
+### 6: Semantic Types
 
 Semantic types tell a user the type of ontological entity a node represents (e.g. agent, action).
 
@@ -98,7 +97,7 @@ Because certain slots require certain types of entities, semantic types ensure o
 
 ![Semantic Types](/assets/semantic.svg)
 
-### Paths
+### 7: Paths
 
 ## Section 3: Using Python_SNePS's Functions
 
