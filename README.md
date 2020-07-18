@@ -151,7 +151,7 @@ Defines a base node with a name and optional semantic type. The default semantic
 net.define_term("Ben", sem_type_name="Agent")
 ```
 
-###### Find term:
+##### Find term:
 Returns the term with the name provided.
 ```python
 net.find_term("Fido")
@@ -185,7 +185,7 @@ net.define_slot("contemplates", "Idea",
                 pos_adj="none", neg_adj="reduce", min=1, max=None, path='')
 ```
 
-###### Find slot:
+##### Find slot:
 Returns the slot with the name provided.
 ```python
 net.find_slot("class")
@@ -210,7 +210,7 @@ Adds a aliases to an existing frame.
 net.same_frame(["Farms", "Grows"], "Cultivates")
 ```
 
-###### Find caseframe:
+##### Find caseframe:
 Returns the caseframe with the name provided.
 ```python
 net.find_slot("Isa")
@@ -241,7 +241,7 @@ Prints representations of each context in the network.
 net.list_contexts()
 ```
 
-##### Define a new path:
+##### Define path:
 Tells the inference package that the cable formed by the slot (first parameter) exists between two nodes when the given path (second parameter) can be followed from one to the other.
 ```python
 net.define_path("equiv", "compose(!, equiv, kstar(compose(equiv-, !, equiv)))")
