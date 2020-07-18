@@ -20,4 +20,4 @@ net.define_caseframe("Owns", "Proposition", ["owner", "owns"])
 net.assert_wft("Beats(every(x, [Farmer(x), Owns(x, some(y(x), Donkey(y)))]), y)")
 
 net.export_graph("donkey")
-net.print_graph()
+net.display_graph()

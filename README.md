@@ -3,10 +3,10 @@
 
 This repository contains a partial implementation of the SNePS 3 semantic network in Python. A few test files have been included to demonstrate the system's current capabilities.
 
-#### Implemented:
+##### Implemented:
 * SNePS module for building a network
 
-#### Not implemented:
+##### Not implemented:
 * Some tokens in well-formed-terms (See section 5)
 * Uniqueness on variables in ‘donkey sentences’ (See section 1, resource 1)
 * Inference package
@@ -138,84 +138,137 @@ composed :   'composed' '(' paths ')'             // Follows each path followed 
 
 ## Section 3: Using Python_SNePS's Functions
 
-Create a network object:
+##### Create a network object:
 
 ```python
 from src import *
 net = Network()
 ```
 
-The following methods are defined:
-
+##### Define term:
+Defines a base node with a name and optional semantic type. The default semantic type is Entity.
 ```python
-# Defines a term with a name and optional semantic type.
-# The default semantic type is Entity.
 net.define_term("Ben", sem_type_name="Agent")
+```
 
-# Prints all terms
+###### Find term:
+Returns the term with the name provided.
+```python
+net.find_term("Fido")
+```
+
+##### List terms:
+Prints representations of each node in the network.
+```python
 net.list_terms()
+```
 
-# Returns the term we just defined.
-net.find_term("Ben")
+##### Define semantic type:
+Defines a semantic type, with a given name, followed by an optional array of parent types.
+```python
+net.define_type("Idea", ["Thing"])
+```
 
-# Defines a semantic type, with a given name, followed by an
-# optional array of parent types
-net.define_type("Action", ["Thing"])
-
-# Prints all types
+##### List types:
+Prints representations of each type in the network.
+```python
 net.list_types()
+```
 
-# Defines a slot corresponding to a type
-# Name, followed by semantic type, with optional
-# docstring, adjustment rules, min, max, and path
-net.define_slot("class", "Category",
-                docstring="Points to a Category that some Entity is a member of.",
-                pos_adj="none", neg_adj="reduce", min=1, max=0, path='')
+##### Define slot:
+Defines a slot with a name, a semantic type, and optional docstring, adjustment rules, min, max, and path.
 
-# Returns the Slot object we just defined.
+Max defaults to None, meaning that there is no upper limit on fillers for a slot.
+```python
+net.define_slot("contemplates", "Idea",
+                docstring="Points to an idea contemplated by an agent.",
+                pos_adj="none", neg_adj="reduce", min=1, max=None, path='')
+```
+
+###### Find slot:
+Returns the slot with the name provided.
+```python
 net.find_slot("class")
+```
 
-# Prints all slots
+##### List slots:
+Prints representations of each slot in the network.
+```python
 net.list_slots()
+```
 
-# Defines a new caseframe with a name, semantic type, list of slots,
-# and optional docstring
-net.define_caseframe("Isa", "Propositional", ["member", "class"],
-                     docstring="Epistemic relationship for class membership")
+##### Define caseframe:
+Defines a new caseframe with a name, a semantic type, list of slots, and optional docstring
+```python
+net.define_caseframe("Contemplates", "Act", ["agent", "contemplates"],
+                     docstring="An agent contemplates some idea.")
+```
 
-# Prints all caseframes
+##### Same frame:
+Adds a aliases to an existing frame.
+```python
+net.same_frame(["Farms", "Grows"], "Cultivates")
+```
+
+###### Find caseframe:
+Returns the caseframe with the name provided.
+```python
+net.find_slot("Isa")
+```
+
+##### List caseframes:
+Prints representations of each caseframe in the network.
+```python
 net.list_caseframes()
+```
 
-# Finds a specific caseframe
-net.find_caseframe("Isa")
+##### Define context:
+Defines a new context, with a name and optional docstring and parent context (uses the default context by default).
+```python
+net.define_context("magical_realism", docstring="Used for reading Tokarczuk novels.",
+                   parent="literary")
+```
 
-# Adds two aliases, "AlsoIsa" and "IsAlsoa", to the "Isa" caseframe.
-net.same_frame(["AlsoIsa", "IsAlsoa"], "Isa")
+##### Set the current context:
+Sets the current context to the existing context with the name provided.
+```python
+net.set_current_context("magical_realism")
+```
 
-# Passes wft followed by optional parameter "inf" for
-# triggering forward inference
-net.assert_wft("Isa(Dog, Pet)", inf=False)
-
-# Prints out a visual representation of the knowledge base
-# This should probably be renamed to something else, since it's not
-# printing anything to stdout, but making a matplotlib window.
-net.print_graph()
-
-# Outputs the network in the Graphviz DOT format to out.dot
-net.export_graph(file_name="out.dot")
-
-# Defines a new context, accessible through net.contexts["test"]
-net.define_context("test")
-
-# Sets the current context to the "test" context.
-net.set_current_context("test")
-
-# Prints out the contexts defined in the network.
+##### List contexts:
+Prints representations of each context in the network.
+```python
 net.list_contexts()
+```
 
-### NOT DONE ANNOTATING:
-net.define_path()
-net.paths_from()
+##### Define a new path:
+Tells the inference package that the cable formed by the slot (first parameter) exists between two nodes when the given path (second parameter) can be followed from one to the other.
+```python
+net.define_path("equiv", "compose(!, equiv, kstar(compose(equiv-, !, equiv)))")
+```
+
+##### Follow paths:
+Given a starting list of node names and a path (as a string), follows the path from each of the nodes and returns the set of nodes derived
+```python
+net.paths_from(['Fido', 'Fluffy'], 'kstar(!, member)')
+```
+
+##### Assert a well formed term:
+Passes wft followed by optional parameter inf used for triggering forward inference
+```python
+net.assert_wft("Isa(Fido, Dog)", inf=False)
+```
+
+##### Display a network:
+Displays a visual representation of the current context in the network.
+```python
+net.display_graph()
+```
+
+##### Export a network to DOT:
+Outputs a representation of the current context in the network in the Graphviz DOT format to network.dot, or an optional user-provided file name.
+```python
+net.export_graph(file_name="about_fido")
 ```
 
 ## Section 4: Inference
@@ -268,7 +321,7 @@ wft :        atomicName                              // e.g. "Dog"
     |        'thresh' '{' i '}' '(' wft+ ')'         // e.g. "thresh{1}(a, b, c)"
     |        'close' '(' atomicNameSet ',' wft ')'
     |        'every' '(' atomicName ',' argument ')'
-    |        'some' '(' atomicName '(' atomicName ')' ',' argument ')'
+    |        'some' '(' atomicName '(' atomicNames ')' ',' argument ')'
     |        '?' ∅ atomicName '(' wft* ')'           // e.g. "?John"
 
 

@@ -38,7 +38,7 @@ class VisualizationMixin:
         if type(self) is VisualizationMixin:
             raise NotImplementedError("Mixins can't be instantiated.")
 
-    def print_graph(self) -> None:
+    def display_graph(self) -> None:
         """ Interactive visual graph opens in new window. """
         # Ensure proper packages available and imported
         if not has_nx:
