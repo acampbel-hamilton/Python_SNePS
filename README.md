@@ -36,6 +36,7 @@ We would recommend any persons continuing with this project implement the missin
 
 7. [“SUNY at Buffalo CSE563 Lecture Notes”](https://cse.buffalo.edu/~shapiro/Courses/CSE563/Slides/krrSlides.pdf) by Stuart C. Shapiro
     * Lecture notes from Stuart C. Shapiro’s course on knowledge representation. A long read, but explains many of the logical concepts at play beneath SNePS (e.g. andor, thresh, relations). The most thorough tutorial available.
+    * To understand and, or, nor, not, implication etc. see slides 437-441
 
 ## Section 2: Structure
 
@@ -254,7 +255,7 @@ net.paths_from(['Fido', 'Fluffy'], 'kstar(!, member)')
 ```
 
 ##### Assert a well formed term:
-Passes wft followed by optional parameter inf used for triggering forward inference
+Takes well-formed-term string followed by optional parameter inf used for triggering forward inference, and builds the node in the Network and asserts it within the current context.
 ```python
 net.assert_wft("Isa(Fido, Dog)", inf=False)
 ```
@@ -271,25 +272,32 @@ Outputs a representation of the current context in the network in the Graphviz D
 net.export_graph(file_name="about_fido")
 ```
 
-## Section 4: Inference
+## Section 4: Using Python_SNePS's Inference Functions
 
-We have implemented a portion of SNIP, the inference package for SNePS, in the snip directory of this repository.
+A partial implementation of SNIP, the inference package for SNePS, can be found in the snip directory of this repository.
 
-To do inference, instantiate an object in the Instance class, and call its methods. These methods are documented below:
+##### Create an inference object:
+Creates an instance of the inference module. Must be passed a network object on which to operate.
 
 ```python
 from src import *
-
 net = Network()
+snip = Inference(net)
+```
 
-# Makes the inference object
-inf = Inference(net)
+##### Ask about a proposition:
+Uses asserted nodes in the system to infer whether the given well formed term ought to also be asserted in the current context, and also to determine whether the negation of that well formed term 'not(expr)' ought to be asserted (Remember SNePS uses para-consistent logic, so both may be asserted!).
+
+Takes a well-formed-term string, which it, if necessary, builds (but does not automatically assert) in the Network.
+
+```python
+inf.ask("Isa(Fido, Cat)")
+```
+
+```python
 
 # Tells the network to print out intermediate knowledge as it goes.
 inf.toggle_debug()
-
-# This should be a valid wft string, as described in Section 5.
-wft_str = "Isa(Fido, Dog)"
 
 # This asks if one or both of the following is asserted or can be derived:
 # 1. The statement represented by wft_str
@@ -325,15 +333,16 @@ wft :        atomicName                              // e.g. "Dog"
     |        '?' ∅ atomicName '(' wft* ')'           // e.g. "?John"
 
 
-BinaryOp :   i ∅ '=>' | 'v=>' | '=>' | 'if'          // 'v=>' does or-implication and
-                                                     // "i ∅ '=>'" does and-implication (e.g. "5=>")
+BinaryOp :   i ∅ '=>' | 'v=>' | '&=>' | '=>' | 'if'  // See Section 1 #7
+
 
 NaryOp :     'and' | 'or' | 'not' | 'nor'            // These operators, exclusively, can take
        |     'thnot' | 'thnor' | 'nand'              // any number of parameters
-       |     'xor' | 'iff' | '<=>' | Equiv
+       |     'xor' | 'iff' | '<=>' | 'Equiv'         // See Section 1 #7
 
 
-Param2Op :   'andor' | 'thresh'
+Param2Op :   'andor' | 'thresh'                      // Special versions of nary ops that
+                                                     // take explicit min and max
 
 
 atomicName : identifier | i                          // Identifier matches r'[A-Za-z][A-Za-z0-9_]*'
@@ -343,6 +352,15 @@ argument :   wft
          |   'None'                                  // Equivalent to an empty set
          |   'setof' '(' wfts* ')'                   // Creates a set of filler nodes for a single slot
          |   '[' wfts* ']'                           // Equivalent to 'setof(wfts*)'
+
+
+atomicNameSet :   atomicName
+              |   '[' atomicNames ']'
+
+
+atomicNames :
+            |     atomicName
+            |     atomicName ',' AtomicNames
 ```
 
 ## Section 6: Imports
