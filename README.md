@@ -288,27 +288,31 @@ snip = Inference(net)
 ##### Ask about a proposition:
 Uses asserted nodes in the system to infer whether the given well formed term ought to also be asserted in the current context, and also to determine whether the negation of that well formed term 'not(expr)' ought to be asserted (Remember SNePS uses para-consistent logic, so both may be asserted!).
 
-Takes a well-formed-term string, which it, if necessary, builds (but does not automatically assert) in the Network.
+Takes a well-formed-term string, which it, if necessary, builds (but does not automatically assert) in the Network. Prints a response and returns an array of the asserted nodes (expr, not(expr), neither, or both).
 
 ```python
 inf.ask("Isa(Fido, Cat)")
 ```
 
+##### Ask whether a proposition is true:
+Asks whether a given well-formed-term (but not its negation) is asserted or can be derived. Prints a response and returns an array of the asserted nodes (expr, or empty).
+
 ```python
+inf.ask_if("Isa(Fido, Dog)")
+```
 
-# Tells the network to print out intermediate knowledge as it goes.
+##### Ask whether a proposition is true:
+Asks whether the negation of a given well-formed-term is asserted or can be derived. Prints a response and returns an array of the asserted nodes (not(expr), or empty).
+
+```python
+inf.ask_if_not("Isa(Fido, Cat)")
+```
+
+###### Toggle debug printing:
+In debug mode, SNIP prints the intermediate knowledge it uses while attempting to infer a proposition. The method either switches the current state or takes a bool value to set the debug state.
+
+```python
 inf.toggle_debug()
-
-# This asks if one or both of the following is asserted or can be derived:
-# 1. The statement represented by wft_str
-# 2. The rejection of that statement
-inf.ask(wft_str)
-
-# This asks if the statement represented by wft_str is asserted or can be derived:
-inf.ask_if(wft_str)
-
-# This asks if the rejection of the statement represented by wft_str is asserted or can be derived:
-inf.ask_if_not(wft_str)
 ```
 
 ## Section 5: Using Python_SNePS's Well Formed Terms (wfts)
